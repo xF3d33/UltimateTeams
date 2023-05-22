@@ -1,0 +1,53 @@
+name: CelestyTeams
+version: '${project.version}'
+main: dev.xf3d3.celestyteams.CelestyTeams
+api-version: 1.13
+prefix: CelestyTeams
+authors: [ xF3d3 ]
+description: A simple and lightweight Teams plugin for Minecraft.
+softdepend: [ PlaceholderAPI ]
+libraries:
+  - 'com.zaxxer:HikariCP:5.0.1'
+commands:
+  teamadmin:
+    description: Admin commands for teams.
+    usage: "Usage: /teamadmin [save|reload|about]"
+    permission: celestyteams.admin
+    aliases:
+      - ca
+      - cla
+  cc:
+    description: Send a message to your team members only.
+    usage: "Usage: /cc <message>"
+    permission: celestyteams.team
+    aliases:
+      - teamchat
+      - teamc
+      - cchat
+      - chat
+  chatspy:
+    description: Allows admins to see ALL team chat messages.
+    usage: "Usage: /chatspy"
+    permission: celestyteams.chat.spy
+    aliases:
+      - cs
+      - ccs
+      - teamchatspy
+      - spy
+
+permissions:
+  celestyteams.team:
+    default: true
+  celestyteams.maxteamsize.group1:
+    default: true
+  celestyteams.*:
+    default: op
+    children:
+      celestyteams.teamadmin:
+        children:
+          celestyteams.chat.spy:
+            default: op
+          celestyteams.bypass:
+            default: op
+          celestyteams.maxteamsize.*:
+            default: op

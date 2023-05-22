@@ -1,0 +1,149 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#                                        ----[CelestyTeams]----                                        #
+#                                     ----[By Loving11ish]----                                      #
+#                                  ----[Contributors: Gamlin]----                                   #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#                                   ----[Plugin Config File]----                                    #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#CelestyTeams config for ${version}
+
+#Do you want to use the GUI system? [Default value: true]
+use-global-GUI-system: true
+
+database:
+  host: 172.18.0.1
+  port: 3306
+  database: celesty_teams
+  user: root
+  password: password
+  parameters: ?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+  connection_pool:
+      # MySQL connection pool properties
+      size: 12
+      idle: 12
+      lifetime: 1800000
+      keepalive: 30000
+      timeout: 20000
+
+team-tags:
+  #Set the minimum length of the team prefix and name. [Default value: 3]
+  min-character-limit: 3
+  #Set the maximum length of the team prefix and name. [Default value: 32]
+  max-character-limit: 32
+  #Set below names that are not allowed to be used in prefixes or names. [They ARE case & syntax sensitive]
+  disallowed-tags:
+    - "Gamers"
+    - "Rise"
+    - "Up"
+  #Add a space after the team prefix in chat. [Default value: true]
+  prefix-add-space-after: true
+  #Add `[]` characters before and after the team prefix in the chat. [Default value: false]
+  prefix-add-brackets: false
+  #Below is how the above brackets should appear.
+  brackets-opening: "&f["
+  brackets-closing: "&f]"
+
+team-size:
+  #Set the default maximum amount of members that can join a players' team. [Default value: 8]
+  default-max-team-size: 8
+  #To allow the use of a tiered permission system for team sizes instead of the global amount, use the system below.
+  tiered-team-system:
+    #Enable the tiered system use. [Default value: false]
+    enabled: false
+    permission-group-list:
+      group-1: 4  #Perm: 'celestyteams.maxteamsize.group1' [This perm is given by default]
+      group-2: 8  #Perm: 'celestyteams.maxteamsize.group2'
+      group-3: 12 #Perm: 'celestyteams.maxteamsize.group3'
+      group-4: 16 #Perm: 'celestyteams.maxteamsize.group4'
+      group-5: 20 #Perm: 'celestyteams.maxteamsize.group5'
+      group-6: 24 #Perm: 'celestyteams.maxteamsize.group6'
+
+team-creation:
+  #Do you want a message to be sent to all players when a new team is created? [Default value: true]
+  announce-to-all: true
+  #Do you want the message sent as a title instead of a chat message? [Default value: true]
+  send-as-title: true
+
+team-join:
+  #Do you want a message to be sent to all players when a player joins a team? [Default value: true]
+  announce-to-all: true
+  #Do you want the message sent as a title instead of a chat message? [Default value: false]
+  send-as-title: false
+
+team-chat:
+  #Enable the team chat system. [Default value: true]
+  enabled: true
+  #Below is the prefix for the team chat messages. [Default value: &6[&3CC&6]&r]
+  chat-prefix: "&6[&3CC&6]&r"
+  cool-down:
+    #Enable the cool down on the '/cc <message>' command to prevent chat spamming (RECOMMENDED). [Default value: true]
+    enabled: true
+    #Cool-down time in seconds. [Default value: 5 = 5 seconds]
+    time: 5
+  chat-spy:
+    #Do you want players with the perm 'celestyteams.chat.spy' be able to spy on all team chat messages? [Default value: true]
+    enabled: true
+    #Below is the prefix for th chat spy messages. [Default value: &6[&cSPY&6]&r]
+    chat-spy-prefix: "&6[&cSPY&6]&r"
+
+#Set the maximum amount of allied teams that can a team can have. [Default value: 4]
+max-team-allies: 4
+
+#Set the maximum amount of enemy teams that can a team can have. [Default value: 2]
+max-team-enemies: 2
+
+#Clan protections
+protections:
+  pvp:
+    #Globally enable the team friendly fire system. [Default value: true]
+    pvp-command-enabled: true
+    #Enable the ability for a player to bypass the pvp protection using 'celestyteams.bypass.pvp'. [Default value: true]
+    enable-bypass-permission: true
+
+#Clan & Player Points
+points:
+  player-points:
+    #Do you want players to get points when they kill another player? [Default value: true]
+    enabled: true
+    #How many points do you want the killer to get when they kill a non-enemy team player? [Default value: 5]
+    non-enemy-team-point-amount-on-kill: 5
+    #How many points do you want the killer to get when they kill an enemy team player? [Default value: 10]
+    enemy-team-point-amount-on-kill: 10
+    #Do you want to take the points given to the killer from the victims point balance if available? [Default value: true]
+    take-points-from-victim: true
+
+#Clan home system
+team-home:
+  #Enable the '/team [sethome|home]' system. [Default value: true]
+  enabled: true
+  cool-down:
+    #Enable the cool down on the '/team home' command to prevent tp spamming (RECOMMENDED). [Default value: true]
+    enabled: true
+    #Cool-down time in seconds. [Default value: 120 = 2 minutes]
+    time: 120
+
+#CelestyTeams update system
+plugin-update-notifications:
+  #Do you want to enable in game plugin update notifications? (Permission:'celestyteams.update'). [Default value: true]
+  enabled: true
+
+#CelestyTeams general settings
+general:
+  run-auto-save-task:
+    #Do you want to enable the plugins ability to auto save the teams to disk? [Default value: true]
+    enabled: true
+  run-auto-invite-wipe-task:
+    #Do you want to enable the plugins ability to auto-wipe the invites list? [Default value: true]
+    enabled: true
+  show-auto-save-task-message:
+    #Do you want to see notifications in console when the auto-save task runs? [Default value: true]
+    enabled: true
+  show-auto-invite-wipe-message:
+    #Do you want to see notifications in console when the auto-invite-wipe task runs? [Default value: true]
+    enabled: true
+  developer-debug-mode:
+    #Do you want to see a lot of debug messages in console when most actions are performed? [Default value: false]
+    enabled: false
+
