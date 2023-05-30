@@ -41,30 +41,20 @@ public class TeamCommand extends BaseCommand {
     @Default
     @CommandCompletion("create|disband|invite|join|leave|kick|info|list|prefix|transfer|ally add|ally remove|enemy|pvp|sethome|delhome|home")
     public void onClanCommand(CommandSender sender, String[] args) {
-        if (sender instanceof Player) {
-            Player player = ((Player) sender).getPlayer();
+        if (sender instanceof final Player player) {
+
             if (args.length < 1) {
                 if (teamsConfig.getBoolean("use-global-GUI-system")) {
-                    new ClanListGUI(plugin, CelestyTeams.getPlayerMenuUtility(player)).open();
+                    System.out.println("aaahg");
+                    new ClanListGUI(plugin).open(player);
                     return;
                 }
+
                 if (teamsConfig.getBoolean("team-home.enabled") && teamsConfig.getBoolean("protections.pvp.pvp-command-enabled")) {
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-1")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-2")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-3")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-4")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-5")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-6")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-7")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-8")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-9")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-10")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-11")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-12")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-13")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-14")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-15")));
-                    sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-command-incorrect-usage.line-16")));
+                    for (int i = 1; i <= 16; i++) {
+                        String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
+                        sender.sendMessage(ColorUtils.translateColorCodes(message));
+                    }
 
                 }
             }

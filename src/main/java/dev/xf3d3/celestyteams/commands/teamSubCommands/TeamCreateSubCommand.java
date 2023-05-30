@@ -17,14 +17,13 @@ import java.util.logging.Logger;
 
 public class TeamCreateSubCommand {
 
-    FileConfiguration teamsConfig = CelestyTeams.getPlugin().getConfig();
-    FileConfiguration messagesConfig = CelestyTeams.getPlugin().messagesFileManager.getMessagesConfig();
-    Logger logger = CelestyTeams.getPlugin().getLogger();
-    private static final String CLAN_PLACEHOLDER = "%CLAN%";
-    private static final String CLAN_OWNER = "%TEAMOWNER%";
+    private final FileConfiguration teamsConfig;
+    private final FileConfiguration messagesConfig;
+    private final Logger logger;
+    private static final String TEAM_PLACEHOLDER = "%TEAM%";
 
-    int MIN_CHAR_LIMIT = teamsConfig.getInt("team-tags.min-character-limit");
-    int MAX_CHAR_LIMIT = teamsConfig.getInt("team-tags.max-character-limit");
+    int MIN_CHAR_LIMIT;
+    int MAX_CHAR_LIMIT;
 
     private final Set<Map.Entry<UUID, Team>> teams;
     ArrayList<String> teamNamesList = new ArrayList<>();
@@ -34,6 +33,11 @@ public class TeamCreateSubCommand {
     public TeamCreateSubCommand(@NotNull CelestyTeams plugin) {
         this.plugin = plugin;
         this.teams = plugin.getTeamStorageUtil().getClans();
+        this.messagesConfig = plugin.messagesFileManager.getMessagesConfig();
+        this.teamsConfig = plugin.getConfig();
+        this.logger = plugin.getLogger();
+        this.MIN_CHAR_LIMIT = teamsConfig.getInt("team-tags.min-character-limit");
+        this.MAX_CHAR_LIMIT = teamsConfig.getInt("team-tags.max-character-limit");
     }
 
     public void createClanSubCommand(CommandSender sender, String[] args, List<String> bannedTags) {
@@ -46,27 +50,27 @@ public class TeamCreateSubCommand {
                     teamNamesList.add(teams.getValue().getTeamFinalName()));
             if (args.length >= 1) {
                 if (bannedTags.contains(args[0])) {
-                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-name-is-banned").replace(CLAN_PLACEHOLDER, args[0])));
+                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-name-is-banned").replace(TEAM_PLACEHOLDER, args[0])));
                 }
                 if (teamNamesList.contains(args[0])) {
-                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-name-already-taken").replace(CLAN_PLACEHOLDER, args[0])));
+                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-name-already-taken").replace(TEAM_PLACEHOLDER, args[0])));
                 }
                 for (String names : teamNamesList){
                     if (StringUtils.containsAnyIgnoreCase(names, args[0])){
-                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-name-already-taken").replace(CLAN_PLACEHOLDER, args[0])));
+                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-name-already-taken").replace(TEAM_PLACEHOLDER, args[0])));
 
                     }
                 }
-                if (args[0].contains("&")||args[0].contains("#")){
+                if (args[0].contains("&") || args[0].contains("#")){
                     player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-name-cannot-contain-colours")));
 
                 }
                 if (storageUtil.isClanOwner(player)){
-                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-creation-failed").replace(CLAN_PLACEHOLDER, ColorUtils.translateColorCodes(args[0]))));
+                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-creation-failed").replace(TEAM_PLACEHOLDER, ColorUtils.translateColorCodes(args[0]))));
 
                 }
                 if (storageUtil.findClanByPlayer(player) != null){
-                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-creation-failed").replace(CLAN_PLACEHOLDER, ColorUtils.translateColorCodes(args[0]))));
+                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-creation-failed").replace(TEAM_PLACEHOLDER, ColorUtils.translateColorCodes(args[0]))));
 
                 }
                 if (args[0].length() < MIN_CHAR_LIMIT) {
@@ -80,7 +84,7 @@ public class TeamCreateSubCommand {
                 } else {
                     if (!storageUtil.isTeamExisting(player)) {
                         Team team = storageUtil.createTeam(player, args[0]);
-                        String teamCreated = ColorUtils.translateColorCodes(messagesConfig.getString("team-created-successfully")).replace(CLAN_PLACEHOLDER, ColorUtils.translateColorCodes(args[0]));
+                        String teamCreated = ColorUtils.translateColorCodes(messagesConfig.getString("team-created-successfully")).replace(TEAM_PLACEHOLDER, ColorUtils.translateColorCodes(args[0]));
 
                         player.sendMessage(teamCreated);
 
@@ -91,15 +95,14 @@ public class TeamCreateSubCommand {
                         }
 
                     } else {
-                        String teamNotCreated = ColorUtils.translateColorCodes(messagesConfig.getString("team-creation-failed")).replace(CLAN_PLACEHOLDER, ColorUtils.translateColorCodes(args[0]));
+                        String teamNotCreated = ColorUtils.translateColorCodes(messagesConfig.getString("team-creation-failed")).replace(TEAM_PLACEHOLDER, ColorUtils.translateColorCodes(args[0]));
                         player.sendMessage(teamNotCreated);
                     }
                     teamNamesList.clear();
 
                 }
             } else {
-                //TODO: message
-                System.out.println("aaah");
+                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-create-incorrect-usage")));
             }
         }
 

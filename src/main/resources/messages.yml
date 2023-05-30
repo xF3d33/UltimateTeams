@@ -10,6 +10,7 @@
 #CelestyTeams messages config for ${version}
 
 #Team Creation Messages
+team-create-incorrect-usage: "&3use /team create <name>."
 team-name-too-short: "&3Team name too short - minimum length is &6%CHARMIN% &3characters."
 team-name-too-long: "&3Team name too long - maximum length is &6%CHARMAX% &3characters."
 team-created-successfully: "&3Team &6%TEAM% &3was Created!"
@@ -110,7 +111,7 @@ not-in-team: "&3You are not in a team!"
 #Team Ally Messages
 added-team-to-your-allies: "&3You successfully added &6%ALLYTEAM% &3to your allies!"
 team-added-to-other-allies: "&6%TEAMOWNER% &3has added your team to their allies!"
-failed-to-add-team-to-allies: "&3Unable to add &6%ALLYOWNER%&3! Make sure the owner is online!"
+failed-to-add-team-to-allies: "&3Unable to add &6%ALLYTEAM%&3! Make sure the owner is online!"
 failed-team-already-your-ally: "&3This team is already your ally!"
 failed-player-not-team-owner: "&6%ALLYOWNER%&3 is not a team owner!"
 removed-team-from-your-allies: "&3You Successfully removed &6%ALLYTEAM% &3from your allies!"

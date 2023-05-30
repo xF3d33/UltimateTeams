@@ -112,7 +112,7 @@ public class TeamStorageUtil {
                 plugin.runAsync(() -> plugin.getDatabase().deleteTeam(uuid));
 
                 return true;
-            }else {
+            } else {
                 logger.warning(ColorUtils.translateColorCodes(messagesConfig.getString("teams-update-error-1")));
                 return false;
             }

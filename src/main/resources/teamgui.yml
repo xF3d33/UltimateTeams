@@ -48,7 +48,7 @@ team-list:
       allies: "&3Team Allies:"
       enemies: "&3Team Enemies:"
       footer-1: "&7----------"
-      action: "&d&oClick to send an invite request to this team owner if online"
+      action: "&fClick to send an invite request to this team owner if online"
       footer-2: "&7----------"
 
 #This is the options for the TeamJoinRequest GUI

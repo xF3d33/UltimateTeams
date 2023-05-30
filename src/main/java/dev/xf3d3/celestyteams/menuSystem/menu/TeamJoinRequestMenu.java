@@ -48,7 +48,7 @@ public class TeamJoinRequestMenu extends Menu {
                 player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-invite-request-failed")));
             }
         }else if (event.getCurrentItem().getType().equals(Material.RED_STAINED_GLASS_PANE)){
-            new ClanListGUI(CelestyTeams.getPlugin(), CelestyTeams.getPlayerMenuUtility(player)).open();
+            new ClanListGUI(CelestyTeams.getPlugin()).open(player);
         }
     }
 
