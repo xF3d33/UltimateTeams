@@ -13,16 +13,10 @@ import java.util.logging.Logger;
 
 public class PlayerDisconnectEvent implements Listener {
 
-    FileConfiguration teamsConfig = CelestyTeams.getPlugin().getConfig();
-    Logger logger = CelestyTeams.getPlugin().getLogger();
-
     @EventHandler (priority = EventPriority.HIGH)
     public void onPlayerQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
         CelestyTeams.connectedPlayers.remove(player);
-        if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
-            logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aPlayer removed from connected players list"));
-        }
     }
 
     @EventHandler (priority = EventPriority.NORMAL)
@@ -31,9 +25,6 @@ public class PlayerDisconnectEvent implements Listener {
         if (CelestyTeams.getFloodgateApi() != null){
             if (CelestyTeams.bedrockPlayers.containsKey(player)){
                 CelestyTeams.bedrockPlayers.remove(player);
-                if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
-                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aBedrock player removed from bedrock players list"));
-                }
             }
         }
     }

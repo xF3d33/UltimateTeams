@@ -352,7 +352,7 @@ public class TeamStorageUtil {
         return teamsList.values();
     }
 
-    public Collection<String> getClanListNames(){
+    public Collection<String> getTeamsListNames(){
         List<String> teams = new ArrayList<>();
 
         for (Team team : teamsList.values())

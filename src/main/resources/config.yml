@@ -98,21 +98,10 @@ max-team-enemies: 2
 protections:
   pvp:
     #Globally enable the team friendly fire system. [Default value: true]
-    pvp-command-enabled: true
+    pvp-command-enabled: false
     #Enable the ability for a player to bypass the pvp protection using 'celestyteams.bypass.pvp'. [Default value: true]
     enable-bypass-permission: true
 
-#Clan & Player Points
-points:
-  player-points:
-    #Do you want players to get points when they kill another player? [Default value: true]
-    enabled: true
-    #How many points do you want the killer to get when they kill a non-enemy team player? [Default value: 5]
-    non-enemy-team-point-amount-on-kill: 5
-    #How many points do you want the killer to get when they kill an enemy team player? [Default value: 10]
-    enemy-team-point-amount-on-kill: 10
-    #Do you want to take the points given to the killer from the victims point balance if available? [Default value: true]
-    take-points-from-victim: true
 
 #Clan home system
 team-home:

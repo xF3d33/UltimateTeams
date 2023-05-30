@@ -15,7 +15,7 @@ import dev.xf3d3.celestyteams.expansions.PapiExpansion;
 import dev.xf3d3.celestyteams.files.TeamGUIFileManager;
 import dev.xf3d3.celestyteams.files.MessagesFileManager;
 import dev.xf3d3.celestyteams.listeners.MenuEvent;
-import dev.xf3d3.celestyteams.listeners.PlayerConnectionEvent;
+import dev.xf3d3.celestyteams.listeners.PlayerJoinEvent;
 import dev.xf3d3.celestyteams.listeners.PlayerDamageEvent;
 import dev.xf3d3.celestyteams.listeners.PlayerDisconnectEvent;
 import dev.xf3d3.celestyteams.menuSystem.PlayerMenuUtility;
@@ -95,7 +95,7 @@ public final class CelestyTeams extends JavaPlugin implements TaskRunner {
                 return null;
             }
 
-            return teamStorageUtil.getClanListNames();
+            return teamStorageUtil.getTeamsListNames();
         });
 
         //Register the plugin commands
@@ -108,7 +108,7 @@ public final class CelestyTeams extends JavaPlugin implements TaskRunner {
         this.getCommand("teamadmin").setTabCompleter(new ClanAdminTabCompleter());
 
         //Register the plugin events
-        this.getServer().getPluginManager().registerEvents(new PlayerConnectionEvent(this), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerJoinEvent(this), this);
         this.getServer().getPluginManager().registerEvents(new PlayerDisconnectEvent(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerDamageEvent(this), this);
         this.getServer().getPluginManager().registerEvents(new MenuEvent(), this);

@@ -39,36 +39,35 @@ public class PapiExpansion extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
-        FileConfiguration configFile = CelestyTeams.getPlugin().getConfig();
+        FileConfiguration configFile = plugin.getConfig();
         Team teamOwner = plugin.getTeamStorageUtil().findTeamByOfflineOwner(player);
         Team teamMember = plugin.getTeamStorageUtil().findClanByOfflinePlayer(player);
-        TeamPlayer teamPlayer = plugin.getUsersStorageUtil().getClanPlayerByBukkitOfflinePlayer(player);
+
         if (params.equalsIgnoreCase("teamName")){
-            //%teamsLite_teamName%
-            if (teamOwner != null){
+            if (teamOwner != null) {
                 return ColorUtils.translateColorCodes(teamOwner.getTeamFinalName() + "&r ");
-            }else if (teamMember != null){
+            } else if (teamMember != null){
                 return ColorUtils.translateColorCodes(teamMember.getTeamFinalName() + "&r ");
-            }else {
+            } else {
                 return "";
             }
         }
 
         if (params.equalsIgnoreCase("teamPrefix")) {
-            //%teamsLite_teamPrefix%
             String openBracket = configFile.getString("team-tags.brackets-opening");
             String closeBracket = configFile.getString("team-tags.brackets-closing");
+
             if (teamOwner != null){
                 if (configFile.getBoolean("team-tags.prefix-add-brackets")){
                     if (configFile.getBoolean("team-tags.prefix-add-space-after")){
                         return ColorUtils.translateColorCodes(openBracket + teamOwner.getTeamPrefix() + closeBracket +"&r ");
-                    }else {
+                    } else {
                         return ColorUtils.translateColorCodes(openBracket + teamOwner.getTeamPrefix() + closeBracket +"&r");
                     }
-                }else {
+                } else {
                     if (configFile.getBoolean("team-tags.prefix-add-space-after")){
                         return ColorUtils.translateColorCodes(teamOwner.getTeamPrefix() + "&r ");
-                    }else {
+                    } else {
                         return ColorUtils.translateColorCodes(teamOwner.getTeamPrefix() + "&r");
                     }
                 }
@@ -76,13 +75,13 @@ public class PapiExpansion extends PlaceholderExpansion {
                 if (configFile.getBoolean("team-tags.prefix-add-brackets")){
                     if (configFile.getBoolean("team-tags.prefix-add-space-after")){
                         return ColorUtils.translateColorCodes(openBracket + teamMember.getTeamPrefix() + closeBracket +"&r ");
-                    }else {
+                    } else {
                         return ColorUtils.translateColorCodes(openBracket + teamMember.getTeamPrefix() + closeBracket +"&r");
                     }
-                }else {
+                } else {
                     if (configFile.getBoolean("team-tags.prefix-add-space-after")){
                         return ColorUtils.translateColorCodes(teamMember.getTeamPrefix() + "&r ");
-                    }else {
+                    } else {
                         return ColorUtils.translateColorCodes(teamMember.getTeamPrefix() + "&r");
                     }
                 }
@@ -92,7 +91,6 @@ public class PapiExpansion extends PlaceholderExpansion {
         }
 
         if (params.equalsIgnoreCase("friendlyFire")){
-            //%teamsLite_friendlyFire%
             if (teamOwner != null){
                 return String.valueOf(teamOwner.isFriendlyFireAllowed());
             }else if (teamMember != null){
@@ -103,45 +101,42 @@ public class PapiExpansion extends PlaceholderExpansion {
         }
 
         if (params.equalsIgnoreCase("teamHomeSet")){
-            //%teamsLite_teamHomeSet%
             if (teamOwner != null){
                 return String.valueOf(plugin.getTeamStorageUtil().isHomeSet(teamOwner));
-            }else if (teamMember != null){
+            } else if (teamMember != null){
                 return String.valueOf(plugin.getTeamStorageUtil().isHomeSet(teamMember));
-            }else {
+            } else {
                 return "";
             }
         }
 
         if (params.equalsIgnoreCase("teamMembersSize")){
-            //%teamsLite_teamMembersSize%
             if (teamOwner != null){
                 return String.valueOf(teamOwner.getClanMembers().size());
-            }else if (teamMember != null){
+            } else if (teamMember != null){
                 return String.valueOf(teamMember.getClanMembers().size());
-            }else {
+            } else {
                 return "";
             }
         }
 
         if (params.equalsIgnoreCase("teamAllySize")){
-            //%teamsLite_teamAllySize%
+
             if (teamOwner != null){
                 return String.valueOf(teamOwner.getClanAllies().size());
-            }else if (teamMember != null){
+            } else if (teamMember != null){
                 return String.valueOf(teamMember.getClanAllies().size());
-            }else {
+            } else {
                 return "";
             }
         }
 
         if (params.equalsIgnoreCase("teamEnemySize")){
-            //%teamsLite_teamEnemySize%
             if (teamOwner != null){
                 return String.valueOf(teamOwner.getClanEnemies().size());
-            }else if (teamMember != null){
+            } else if (teamMember != null){
                 return String.valueOf(teamMember.getClanEnemies().size());
-            }else {
+            } else {
                 return "";
             }
         }

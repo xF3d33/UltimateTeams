@@ -38,25 +38,13 @@ public class TeamAdmin implements CommandExecutor {
 //----------------------------------------------------------------------------------------------------------------------
                 if (args[0].equalsIgnoreCase("reload")) {
                     sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-begin")));
-                    FoliaLib foliaLib = new FoliaLib(CelestyTeams.getPlugin());
-                    CelestyTeams plugin = CelestyTeams.getPlugin();
-                    plugin.onDisable();
-                    foliaLib.getImpl().runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            plugin.onEnable();
-                        }
-                    }, 5L, TimeUnit.SECONDS);
-                    foliaLib.getImpl().runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            CelestyTeams.getPlugin().reloadConfig();
+                    plugin.runSync(() -> {
+                            plugin.reloadConfig();
                             TeamCommand.updateBannedTagsList();
-                            CelestyTeams.getPlugin().messagesFileManager.reloadMessagesConfig();
-                            CelestyTeams.getPlugin().teamGUIFileManager.reloadClanGUIConfig();
+                            plugin.messagesFileManager.reloadMessagesConfig();
+                            plugin.teamGUIFileManager.reloadClanGUIConfig();
                             sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-successful")));
-                        }
-                    }, 5L, TimeUnit.SECONDS);
+                    });
                 }
 
 //----------------------------------------------------------------------------------------------------------------------

@@ -58,7 +58,7 @@ public class TeamChatCommand extends BaseCommand {
                 ArrayList<Player> onlinePlayers = new ArrayList<>(Bukkit.getServer().getOnlinePlayers());
                 ArrayList<Player> playersWithSpyPerms = new ArrayList<>();
                 for (Player p : onlinePlayers){
-                    TeamPlayer teamPlayer = plugin.getUsersStorageUtil().getClanPlayerByBukkitPlayer(p);
+                    TeamPlayer teamPlayer = plugin.getUsersStorageUtil().getTeamPlayerByBukkitPlayer(p);
                     if (teamPlayer.getCanChatSpy() && p.hasPermission("celestyteams.chat.spy")){
                         playersWithSpyPerms.add(p);
                     }
@@ -309,7 +309,7 @@ public class TeamChatCommand extends BaseCommand {
                 }
             }
 
-        }else {
+        } else {
             logger.warning(ColorUtils.translateColorCodes(messagesConfig.getString("player-only-command")));
         }
     }

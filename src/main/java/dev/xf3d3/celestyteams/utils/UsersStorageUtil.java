@@ -42,18 +42,15 @@ public class UsersStorageUtil {
         });*/
     }
 
-    public void addToUsermap(Player player){
+    public void getPlayer(Player player){
         UUID uuid = player.getUniqueId();
         String javaUUID = uuid.toString();
         String lastPlayerName = player.getName();
 
-        System.out.println("1");
-
         plugin.runAsync(() -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
                 teamPlayer -> usermap.put(UUID.fromString(teamPlayer.getJavaUUID()), teamPlayer),
                 () -> {
-                    System.out.println("3");
-                    TeamPlayer teamPlayer = new TeamPlayer(javaUUID, lastPlayerName, null, null, null);
+                    TeamPlayer teamPlayer = new TeamPlayer(javaUUID, lastPlayerName, false, null, null);
 
                     plugin.getDatabase().createPlayer(teamPlayer);
                     usermap.put(uuid, teamPlayer);
@@ -61,7 +58,7 @@ public class UsersStorageUtil {
         ));
     }
 
-    public void addBedrockPlayerToUsermap(Player player){
+    public void getBedrockPlayer(Player player){
         UUID uuid = player.getUniqueId();
 
         plugin.runAsync(() -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
@@ -80,11 +77,7 @@ public class UsersStorageUtil {
 
     }
 
-    public boolean isUserExisting(Player player){
-        return usermap.containsKey(player.getUniqueId());
-    }
-
-    public TeamPlayer getClanPlayerByBukkitPlayer(Player player){
+    public TeamPlayer getTeamPlayerByBukkitPlayer(Player player){
         UUID uuid = player.getUniqueId();
         if (usermap.containsKey(uuid)){
             TeamPlayer teamPlayer = usermap.get(uuid);
@@ -98,7 +91,7 @@ public class UsersStorageUtil {
         return null;
     }
 
-    public TeamPlayer getClanPlayerByBukkitOfflinePlayer(OfflinePlayer offlinePlayer){
+    public TeamPlayer getTeamPlayerByBukkitOfflinePlayer(OfflinePlayer offlinePlayer){
         UUID uuid = offlinePlayer.getUniqueId();
         if (usermap.containsKey(uuid)){
             TeamPlayer teamPlayer = usermap.get(uuid);

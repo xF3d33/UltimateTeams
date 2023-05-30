@@ -29,13 +29,13 @@ public class PlayerDamageEvent implements Listener {
     }
 
     @EventHandler (priority = EventPriority.NORMAL)
-    public void onPlayerHit(EntityDamageByEntityEvent event){
-        if (event.getEntity() instanceof Player) {
-            Player hurtPlayer = (Player) event.getEntity();
+    public void onPlayerHit(EntityDamageByEntityEvent e){
+        if (e.getEntity() instanceof Player) {
+            Player hurtPlayer = (Player) e.getEntity();
             String hurtUUID = hurtPlayer.getUniqueId().toString();
             
-            if (event.getDamager() instanceof Player) {
-                Player attackingPlayer = (Player) event.getDamager();
+            if (e.getDamager() instanceof Player) {
+                Player attackingPlayer = (Player) e.getDamager();
                 attackingPlayer.setInvulnerable(false);
                 
                 Team attackingTeam = plugin.getTeamStorageUtil().findTeamByOwner(attackingPlayer);
@@ -52,7 +52,7 @@ public class PlayerDamageEvent implements Listener {
                                         return;
                                     }
                                 }
-                                event.setCancelled(true);
+                                e.setCancelled(true);
                                 fireClanFriendlyFireAttackEvent(hurtPlayer, attackingPlayer, hurtPlayer, attackingTeam, victimTeam);
                                 
                                 if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
@@ -61,7 +61,7 @@ public class PlayerDamageEvent implements Listener {
                                 attackingPlayer.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("friendly-fire-is-disabled")));
                             }
                         } else {
-                            event.setCancelled(false);
+                            e.setCancelled(false);
                         }
                     }
                 }
@@ -84,15 +84,15 @@ public class PlayerDamageEvent implements Listener {
                                             return;
                                         }
                                     }
-                                    event.setCancelled(true);
+                                    e.setCancelled(true);
                                     fireClanFriendlyFireAttackEvent(hurtPlayer, attackingPlayer, hurtPlayer, attackingTeamByPlayer, victimTeamByPlayer);
                                     if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
                                         logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aFired ClanFriendlyFireAttackEvent"));
                                     }
                                     attackingPlayer.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("friendly-fire-is-disabled")));
                                 }
-                            }else {
-                                event.setCancelled(false);
+                            } else {
+                                e.setCancelled(false);
                             }
                         }
                     }
@@ -101,7 +101,7 @@ public class PlayerDamageEvent implements Listener {
         }
     }
 
-    private static void fireClanFriendlyFireAttackEvent(Player createdBy, Player attackingPlayer, Player victimPlayer, Team attackingTeam, Team victimTeam){
+    private void fireClanFriendlyFireAttackEvent(Player createdBy, Player attackingPlayer, Player victimPlayer, Team attackingTeam, Team victimTeam){
         ClanFriendlyFireAttackEvent teamFriendlyFireAttackEvent = new ClanFriendlyFireAttackEvent(createdBy, attackingPlayer, victimPlayer, attackingTeam, victimTeam);
         Bukkit.getPluginManager().callEvent(teamFriendlyFireAttackEvent);
     }
