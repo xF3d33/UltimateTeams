@@ -1,7 +1,5 @@
 package dev.xf3d3.celestyteams.menuSystem.paginatedMenu;
 
-import com.tcoded.folialib.FoliaLib;
-import com.tcoded.folialib.wrapper.WrappedTask;
 import dev.xf3d3.celestyteams.CelestyTeams;
 import dev.xf3d3.celestyteams.menuSystem.PaginatedMenu;
 import dev.xf3d3.celestyteams.menuSystem.PlayerMenuUtility;
@@ -20,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -29,32 +28,26 @@ import java.util.logging.Logger;
 import static org.bukkit.Bukkit.getServer;
 
 public class ClanListGUI extends PaginatedMenu {
-
-    public static WrappedTask task5;
-
     FileConfiguration guiConfig = CelestyTeams.getPlugin().teamGUIFileManager.getClanGUIConfig();
     FileConfiguration messagesConfig = CelestyTeams.getPlugin().messagesFileManager.getMessagesConfig();
     FileConfiguration teamsConfig = CelestyTeams.getPlugin().getConfig();
     Logger logger = CelestyTeams.getPlugin().getLogger();
 
-    private CelestyTeams plugin;
+    private final CelestyTeams plugin;
 
     public ClanListGUI(@NotNull CelestyTeams plugin, @NotNull PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
         this.plugin = plugin;
     }
 
-    @Override
     public String getMenuName() {
         return ColorUtils.translateColorCodes(guiConfig.getString("team-list.name"));
     }
 
-    @Override
     public int getSlots() {
         return 54;
     }
 
-    @Override
     public void handleMenu(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         ArrayList<Team> teams = new ArrayList<>(plugin.getTeamStorageUtil().getClanList());
@@ -77,7 +70,7 @@ public class ClanListGUI extends PaginatedMenu {
             playerMenuUtility.setOfflineClanOwner(Bukkit.getOfflinePlayer(target));
             new TeamJoinRequestMenu(CelestyTeams.getPlayerMenuUtility(player)).open();
             if (guiConfig.getBoolean("team-list.icons.auto-refresh-data.enabled")){
-                task5.cancel();
+
                 if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
                     logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aAuto refresh task cancelled"));
                 }
@@ -85,7 +78,7 @@ public class ClanListGUI extends PaginatedMenu {
         }else if (event.getCurrentItem().getType().equals(Material.BARRIER)) {
             player.closeInventory();
             if (guiConfig.getBoolean("team-list.icons.auto-refresh-data.enabled")){
-                task5.cancel();
+
                 if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
                     logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aAuto refresh task cancelled"));
                 }
@@ -109,19 +102,15 @@ public class ClanListGUI extends PaginatedMenu {
         }
     }
 
-    @Override
     public void setMenuItems() {
         addMenuControls();
         if (guiConfig.getBoolean("team-list.icons.auto-refresh-data.enabled")){
-            FoliaLib foliaLib = new FoliaLib(CelestyTeams.getPlugin());
-            task5 = foliaLib.getImpl().runTimerAsync(new Runnable() {
-                @Override
-                public void run() {
+            plugin.runAsync(() -> {
                     //The thing you will be looping through to place items
                     ArrayList<Team> teams = new ArrayList<>(plugin.getTeamStorageUtil().getClanList());
 
                     //Pagination loop template
-                    if (teams != null && !teams.isEmpty()){
+                    if (!teams.isEmpty()){
                         for (int i = 0; i < getMaxItemsPerPage(); i++){
                             index = getMaxItemsPerPage() * page + i;
                             if (index >= teams.size()) break;
@@ -137,9 +126,6 @@ public class ClanListGUI extends PaginatedMenu {
                                 SkullMeta skull = (SkullMeta) playerHead.getItemMeta();
                                 skull.setOwningPlayer(getServer().getOfflinePlayer(ownerUUID));
                                 playerHead.setItemMeta(skull);
-                                if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
-                                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aRetrieved player head info for UUID: &d" + teamOwnerUUIDString));
-                                }
 
                                 ItemMeta meta = playerHead.getItemMeta();
                                 if (guiConfig.getBoolean("team-list.icons.icon-display-name.use-team-name")){
@@ -207,14 +193,10 @@ public class ClanListGUI extends PaginatedMenu {
                                 playerHead.setItemMeta(meta);
 
                                 inventory.setItem(index, playerHead);
-                                if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
-                                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aAuto refresh task running"));
-                                }
                             }
                         }
                     }
-                }
-            }, 0L, 5L, TimeUnit.SECONDS);
+                });
         }else {
             //The thing you will be looping through to place items
             ArrayList<Team> teams = new ArrayList<>(plugin.getTeamStorageUtil().getClanList());

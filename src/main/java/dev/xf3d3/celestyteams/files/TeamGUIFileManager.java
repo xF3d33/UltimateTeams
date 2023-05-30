@@ -12,45 +12,43 @@ import java.io.InputStreamReader;
 import java.util.logging.Logger;
 
 public class TeamGUIFileManager {
-
-    private CelestyTeams plugin;
+    private final CelestyTeams plugin;
     private FileConfiguration dataConfig = null;
     private File configFile = null;
-
-    Logger logger = CelestyTeams.getPlugin().getLogger();
+    private final Logger logger;
 
     public TeamGUIFileManager(CelestyTeams plugin){
         this.plugin = plugin;
+        this.logger = plugin.getLogger();
         saveDefaultClanGUIConfig();
     }
 
-    public void reloadClanGUIConfig(){
-
+    public void reloadClanGUIConfig() {
         if (this.configFile == null){
             this.configFile = new File(plugin.getDataFolder(), "teamgui.yml");
         }
         this.dataConfig = YamlConfiguration.loadConfiguration(this.configFile);
         InputStream defaultStream = this.plugin.getResource("teamgui.yml");
-        if (defaultStream != null){
+        if (defaultStream != null) {
             YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
             this.dataConfig.setDefaults(defaultConfig);
         }
     }
 
-    public FileConfiguration getClanGUIConfig(){
-        if (this.dataConfig == null){
+    public FileConfiguration getClanGUIConfig() {
+        if (this.dataConfig == null) {
             this.reloadClanGUIConfig();
         }
         return this.dataConfig;
     }
 
     public void saveClanGUIConfig() {
-        if (this.dataConfig == null||this.configFile == null){
+        if (this.dataConfig == null || this.configFile == null){
             return;
         }
         try {
             this.getClanGUIConfig().save(this.configFile);
-        }catch (IOException e){
+        } catch (IOException e) {
             logger.severe(ColorUtils.translateColorCodes("&6CelestyTeams: &4Could not save teamgui.yml"));
             logger.severe(ColorUtils.translateColorCodes("&6CelestyTeams: &4Check the below message for the reasons!"));
             e.printStackTrace();
@@ -58,10 +56,10 @@ public class TeamGUIFileManager {
     }
 
     public void saveDefaultClanGUIConfig(){
-        if (this.configFile == null){
+        if (this.configFile == null) {
             this.configFile = new File(plugin.getDataFolder(), "teamgui.yml");
         }
-        if (!this.configFile.exists()){
+        if (!this.configFile.exists()) {
             this.plugin.saveResource("teamgui.yml", false);
         }
     }

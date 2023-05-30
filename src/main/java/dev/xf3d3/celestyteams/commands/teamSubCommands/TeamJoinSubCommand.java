@@ -1,8 +1,8 @@
 package dev.xf3d3.celestyteams.commands.teamSubCommands;
 
 import dev.xf3d3.celestyteams.CelestyTeams;
-import dev.xf3d3.celestyteams.models.TeamInvite;
 import dev.xf3d3.celestyteams.models.Team;
+import dev.xf3d3.celestyteams.models.TeamInvite;
 import dev.xf3d3.celestyteams.utils.ColorUtils;
 import dev.xf3d3.celestyteams.utils.TeamInviteUtil;
 import org.bukkit.Bukkit;
@@ -37,7 +37,7 @@ public class TeamJoinSubCommand {
             Player player = ((Player) sender).getPlayer();
             AtomicReference<String> inviterUUIDString = new AtomicReference<>("");
             Set<Map.Entry<UUID, TeamInvite>> teamInvitesList = TeamInviteUtil.getInvites();
-            if (TeamInviteUtil.searchInvitee(player.getUniqueId().toString())) {
+            if (plugin.getTeamInviteUtil().searchInvitee(player.getUniqueId().toString())) {
                 teamInvitesList.forEach((invites) ->
                         inviterUUIDString.set(invites.getValue().getInviter()));
                 logger.info(String.valueOf(inviterUUIDString.get()));
@@ -50,7 +50,7 @@ public class TeamJoinSubCommand {
                         player.sendMessage(joinMessage);
                         if (teamsConfig.getBoolean("team-join.announce-to-all")){
                             if (teamsConfig.getBoolean("team-join.send-as-title")){
-                                for (Player onlinePlayers : CelestyTeams.connectedPlayers.keySet()){
+                                for (Player onlinePlayers : plugin.getConnectedPlayers().keySet()){
                                     onlinePlayers.sendTitle(ColorUtils.translateColorCodes(messagesConfig.getString("team-join-broadcast-title-1")
                                                     .replace(PLAYER_PLACEHOLDER, player.getName())
                                                     .replace(CLAN_PLACEHOLDER, ColorUtils.translateColorCodes(team.getTeamFinalName()))),

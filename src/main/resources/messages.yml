@@ -9,33 +9,33 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #CelestyTeams messages config for ${version}
 
-#Clan Creation Messages
-team-name-too-short: "&3Clan name too short - minimum length is &6%CHARMIN% &3characters."
-team-name-too-long: "&3Clan name too long - maximum length is &6%CHARMAX% &3characters."
-team-created-successfully: "&3Clan &6%CLAN% &3was Created!"
-team-name-already-taken: "&3Sorry but &6%CLAN% &3is already taken.\n&3Please choose another!"
-team-name-is-banned: "&3Sorry but &6%CLAN% &3is a &cBANNED &3name!\n&3Please choose another!"
+#Team Creation Messages
+team-name-too-short: "&3Team name too short - minimum length is &6%CHARMIN% &3characters."
+team-name-too-long: "&3Team name too long - maximum length is &6%CHARMAX% &3characters."
+team-created-successfully: "&3Team &6%TEAM% &3was Created!"
+team-name-already-taken: "&3Sorry but &6%TEAM% &3is already taken.\n&3Please choose another!"
+team-name-is-banned: "&3Sorry but &6%TEAM% &3is a &cBANNED &3name!\n&3Please choose another!"
 team-name-cannot-contain-colours: "&3Sorry, the team name cannot contain '&' or '#' characters."
-team-creation-failed: "&3Clan &6%CLAN% &3was NOT created, please make sure you're not already in a team!"
-team-created-broadcast-chat: "&6%CLANOWNER%&3 Created a new team!\n&3The new team is called &6%CLAN%&3!"
-team-created-broadcast-title-1: "&6%CLANOWNER%&3 Created a new team!"
-team-created-broadcast-title-2: "&3The new team is called &6%CLAN%&3!"
+team-creation-failed: "&3Team &6%TEAM% &3was NOT created, please make sure you're not already in a team!"
+team-created-broadcast-chat: "&6%TEAMOWNER%&3 Created a new team!\n&3The new team is called &6%TEAM%&3!"
+team-created-broadcast-title-1: "&6%TEAMOWNER%&3 Created a new team!"
+team-created-broadcast-title-2: "&3The new team is called &6%TEAM%&3!"
 
-#Clan Disbanded Messages
-team-successfully-disbanded: "&3Clan was disbanded!"
+#Team Disbanded Messages
+team-successfully-disbanded: "&3Team was disbanded!"
 team-disband-failure: "&3Failed to disband team - Please make sure you're the owner!"
 team-admin-disband-failure: "&3Failed to disband team - make sure that the provided player is a team owner!"
 incorrect-disband-command-usage: "&3Unrecognised argument please use &6/teamadmin disband <team-owner>&3."
 
-#Clan Transfer Ownership Messages
+#Team Transfer Ownership Messages
 team-ownership-transfer-successful: "&3You successfully transferred your team to &6%PLAYER%&3."
-team-ownership-transfer-new-owner: "&6%OLDOWNER% &3has transferred ownership of &6%CLAN% &3to you."
+team-ownership-transfer-new-owner: "&6%OLDOWNER% &3has transferred ownership of &6%TEAM% &3to you."
 team-ownership-transfer-failure-owner-offline: "&3Failed to transfer team ownership to &6%PLAYER%&3!\n&3They may be offline."
 team-ownership-transfer-failed-cannot-transfer-to-self: "&3Failed to transfer team ownership to &6%PLAYER%!\n&3The specified player cannot be yourself!"
 team-ownership-transfer-failed-target-in-team: "&3Failed to transfer team as the target is already in/owns a team!"
 incorrect-team-transfer-ownership-command-usage: "&3Unrecognised argument please use &6/team transfer <player-name>&3."
 
-#Clan Invite Messages
+#Team Invite Messages
 team-invite-no-valid-player: "&3Please specify a player to invite!"
 team-invite-not-team-owner: "&3You must be a team owner to invite people!"
 team-invite-self-error: "&3You can't invite yourself!"
@@ -44,78 +44,77 @@ team-invite-invited-already-in-team: "&3Player &6%INVITED% &3is already in a tea
 team-invite-max-size-reached: "&3You have reached the clam members size limit &a%LIMIT%&3!"
 team-invite-successful: "&3You have invited &6%INVITED% &3to your team!"
 team-invite-failed: "&3Failed to send invite to &6%INVITED%&3, this player might already have an invitation!"
-team-invited-player-invite-pending: "&3You have been invited to a team by &6%CLANOWNER% &3- use /team join"
+team-invited-player-invite-pending: "&3You have been invited to a team by &6%TEAMOWNER% &3- use /team join"
 team-invite-request: "&6%PLAYER% &3would like you to invite them to your team.\n&3Use &6/team invite %PLAYER% &3to send the invite."
 team-invite-request-failed: "&3Failed to send request, check that the team owner is online!"
-team-invite-sent-successfully: "&3You have successfully sent a request to %CLANOWNER%"
+team-invite-sent-successfully: "&3You have successfully sent a request to %TEAMOWNER%"
 team-invite-failed-own-team: "&3Failed to send request, this is YOUR team!"
 
-#Clan Join Messages
-team-join-successful: "&3Successfully joined &6%CLAN%&3!"
-team-join-failed: "&3Failed to join &6%CLAN%&3"
+#Team Join Messages
+team-join-successful: "&3Successfully joined &6%TEAM%&3!"
+team-join-failed: "&3Failed to join &6%TEAM%&3"
 team-join-failed-no-valid-team: "&3Failed to join a team - no team was found!"
 team-join-failed-no-invite: "&3Failed to join a team - no invite was found!"
-team-join-broadcast-chat: "&6%PLAYER%&3 Has joined a team!\n&3The player's joined team is &6%CLAN%&3!"
+team-join-broadcast-chat: "&6%PLAYER%&3 Has joined a team!\n&3The player's joined team is &6%TEAM%&3!"
 team-join-broadcast-title-1: "&6%PLAYER%&3 Has joined a team!"
-team-join-broadcast-title-2: "&3The player's joined team is &6%CLAN%&3!"
+team-join-broadcast-title-2: "&3The player's joined team is &6%TEAM%&3!"
 
-#Clan Leave Messages
+#Team Leave Messages
 failed-team-owner: "&3You are the owner of a team, use &6/team disband&3."
-team-leave-successful: "&3You have left &6%CLAN%."
+team-leave-successful: "&3You have left &6%TEAM%."
 team-leave-failed: "&3Failed to leave team, please try again later."
 
-#Clan Kick Messages
+#Team Kick Messages
 team-member-kick-successful: "&3Player &6%KICKEDPLAYER%&3 was kicked from your team."
-team-kicked-player-message: "&3You were kicked from &6%CLAN%&3!"
+team-kicked-player-message: "&3You were kicked from &6%TEAM%&3!"
 targeted-player-is-not-in-your-team: "&3Player &6%KICKEDPLAYER%&3 is not in your team."
 could-not-find-specified-player: "&3Could not find player &6%KICKEDPLAYER%&3. They may be have not joined before."
 must-be-owner-to-kick: "&3You are not an owner of a team!"
 incorrect-kick-command-usage: "&3Unrecognised argument please use &6/team kick <member>&3."
 failed-cannot-kick-yourself: "&3You cannot kick yourself, use &6/team leave&3."
 
-#Clan Prefix Messages
-team-prefix-change-successful: "&3Successfully changed team prefix to &6%CLANPREFIX%&3!"
-team-prefix-too-long: "&3Clan prefix too long - maximum length is &6%CHARMAX% &3characters."
-team-prefix-too-short: "&3Clan prefix too short - minimum length is &6%CHARMIN% &3characters."
+#Team Prefix Messages
+team-prefix-change-successful: "&3Successfully changed team prefix to &6%TEAMPREFIX%&3!"
+team-prefix-too-long: "&3Team prefix too long - maximum length is &6%CHARMAX% &3characters."
+team-prefix-too-short: "&3Team prefix too short - minimum length is &6%CHARMIN% &3characters."
 team-invalid-prefix: "&3Please provide a new prefix. Use &b/team prefix <prefix>&3!"
-team-prefix-already-taken: "&3Sorry but &6%CLANPREFIX% &3is already taken.\n&3Please choose another!"
-team-prefix-is-banned: "&3Sorry but &6%CLANPREFIX% &3is a &cBANNED &3name!\n&3Please choose another!"
+team-prefix-already-taken: "&3Sorry but &6%TEAMPREFIX% &3is already taken.\n&3Please choose another!"
+team-prefix-is-banned: "&3Sorry but &6%TEAMPREFIX% &3is a &cBANNED &3name!\n&3Please choose another!"
 must-be-owner-to-change-prefix: "&3You are not an owner of a team!"
 
-#Clan List Messages
+#Team List Messages
 no-teams-to-list: "&3No teams found!\n&3Create one using &b/team create <name>&3!"
-teams-list-header: "&7----- &6ClansList &7-----&r\n&3&lCurrent teams:&r\n"
+teams-list-header: "&7----- &6TeamsList &7-----&r\n&3&lCurrent teams:&r\n"
 teams-list-footer: "\n&7-----"
 
-#Clan Info Messages
-team-info-header: "&7----- &6ClanInfo &7-----&r\n&3Name: %CLAN%&r\n&3Prefix: &7(%CLANPREFIX%&r&7)&r"
+#Team Info Messages
+team-info-header: "&7----- &6TeamInfo &7-----&r\n&3Name: %TEAM%&r\n&3Prefix: &7(%TEAMPREFIX%&r&7)&r"
 team-info-owner-online: "\n\n&3Owner: &a%OWNER%"
 team-info-owner-offline: "\n\n&3Owner: &c%OWNER%&7&o(offline)"
 team-info-members-header: "\n\n&3Members: &3&o(%NUMBER%)"
 team-info-members-online: "\n&a%MEMBER%\n"
 team-info-members-offline: "\n&c%MEMBER%&7&o(offline)\n"
-team-info-allies-header: "\n\n&3Allied Clans:"
-team-ally-members: "\n&a%ALLYCLAN%\n"
+team-info-allies-header: "\n\n&3Allied Teams:"
+team-ally-members: "\n&a%ALLYTEAM%\n"
 team-ally-members-not-found: "\n&aAlly not found\n"
-team-info-enemies-header: "\n\n&3Enemy Clans:"
-team-enemy-members: "\n&c%ENEMYCLAN%\n"
+team-info-enemies-header: "\n\n&3Enemy Teams:"
+team-enemy-members: "\n&c%ENEMYTEAM%\n"
 team-enemy-members-not-found: "\n&aEnemy not found\n"
 team-pvp-status-enabled: "\n\n&3Friendly Fire: &a&oENABLED"
 team-pvp-status-disabled: "\n\n&3Friendly Fire: &c&oDISABLED"
 team-home-set-true: "\n\n&3Home Set: &a&oTRUE"
 team-home-set-false: "\n\n&3Home Set: &c&oFALSE"
-team-points-value: "\n\n&3Clan Points Balance: &a%POINTS%"
 team-info-footer: "\n&7-----"
 not-in-team: "&3You are not in a team!"
 
-#Clan Ally Messages
-added-team-to-your-allies: "&3You successfully added &6%ALLYCLAN% &3to your allies!"
-team-added-to-other-allies: "&6%CLANOWNER% &3has added your team to their allies!"
+#Team Ally Messages
+added-team-to-your-allies: "&3You successfully added &6%ALLYTEAM% &3to your allies!"
+team-added-to-other-allies: "&6%TEAMOWNER% &3has added your team to their allies!"
 failed-to-add-team-to-allies: "&3Unable to add &6%ALLYOWNER%&3! Make sure the owner is online!"
 failed-team-already-your-ally: "&3This team is already your ally!"
 failed-player-not-team-owner: "&6%ALLYOWNER%&3 is not a team owner!"
-removed-team-from-your-allies: "&3You Successfully removed &6%ALLYCLAN% &3from your allies!"
-team-removed-from-other-allies: "&3The team owner &6%CLANOWNER% &3has removed your team from their allies!"
+removed-team-from-your-allies: "&3You Successfully removed &6%ALLYTEAM% &3from your allies!"
+team-removed-from-other-allies: "&3The team owner &6%TEAMOWNER% &3has removed your team from their allies!"
 failed-to-remove-team-from-allies: "&3Unable to remove &6%ALLYOWNER%&3! Make sure they're you ally"
 ally-team-add-owner-offline: "&3Unable to add &6%ALLYOWNER%&3! Make sure the owner is online!"
 ally-team-remove-owner-offline: "&3Unable to remove &6%ALLYOWNER%&3! Make sure the owner is online!"
@@ -124,14 +123,14 @@ failed-cannot-ally-your-own-team: "&3You cannot be an ally with your &3&lOWN&r&3
 team-ally-max-amount-reached: "&3You have reached the team allies amount limit &a%LIMIT%&3!"
 failed-cannot-ally-enemy-team: "&3You cannot be an ally with an &c&lENEMY&r &3team!"
 
-#Clan Enemy Messages
-added-team-to-your-enemies: "&3You successfully added &6%ENEMYCLAN% &3to your enemies!"
-team-added-to-other-enemies: "&6%CLANOWNER% &3has added your team to their enemies!"
+#Team Enemy Messages
+added-team-to-your-enemies: "&3You successfully added &6%ENEMYTEAM% &3to your enemies!"
+team-added-to-other-enemies: "&6%TEAMOWNER% &3has added your team to their enemies!"
 failed-to-add-team-to-enemies: "&3Unable to add &6%ENEMYOWNER%&3! Make sure the owner is online!"
 failed-team-already-your-enemy: "&3This team is already your enemy!"
 failed-enemy-player-not-team-owner: "&6%ENEMYOWNER%&3 is not a team owner!"
-removed-team-from-your-enemies: "&3You Successfully removed &6%ENEMYCLAN% &3from your enemies!"
-team-removed-from-other-enemies: "&3The team owner &6%CLANOWNER% &3has removed your team from their enemies!"
+removed-team-from-your-enemies: "&3You Successfully removed &6%ENEMYTEAM% &3from your enemies!"
+team-removed-from-other-enemies: "&3The team owner &6%TEAMOWNER% &3has removed your team from their enemies!"
 failed-to-remove-team-from-enemies: "&3Unable to remove &6%ENEMYOWNER%&3! Make sure they're your enemy!"
 enemy-team-add-owner-offline: "&3Unable to add &6%ENEMYOWNER%&3! Make sure the owner is online!"
 enemy-team-remove-owner-offline: "&3Unable to remove &6%ENEMYOWNER%&3! Make sure the owner is online!"
@@ -139,22 +138,22 @@ incorrect-team-enemy-command-usage: "&3Unrecognised argument please use &6/team 
 failed-cannot-enemy-your-own-team: "&3You cannot be an enemy with your &3&lOWN&r&3 team!"
 team-enemy-max-amount-reached: "&3You have reached the team enemies amount limit &a%LIMIT%&3!"
 failed-cannot-enemy-allied-team: "&3You cannot be an enemy with an &a&lALLIED&r &3team!"
-added-enemy-team-to-your-enemies-title-1: "&c&lYOUR CLAN IS NOW AT WAR WITH:"
-added-enemy-team-to-your-enemies-title-2: "&6%CLANOWNER%'s &cClan!"
-removed-enemy-team-from-your-enemies-title-1: "&a&lYOUR CLAN IS NO LONGER AT WAR WITH:"
-removed-enemy-team-from-your-enemies-title-2: "&6%CLANOWNER%'s &aClan!"
-team-added-to-other-enemies-title-1: "&c&lYOUR CLAN IS NOW AT WAR WITH:"
-team-added-to-other-enemies-title-2: "&6%CLANOWNER%'s &cClan!"
-team-removed-from-other-enemies-title-1: "&a&lYOUR CLAN IS NO LONGER AT WAR WITH:"
-team-removed-from-other-enemies-title-2: "&6%CLANOWNER%'s &aClan!"
+added-enemy-team-to-your-enemies-title-1: "&c&lYOUR TEAM IS NOW AT WAR WITH:"
+added-enemy-team-to-your-enemies-title-2: "&6%TEAMOWNER%'s &cTeam!"
+removed-enemy-team-from-your-enemies-title-1: "&a&lYOUR TEAM IS NO LONGER AT WAR WITH:"
+removed-enemy-team-from-your-enemies-title-2: "&6%TEAMOWNER%'s &aTeam!"
+team-added-to-other-enemies-title-1: "&c&lYOUR TEAM IS NOW AT WAR WITH:"
+team-added-to-other-enemies-title-2: "&6%TEAMOWNER%'s &cTeam!"
+team-removed-from-other-enemies-title-1: "&a&lYOUR TEAM IS NO LONGER AT WAR WITH:"
+team-removed-from-other-enemies-title-2: "&6%TEAMOWNER%'s &aTeam!"
 
-#Clan Friendly Fire
+#Team Friendly Fire
 enabled-friendly-fire: "&3You successfully &aenabled &3friendly fire.\n&3Your team members can now pvp each other!"
 disabled-friendly-fire: "&3You successfully &cdisabled &3friendly fire.\n&3Your team members can no longer pvp each other!"
 failed-not-in-team: "&3You need to be in a team first! Use &6/team &3for details how."
 friendly-fire-is-disabled: "&3Your team has friendly fire disabled."
 
-#Clan Homes
+#Team Homes
 successfully-set-team-home: "&3You &aSuccessfully &3set the team home to your current location!"
 successfully-deleted-team-home: "&3You &aSuccessfully &3deleted the team home!"
 home-cool-down-timer-wait: "&3Sorry, you can't use that again for another &6%TIMELEFT%&r &3seconds."
@@ -162,34 +161,11 @@ successfully-teleported-to-home: "&3You teleported to your team's home."
 failed-no-home-set: "&3Your team does not have a home set!"
 failed-tp-not-in-team: "&3You need to be in a team first! Use &6/team &3for details how."
 
-#Clan Chat
+#Team Chat
 failed-must-be-in-team: "&3You need to be in a team first! Use &6/team &3for details how."
 chat-cool-down-timer-wait: "&3Sorry, you can't use that again for another &6%TIMELEFT%&r &3seconds."
-chatspy-toggle-on: "&3Toggled Clan Chat spy &a&lON&3."
-chatspy-toggle-off: "&3Toggled Clan Chat spy &c&lOFF&3."
-
-#Clan & Player Points
-player-points-killer-non-enemy-received-success: "&3You killed &6%PLAYER% &3and won &6%POINTVALUE%&3 points!"
-player-points-killer-enemy-received-success: "&3You killed &6%PLAYER% &3,they were a team enemy and you won &6%ENEMYPOINTVALUE%&3 points!"
-player-points-victim-non-enemy-withdrawn-success: "&3You died to &6%KILLER% &3and had &6%POINTVALUE% &3points withdrawn!"
-player-points-victim-enemy-withdrawn-success: "&3You died to &6%KILLER% &3,they were a team enemy and you had &6%ENEMYPOINTVALUE% &3points withdrawn!"
-player-points-console-victim-point-withdraw-failed: "&6%VICTIM% &cdid not have enough points to remove when they were killed!"
-player-points-victim-withdraw-failed: "&3You did not have enough points to be withdrawn when you died!"
-player-points-list-command: "&3You currently have &6%POINTVALUE% &3points in your personal balance."
-team-deposit-points-success: "&3You successfully deposited &6%POINTS% &3points into &6%CLAN%'s &3account."
-team-deposit-points-failed: "&cFailed to deposit &6%POINTS% &cpoints into &6%CLAN%'s &caccount. &3You have insufficient points!"
-team-deposit-points-invalid-point-amount: "&cPlease provide an amount to deposit!"
-team-deposit-points-incorrect-command: "&cPlease provide a point value: &6/team point deposit <amount>"
-team-withdraw-points-success: "&3You successfully withdrew &6%POINTS% &3from &6%CLAN%'s &3into your account."
-team-withdraw-points-failed: "&cFailed to withdraw &6%POINTS% &cfrom &6%CLAN%'s &caccount. &3Your team has insufficient points!"
-team-withdraw-points-invalid-point-amount: "&cPlease provide an amount to withdraw!"
-team-withdraw-points-incorrect-command: "&cPlease provide a point value: &6/team point withdraw <amount>"
-team-points-failed-not-in-team: "&3You need to be in a team first! Use &6/team &3for details how."
-
-#PlayerPoints command
-all-points-list-header: "&7----- &6All Player Points &7-----&r\n"
-all-points-list-entry: " &7>> &e%PLAYER%&7: &6%POINTVALUE%\n"
-all-points-list-footer: "&7----- &6All Player Points &7-----&r"
+chatspy-toggle-on: "&3Toggled Team Chat spy &a&lON&3."
+chatspy-toggle-off: "&3Toggled Team Chat spy &c&lOFF&3."
 
 #General Plugin Messages
 team-must-be-owner: "&3You must be the team owner to do this."
@@ -200,10 +176,10 @@ plugin-reload-successful: "&6CelestyTeams: &aThe plugin has been successfully re
 incorrect-command-usage: "&3Unrecognised argument please use &6/team&3."
 player-only-command: "&4Sorry, that command can only be run by a player!"
 saving-teams-start: "&6CelestyTeams: Saving teams data..."
-save-completed: "&6CelestyTeams: &aClans saved!"
+save-completed: "&6CelestyTeams: &aTeams saved!"
 save-failed-no-teams: "&6CelestyTeams: &cSkipping saving of teams as &c&lNO &cteams are stored in memory!"
 auto-save-started: "&6CelestyTeams: &aAuto save task has started."
-auto-save-complete: "&6CelestyTeams: &aSaved all Clans to file!"
+auto-save-complete: "&6CelestyTeams: &aSaved all Teams to file!"
 auto-save-failed: "&6CelestyTeams: &4Failed to save teams.yml to file!"
 auto-invite-wipe-started: "&6CelestyTeams: &aAuto invite wipe task has started."
 auto-invite-wipe-complete: "&6CelestyTeams: &aCleared all outstanding team invites!"
@@ -243,14 +219,3 @@ teamadmin-command-incorrect-usage:
   line-3: "/teamadmin reload"
   line-4: "/teamadmin disband <team-owner>"
   line-5: "/teamadmin about"
-
-#Update Notification
-update-check-failure: "&6CelestyTeams: &4Unable to check for updates! - &c"
-update-available:
-  1: "&4*-------------------------------------------*"
-  2: "&6CelestyTeams: &cA new version is available!"
-  3: "&4*-------------------------------------------*"
-no-update-available:
-  1: "&a*-------------------------------------------*"
-  2: "&6CelestyTeams: &aPlugin is up to date!"
-  3: "&a*-------------------------------------------*"

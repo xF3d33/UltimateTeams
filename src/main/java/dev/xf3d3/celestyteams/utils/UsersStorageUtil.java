@@ -64,7 +64,7 @@ public class UsersStorageUtil {
         plugin.runAsync(() -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
                 teamPlayer -> usermap.put(UUID.fromString(teamPlayer.getJavaUUID()), teamPlayer),
                 () -> {
-                    FloodgatePlayer floodgatePlayer = CelestyTeams.getFloodgateApi().getPlayer(uuid);
+                    FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(uuid);
                     UUID bedrockPlayerUUID = floodgatePlayer.getJavaUniqueId();
                     String javaUUID = floodgatePlayer.getJavaUniqueId().toString();
                     String lastPlayerName = floodgatePlayer.getUsername();
@@ -145,8 +145,8 @@ public class UsersStorageUtil {
     public boolean hasBedrockPlayerJavaUUIDChanged(Player player){
         UUID uuid = player.getUniqueId();
         for (TeamPlayer teamPlayer : usermap.values()){
-            if (CelestyTeams.getFloodgateApi() != null){
-                FloodgatePlayer floodgatePlayer = CelestyTeams.getFloodgateApi().getPlayer(uuid);
+            if (plugin.getFloodgateApi() != null){
+                FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(uuid);
                 if (!(floodgatePlayer.getJavaUniqueId().toString().equals(teamPlayer.getBedrockUUID()))){
                     return true;
                 }
@@ -168,8 +168,8 @@ public class UsersStorageUtil {
     public void updateBedrockPlayerJavaUUID(Player player){
         UUID uuid = player.getUniqueId();
         TeamPlayer teamPlayer = usermap.get(uuid);
-        if (CelestyTeams.getFloodgateApi() != null){
-            FloodgatePlayer floodgatePlayer = CelestyTeams.getFloodgateApi().getPlayer(uuid);
+        if (plugin.getFloodgateApi() != null){
+            FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(uuid);
             String newJavaUUID = floodgatePlayer.getJavaUniqueId().toString();
             teamPlayer.setJavaUUID(newJavaUUID);
 

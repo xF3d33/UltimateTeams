@@ -36,13 +36,12 @@ public class TeamStorageUtil {
         teamsList.clear();
 
         plugin.getDatabase().getAllTeams().forEach(rawTeam -> {
-            System.out.println("TEAM LOADED: " + rawTeam.getTeamOwner());
 
             final String finalName = rawTeam.getTeamFinalName();
 
             Team team = new Team(rawTeam.getTeamOwner(), finalName);
 
-            if (finalName.contains("&")|| finalName.contains("#")){
+            if (finalName.contains("&") || finalName.contains("#")){
                 team.setTeamFinalName(stripClanNameColorCodes(team));
             }
 
@@ -84,13 +83,10 @@ public class TeamStorageUtil {
 
     public boolean deleteTeam(Player player) throws IOException{
         UUID uuid = player.getUniqueId();
-        if (findTeamByOwner(player) != null){
-            if (isClanOwner(player)){
-                if (teamsList.containsKey(uuid)){
+        if (findTeamByOwner(player) != null) {
+            if (isClanOwner(player)) {
+                if (teamsList.containsKey(uuid)) {
                     fireClanDisbandEvent(player);
-                    if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
-                        logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aFired ClanDisbandEvent"));
-                    }
 
                     teamsList.remove(uuid);
                     plugin.runAsync(() -> plugin.getDatabase().deleteTeam(uuid));
@@ -108,12 +104,9 @@ public class TeamStorageUtil {
     public boolean deleteOfflineClan(OfflinePlayer offlinePlayer) throws IOException{
         UUID uuid = offlinePlayer.getUniqueId();
 
-        if (findTeamByOfflineOwner(offlinePlayer) != null){
-            if (teamsList.containsKey(uuid)){
+        if (findTeamByOfflineOwner(offlinePlayer) != null) {
+            if (teamsList.containsKey(uuid)) {
                 fireOfflineClanDisbandEvent(offlinePlayer);
-                if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
-                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aFired OfflineClanDisbandEvent"));
-                }
 
                 teamsList.remove(uuid);
                 plugin.runAsync(() -> plugin.getDatabase().deleteTeam(uuid));
@@ -127,12 +120,13 @@ public class TeamStorageUtil {
         return false;
     }
 
-    public boolean isClanOwner(Player player){
+    public boolean isClanOwner(Player player) {
         UUID uuid = player.getUniqueId();
         String ownerUUID = uuid.toString();
         Team team = teamsList.get(uuid);
-        if (team != null){
-            if (team.getTeamOwner() == null){
+
+        if (team != null) {
+            if (team.getTeamOwner() == null) {
                 return false;
             } else {
                 return team.getTeamOwner().equals(ownerUUID);
@@ -141,7 +135,7 @@ public class TeamStorageUtil {
         return false;
     }
 
-    public Team findTeamByName(String name){
+    public Team findTeamByName(String name) {
         Map<String, Team> teamsMap = new HashMap<>();
 
         for (Team team : teamsList.values())
@@ -150,18 +144,18 @@ public class TeamStorageUtil {
         return teamsMap.get(name);
     }
 
-    public Team findTeamByOwner(Player player){
+    public Team findTeamByOwner(Player player) {
         UUID uuid = player.getUniqueId();
         return teamsList.get(uuid);
     }
 
-    public Team findTeamByOfflineOwner(OfflinePlayer offlinePlayer){
+    public Team findTeamByOfflineOwner(OfflinePlayer offlinePlayer) {
         UUID uuid = offlinePlayer.getUniqueId();
         return teamsList.get(uuid);
     }
 
-    public Team findClanByPlayer(Player player){
-        for (Team team : teamsList.values()){
+    public Team findClanByPlayer(Player player) {
+        for (Team team : teamsList.values()) {
             if (findTeamByOwner(player) != null) {
                 return team;
             }
@@ -176,14 +170,14 @@ public class TeamStorageUtil {
         return null;
     }
 
-    public Team findClanByOfflinePlayer(OfflinePlayer player){
-        for (Team team : teamsList.values()){
-            if (findTeamByOfflineOwner(player) != null){
+    public Team findClanByOfflinePlayer(OfflinePlayer player) {
+        for (Team team : teamsList.values()) {
+            if (findTeamByOfflineOwner(player) != null) {
                 return team;
             }
-            if (team.getClanMembers() != null){
-                for (String member : team.getClanMembers()){
-                    if (member.equals(player.getUniqueId().toString())){
+            if (team.getClanMembers() != null) {
+                for (String member : team.getClanMembers()) {
+                    if (member.equals(player.getUniqueId().toString())) {
                         return team;
                     }
                 }
@@ -192,9 +186,9 @@ public class TeamStorageUtil {
         return null;
     }
 
-    public void updatePrefix(Player player, String prefix){
+    public void updatePrefix(Player player, String prefix) {
         UUID uuid = player.getUniqueId();
-        if (!isClanOwner(player)){
+        if (!isClanOwner(player)) {
             player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-must-be-owner")));
             return;
         }
@@ -206,7 +200,7 @@ public class TeamStorageUtil {
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
-    public boolean addClanMember(Team team, Player player){
+    public boolean addClanMember(Team team, Player player) {
         UUID uuid = player.getUniqueId();
         String memberUUID = uuid.toString();
         team.addTeamMember(memberUUID);
@@ -217,7 +211,7 @@ public class TeamStorageUtil {
         return true;
     }
 
-    public void addClanEnemy(Player teamOwner, Player enemyClanOwner){
+    public void addClanEnemy(Player teamOwner, Player enemyClanOwner) {
         UUID ownerUUID = teamOwner.getUniqueId();
         UUID enemyUUID = enemyClanOwner.getUniqueId();
         String enemyOwnerUUID = enemyUUID.toString();
@@ -229,7 +223,7 @@ public class TeamStorageUtil {
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
-    public void removeClanEnemy(Player teamOwner, Player enemyClanOwner){
+    public void removeClanEnemy(Player teamOwner, Player enemyClanOwner) {
         UUID ownerUUID = teamOwner.getUniqueId();
         UUID enemyUUID = enemyClanOwner.getUniqueId();
         String enemyOwnerUUID = enemyUUID.toString();
@@ -241,7 +235,7 @@ public class TeamStorageUtil {
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
-    public void addClanAlly(Player teamOwner, Player allyClanOwner){
+    public void addClanAlly(Player teamOwner, Player allyClanOwner) {
         UUID ownerUUID = teamOwner.getUniqueId();
         UUID uuid = allyClanOwner.getUniqueId();
         String allyUUID = uuid.toString();
@@ -253,7 +247,7 @@ public class TeamStorageUtil {
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
-    public void removeClanAlly(Player teamOwner, Player allyClanOwner){
+    public void removeClanAlly(Player teamOwner, Player allyClanOwner) {
         UUID ownerUUID = teamOwner.getUniqueId();
         UUID uuid = allyClanOwner.getUniqueId();
         String allyUUID = uuid.toString();
@@ -269,26 +263,21 @@ public class TeamStorageUtil {
         return team.getClanHomeWorld() != null;
     }
 
-    public void deleteHome(Team team){
+    public void deleteHome(Team team) {
         team.setClanHomeWorld(null);
 
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
-    public String stripClanNameColorCodes(Team team){
+    public String stripClanNameColorCodes(Team team) {
         String teamFinalName = team.getTeamFinalName();
-        if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")
-                ||teamFinalName.contains("&")||teamFinalName.contains("#")){
-            logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aFound Colour Code To Strip"));
-            logger.info(ColorUtils.translateColorCodes("&aOriginal Name: ") + teamFinalName);
-            logger.info(ColorUtils.translateColorCodes("&aNew Name: ") + (teamFinalName == null?null:STRIP_COLOR_PATTERN.matcher(teamFinalName).replaceAll("")));
-        }
-        return teamFinalName == null?null:STRIP_COLOR_PATTERN.matcher(teamFinalName).replaceAll("");
+
+        return teamFinalName == null ? null : STRIP_COLOR_PATTERN.matcher(teamFinalName).replaceAll("");
     }
 
-    public Team transferClanOwner(Team originalTeam, Player originalClanOwner, Player newClanOwner) throws IOException{
-        if (findTeamByOwner(originalClanOwner) != null){
-            if (isClanOwner(originalClanOwner)){
+    public Team transferClanOwner(Team originalTeam, Player originalClanOwner, Player newClanOwner) throws IOException {
+        if (findTeamByOwner(originalClanOwner) != null) {
+            if (isClanOwner(originalClanOwner)) {
                 if (!isClanOwner(newClanOwner) && findClanByPlayer(newClanOwner) == null){
                     String originalOwnerKey = originalClanOwner.getUniqueId().toString();
                     UUID originalOwnerUUID = originalClanOwner.getUniqueId();

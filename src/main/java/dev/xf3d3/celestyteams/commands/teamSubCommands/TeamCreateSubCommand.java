@@ -3,8 +3,8 @@ package dev.xf3d3.celestyteams.commands.teamSubCommands;
 import dev.xf3d3.celestyteams.CelestyTeams;
 import dev.xf3d3.celestyteams.api.ClanCreateEvent;
 import dev.xf3d3.celestyteams.models.Team;
-import dev.xf3d3.celestyteams.utils.TeamStorageUtil;
 import dev.xf3d3.celestyteams.utils.ColorUtils;
+import dev.xf3d3.celestyteams.utils.TeamStorageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -21,7 +21,7 @@ public class TeamCreateSubCommand {
     FileConfiguration messagesConfig = CelestyTeams.getPlugin().messagesFileManager.getMessagesConfig();
     Logger logger = CelestyTeams.getPlugin().getLogger();
     private static final String CLAN_PLACEHOLDER = "%CLAN%";
-    private static final String CLAN_OWNER = "%CLANOWNER%";
+    private static final String CLAN_OWNER = "%TEAMOWNER%";
 
     int MIN_CHAR_LIMIT = teamsConfig.getInt("team-tags.min-character-limit");
     int MAX_CHAR_LIMIT = teamsConfig.getInt("team-tags.max-character-limit");

@@ -4,10 +4,9 @@ import dev.xf3d3.celestyteams.CelestyTeams;
 import dev.xf3d3.celestyteams.api.ClanAllyAddEvent;
 import dev.xf3d3.celestyteams.api.ClanAllyRemoveEvent;
 import dev.xf3d3.celestyteams.models.Team;
-import dev.xf3d3.celestyteams.utils.TeamStorageUtil;
 import dev.xf3d3.celestyteams.utils.ColorUtils;
+import dev.xf3d3.celestyteams.utils.TeamStorageUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -22,9 +21,9 @@ public class TeamAllySubCommand {
     FileConfiguration teamsConfig = CelestyTeams.getPlugin().getConfig();
     FileConfiguration messagesConfig = CelestyTeams.getPlugin().messagesFileManager.getMessagesConfig();
     Logger logger = CelestyTeams.getPlugin().getLogger();
-    private static final String ALLY_CLAN = "%ALLYCLAN%";
+    private static final String ALLY_CLAN = "%ALLYTEAM%";
     private static final String ALLY_OWNER = "%ALLYOWNER%";
-    private static final String CLAN_OWNER = "%CLANOWNER%";
+    private static final String CLAN_OWNER = "%TEAMOWNER%";
 
     private final CelestyTeams plugin;
 

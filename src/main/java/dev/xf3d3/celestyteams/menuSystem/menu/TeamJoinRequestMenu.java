@@ -42,7 +42,7 @@ public class TeamJoinRequestMenu extends Menu {
                         .replace("%PLAYER%", player.getName())));
                 player.closeInventory();
                 player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-invite-sent-successfully")
-                        .replace("%CLANOWNER%", targetClanOwner.getName())));
+                        .replace("%TEAMOWNER%", targetClanOwner.getName())));
             }else {
                 player.closeInventory();
                 player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("team-invite-request-failed")));

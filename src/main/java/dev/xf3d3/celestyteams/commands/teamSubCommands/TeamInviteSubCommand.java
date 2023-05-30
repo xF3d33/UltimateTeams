@@ -3,7 +3,6 @@ package dev.xf3d3.celestyteams.commands.teamSubCommands;
 import dev.xf3d3.celestyteams.CelestyTeams;
 import dev.xf3d3.celestyteams.models.Team;
 import dev.xf3d3.celestyteams.utils.ColorUtils;
-import dev.xf3d3.celestyteams.utils.TeamInviteUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -96,13 +95,13 @@ public class TeamInviteSubCommand {
                             }
 
 
-                            if (CelestyTeams.getFloodgateApi() != null){
-                                if (CelestyTeams.bedrockPlayers.containsKey(invitedPlayer)){
-                                    String bedrockInvitedPlayerUUIDString = CelestyTeams.bedrockPlayers.get(invitedPlayer);
-                                    if (TeamInviteUtil.createInvite(player.getUniqueId().toString(), bedrockInvitedPlayerUUIDString) != null){
+                            if (plugin.getFloodgateApi() != null){
+                                if (plugin.getBedrockPlayers().containsKey(invitedPlayer)){
+                                    String bedrockInvitedPlayerUUIDString = plugin.getBedrockPlayers().get(invitedPlayer);
+                                    if (plugin.getTeamInviteUtil().createInvite(player.getUniqueId().toString(), bedrockInvitedPlayerUUIDString) != null){
                                         String confirmationString = ColorUtils.translateColorCodes(messagesConfig.getString("team-invite-successful")).replace(INVITED_PLAYER, invitedPlayer.getName());
                                         player.sendMessage(confirmationString);
-                                        String invitationString = ColorUtils.translateColorCodes(messagesConfig.getString("team-invited-player-invite-pending")).replace("%CLANOWNER%", player.getName());
+                                        String invitationString = ColorUtils.translateColorCodes(messagesConfig.getString("team-invited-player-invite-pending")).replace("%TEAMOWNER%", player.getName());
                                         invitedPlayer.sendMessage(invitationString);
                                         return true;
                                     }else {
@@ -111,10 +110,10 @@ public class TeamInviteSubCommand {
                                         return true;
                                     }
                                 }else {
-                                    if (TeamInviteUtil.createInvite(player.getUniqueId().toString(), invitedPlayer.getUniqueId().toString()) != null) {
+                                    if (plugin.getTeamInviteUtil().createInvite(player.getUniqueId().toString(), invitedPlayer.getUniqueId().toString()) != null) {
                                         String confirmationString = ColorUtils.translateColorCodes(messagesConfig.getString("team-invite-successful")).replace(INVITED_PLAYER, invitedPlayer.getName());
                                         player.sendMessage(confirmationString);
-                                        String invitationString = ColorUtils.translateColorCodes(messagesConfig.getString("team-invited-player-invite-pending")).replace("%CLANOWNER%", player.getName());
+                                        String invitationString = ColorUtils.translateColorCodes(messagesConfig.getString("team-invited-player-invite-pending")).replace("%TEAMOWNER%", player.getName());
                                         invitedPlayer.sendMessage(invitationString);
                                         return true;
                                     }else {
@@ -125,10 +124,10 @@ public class TeamInviteSubCommand {
                                 }
                             }
 
-                            if (TeamInviteUtil.createInvite(player.getUniqueId().toString(), invitedPlayer.getUniqueId().toString()) != null) {
+                            if (plugin.getTeamInviteUtil().createInvite(player.getUniqueId().toString(), invitedPlayer.getUniqueId().toString()) != null) {
                                 String confirmationString = ColorUtils.translateColorCodes(messagesConfig.getString("team-invite-successful")).replace(INVITED_PLAYER, invitedPlayer.getName());
                                 player.sendMessage(confirmationString);
-                                String invitationString = ColorUtils.translateColorCodes(messagesConfig.getString("team-invited-player-invite-pending")).replace("%CLANOWNER%", player.getName());
+                                String invitationString = ColorUtils.translateColorCodes(messagesConfig.getString("team-invited-player-invite-pending")).replace("%TEAMOWNER%", player.getName());
                                 invitedPlayer.sendMessage(invitationString);
                                 return true;
                             } else {

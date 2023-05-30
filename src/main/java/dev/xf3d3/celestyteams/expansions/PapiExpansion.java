@@ -2,7 +2,6 @@ package dev.xf3d3.celestyteams.expansions;
 
 import dev.xf3d3.celestyteams.CelestyTeams;
 import dev.xf3d3.celestyteams.models.Team;
-import dev.xf3d3.celestyteams.models.TeamPlayer;
 import dev.xf3d3.celestyteams.utils.ColorUtils;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;

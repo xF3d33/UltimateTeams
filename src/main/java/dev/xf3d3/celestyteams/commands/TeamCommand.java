@@ -21,17 +21,17 @@ import java.util.logging.Logger;
 @CommandAlias("team")
 public class TeamCommand extends BaseCommand {
 
-    Logger logger = CelestyTeams.getPlugin().getLogger();
-
-    FileConfiguration teamsConfig = CelestyTeams.getPlugin().getConfig();
-    FileConfiguration messagesConfig = CelestyTeams.getPlugin().messagesFileManager.getMessagesConfig();
-
+    private final Logger logger;
+    private final FileConfiguration teamsConfig;
+    private final FileConfiguration messagesConfig;
     private static List<String> bannedTags;
-
     private final CelestyTeams plugin;
 
     public TeamCommand(@NotNull CelestyTeams plugin) {
         this.plugin = plugin;
+        this.messagesConfig = plugin.messagesFileManager.getMessagesConfig();
+        this.teamsConfig = plugin.getConfig();
+        this.logger = plugin.getLogger();
     }
 
     public static void updateBannedTagsList() {
@@ -76,7 +76,7 @@ public class TeamCommand extends BaseCommand {
     }
 
     @Subcommand("create")
-    @CommandCompletion("<name>")
+    @CommandCompletion("<name> @nothing")
     public void onClanCreateCommand(CommandSender sender, String[] args) {
         new TeamCreateSubCommand(plugin).createClanSubCommand(sender, args, bannedTags);
     }
@@ -88,7 +88,7 @@ public class TeamCommand extends BaseCommand {
     }
 
     @Subcommand("invite")
-    @CommandCompletion("@players")
+    @CommandCompletion("@players @nothing")
     public void onClanInviteCommand(CommandSender sender, String[] args) {
         new TeamInviteSubCommand(plugin).teamInviteSubCommand(sender, args);
     }
@@ -120,19 +120,19 @@ public class TeamCommand extends BaseCommand {
 
 
     @Subcommand("enemy")
-    @CommandCompletion("[add/remove] @teams")
+    @CommandCompletion("[add/remove] @teams @nothing")
     public void onClanEnemyCommand(CommandSender sender, String[] args) {
         new TeamEnemySubCommand(plugin).teamEnemySubCommand(sender, args);
     }
 
     @Subcommand("ally add")
-    @CommandCompletion("@teams")
+    @CommandCompletion("@teams @nothing")
     public void onClanAllyAddCommand(CommandSender sender, String[] args) {
         new TeamAllySubCommand(plugin).teamAllyAddSubCommand(sender, args);
     }
 
     @Subcommand("ally remove")
-    @CommandCompletion("@teams")
+    @CommandCompletion("@teams @nothing")
     public void onClanAllyRemoveCommand(CommandSender sender, String[] args) {
         new TeamAllySubCommand(plugin).teamAllyRemoveSubCommand(sender, args);
     }
@@ -143,7 +143,7 @@ public class TeamCommand extends BaseCommand {
     }
 
     @Subcommand("kick")
-    @CommandCompletion("@players")
+    @CommandCompletion("@players @nothing")
     public void onClanKickCommand(CommandSender sender, String[] args) {
         new TeamKickSubCommand(plugin).teamKickSubCommand(sender, args);
     }
@@ -167,7 +167,7 @@ public class TeamCommand extends BaseCommand {
     }
 
     @Subcommand("prefix")
-    @CommandCompletion("<prefix>")
+    @CommandCompletion("<prefix> @nothing")
     public void onClanPrefixCommand(CommandSender sender, String[] args) {
         new TeamPrefixSubCommand(plugin).teamPrefixSubCommand(sender, args, bannedTags);
     }

@@ -4,8 +4,8 @@ import dev.xf3d3.celestyteams.CelestyTeams;
 import dev.xf3d3.celestyteams.api.ClanEnemyAddEvent;
 import dev.xf3d3.celestyteams.api.ClanEnemyRemoveEvent;
 import dev.xf3d3.celestyteams.models.Team;
-import dev.xf3d3.celestyteams.utils.TeamStorageUtil;
 import dev.xf3d3.celestyteams.utils.ColorUtils;
+import dev.xf3d3.celestyteams.utils.TeamStorageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -22,9 +22,9 @@ public class TeamEnemySubCommand {
     FileConfiguration teamsConfig = CelestyTeams.getPlugin().getConfig();
     FileConfiguration messagesConfig = CelestyTeams.getPlugin().messagesFileManager.getMessagesConfig();
     Logger logger = CelestyTeams.getPlugin().getLogger();
-    private static final String ENEMY_CLAN = "%ENEMYCLAN%";
+    private static final String ENEMY_CLAN = "%ENEMYTEAM%";
     private static final String ENEMY_OWNER = "%ENEMYOWNER%";
-    private static final String CLAN_OWNER = "%CLANOWNER%";
+    private static final String CLAN_OWNER = "%TEAMOWNER%";
 
     private final CelestyTeams plugin;
 

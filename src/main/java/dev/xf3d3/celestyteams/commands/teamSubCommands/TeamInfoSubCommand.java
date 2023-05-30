@@ -2,8 +2,8 @@ package dev.xf3d3.celestyteams.commands.teamSubCommands;
 
 import dev.xf3d3.celestyteams.CelestyTeams;
 import dev.xf3d3.celestyteams.models.Team;
-import dev.xf3d3.celestyteams.utils.TeamStorageUtil;
 import dev.xf3d3.celestyteams.utils.ColorUtils;
+import dev.xf3d3.celestyteams.utils.TeamStorageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -20,8 +20,8 @@ public class TeamInfoSubCommand {
     private static final String CLAN_PLACEHOLDER = "%CLAN%";
     private static final String OWNER = "%OWNER%";
     private static final String CLAN_MEMBER = "%MEMBER%";
-    private static final String ALLY_CLAN = "%ALLYCLAN%";
-    private static final String ENEMY_CLAN = "%ENEMYCLAN%";
+    private static final String ALLY_CLAN = "%ALLYTEAM%";
+    private static final String ENEMY_CLAN = "%ENEMYTEAM%";
     private static final String POINTS_PLACEHOLDER = "%POINTS%";
 
     private final CelestyTeams plugin;

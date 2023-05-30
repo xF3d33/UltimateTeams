@@ -1,6 +1,5 @@
 package dev.xf3d3.celestyteams.commands;
 
-import com.tcoded.folialib.FoliaLib;
 import dev.xf3d3.celestyteams.CelestyTeams;
 import dev.xf3d3.celestyteams.utils.ColorUtils;
 import org.bukkit.Bukkit;
@@ -14,13 +13,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class TeamAdmin implements CommandExecutor {
 
-    Logger logger = CelestyTeams.getPlugin().getLogger();
-    FileConfiguration messagesConfig = CelestyTeams.getPlugin().messagesFileManager.getMessagesConfig();
+    private final Logger logger;
+    private final FileConfiguration messagesConfig;
 
     private static final String PLAYER_TO_KICK = "%KICKEDPLAYER%";
 
@@ -28,6 +26,8 @@ public class TeamAdmin implements CommandExecutor {
 
     public TeamAdmin(@NotNull CelestyTeams plugin) {
         this.plugin = plugin;
+        this.messagesConfig = plugin.messagesFileManager.getMessagesConfig();
+        this.logger = plugin.getLogger();
     }
 
     @Override
@@ -118,26 +118,9 @@ public class TeamAdmin implements CommandExecutor {
 
 //----------------------------------------------------------------------------------------------------------------------
                 if (args[0].equalsIgnoreCase("reload")) {
-                    logger.info(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-begin")));
-                    FoliaLib foliaLib = new FoliaLib(CelestyTeams.getPlugin());
-                    CelestyTeams plugin = CelestyTeams.getPlugin();
-                    plugin.onDisable();
-                    foliaLib.getImpl().runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            plugin.onEnable();
-                        }
-                    }, 5L, TimeUnit.SECONDS);
-                    foliaLib.getImpl().runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            CelestyTeams.getPlugin().reloadConfig();
-                            TeamCommand.updateBannedTagsList();
-                            CelestyTeams.getPlugin().messagesFileManager.reloadMessagesConfig();
-                            CelestyTeams.getPlugin().teamGUIFileManager.reloadClanGUIConfig();
-                            logger.info(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-successful")));
-                        }
-                    }, 5L, TimeUnit.SECONDS);
+                    plugin.reloadConfig();
+                    plugin.messagesFileManager.reloadMessagesConfig();
+                    plugin.teamGUIFileManager.reloadClanGUIConfig();
                 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -182,13 +165,11 @@ public class TeamAdmin implements CommandExecutor {
 //----------------------------------------------------------------------------------------------------------------------
                 if (args[0].equalsIgnoreCase("about")) {
                     logger.info(ColorUtils.translateColorCodes("&3~~~~~~~~~~ &6CelestyTeams &3~~~~~~~~~~"));
-                    logger.info(ColorUtils.translateColorCodes("&3Version: &6" + CelestyTeams.getPlugin().getDescription().getVersion()));
-                    logger.info(ColorUtils.translateColorCodes("&3Authors: &6" + CelestyTeams.getPlugin().getDescription().getAuthors()));
-                    logger.info(ColorUtils.translateColorCodes("&3Description: &6" + CelestyTeams.getPlugin().getDescription().getDescription()));
-                    logger.info(ColorUtils.translateColorCodes("&3Website: "));
-                    logger.info(ColorUtils.translateColorCodes("&6" + CelestyTeams.getPlugin().getDescription().getWebsite()));
+                    logger.info(ColorUtils.translateColorCodes("&3Version: &6" + plugin.getDescription().getVersion()));
+                    logger.info(ColorUtils.translateColorCodes("&3Authors: &6" + plugin.getDescription().getAuthors()));
+                    logger.info(ColorUtils.translateColorCodes("&3Description: &6" + plugin.getDescription().getDescription()));
                     logger.info(ColorUtils.translateColorCodes("&3Discord:"));
-                    logger.info(ColorUtils.translateColorCodes("&6https://discord.gg/crapticraft"));
+                    logger.info(ColorUtils.translateColorCodes("&6https://discord.gg/celestymc"));
                     logger.info(ColorUtils.translateColorCodes("&3~~~~~~~~~~ &6CelestyTeams &3~~~~~~~~~~"));
                 }
 

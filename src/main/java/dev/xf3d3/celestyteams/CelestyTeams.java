@@ -4,7 +4,6 @@ import co.aikar.commands.PaperCommandManager;
 import com.fatboyindustrial.gsonjavatime.Converters;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.tcoded.folialib.FoliaLib;
 import dev.xf3d3.celestyteams.commands.TeamAdmin;
 import dev.xf3d3.celestyteams.commands.TeamChatCommand;
 import dev.xf3d3.celestyteams.commands.TeamChatSpyCommand;
@@ -12,17 +11,14 @@ import dev.xf3d3.celestyteams.commands.TeamCommand;
 import dev.xf3d3.celestyteams.commands.commandTabCompleters.ClanAdminTabCompleter;
 import dev.xf3d3.celestyteams.database.MySqlDatabase;
 import dev.xf3d3.celestyteams.expansions.PapiExpansion;
-import dev.xf3d3.celestyteams.files.TeamGUIFileManager;
 import dev.xf3d3.celestyteams.files.MessagesFileManager;
+import dev.xf3d3.celestyteams.files.TeamGUIFileManager;
 import dev.xf3d3.celestyteams.listeners.MenuEvent;
-import dev.xf3d3.celestyteams.listeners.PlayerJoinEvent;
+import dev.xf3d3.celestyteams.listeners.PlayerConnectEvent;
 import dev.xf3d3.celestyteams.listeners.PlayerDamageEvent;
 import dev.xf3d3.celestyteams.listeners.PlayerDisconnectEvent;
 import dev.xf3d3.celestyteams.menuSystem.PlayerMenuUtility;
-import dev.xf3d3.celestyteams.utils.TeamStorageUtil;
-import dev.xf3d3.celestyteams.utils.ColorUtils;
-import dev.xf3d3.celestyteams.utils.TaskRunner;
-import dev.xf3d3.celestyteams.utils.UsersStorageUtil;
+import dev.xf3d3.celestyteams.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -36,7 +32,6 @@ import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,16 +39,11 @@ public final class CelestyTeams extends JavaPlugin implements TaskRunner {
 
     private final PluginDescriptionFile pluginInfo = getDescription();
     private final String pluginVersion = pluginInfo.getVersion();
-    private final FoliaLib foliaLib = new FoliaLib(this);
     Logger logger = this.getLogger();
-
     private static CelestyTeams instance;
-    private static FloodgateApi floodgateApi;
+    private FloodgateApi floodgateApi;
     public MessagesFileManager messagesFileManager;
     public TeamGUIFileManager teamGUIFileManager;
-
-    public static HashMap<Player, String> connectedPlayers = new HashMap<>();
-    public static HashMap<Player, String> bedrockPlayers = new HashMap<>();
     private static final HashMap<Player, PlayerMenuUtility> playerMenuUtilityMap = new HashMap<>();
     private MySqlDatabase database;
     private ConcurrentHashMap<Integer, ScheduledTask> tasks;
@@ -61,6 +51,9 @@ public final class CelestyTeams extends JavaPlugin implements TaskRunner {
     private PaperCommandManager manager;
     private TeamStorageUtil teamStorageUtil;
     private UsersStorageUtil usersStorageUtil;
+    private TeamInviteUtil teamInviteUtil;
+    private HashMap<Player, String> connectedPlayers = new HashMap<>();
+    private HashMap<Player, String> bedrockPlayers = new HashMap<>();
 
     @Override
     public void onLoad() {
@@ -77,6 +70,7 @@ public final class CelestyTeams extends JavaPlugin implements TaskRunner {
         this.messagesFileManager = new MessagesFileManager(this);
         this.teamStorageUtil = new TeamStorageUtil(this);
         this.usersStorageUtil = new UsersStorageUtil(this);
+        this.teamInviteUtil = new TeamInviteUtil(this);
 
         // Load the plugin configs
         getConfig().options().copyDefaults();
@@ -108,8 +102,8 @@ public final class CelestyTeams extends JavaPlugin implements TaskRunner {
         this.getCommand("teamadmin").setTabCompleter(new ClanAdminTabCompleter());
 
         //Register the plugin events
-        this.getServer().getPluginManager().registerEvents(new PlayerJoinEvent(this), this);
-        this.getServer().getPluginManager().registerEvents(new PlayerDisconnectEvent(), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerConnectEvent(this), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerDisconnectEvent(this), this);
         this.getServer().getPluginManager().registerEvents(new PlayerDamageEvent(this), this);
         this.getServer().getPluginManager().registerEvents(new MenuEvent(), this);
 
@@ -144,87 +138,30 @@ public final class CelestyTeams extends JavaPlugin implements TaskRunner {
             logger.info(ColorUtils.translateColorCodes("-------------------------------------------"));
         }
 
-        //Start auto save task
-        if (getConfig().getBoolean("general.run-auto-save-task.enabled")){
-            foliaLib.getImpl().runLaterAsync(new Runnable() {
-                @Override
-                public void run() {
-                    //TaskRunner.runClansAutoSaveOne();
-                    logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("auto-save-started")));
-                }
-            }, 5L, TimeUnit.SECONDS);
-        }
-
         //Start auto invite clear task
         if (getConfig().getBoolean("general.run-auto-invite-wipe-task.enabled")){
-            foliaLib.getImpl().runLaterAsync(new Runnable() {
-                @Override
-                public void run() {
-                    //TaskRunner.runClanInviteClearOne();
-
-                    logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("auto-invite-wipe-started")));
+            runAsyncRepeating(() -> {
+                try {
+                    teamInviteUtil.emptyInviteList();
+                    if (getConfig().getBoolean("general.show-auto-invite-wipe-message.enabled")){
+                        getLogger().info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("auto-invite-wipe-complete")));
+                    }
+                }catch (UnsupportedOperationException exception){
+                    getLogger().info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("invite-wipe-failed")));
                 }
-            }, 5L, TimeUnit.SECONDS);
+            }, 20L * 900);
         }
     }
 
     @Override
     public void onDisable() {
         //Plugin shutdown logic
-
-        //Safely stop the background tasks if running
         logger.info(ColorUtils.translateColorCodes("-------------------------------------------"));
-        logger.info(ColorUtils.translateColorCodes("&6CelestyTeams: &3Plugin by: &b&lLoving11ish"));
-        /*try {
-            if (!TaskRunner.task1.isCancelled()){
-                if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
-                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aWrapped task: " + TaskRunner.task1.toString()));
-                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aTimed task 1 canceled successfully"));
-                }
-                TaskRunner.task1.cancel();
-            }
-            if (!TaskRunner.task2.isCancelled()){
-                if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
-                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aWrapped task: " + TaskRunner.task2.toString()));
-                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aTimed task 2 canceled successfully"));
-                }
-                TaskRunner.task2.cancel();
-            }
-            if (!TaskRunner.task3.isCancelled()){
-                if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
-                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aWrapped task: " + TaskRunner.task3.toString()));
-                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aTimed task 3 canceled successfully"));
-                }
-                TaskRunner.task3.cancel();
-            }
-            if (!TaskRunner.task4.isCancelled()){
-                if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
-                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aWrapped task: " + TaskRunner.task4.toString()));
-                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aTimed task 4 canceled successfully"));
-                }
-                TaskRunner.task4.cancel();
-            }
-            if (!ClanListGUI.task5.isCancelled()){
-                if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
-                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aWrapped task: " + ClanListGUI.task5.toString()));
-                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aTimed task 5 canceled successfully"));
-                }
-                ClanListGUI.task5.cancel();
-            }
-            if (foliaLib.isUnsupported()){
-                Bukkit.getScheduler().cancelTasks(this);
-                if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
-                    logger.info(ColorUtils.translateColorCodes("&6CelestyTeams-Debug: &aBukkit scheduler tasks canceled successfully"));
-                }
-            }
-            logger.info(ColorUtils.translateColorCodes("&6CelestyTeams: &3Background tasks have disabled successfully!"));
-        }catch (Exception e){
-            logger.info(ColorUtils.translateColorCodes("&6CelestyTeams: &3Background tasks have disabled successfully!"));
-        }*/
+        logger.info(ColorUtils.translateColorCodes("&6CelestyTeams: &3Plugin by: &b&lxF3d3"));
 
         database.close();
 
-        //Final plugin shutdown message
+        // Final plugin shutdown message
         logger.info(ColorUtils.translateColorCodes("&6CelestyTeams: &3Plugin Version: &d&l" + pluginVersion));
         logger.info(ColorUtils.translateColorCodes("&6CelestyTeams: &3Has been shutdown successfully"));
         logger.info(ColorUtils.translateColorCodes("&6CelestyTeams: &3Goodbye!"));
@@ -288,7 +225,7 @@ public final class CelestyTeams extends JavaPlugin implements TaskRunner {
         return instance;
     }
 
-    public static FloodgateApi getFloodgateApi() {
+    public FloodgateApi getFloodgateApi() {
         return floodgateApi;
     }
 
@@ -300,6 +237,21 @@ public final class CelestyTeams extends JavaPlugin implements TaskRunner {
     @NotNull
     public UsersStorageUtil getUsersStorageUtil() {
         return usersStorageUtil;
+    }
+
+    @NotNull
+    public TeamInviteUtil getTeamInviteUtil() {
+        return teamInviteUtil;
+    }
+
+    @NotNull
+    public HashMap<Player, String> getConnectedPlayers() {
+        return connectedPlayers;
+    }
+
+    @NotNull
+    public HashMap<Player, String> getBedrockPlayers() {
+        return bedrockPlayers;
     }
 
     @NotNull
