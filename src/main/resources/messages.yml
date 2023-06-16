@@ -1,13 +1,12 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#                                        ----[CelestyTeams]----                                        #
-#                                     ----[By Loving11ish]----                                      #
-#                                  ----[Contributors: Gamlin]----                                   #
+#                                   ----[UltimateTeams]----                                          #
+#                                     ----[By xF3d3]----                                            #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #                                  ----[Plugin Messages File]----                                   #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#CelestyTeams messages config for ${version}
+#UltimateTeams messages config for ${version}
 
 #Team Creation Messages
 team-create-incorrect-usage: "&3use /team create <name>."
@@ -42,7 +41,7 @@ team-invite-not-team-owner: "&3You must be a team owner to invite people!"
 team-invite-self-error: "&3You can't invite yourself!"
 team-invitee-not-found: "&3Player &6%INVITED% &3was not found, make sure they are online!"
 team-invite-invited-already-in-team: "&3Player &6%INVITED% &3is already in a team!"
-team-invite-max-size-reached: "&3You have reached the clam members size limit &a%LIMIT%&3!"
+team-invite-max-size-reached: "&3You have reached the team members size limit &a%LIMIT%&3!"
 team-invite-successful: "&3You have invited &6%INVITED% &3to your team!"
 team-invite-failed: "&3Failed to send invite to &6%INVITED%&3, this player might already have an invitation!"
 team-invited-player-invite-pending: "&3You have been invited to a team by &6%TEAMOWNER% &3- use /team join"
@@ -50,15 +49,14 @@ team-invite-request: "&6%PLAYER% &3would like you to invite them to your team.\n
 team-invite-request-failed: "&3Failed to send request, check that the team owner is online!"
 team-invite-sent-successfully: "&3You have successfully sent a request to %TEAMOWNER%"
 team-invite-failed-own-team: "&3Failed to send request, this is YOUR team!"
+team-invite-failed-already-in-team: "&3Failed to send request, you are already in a team!"
 
 #Team Join Messages
 team-join-successful: "&3Successfully joined &6%TEAM%&3!"
 team-join-failed: "&3Failed to join &6%TEAM%&3"
 team-join-failed-no-valid-team: "&3Failed to join a team - no team was found!"
 team-join-failed-no-invite: "&3Failed to join a team - no invite was found!"
-team-join-broadcast-chat: "&6%PLAYER%&3 Has joined a team!\n&3The player's joined team is &6%TEAM%&3!"
-team-join-broadcast-title-1: "&6%PLAYER%&3 Has joined a team!"
-team-join-broadcast-title-2: "&3The player's joined team is &6%TEAM%&3!"
+team-join-broadcast-chat: "&3The player &6%PLAYER%&3 has joined your team!"
 
 #Team Leave Messages
 failed-team-owner: "&3You are the owner of a team, use &6/team disband&3."
@@ -115,10 +113,11 @@ failed-to-add-team-to-allies: "&3Unable to add &6%ALLYTEAM%&3! Make sure the own
 failed-team-already-your-ally: "&3This team is already your ally!"
 failed-player-not-team-owner: "&6%ALLYOWNER%&3 is not a team owner!"
 removed-team-from-your-allies: "&3You Successfully removed &6%ALLYTEAM% &3from your allies!"
-team-removed-from-other-allies: "&3The team owner &6%TEAMOWNER% &3has removed your team from their allies!"
-failed-to-remove-team-from-allies: "&3Unable to remove &6%ALLYOWNER%&3! Make sure they're you ally"
-ally-team-add-owner-offline: "&3Unable to add &6%ALLYOWNER%&3! Make sure the owner is online!"
-ally-team-remove-owner-offline: "&3Unable to remove &6%ALLYOWNER%&3! Make sure the owner is online!"
+team-owner-removed-team-from-allies: "&3Your team owner has removed &6%TEAM% &3from your allies!"
+team-removed-from-other-allies: "&3The team &6%TEAM% &3has removed your team from their allies!"
+failed-to-remove-team-from-allies: "&3Unable to remove &6%ALLYOWNER%&3! Make sure they're your ally"
+ally-team-add-owner-offline: "&3Unable to add &6%ALLYTEAM%&3! Make sure the owner is online!"
+ally-team-remove-owner-offline: "&3Unable to remove &6%ALLYTEAM%&3! Make sure the owner is online!"
 incorrect-team-ally-command-usage: "&3Unrecognised argument please use &6/team ally [add|remove] <team-owner>&3."
 failed-cannot-ally-your-own-team: "&3You cannot be an ally with your &3&lOWN&r&3 team!"
 team-ally-max-amount-reached: "&3You have reached the team allies amount limit &a%LIMIT%&3!"
@@ -132,9 +131,9 @@ failed-team-already-your-enemy: "&3This team is already your enemy!"
 failed-enemy-player-not-team-owner: "&6%ENEMYOWNER%&3 is not a team owner!"
 removed-team-from-your-enemies: "&3You Successfully removed &6%ENEMYTEAM% &3from your enemies!"
 team-removed-from-other-enemies: "&3The team owner &6%TEAMOWNER% &3has removed your team from their enemies!"
-failed-to-remove-team-from-enemies: "&3Unable to remove &6%ENEMYOWNER%&3! Make sure they're your enemy!"
-enemy-team-add-owner-offline: "&3Unable to add &6%ENEMYOWNER%&3! Make sure the owner is online!"
-enemy-team-remove-owner-offline: "&3Unable to remove &6%ENEMYOWNER%&3! Make sure the owner is online!"
+failed-to-remove-team-from-enemies: "&3Unable to remove &6%ENEMYTEAM%&3! Make sure they're your enemy!"
+enemy-team-add-owner-offline: "&3Unable to add &6%ENEMYTEAM%&3! Make sure the owner is online!"
+enemy-team-remove-owner-offline: "&3Unable to remove &6%ENEMYTEAM%&3! Make sure the owner is online!"
 incorrect-team-enemy-command-usage: "&3Unrecognised argument please use &6/team enemy [add|remove] <team-owner>&3."
 failed-cannot-enemy-your-own-team: "&3You cannot be an enemy with your &3&lOWN&r&3 team!"
 team-enemy-max-amount-reached: "&3You have reached the team enemies amount limit &a%LIMIT%&3!"
@@ -171,32 +170,32 @@ chatspy-toggle-off: "&3Toggled Team Chat spy &c&lOFF&3."
 #General Plugin Messages
 team-must-be-owner: "&3You must be the team owner to do this."
 function-disabled: "&3Sorry, that has been disabled. :("
-no-permission: "&6CelestyTeams: &cSorry, you don't have permission to do that. :("
-plugin-reload-begin: "&6CelestyTeams: &aBeginning plugin reload..."
-plugin-reload-successful: "&6CelestyTeams: &aThe plugin has been successfully reloaded!"
+no-permission: "&6UltimateTeams: &cSorry, you don't have permission to do that. :("
+plugin-reload-begin: "&6UltimateTeams: &aBeginning plugin reload..."
+plugin-reload-successful: "&6UltimateTeams: &aThe plugin has been successfully reloaded!"
 incorrect-command-usage: "&3Unrecognised argument please use &6/team&3."
 player-only-command: "&4Sorry, that command can only be run by a player!"
-saving-teams-start: "&6CelestyTeams: Saving teams data..."
-save-completed: "&6CelestyTeams: &aTeams saved!"
-save-failed-no-teams: "&6CelestyTeams: &cSkipping saving of teams as &c&lNO &cteams are stored in memory!"
-auto-save-started: "&6CelestyTeams: &aAuto save task has started."
-auto-save-complete: "&6CelestyTeams: &aSaved all Teams to file!"
-auto-save-failed: "&6CelestyTeams: &4Failed to save teams.yml to file!"
-auto-invite-wipe-started: "&6CelestyTeams: &aAuto invite wipe task has started."
-auto-invite-wipe-complete: "&6CelestyTeams: &aCleared all outstanding team invites!"
-invite-wipe-failed: "&6CelestyTeams: &cFailed to clear all outstanding team invites!"
-teams-save-error-1: "&6CelestyTeams: &4Failed to save teams.yml to file!"
-teams-save-error-2: "&6CelestyTeams: &4Check the console for errors!"
-teams-load-error-1: "&6CelestyTeams: &4Failed to load data from teams.yml!"
-teams-load-error-2: "&6CelestyTeams: &4See console for errors!"
-teams-update-error-1: "&6CelestyTeams: &4Failed to update teams.yml file!"
-teams-update-error-2: "&6CelestyTeams: &4Check the console for errors!"
-team-player-not-found-1: "&6CelestyTeams: &4Failed to find player by name of &6%PLAYER%&4!"
-team-player-not-found-2: "&6CelestyTeams: &4Ensure that &6%PLAYER% &4has joined before!"
+saving-teams-start: "&6UltimateTeams: Saving teams data..."
+save-completed: "&6UltimateTeams: &aTeams saved!"
+save-failed-no-teams: "&6UltimateTeams: &cSkipping saving of teams as &c&lNO &cteams are stored in memory!"
+auto-save-started: "&6UltimateTeams: &aAuto save task has started."
+auto-save-complete: "&6UltimateTeams: &aSaved all Teams to file!"
+auto-save-failed: "&6UltimateTeams: &4Failed to save teams.yml to file!"
+auto-invite-wipe-started: "&6UltimateTeams: &aAuto invite wipe task has started."
+auto-invite-wipe-complete: "&6UltimateTeams: &aCleared all outstanding team invites!"
+invite-wipe-failed: "&6UltimateTeams: &cFailed to clear all outstanding team invites!"
+teams-save-error-1: "&6UltimateTeams: &4Failed to save teams.yml to file!"
+teams-save-error-2: "&6UltimateTeams: &4Check the console for errors!"
+teams-load-error-1: "&6UltimateTeams: &4Failed to load data from teams.yml!"
+teams-load-error-2: "&6UltimateTeams: &4See console for errors!"
+teams-update-error-1: "&6UltimateTeams: &4Failed to update teams.yml file!"
+teams-update-error-2: "&6UltimateTeams: &4Check the console for errors!"
+team-player-not-found-1: "&6UltimateTeams: &4Failed to find player by name of &6%PLAYER%&4!"
+team-player-not-found-2: "&6UltimateTeams: &4Ensure that &6%PLAYER% &4has joined before!"
 
 #/team Command Responses
 team-command-incorrect-usage:
-  line-1: "&6CelestyTeams usage:&3"
+  line-1: "&6UltimateTeams usage:&3"
   line-2: "/team create <name>"
   line-3: "/team disband"
   line-4: "/team invite <player>"
@@ -215,7 +214,7 @@ team-command-incorrect-usage:
 
 #/teamadmin Command Responses
 teamadmin-command-incorrect-usage:
-  line-1: "&6CelestyTeams Admin usage:&3"
+  line-1: "&6UltimateTeams Admin usage:&3"
   line-2: "/teamadmin save"
   line-3: "/teamadmin reload"
   line-4: "/teamadmin disband <team-owner>"

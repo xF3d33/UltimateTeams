@@ -5,7 +5,7 @@ SET DEFAULT_STORAGE_ENGINE = INNODB;
 SET FOREIGN_KEY_CHECKS = 1;
 
 # Create the users table if it does not exist
-CREATE TABLE IF NOT EXISTS `celestyteams_users`
+CREATE TABLE IF NOT EXISTS `%user_table%`
 (
     `id`          int         NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `uuid`        char(36)    NOT NULL UNIQUE,
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `celestyteams_users`
     COLLATE utf8_unicode_ci;
 
 # Create the teams table if it does not exist
-CREATE TABLE IF NOT EXISTS `celestyteams_teams`
+CREATE TABLE IF NOT EXISTS `%team_table%`
 (
     `id`   int         NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `uuid` varchar(36) NOT NULL UNIQUE,

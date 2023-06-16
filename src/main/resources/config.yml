@@ -1,25 +1,32 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#                                        ----[CelestyTeams]----                                        #
+#                                        ----[UltimateTeams]----                                        #
 #                                     ----[By Loving11ish]----                                      #
 #                                  ----[Contributors: Gamlin]----                                   #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #                                   ----[Plugin Config File]----                                    #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#CelestyTeams config for ${version}
+#UltimateTeams config for ${version}
 
 #Do you want to use the GUI system? [Default value: true]
 use-global-GUI-system: true
 
+
 database:
-  host: 172.18.0.1
-  port: 3306
-  database: celesty_teams
-  user: root
-  password: password
-  parameters: ?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
-  connection_pool:
+  # Type: MySQL or SQLite
+  type: "MySQL"
+  mysql:
+    host: 172.18.0.1
+    port: 3306
+    database: celesty_teams
+    user: root
+    password: password
+    parameters: ?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+    tables:
+      users: "ultimateteams_users"
+      teams: "ultimateteams_teams"
+    connection_pool:
       # MySQL connection pool properties
       size: 12
       idle: 12
@@ -37,8 +44,8 @@ team-tags:
     - "Gamers"
     - "Rise"
     - "Up"
-  #Add a space after the team prefix in chat. [Default value: true]
-  prefix-add-space-after: true
+  #Add a space after the team prefix in chat. [Default value: false]
+  prefix-add-space-after: false
   #Add `[]` characters before and after the team prefix in the chat. [Default value: false]
   prefix-add-brackets: false
   #Below is how the above brackets should appear.
@@ -53,12 +60,12 @@ team-size:
     #Enable the tiered system use. [Default value: false]
     enabled: false
     permission-group-list:
-      group-1: 4  #Perm: 'celestyteams.maxteamsize.group1' [This perm is given by default]
-      group-2: 8  #Perm: 'celestyteams.maxteamsize.group2'
-      group-3: 12 #Perm: 'celestyteams.maxteamsize.group3'
-      group-4: 16 #Perm: 'celestyteams.maxteamsize.group4'
-      group-5: 20 #Perm: 'celestyteams.maxteamsize.group5'
-      group-6: 24 #Perm: 'celestyteams.maxteamsize.group6'
+      group-1: 4  #Perm: 'ultimateteams.maxteamsize.group1' [This perm is given by default]
+      group-2: 8  #Perm: 'ultimateteams.maxteamsize.group2'
+      group-3: 12 #Perm: 'ultimateteams.maxteamsize.group3'
+      group-4: 16 #Perm: 'ultimateteams.maxteamsize.group4'
+      group-5: 20 #Perm: 'ultimateteams.maxteamsize.group5'
+      group-6: 24 #Perm: 'ultimateteams.maxteamsize.group6'
 
 team-creation:
   #Do you want a message to be sent to all players when a new team is created? [Default value: true]
@@ -67,10 +74,8 @@ team-creation:
   send-as-title: true
 
 team-join:
-  #Do you want a message to be sent to all players when a player joins a team? [Default value: true]
-  announce-to-all: true
-  #Do you want the message sent as a title instead of a chat message? [Default value: false]
-  send-as-title: false
+  #Do you want a message to be sent to team players when a player joins a team? [Default value: true]
+  announce: true
 
 team-chat:
   #Enable the team chat system. [Default value: true]
@@ -83,7 +88,7 @@ team-chat:
     #Cool-down time in seconds. [Default value: 5 = 5 seconds]
     time: 5
   chat-spy:
-    #Do you want players with the perm 'celestyteams.chat.spy' be able to spy on all team chat messages? [Default value: true]
+    #Do you want players with the perm 'ultimateteams.chat.spy' be able to spy on all team chat messages? [Default value: true]
     enabled: true
     #Below is the prefix for th chat spy messages. [Default value: &6[&cSPY&6]&r]
     chat-spy-prefix: "&6[&cSPY&6]&r"
@@ -99,7 +104,7 @@ protections:
   pvp:
     #Globally enable the team friendly fire system. [Default value: true]
     pvp-command-enabled: false
-    #Enable the ability for a player to bypass the pvp protection using 'celestyteams.bypass.pvp'. [Default value: true]
+    #Enable the ability for a player to bypass the pvp protection using 'ultimateteams.bypass.pvp'. [Default value: true]
     enable-bypass-permission: true
 
 
@@ -113,12 +118,12 @@ team-home:
     #Cool-down time in seconds. [Default value: 120 = 2 minutes]
     time: 120
 
-#CelestyTeams update system
+#UltimateTeams update system
 plugin-update-notifications:
-  #Do you want to enable in game plugin update notifications? (Permission:'celestyteams.update'). [Default value: true]
+  #Do you want to enable in game plugin update notifications? (Permission:'ultimateteams.update'). [Default value: true]
   enabled: true
 
-#CelestyTeams general settings
+#UltimateTeams general settings
 general:
   run-auto-save-task:
     #Do you want to enable the plugins ability to auto save the teams to disk? [Default value: true]

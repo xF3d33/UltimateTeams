@@ -1,11 +1,9 @@
-[![](https://jitpack.io/v/Loving11ish/CelestyTeams.svg)](https://jitpack.io/#Loving11ish/CelestyTeams)
+# UltimateTeams
+UltimateTeams is a light-weight teams plugin for Minecraft servers running Spigot and most of its forks!
 
-# CelestyTeams
-CelestyTeams is a light-weight teams plugin for Minecraft servers running Spigot and most of its forks!
+UltimateTeams does not support any grief prevention tools such as land claiming or securing containers within your team.
 
-CelestyTeams does not support any grief prevention tools such as land claiming or securing containers within your team.
-
-CelestyTeams DOES however offer the ability to disable friendly fire within your team!
+UltimateTeams DOES however offer the ability to disable friendly fire within your team!
 
 ## /team command
 Aliases: `/teams`, `/c`, `cl`  
@@ -44,78 +42,78 @@ The `/cc` command is for the sole purpose of utilising the per team chat. The fo
 `/cc <message>` - This will send a message to only the members of YOUR team or the team you are in.
 
 ## Permissions
-CelestyTeams comes with `14` permissions:
-* `celestyteams.*`
-* `celestyteams.team`
-* `celestyteams.admin`
-* `celestyteams.update`
-* `celestyteams.bypass`
-* `celestyteams.bypass.*`
-* `celestyteams.bypass.homecooldown`
-* `celestyteams.bypass.chatcooldown`
-* `celestyteams.bypass.pvp`
-* `celestyteams.maxteamsize.group1`
-* `celestyteams.maxteamsize.group2`
-* `celestyteams.maxteamsize.group3`
-* `celestyteams.maxteamsize.group4`
-* `celestyteams.maxteamsize.group5`
-* `celestyteams.maxteamsize.group6`
+UltimateTeams comes with `14` permissions:
+* `ultimateteams.*`
+* `ultimateteams.team`
+* `ultimateteams.admin`
+* `ultimateteams.update`
+* `ultimateteams.bypass`
+* `ultimateteams.bypass.*`
+* `ultimateteams.bypass.homecooldown`
+* `ultimateteams.bypass.chatcooldown`
+* `ultimateteams.bypass.pvp`
+* `ultimateteams.maxteamsize.group1`
+* `ultimateteams.maxteamsize.group2`
+* `ultimateteams.maxteamsize.group3`
+* `ultimateteams.maxteamsize.group4`
+* `ultimateteams.maxteamsize.group5`
+* `ultimateteams.maxteamsize.group6`
 
-`celestyteams.*` is a permission to allow access to ALL functions regardless of operator status.
+`ultimateteams.*` is a permission to allow access to ALL functions regardless of operator status.
 
-`celestyteams.team` is by default given to everyone so they can all create, edit and manage a team.  
+`ultimateteams.team` is by default given to everyone so they can all create, edit and manage a team.  
 
-`celestyteams.admin` is by default given to server operators.
+`ultimateteams.admin` is by default given to server operators.
 
-`celestyteams.update` is the permission node to allow a player to see in game notifications if there is a plugin update available.
+`ultimateteams.update` is the permission node to allow a player to see in game notifications if there is a plugin update available.
 
-`celestyteams.bypass` is the permission node to allow a player to bypass all protections and cooldowns.
+`ultimateteams.bypass` is the permission node to allow a player to bypass all protections and cooldowns.
 
-`celestyteams.bypass.*` is the permission node to allow a player to bypass all protections and cooldowns.
+`ultimateteams.bypass.*` is the permission node to allow a player to bypass all protections and cooldowns.
 
-`celestyteams.bypass.homecooldown` is the permission node to allow a player to bypass the home command cooldown.
+`ultimateteams.bypass.homecooldown` is the permission node to allow a player to bypass the home command cooldown.
 
-`celestyteams.bypass.chatcooldown` - is the permission node to allow a player to bypass the team chat command cooldown.
+`ultimateteams.bypass.chatcooldown` - is the permission node to allow a player to bypass the team chat command cooldown.
 
-`celestyteams.bypass.pvp` is the permission node to allow a player to bypass the friendly fire protections.
+`ultimateteams.bypass.pvp` is the permission node to allow a player to bypass the friendly fire protections.
 
-`celestyteams.maxteamsize.group1` is the permission node to allow only group 1 size of team.
+`ultimateteams.maxteamsize.group1` is the permission node to allow only group 1 size of team.
 
-`celestyteams.maxteamsize.group2` is the permission node to allow only group 2 size of team.
+`ultimateteams.maxteamsize.group2` is the permission node to allow only group 2 size of team.
 
-`celestyteams.maxteamsize.group3` is the permission node to allow only group 3 size of team.
+`ultimateteams.maxteamsize.group3` is the permission node to allow only group 3 size of team.
 
-`celestyteams.maxteamsize.group4` is the permission node to allow only group 4 size of team.
+`ultimateteams.maxteamsize.group4` is the permission node to allow only group 4 size of team.
 
-`celestyteams.maxteamsize.group5` is the permission node to allow only group 5 size of team.
+`ultimateteams.maxteamsize.group5` is the permission node to allow only group 5 size of team.
 
-`celestyteams.maxteamsize.group6` is the permission node to allow only group 6 size of team.
+`ultimateteams.maxteamsize.group6` is the permission node to allow only group 6 size of team.
 
 ## Config
-The max team size (by default is 8), can be managed in the `plugins/CelestyTeams/config.yml` file.
+The max team size (by default is 8), can be managed in the `plugins/UltimateTeams/config.yml` file.
 
-The max team allies (by default is 4), can be managed in the `plugins/CelestyTeams/config.yml` file.
+The max team allies (by default is 4), can be managed in the `plugins/UltimateTeams/config.yml` file.
 
-The max team enemies (by default is 2), can be managed in the `plugins/CelestyTeams/config.yml` file.
+The max team enemies (by default is 2), can be managed in the `plugins/UltimateTeams/config.yml` file.
 
 ## Chat prefix
-CelestyTeams exposes a variable of `{CLAN}` to use in Essentials Chat or similar.
+UltimateTeams exposes a variable of `{TEAM}` to use in Essentials Chat or similar.
 
 ## PlaceholderAPI
-CelestyTeams exposes `8` external placeholders using `PlaceholderAPI` to enable the fetching of a players team name or the team prefix or if the team has friendly fire enabled or if the team has a home set.
+UltimateTeams exposes `8` external placeholders using `PlaceholderAPI` to enable the fetching of a players team name or the team prefix or if the team has friendly fire enabled or if the team has a home set.
 
 The four available placeholders are:
-* `%teamsLite_teamName%`
-* `%teamsLite_teamPrefix%`
-* `%teamsLite_friendlyFire%`
-* `%teamsLite_teamHomeSet%`
-* `%teamsLite_teamMembersSize%`
-* `%teamsLite_teamAllySize%`
-* `%teamsLite_teamEnemySize%`
-* `%teamsLite_playerPointBalance%`
+* `%ultimateteams_teamName%`
+* `%ultimateteams_teamPrefix%`
+* `%ultimateteams_friendlyFire%`
+* `%ultimateteams_teamHomeSet%`
+* `%ultimateteams_teamMembersSize%`
+* `%ultimateteams_teamAllySize%`
+* `%ultimateteams_teamEnemySize%`
+* `%ultimateteams_playerPointBalance%`
 
-To be able to use these The latest release of [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) MUST be installed!  Without it, only the above `{CLAN}` will be available.
+To be able to use these The latest release of [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) MUST be installed!  Without it, only the above `{TEAM}` will be available.
 
-###Please report any issues in GitHub and feel free to join my [discord](https://discord.gg/crapticraft).
+###Please report any issues in GitHub.
 
 ###Thank you for using my plugin!

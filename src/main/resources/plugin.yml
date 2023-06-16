@@ -1,25 +1,27 @@
-name: CelestyTeams
+name: UltimateTeams
 version: '${project.version}'
-main: dev.xf3d3.celestyteams.CelestyTeams
+main: dev.xf3d3.ultimateteams.UltimateTeams
 api-version: 1.13
-prefix: CelestyTeams
+prefix: UltimateTeams
 authors: [ xF3d3 ]
 description: A simple and lightweight Teams plugin for Minecraft.
-softdepend: [ PlaceholderAPI ]
+softdepend:
+  - PlaceholderAPI
+  - floodgate
 libraries:
   - 'com.zaxxer:HikariCP:5.0.1'
 commands:
   teamadmin:
     description: Admin commands for teams.
     usage: "Usage: /teamadmin [save|reload|about]"
-    permission: celestyteams.admin
+    permission: ultimateteams.admin
     aliases:
       - ca
       - cla
   cc:
     description: Send a message to your team members only.
     usage: "Usage: /cc <message>"
-    permission: celestyteams.team
+    permission: ultimateteams.team
     aliases:
       - teamchat
       - teamc
@@ -28,7 +30,7 @@ commands:
   chatspy:
     description: Allows admins to see ALL team chat messages.
     usage: "Usage: /chatspy"
-    permission: celestyteams.chat.spy
+    permission: ultimateteams.chat.spy
     aliases:
       - cs
       - ccs
@@ -36,18 +38,18 @@ commands:
       - spy
 
 permissions:
-  celestyteams.team:
+  ultimateteams.team:
     default: true
-  celestyteams.maxteamsize.group1:
+  ultimateteams.maxteamsize.group1:
     default: true
-  celestyteams.*:
+  ultimateteams.*:
     default: op
     children:
-      celestyteams.teamadmin:
+      ultimateteams.teamadmin:
         children:
-          celestyteams.chat.spy:
+          ultimateteams.chat.spy:
             default: op
-          celestyteams.bypass:
+          ultimateteams.bypass:
             default: op
-          celestyteams.maxteamsize.*:
+          ultimateteams.maxteamsize.*:
             default: op

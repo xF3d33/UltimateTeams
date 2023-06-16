@@ -1,0 +1,86 @@
+package dev.xf3d3.ultimateteams.commands;
+
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.*;
+import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.utils.Utils;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.logging.Logger;
+
+@CommandAlias("teamAdmin")
+public class TeamAdmin extends BaseCommand {
+
+    private final Logger logger;
+    private final FileConfiguration messagesConfig;
+
+    private static final String PLAYER_TO_KICK = "%KICKEDPLAYER%";
+
+    private final UltimateTeams plugin;
+
+    public TeamAdmin(@NotNull UltimateTeams plugin) {
+        this.plugin = plugin;
+        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
+        this.logger = plugin.getLogger();
+    }
+
+
+    @Default
+    @Subcommand("about")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.admin.about")
+    public void aboutSubcommand(CommandSender sender) {
+        sender.sendMessage(Utils.Color("&3~~~~~~~~~~ &6&nUltimateTeams&r &3~~~~~~~~~~"));
+        sender.sendMessage(Utils.Color("&3Version: &6" + UltimateTeams.getPlugin().getDescription().getVersion()));
+        sender.sendMessage(Utils.Color("&3Authors: &6" + UltimateTeams.getPlugin().getDescription().getAuthors()));
+        sender.sendMessage(Utils.Color("&3Description: &6" + UltimateTeams.getPlugin().getDescription().getDescription()));
+        sender.sendMessage(Utils.Color("&3Website: "));
+        sender.sendMessage(Utils.Color("&6" + UltimateTeams.getPlugin().getDescription().getWebsite()));
+        sender.sendMessage(Utils.Color("&3Discord:"));
+        sender.sendMessage(Utils.Color("&6https://discord.gg/crapticraft"));
+        sender.sendMessage(Utils.Color("&3~~~~~~~~~~ &6&nUltimateTeams&r &3~~~~~~~~~~"));
+    }
+
+    @Subcommand("reload")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.admin.reload")
+    public void reloadSubcommand(CommandSender sender) {
+        sender.sendMessage(Utils.Color(messagesConfig.getString("plugin-reload-begin")));
+
+        plugin.runSync(() -> {
+            plugin.reloadConfig();
+            plugin.msgFileManager.reloadMessagesConfig();
+            plugin.teamGUIFileManager.reloadClanGUIConfig();
+
+            TeamCommand.updateBannedTagsList();
+
+            sender.sendMessage(Utils.Color(messagesConfig.getString("plugin-reload-successful")));
+        });
+    }
+
+    @Subcommand("disband")
+    @CommandCompletion("@teams")
+    @CommandPermission("ultimateteams.admin.disband")
+    @Syntax("/teamadmin disband <teamName>")
+    public void disbandSubcommand(CommandSender sender, String[] args) {
+        if (args[0].length() > 1) {
+            final Team team = plugin.getTeamStorageUtil().findTeamByName(args[0]);
+
+            if (team != null){
+                if (plugin.getTeamStorageUtil().deleteTeam(team.getTeamOwner())) {
+                    sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
+                } else {
+                    sender.sendMessage(Utils.Color(messagesConfig.getString("team-admin-disband-failure")));
+                }
+            } else {
+                sender.sendMessage(Utils.Color(messagesConfig.getString("could-not-find-specified-player").replace(PLAYER_TO_KICK, args[1])));
+            }
+        } else {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("incorrect-disband-command-usage")));
+        }
+    }
+
+}
