@@ -116,4 +116,6 @@ To be able to use these The latest release of [PlaceholderAPI](https://www.spigo
 
 ##Please report any issues in GitHub.
 
+This plugin is based on ClansLite by Loving11ish
+
 ##Thank you for using my plugin!
