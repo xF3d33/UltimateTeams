@@ -16,30 +16,35 @@ import java.util.logging.Level;
 
 
 public abstract class Database {
-    private boolean loaded;
     protected final UltimateTeams plugin;
+    private final String schemaFile;
+    private boolean loaded;
 
-    protected Database(@NotNull UltimateTeams plugin) {
+    protected Database(@NotNull UltimateTeams plugin, @NotNull String schemaFile) {
         this.plugin = plugin;
+        this.schemaFile = "database/" + schemaFile;
     }
 
     @NotNull
-    protected String[] getSchema() {
-        try (InputStream schemaStream = Objects.requireNonNull(plugin.getResource("mysql_schema.sql"))) {
+    protected final String[] getSchema() {
+        try (InputStream schemaStream = Objects.requireNonNull(plugin.getResource(schemaFile))) {
             final String schema = new String(schemaStream.readAllBytes(), StandardCharsets.UTF_8);
             return format(schema).split(";");
+
         } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to load database schema", e);
+            plugin.log(Level.SEVERE, "Failed to load database schema", e);
         }
+
         return new String[0];
     }
+
 
     @NotNull
     protected final String format(@NotNull String statement) {
 
         return statement
-                .replaceAll("%team_table%", Table.TEAM_DATA.toString())
-                .replaceAll("%user_table%", Table.USER_DATA.toString());
+                .replaceAll("%team_table%", Table.TEAM_DATA.getDefaultName())
+                .replaceAll("%user_table%", Table.USER_DATA.getDefaultName());
     }
 
     public abstract void initialize();

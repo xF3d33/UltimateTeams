@@ -10,6 +10,7 @@ softdepend:
   - floodgate
 libraries:
   - 'com.zaxxer:HikariCP:5.0.1'
+  - 'org.xerial:sqlite-jdbc:3.41.0.0'
 commands:
   teamadmin:
     description: Admin commands for teams.

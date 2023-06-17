@@ -15,11 +15,11 @@ use-global-GUI-system: true
 
 database:
   # Type: MySQL or SQLite
-  type: "MySQL"
+  type: "SQLite"
   mysql:
     host: 172.18.0.1
     port: 3306
-    database: celesty_teams
+    database: ultimate_teams
     user: root
     password: password
     parameters: ?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8

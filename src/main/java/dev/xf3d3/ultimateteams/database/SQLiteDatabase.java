@@ -35,7 +35,7 @@ public class SQLiteDatabase extends Database {
     private Connection connection;
 
     public SQLiteDatabase(@NotNull UltimateTeams plugin) {
-        super(plugin);
+        super(plugin, "sqlite_schema.sql");
         this.databaseFile = new File(plugin.getDataFolder(), DATABASE_FILE_NAME);
     }
 
@@ -98,26 +98,16 @@ public class SQLiteDatabase extends Database {
         this.setConnection();
 
         // Create tables
-        try (Connection connection = getConnection()) {
-            try (Statement statement = connection.createStatement()) {
-                for (String tableCreationStatement : getSchema()) {
-                    statement.execute(tableCreationStatement);
-                }
-
-                setLoaded(true);
-            } catch (SQLException e) {
-                setLoaded(false);
-
-
-                throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
-                        "and that your connecting user account has privileges to create tables.", e);
+        try (Statement statement = getConnection().createStatement()) {
+            for (String tableCreationStatement : getSchema()) {
+                statement.execute(tableCreationStatement);
             }
 
+            setLoaded(true);
         } catch (SQLException e) {
             setLoaded(false);
 
-            throw new IllegalStateException("Failed to establish a connection to the MySQL database. " +
-                    "Please check the supplied database credentials in the config file", e);
+            throw new IllegalStateException("Failed to create SQLite database tables.", e);
         }
 
         plugin.getLogger().info("Database tables created");

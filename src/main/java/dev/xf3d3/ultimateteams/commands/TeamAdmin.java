@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 @CommandAlias("teamAdmin")
 public class TeamAdmin extends BaseCommand {
 
-    private final Logger logger;
     private final FileConfiguration messagesConfig;
 
     private static final String PLAYER_TO_KICK = "%KICKEDPLAYER%";
@@ -24,7 +23,6 @@ public class TeamAdmin extends BaseCommand {
     public TeamAdmin(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.logger = plugin.getLogger();
     }
 
 
@@ -39,8 +37,6 @@ public class TeamAdmin extends BaseCommand {
         sender.sendMessage(Utils.Color("&3Description: &6" + UltimateTeams.getPlugin().getDescription().getDescription()));
         sender.sendMessage(Utils.Color("&3Website: "));
         sender.sendMessage(Utils.Color("&6" + UltimateTeams.getPlugin().getDescription().getWebsite()));
-        sender.sendMessage(Utils.Color("&3Discord:"));
-        sender.sendMessage(Utils.Color("&6https://discord.gg/crapticraft"));
         sender.sendMessage(Utils.Color("&3~~~~~~~~~~ &6&nUltimateTeams&r &3~~~~~~~~~~"));
     }
 

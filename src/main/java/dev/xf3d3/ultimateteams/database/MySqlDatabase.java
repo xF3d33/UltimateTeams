@@ -18,7 +18,7 @@ public class MySqlDatabase extends Database {
     private HikariDataSource dataSource;
 
     public MySqlDatabase(@NotNull UltimateTeams plugin) {
-        super(plugin);
+        super(plugin, "mysql_schema.sql");
     }
 
     /**

@@ -166,7 +166,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     public void onDisable() {
         // Plugin shutdown logic
         log(Level.INFO, Utils.Color("-------------------------------------------"));
-        log(Level.INFO, Utils.Color("&6UltimateTeams: &3Plugin by: &b&lxF3d3"));
+        Bukkit.getConsoleSender().sendMessage(Utils.Color("&6UltimateTeams: &3Plugin by: &b&lxF3d3"));
+        // todo: method for this
 
         // Cancel plugin tasks
         getScheduler().cancelGlobalTasks();
