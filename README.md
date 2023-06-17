@@ -111,7 +111,6 @@ The four available placeholders are:
 * `%ultimateteams_teamMembersSize%`
 * `%ultimateteams_teamAllySize%`
 * `%ultimateteams_teamEnemySize%`
-* `%ultimateteams_playerPointBalance%`
 
 To be able to use these The latest release of [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) MUST be installed!  Without it, you can't use these placeholders.
 
