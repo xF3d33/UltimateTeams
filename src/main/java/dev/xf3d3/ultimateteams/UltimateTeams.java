@@ -79,6 +79,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         getConfig().options().copyDefaults();
         saveDefaultConfig();
 
+        // Initialize the database
         this.database = switch (getConfig().getString("database.type")) {
             case "MySQL" -> new MySqlDatabase(this);
             default -> new SQLiteDatabase(this);
@@ -91,10 +92,12 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             return;
         }
 
+        // Load the teams
         runAsync(() -> {
             teamStorageUtil.loadTeams();
         });
 
+        // Register command completions
         this.manager.getCommandCompletions().registerAsyncCompletion("teams", c -> teamStorageUtil.getTeamsListNames());
         this.manager.getCommandCompletions().registerAsyncCompletion("warps", c -> {
             Team team;
@@ -104,8 +107,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
                 team = teamStorageUtil.findTeamByPlayer(c.getPlayer());
             }
 
-            Collection<TeamWarp> warps = team.getTeamWarps();
-            Collection<String> names = new ArrayList<>();
+            final Collection<TeamWarp> warps = team.getTeamWarps();
+            final Collection<String> names = new ArrayList<>();
 
             warps.forEach(warp -> names.add(warp.getName()));
 
@@ -207,6 +210,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
                 sendConsole("&6UltimateTeams-Debug: &dorg.geysermc.floodgate.api.FloodgateApi");
             }
             return true;
+            
         } catch (ClassNotFoundException e) {
             if (getConfig().getBoolean("general.developer-debug-mode.enabled")) {
                 sendConsole("&6UltimateTeams-Debug: &aCould not find FloodgateApi class at:");
@@ -219,13 +223,15 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     private boolean isPlaceholderAPIEnabled() {
         try {
             Class.forName("me.clip.placeholderapi.PlaceholderAPIPlugin");
+
             if (getConfig().getBoolean("general.developer-debug-mode.enabled")) {
                 sendConsole("&6UltimateTeams-Debug: &aFound PlaceholderAPI main class at:");
                 sendConsole("&6UltimateTeams-Debug: &dme.clip.placeholderapi.PlaceholderAPIPlugin");
             }
             return true;
-        } catch (ClassNotFoundException e){
-            if (getConfig().getBoolean("general.developer-debug-mode.enabled"))     {
+
+        } catch (ClassNotFoundException e) {
+            if (getConfig().getBoolean("general.developer-debug-mode.enabled")) {
                 sendConsole("&6UltimateTeams-Debug: &aCould not find PlaceholderAPI main class at:");
                 sendConsole("&6UltimateTeams-Debug: &dme.clip.placeholderapi.PlaceholderAPIPlugin");
             }
