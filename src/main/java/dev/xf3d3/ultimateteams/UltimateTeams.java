@@ -18,6 +18,7 @@ import dev.xf3d3.ultimateteams.listeners.PlayerConnectEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDamageEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDisconnectEvent;
 import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.models.TeamWarp;
 import dev.xf3d3.ultimateteams.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -30,6 +31,8 @@ import space.arim.morepaperlib.MorePaperLib;
 import space.arim.morepaperlib.scheduling.GracefulScheduling;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -93,6 +96,21 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         });
 
         this.manager.getCommandCompletions().registerAsyncCompletion("teams", c -> teamStorageUtil.getTeamsListNames());
+        this.manager.getCommandCompletions().registerAsyncCompletion("warps", c -> {
+            Team team;
+            if (teamStorageUtil.findTeamByOwner(c.getPlayer()) != null) {
+                team = teamStorageUtil.findTeamByOwner(c.getPlayer());
+            } else {
+                team = teamStorageUtil.findTeamByPlayer(c.getPlayer());
+            }
+
+            Collection<TeamWarp> warps = team.getTeamWarps();
+            Collection<String> names = new ArrayList<>();
+
+            warps.forEach(warp -> names.add(warp.getName()));
+
+            return names;
+        });
         this.manager.getCommandCompletions().registerAsyncCompletion("teamPlayers", c -> {
             Team team;
             if (teamStorageUtil.findTeamByOwner(c.getPlayer()) != null) {
