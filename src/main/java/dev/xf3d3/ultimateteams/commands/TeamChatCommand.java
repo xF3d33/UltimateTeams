@@ -20,7 +20,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
-@CommandAlias("tc|teamchat")
+@CommandAlias("tc|teamchat|tchat")
 public class TeamChatCommand extends BaseCommand {
 
     private final FileConfiguration teamsConfig;

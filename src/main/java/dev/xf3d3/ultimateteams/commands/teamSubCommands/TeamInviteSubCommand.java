@@ -38,8 +38,8 @@ public class TeamInviteSubCommand {
                     sender.sendMessage(Utils.Color(messagesConfig.getString("team-invite-self-error")));
                 } else {
                     if (plugin.getTeamStorageUtil().findTeamByPlayer(invitedPlayer) != null) {
-                        String playerAlreadyInClan = Utils.Color(messagesConfig.getString("team-invite-invited-already-in-team")).replace(INVITED_PLAYER, invitedPlayer.getName());
-                        sender.sendMessage(playerAlreadyInClan);
+                        String playerAlreadyInTeam = Utils.Color(messagesConfig.getString("team-invite-invited-already-in-team")).replace(INVITED_PLAYER, invitedPlayer.getName());
+                        sender.sendMessage(playerAlreadyInTeam);
                     } else {
                         Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
                         if (!(player.hasPermission("ultimateteams.maxteamsize.*") || player.hasPermission("ultimateteams.*") || player.isOp())) {

@@ -43,7 +43,7 @@ public class TeamJoinSubCommand {
         Team team = plugin.getTeamStorageUtil().findTeamByOwner(inviterPlayer);
 
         if (team != null) {
-            if (plugin.getTeamStorageUtil().addClanMember(team, player)) {
+            if (plugin.getTeamStorageUtil().addTeamMember(team, player)) {
                 plugin.getTeamInviteUtil().removeInvite(inviterUUIDString);
 
                 String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace(TEAM_PLACEHOLDER, team.getTeamFinalName());

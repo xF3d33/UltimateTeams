@@ -54,15 +54,15 @@ public class TeamKickSubCommand {
                             playerToKick.sendMessage(kickMessage);
                         }
                     } else {
-                        String differentClanMessage = Utils.Color(messagesConfig.getString("targeted-player-is-not-in-your-team")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
-                        player.sendMessage(differentClanMessage);
+                        String differentTeamMessage = Utils.Color(messagesConfig.getString("targeted-player-is-not-in-your-team")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
+                        player.sendMessage(differentTeamMessage);
                     }
                 } else {
                     player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-kick-yourself")));
                 }
             } else if (offlinePlayerToKick != null){
                 if (!player.getName().equalsIgnoreCase(offlinePlayer.getName())){
-                    Team offlinePlayerTeam = plugin.getTeamStorageUtil().findClanByOfflinePlayer(offlinePlayerToKick);
+                    Team offlinePlayerTeam = plugin.getTeamStorageUtil().findTeamByOfflinePlayer(offlinePlayerToKick);
                     if (targetTeam.equals(offlinePlayerTeam)){
 
                         targetTeam.removeTeamMember(offlinePlayerToKick.getUniqueId().toString());
@@ -71,8 +71,8 @@ public class TeamKickSubCommand {
                         String playerKickedMessage = Utils.Color(messagesConfig.getString("team-member-kick-successful")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
                         player.sendMessage(playerKickedMessage);
                     }else {
-                        String differentClanMessage = Utils.Color(messagesConfig.getString("targeted-player-is-not-in-your-team")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
-                        player.sendMessage(differentClanMessage);
+                        String differentTeamMessage = Utils.Color(messagesConfig.getString("targeted-player-is-not-in-your-team")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
+                        player.sendMessage(differentTeamMessage);
                     }
                 }else {
                     player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-kick-yourself")));

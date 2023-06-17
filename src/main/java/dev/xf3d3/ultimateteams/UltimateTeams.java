@@ -122,29 +122,29 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI") || isPlaceholderAPIEnabled()) {
             new PapiExpansion(this).register();
 
-            log(Level.INFO, Utils.Color("-------------------------------------------"));
-            log(Level.INFO, Utils.Color("&6UltimateTeams: &3PlaceholderAPI found!"));
-            log(Level.INFO, Utils.Color("&6UltimateTeams: &3External placeholders enabled!"));
-            log(Level.INFO, Utils.Color("-------------------------------------------"));
+            sendConsole("-------------------------------------------");
+            sendConsole("&6UltimateTeams: &3PlaceholderAPI found!");
+            sendConsole("&6UltimateTeams: &3External placeholders enabled!");
+            sendConsole("-------------------------------------------");
         } else {
-            log(Level.WARNING, Utils.Color("-------------------------------------------"));
-            log(Level.WARNING, Utils.Color("&6UltimateTeams: &cPlaceholderAPI not found!"));
-            log(Level.WARNING, Utils.Color("&6UltimateTeams: &cExternal placeholders disabled!"));
-            log(Level.WARNING, Utils.Color("-------------------------------------------"));
+            sendConsole("-------------------------------------------");
+            sendConsole("&6UltimateTeams: &cPlaceholderAPI not found!");
+            sendConsole("&6UltimateTeams: &cExternal placeholders disabled!");
+            sendConsole("-------------------------------------------");
         }
 
         // Register FloodgateApi hooks
         if (getServer().getPluginManager().isPluginEnabled("floodgate") || isFloodgateEnabled()) {
             floodgateApi = FloodgateApi.getInstance();
-            log(Level.INFO, Utils.Color("-------------------------------------------"));
-            log(Level.INFO, Utils.Color("&6UltimateTeams: &3FloodgateApi found!"));
-            log(Level.INFO, Utils.Color("&6UltimateTeams: &3Full Bedrock support enabled!"));
-            log(Level.INFO, Utils.Color("-------------------------------------------"));
+            sendConsole("-------------------------------------------");
+            sendConsole("&6UltimateTeams: &3FloodgateApi found!");
+            sendConsole("&6UltimateTeams: &3Full Bedrock support enabled!");
+            sendConsole("-------------------------------------------");
         } else {
-            log(Level.INFO, Utils.Color("-------------------------------------------"));
-            log(Level.INFO, Utils.Color("&6UltimateTeams: &3FloodgateApi not found!"));
-            log(Level.INFO, Utils.Color("&6UltimateTeams: &3Bedrock support may not function!"));
-            log(Level.INFO, Utils.Color("-------------------------------------------"));
+            sendConsole("-------------------------------------------");
+            sendConsole("&6UltimateTeams: &3FloodgateApi not found!");
+            sendConsole("&6UltimateTeams: &3Bedrock support may not function!");
+            sendConsole("-------------------------------------------");
         }
 
         // Start auto invite clear task
@@ -153,7 +153,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
                 try {
                     teamInviteUtil.emptyInviteList();
                     if (getConfig().getBoolean("general.show-auto-invite-wipe-message.enabled")){
-                        getLogger().info(Utils.Color(msgFileManager.getMessagesConfig().getString("auto-invite-wipe-complete")));
+                        sendConsole(msgFileManager.getMessagesConfig().getString("auto-invite-wipe-complete"));
                     }
                 } catch (UnsupportedOperationException e) {
                     getLogger().info(Utils.Color(msgFileManager.getMessagesConfig().getString("invite-wipe-failed")));
@@ -165,9 +165,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        log(Level.INFO, Utils.Color("-------------------------------------------"));
-        Bukkit.getConsoleSender().sendMessage(Utils.Color("&6UltimateTeams: &3Plugin by: &b&lxF3d3"));
-        // todo: method for this
+        sendConsole("-------------------------------------------");
+        sendConsole("&6UltimateTeams: &3Plugin by: &b&lxF3d3");
 
         // Cancel plugin tasks
         getScheduler().cancelGlobalTasks();
@@ -176,24 +175,24 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         database.close();
 
         // Final plugin shutdown message
-        log(Level.INFO, Utils.Color("&6UltimateTeams: &3Plugin Version: &d&l" + pluginVersion));
-        log(Level.INFO, Utils.Color("&6UltimateTeams: &3Has been shutdown successfully"));
-        log(Level.INFO, Utils.Color("&6UltimateTeams: &3Goodbye!"));
-        log(Level.INFO, Utils.Color("-------------------------------------------"));
+        sendConsole("&6UltimateTeams: &3Plugin Version: &d&l" + pluginVersion);
+        sendConsole("&6UltimateTeams: &3Has been shutdown successfully");
+        sendConsole("&6UltimateTeams: &3Goodbye!");
+        sendConsole("-------------------------------------------");
     }
 
     private boolean isFloodgateEnabled() {
         try {
             Class.forName("org.geysermc.floodgate.api.FloodgateApi");
             if (getConfig().getBoolean("general.developer-debug-mode.enabled")) {
-                log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFound FloodgateApi class at:"));
-                log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &dorg.geysermc.floodgate.api.FloodgateApi"));
+                sendConsole("&6UltimateTeams-Debug: &aFound FloodgateApi class at:");
+                sendConsole("&6UltimateTeams-Debug: &dorg.geysermc.floodgate.api.FloodgateApi");
             }
             return true;
         } catch (ClassNotFoundException e) {
             if (getConfig().getBoolean("general.developer-debug-mode.enabled")) {
-                log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aCould not find FloodgateApi class at:"));
-                log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &dorg.geysermc.floodgate.api.FloodgateApi"));
+                sendConsole("&6UltimateTeams-Debug: &aCould not find FloodgateApi class at:");
+                sendConsole("&6UltimateTeams-Debug: &dorg.geysermc.floodgate.api.FloodgateApi");
             }
             return false;
         }
@@ -203,14 +202,14 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         try {
             Class.forName("me.clip.placeholderapi.PlaceholderAPIPlugin");
             if (getConfig().getBoolean("general.developer-debug-mode.enabled")) {
-                log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFound PlaceholderAPI main class at:"));
-                log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &dme.clip.placeholderapi.PlaceholderAPIPlugin"));
+                sendConsole("&6UltimateTeams-Debug: &aFound PlaceholderAPI main class at:");
+                sendConsole("&6UltimateTeams-Debug: &dme.clip.placeholderapi.PlaceholderAPIPlugin");
             }
             return true;
         } catch (ClassNotFoundException e){
             if (getConfig().getBoolean("general.developer-debug-mode.enabled"))     {
-                log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aCould not find PlaceholderAPI main class at:"));
-                log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &dme.clip.placeholderapi.PlaceholderAPIPlugin"));
+                sendConsole("&6UltimateTeams-Debug: &aCould not find PlaceholderAPI main class at:");
+                sendConsole("&6UltimateTeams-Debug: &dme.clip.placeholderapi.PlaceholderAPIPlugin");
             }
             return false;
         }
@@ -222,6 +221,10 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             return;
         }
         getLogger().log(level, message);
+    }
+
+    public void sendConsole(String text) {
+        Bukkit.getConsoleSender().sendMessage(Utils.Color(text));
     }
 
     public static UltimateTeams getPlugin() {

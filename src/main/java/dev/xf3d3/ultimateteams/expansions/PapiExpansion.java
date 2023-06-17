@@ -40,7 +40,7 @@ public class PapiExpansion extends PlaceholderExpansion {
     public String onRequest(OfflinePlayer player, String params) {
         FileConfiguration configFile = plugin.getConfig();
         Team teamOwner = plugin.getTeamStorageUtil().findTeamByOfflineOwner(player);
-        Team teamMember = plugin.getTeamStorageUtil().findClanByOfflinePlayer(player);
+        Team teamMember = plugin.getTeamStorageUtil().findTeamByOfflinePlayer(player);
 
         if (params.equalsIgnoreCase("teamName")){
             if (teamOwner != null) {

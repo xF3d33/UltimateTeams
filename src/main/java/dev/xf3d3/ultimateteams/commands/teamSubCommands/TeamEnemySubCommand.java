@@ -17,9 +17,9 @@ import java.util.UUID;
 
 public class TeamEnemySubCommand {
 
-    private static final String ENEMY_CLAN = "%ENEMYTEAM%";
+    private static final String ENEMY_Team = "%ENEMYTEAM%";
     private static final String ENEMY_OWNER = "%ENEMYOWNER%";
-    private static final String CLAN_OWNER = "%TEAMOWNER%";
+    private static final String Team_OWNER = "%TEAMOWNER%";
 
     private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
@@ -39,16 +39,16 @@ public class TeamEnemySubCommand {
 
         final TeamStorageUtil storageUtil = plugin.getTeamStorageUtil();
 
-        if (!plugin.getTeamStorageUtil().isClanOwner(player)) {
+        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
             return;
         }
 
         if (storageUtil.findTeamByName(teamName) != null) {
             Team team = storageUtil.findTeamByName(teamName);
-            Player enemyClanOwner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
+            Player enemyTeamOwner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
 
-            if (enemyClanOwner == null) {
+            if (enemyTeamOwner == null) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("ally-team-add-owner-offline").replaceAll("%ALLYOWNER%", player.getName())));
                 return;
             }
@@ -72,39 +72,39 @@ public class TeamEnemySubCommand {
                     return;
                 }
 
-                storageUtil.addClanEnemy(player, enemyClanOwner);
-                fireClanEnemyAddEvent(player, team, enemyClanOwner, team);
+                storageUtil.addTeamEnemy(player, enemyTeamOwner);
+                fireTeamEnemyAddEvent(player, team, enemyTeamOwner, team);
 
                 // send message to player
-                player.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_CLAN, team.getTeamFinalName())));
+                player.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getTeamFinalName())));
 
                 // send message to player team
-                ArrayList<String> playerClanMembers = storageUtil.findTeamByOwner(player).getTeamMembers();
-                for (String playerClanMember : playerClanMembers) {
-                    if (playerClanMember != null) {
-                        UUID memberUUID = UUID.fromString(playerClanMember);
-                        Player playerClanPlayer = Bukkit.getPlayer(memberUUID);
-                        if (playerClanPlayer != null) {
-                            playerClanPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_CLAN, team.getTeamFinalName())));
+                ArrayList<String> playerTeamMembers = storageUtil.findTeamByOwner(player).getTeamMembers();
+                for (String playerTeamMember : playerTeamMembers) {
+                    if (playerTeamMember != null) {
+                        UUID memberUUID = UUID.fromString(playerTeamMember);
+                        Player playerTeamPlayer = Bukkit.getPlayer(memberUUID);
+                        if (playerTeamPlayer != null) {
+                            playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getTeamFinalName())));
                         }
                     }
                 }
 
                 // send message to enemy team
-                ArrayList<String> enemyClanMembers = storageUtil.findTeamByOwner(enemyClanOwner).getTeamMembers();
-                for (String playerClanMember : enemyClanMembers) {
-                    if (playerClanMember != null) {
-                        UUID memberUUID = UUID.fromString(playerClanMember);
-                        Player playerClanPlayer = Bukkit.getPlayer(memberUUID);
-                        if (playerClanPlayer != null) {
-                            playerClanPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_CLAN, team.getTeamFinalName())));
+                ArrayList<String> enemyTeamMembers = storageUtil.findTeamByOwner(enemyTeamOwner).getTeamMembers();
+                for (String playerTeamMember : enemyTeamMembers) {
+                    if (playerTeamMember != null) {
+                        UUID memberUUID = UUID.fromString(playerTeamMember);
+                        Player playerTeamPlayer = Bukkit.getPlayer(memberUUID);
+                        if (playerTeamPlayer != null) {
+                            playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getTeamFinalName())));
                         }
                     }
                 }
 
                 // send message to enemy team owner
-                if (enemyClanOwner.isOnline()) {
-                    enemyClanOwner.sendMessage(Utils.Color(messagesConfig.getString("team-added-to-other-enemies").replace(CLAN_OWNER, player.getName())));
+                if (enemyTeamOwner.isOnline()) {
+                    enemyTeamOwner.sendMessage(Utils.Color(messagesConfig.getString("team-added-to-other-enemies").replace(Team_OWNER, player.getName())));
                 }
 
             } else {
@@ -120,16 +120,16 @@ public class TeamEnemySubCommand {
         }
         final TeamStorageUtil storageUtil = plugin.getTeamStorageUtil();
 
-        if (!plugin.getTeamStorageUtil().isClanOwner(player)) {
+        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
             return;
         }
 
         if (storageUtil.findTeamByName(teamName) != null) {
             Team team = storageUtil.findTeamByName(teamName);
-            Player enemyClanOwner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
+            Player enemyTeamOwner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
 
-            if (enemyClanOwner == null) {
+            if (enemyTeamOwner == null) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("enemy-team-remove-owner-offline").replaceAll("%ENEMYTEAM%", team.getTeamFinalName())));
                 return;
             }
@@ -138,39 +138,39 @@ public class TeamEnemySubCommand {
                 String enemyOwnerUUIDString = team.getTeamOwner();
 
                 if (team.getTeamEnemies().contains(enemyOwnerUUIDString)){
-                    fireClanEnemyRemoveEvent(storageUtil, player, enemyClanOwner, team);
-                    storageUtil.removeClanEnemy(player, enemyClanOwner);
+                    fireTeamEnemyRemoveEvent(storageUtil, player, enemyTeamOwner, team);
+                    storageUtil.removeTeamEnemy(player, enemyTeamOwner);
 
                     // message to team owner
-                    player.sendMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_CLAN, team.getTeamFinalName())));
+                    player.sendMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_Team, team.getTeamFinalName())));
 
                     // message to team players
-                    ArrayList<String> playerClanMembers = storageUtil.findTeamByOwner(player).getTeamMembers();
-                    for (String playerClanMember : playerClanMembers){
-                        if (playerClanMember != null){
-                            UUID memberUUID = UUID.fromString(playerClanMember);
-                            Player playerClanPlayer = Bukkit.getPlayer(memberUUID);
-                            if (playerClanPlayer != null){
-                                playerClanPlayer.sendMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_CLAN, team.getTeamFinalName())));
+                    ArrayList<String> playerTeamMembers = storageUtil.findTeamByOwner(player).getTeamMembers();
+                    for (String playerTeamMember : playerTeamMembers){
+                        if (playerTeamMember != null){
+                            UUID memberUUID = UUID.fromString(playerTeamMember);
+                            Player playerTeamPlayer = Bukkit.getPlayer(memberUUID);
+                            if (playerTeamPlayer != null){
+                                playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_Team, team.getTeamFinalName())));
                             }
                         }
                     }
 
                     // message to enemy team players
                     ArrayList<String> enemyTeamMembers = team.getTeamMembers();
-                    for (String playerClanMember : playerClanMembers){
-                        if (playerClanMember != null){
-                            UUID memberUUID = UUID.fromString(playerClanMember);
-                            Player playerClanPlayer = Bukkit.getPlayer(memberUUID);
-                            if (playerClanPlayer != null){
-                                playerClanPlayer.sendMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_CLAN, team.getTeamFinalName())));
+                    for (String playerTeamMember : playerTeamMembers){
+                        if (playerTeamMember != null){
+                            UUID memberUUID = UUID.fromString(playerTeamMember);
+                            Player playerTeamPlayer = Bukkit.getPlayer(memberUUID);
+                            if (playerTeamPlayer != null){
+                                playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_Team, team.getTeamFinalName())));
                             }
                         }
                     }
 
                     // message to enemy team owner
-                    if (enemyClanOwner.isOnline()){
-                        enemyClanOwner.sendMessage(Utils.Color(messagesConfig.getString("team-removed-from-other-enemies").replace(ENEMY_OWNER, player.getName())));
+                    if (enemyTeamOwner.isOnline()){
+                        enemyTeamOwner.sendMessage(Utils.Color(messagesConfig.getString("team-removed-from-other-enemies").replace(ENEMY_OWNER, player.getName())));
                     }
                 } else {
                     player.sendMessage(Utils.Color(messagesConfig.getString("failed-to-remove-team-from-enemies").replace("%ENEMYTEAM%", teamName)));
@@ -181,12 +181,12 @@ public class TeamEnemySubCommand {
         }
     }
 
-    private void fireClanEnemyRemoveEvent(TeamStorageUtil storageUtil, Player player, Player enemyClanOwner, Team enemyTeam) {
-        TeamEnemyRemoveEvent teamEnemyRemoveEvent = new TeamEnemyRemoveEvent(player, storageUtil.findTeamByPlayer(player), enemyTeam, enemyClanOwner);
+    private void fireTeamEnemyRemoveEvent(TeamStorageUtil storageUtil, Player player, Player enemyTeamOwner, Team enemyTeam) {
+        TeamEnemyRemoveEvent teamEnemyRemoveEvent = new TeamEnemyRemoveEvent(player, storageUtil.findTeamByPlayer(player), enemyTeam, enemyTeamOwner);
         Bukkit.getPluginManager().callEvent(teamEnemyRemoveEvent);
     }
-    private void fireClanEnemyAddEvent(Player player, Team team, Player enemyClanOwner, Team enemyTeam) {
-        TeamEnemyAddEvent teamEnemyAddEvent = new TeamEnemyAddEvent(player, team, enemyTeam, enemyClanOwner);
+    private void fireTeamEnemyAddEvent(Player player, Team team, Player enemyTeamOwner, Team enemyTeam) {
+        TeamEnemyAddEvent teamEnemyAddEvent = new TeamEnemyAddEvent(player, team, enemyTeam, enemyTeamOwner);
         Bukkit.getPluginManager().callEvent(teamEnemyAddEvent);
     }
 }

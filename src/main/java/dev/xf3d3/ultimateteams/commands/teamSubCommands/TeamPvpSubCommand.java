@@ -31,7 +31,7 @@ public class TeamPvpSubCommand {
             return;
         }
 
-        if (plugin.getTeamStorageUtil().isClanOwner(player)) {
+        if (plugin.getTeamStorageUtil().isTeamOwner(player)) {
             if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
                 final Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
 

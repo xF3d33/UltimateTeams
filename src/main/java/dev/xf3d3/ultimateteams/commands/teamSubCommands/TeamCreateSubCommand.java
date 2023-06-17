@@ -40,7 +40,7 @@ public class TeamCreateSubCommand {
         this.MAX_CHAR_LIMIT = teamsConfig.getInt("team-tags.max-character-limit");
     }
 
-    public void createClanSubCommand(CommandSender sender, String name, List<String> bannedTags) {
+    public void createTeamSubCommand(CommandSender sender, String name, List<String> bannedTags) {
 
         if (!(sender instanceof final Player player)) {
             sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
@@ -71,7 +71,7 @@ public class TeamCreateSubCommand {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-name-cannot-contain-colours")));
                 return;
             }
-            if (storageUtil.isClanOwner(player)){
+            if (storageUtil.isTeamOwner(player)){
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-creation-failed").replace(TEAM_PLACEHOLDER, Utils.Color(name))));
                 return;
             }
@@ -94,7 +94,7 @@ public class TeamCreateSubCommand {
 
                     player.sendMessage(teamCreated);
 
-                    fireClanCreateEvent(player, team);
+                    fireTeamCreateEvent(player, team);
 
                 } else {
                     String teamNotCreated = Utils.Color(messagesConfig.getString("team-creation-failed")).replace(TEAM_PLACEHOLDER, Utils.Color(name));
@@ -108,7 +108,7 @@ public class TeamCreateSubCommand {
         }
     }
 
-    private void fireClanCreateEvent(Player player, Team team) {
+    private void fireTeamCreateEvent(Player player, Team team) {
         TeamCreateEvent teamCreateEvent = new TeamCreateEvent(player, team);
         Bukkit.getPluginManager().callEvent(teamCreateEvent);
     }

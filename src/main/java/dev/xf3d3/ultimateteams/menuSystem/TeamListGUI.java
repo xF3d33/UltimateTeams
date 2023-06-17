@@ -31,7 +31,7 @@ public class TeamListGUI {
     public TeamListGUI(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.guiConfig = plugin.teamGUIFileManager.getClanGUIConfig();
+        this.guiConfig = plugin.teamGUIFileManager.getTeamGUIConfig();
     }
 
     public void open(Player player) {

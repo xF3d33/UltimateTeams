@@ -9,21 +9,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class TeamGUIFileManager {
     private final UltimateTeams plugin;
     private FileConfiguration dataConfig = null;
     private File configFile = null;
-    private final Logger logger;
 
     public TeamGUIFileManager(UltimateTeams plugin){
         this.plugin = plugin;
-        this.logger = plugin.getLogger();
-        saveDefaultClanGUIConfig();
+        saveDefaultTeamGUIConfig();
     }
 
-    public void reloadClanGUIConfig() {
+    public void reloadTeamGUIConfig() {
         if (this.configFile == null){
             this.configFile = new File(plugin.getDataFolder(), "teamgui.yml");
         }
@@ -35,27 +34,27 @@ public class TeamGUIFileManager {
         }
     }
 
-    public FileConfiguration getClanGUIConfig() {
+    public FileConfiguration getTeamGUIConfig() {
         if (this.dataConfig == null) {
-            this.reloadClanGUIConfig();
+            this.reloadTeamGUIConfig();
         }
         return this.dataConfig;
     }
 
-    public void saveClanGUIConfig() {
+    public void saveTeamGUIConfig() {
         if (this.dataConfig == null || this.configFile == null){
             return;
         }
         try {
-            this.getClanGUIConfig().save(this.configFile);
-        } catch (IOException e) {
-            logger.severe(Utils.Color("&6UltimateTeams: &4Could not save teamgui.yml"));
-            logger.severe(Utils.Color("&6UltimateTeams: &4Check the below message for the reasons!"));
-            e.printStackTrace();
+            this.getTeamGUIConfig().save(this.configFile);
+        } catch (IOException ex) {
+            plugin.log(Level.SEVERE,"UltimateTeams: Could not save teamgui.yml");
+            plugin.log(Level.SEVERE, "UltimateTeams: Check the below message for the reasons!", ex);
+
         }
     }
 
-    public void saveDefaultClanGUIConfig(){
+    public void saveDefaultTeamGUIConfig(){
         if (this.configFile == null) {
             this.configFile = new File(plugin.getDataFolder(), "teamgui.yml");
         }

@@ -19,7 +19,7 @@ public class TeamDisbandSubCommand {
         this.plugin = plugin;
     }
 
-    public boolean disbandClanSubCommand(CommandSender sender) {
+    public boolean disbandTeamSubCommand(CommandSender sender) {
         if (sender instanceof Player) {
             Player player = ((Player) sender).getPlayer();
             if (plugin.getTeamStorageUtil().deleteTeam(player)) {

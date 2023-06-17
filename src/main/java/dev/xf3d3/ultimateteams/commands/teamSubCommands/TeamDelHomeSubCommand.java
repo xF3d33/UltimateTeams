@@ -22,7 +22,7 @@ public class TeamDelHomeSubCommand {
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
 
-    public void deleteClanHomeSubCommand(CommandSender sender) {
+    public void deleteTeamHomeSubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
             sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
             return;
@@ -33,7 +33,7 @@ public class TeamDelHomeSubCommand {
                 Team teamByOwner = plugin.getTeamStorageUtil().findTeamByOwner(player);
 
                 if (plugin.getTeamStorageUtil().isHomeSet(teamByOwner)) {
-                    fireClanHomeDeleteEvent(player, teamByOwner);
+                    fireTeamHomeDeleteEvent(player, teamByOwner);
 
                     plugin.getTeamStorageUtil().deleteHome(teamByOwner);
                     player.sendMessage(Utils.Color(messagesConfig.getString("successfully-deleted-team-home")));
@@ -48,7 +48,7 @@ public class TeamDelHomeSubCommand {
         }
     }
 
-    private void fireClanHomeDeleteEvent(Player player, Team team) {
+    private void fireTeamHomeDeleteEvent(Player player, Team team) {
         TeamHomeDeleteEvent teamHomeDeleteEvent = new TeamHomeDeleteEvent(player, team);
         Bukkit.getPluginManager().callEvent(teamHomeDeleteEvent);
     }

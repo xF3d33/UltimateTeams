@@ -5,6 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
 public class Team {
@@ -16,18 +19,16 @@ public class Team {
     @Expose
     private String teamPrefix;
     @Expose
-    @Nullable
+    private ConcurrentHashMap<String, TeamWarp> teamWarps;
+    @Expose
     private ArrayList<String> teamMembers;
     @Expose
-    @Nullable
     private ArrayList<String> teamAllies;
     @Expose
-    @Nullable
     private ArrayList<String> teamEnemies;
     @Expose
     private boolean friendlyFire;
     @Expose
-    @Nullable
     private String teamHomeWorld;
     @Expose
     @Nullable
@@ -52,6 +53,7 @@ public class Team {
         teamMembers = new ArrayList<>();
         teamAllies = new ArrayList<>();
         teamEnemies = new ArrayList<>();
+        teamWarps = new ConcurrentHashMap<>();
         friendlyFire = false;
         teamHomeWorld = null;
     }
@@ -76,7 +78,18 @@ public class Team {
         teamPrefix = newTeamPrefix;
     }
 
-    @Nullable
+    public Collection<TeamWarp> getTeamWarps(){
+        return teamWarps.values();
+    }
+
+    public void addTeamWarps(@NotNull String name, @NotNull TeamWarp warp){
+        teamWarps.put(name, warp);
+    }
+
+    public void removeTeamWarps(@NotNull String name){
+        teamWarps.remove(name);
+    }
+
     public ArrayList<String> getTeamMembers(){
         return teamMembers;
     }
@@ -86,12 +99,10 @@ public class Team {
     }
 
     public void addTeamMember(String teamMember){
-        assert teamMembers != null;
         teamMembers.add(teamMember);
     }
 
     public Boolean removeTeamMember(String teamMember){
-        assert teamMembers != null;
         return teamMembers.remove(teamMember);
     }
 
@@ -101,12 +112,10 @@ public class Team {
     }
 
     public void addTeamAlly(String ally){
-        assert teamAllies != null;
         teamAllies.add(ally);
     }
 
     public void removeTeamAlly(String allyUUID){
-        assert teamAllies != null;
         teamAllies.remove(allyUUID);
     }
 
@@ -115,12 +124,10 @@ public class Team {
     }
 
     public void addTeamEnemy(String enemy){
-        assert teamEnemies != null;
         teamEnemies.add(enemy);
     }
 
     public void removeTeamEnemy(String enemyUUID){
-        assert teamEnemies != null;
         teamEnemies.remove(enemyUUID);
     }
 
@@ -151,7 +158,7 @@ public class Team {
     }
 
     public double getTeamHomeX() {
-        return teamHomeX;
+        return Objects.requireNonNullElseGet(teamHomeX, null);
     }
 
     public void setTeamHomeX(double teamHomeX){
@@ -159,7 +166,7 @@ public class Team {
     }
 
     public double getTeamHomeY(){
-        return teamHomeY;
+        return Objects.requireNonNullElseGet(teamHomeY, null);
     }
 
     public void setTeamHomeY(double teamHomeY){
@@ -167,7 +174,7 @@ public class Team {
     }
 
     public double getTeamHomeZ(){
-        return teamHomeZ;
+        return Objects.requireNonNullElseGet(teamHomeZ, null);
     }
 
     public void setTeamHomeZ(double teamHomeZ){
@@ -175,7 +182,7 @@ public class Team {
     }
 
     public float getTeamHomeYaw(){
-        return teamHomeYaw;
+        return Objects.requireNonNullElseGet(teamHomeYaw, null);
     }
 
     public void setTeamHomeYaw(float teamHomeYaw){
@@ -183,7 +190,7 @@ public class Team {
     }
 
     public float getTeamHomePitch(){
-        return teamHomePitch;
+        return Objects.requireNonNullElseGet(teamHomePitch, null);
     }
 
     public void setTeamHomePitch(float teamHomePitch){

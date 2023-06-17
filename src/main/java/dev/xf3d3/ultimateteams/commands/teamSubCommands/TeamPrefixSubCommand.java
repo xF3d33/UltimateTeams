@@ -40,21 +40,21 @@ public class TeamPrefixSubCommand {
         teams.forEach((teams) -> teamsPrefixList.add(teams.getValue().getTeamPrefix()));
 
         if (bannedTags.contains(prefix)) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-is-banned").replace("%CLANPREFIX%", prefix)));
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-is-banned").replace("%TeamPREFIX%", prefix)));
             return;
         }
 
         if (teamsPrefixList.contains(prefix)) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-already-taken").replace("%CLANPREFIX%", prefix)));
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-already-taken").replace("%TeamPREFIX%", prefix)));
             return;
         }
 
-        if (plugin.getTeamStorageUtil().isClanOwner(player)) {
+        if (plugin.getTeamStorageUtil().isTeamOwner(player)) {
             if (prefix.length() >= MIN_CHAR_LIMIT && prefix.length() <= MAX_CHAR_LIMIT) {
                 Team playerTeam = plugin.getTeamStorageUtil().findTeamByOwner(player);
 
                 plugin.getTeamStorageUtil().updatePrefix(player, prefix);
-                String prefixConfirmation = Utils.Color(messagesConfig.getString("team-prefix-change-successful")).replace("%CLANPREFIX%", playerTeam.getTeamPrefix());
+                String prefixConfirmation = Utils.Color(messagesConfig.getString("team-prefix-change-successful")).replace("%TeamPREFIX%", playerTeam.getTeamPrefix());
                 sender.sendMessage(prefixConfirmation);
                 teamsPrefixList.clear();
 

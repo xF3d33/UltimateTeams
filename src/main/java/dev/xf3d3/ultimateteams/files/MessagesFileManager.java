@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MessagesFileManager {
@@ -17,11 +18,8 @@ public class MessagesFileManager {
     private FileConfiguration dataConfig = null;
     private File configFile = null;
 
-    private final Logger logger;
-
     public MessagesFileManager(UltimateTeams plugin) {
         this.plugin = plugin;
-        this.logger = plugin.getLogger();
         saveDefaultMessagesConfig();
     }
 
@@ -50,10 +48,9 @@ public class MessagesFileManager {
         }
         try {
             this.getMessagesConfig().save(this.configFile);
-        } catch (IOException e) {
-            logger.severe(Utils.Color("&6UltimateTeams: &4Could not save messages.yml"));
-            logger.severe(Utils.Color("&6UltimateTeams: &4Check the below message for the reasons!"));
-            e.printStackTrace();
+        } catch (IOException ex) {
+            plugin.log(Level.SEVERE,"UltimateTeams: Could not save messages.yml");
+            plugin.log(Level.SEVERE,"UltimateTeams: Check the below message for the reasons!", ex);
         }
     }
 

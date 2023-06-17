@@ -12,6 +12,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -36,7 +37,7 @@ public class TeamHomeSubCommand {
         this.teamsConfig = plugin.getConfig();
     }
 
-    public void tpClanHomeSubCommand(CommandSender sender) {
+    public void tpTeamHomeSubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
             sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
             return;
@@ -69,10 +70,10 @@ public class TeamHomeSubCommand {
             return;
         }
 
-        fireClanHomePreTPEvent(player, team);
+        fireTeamHomePreTPEvent(player, team);
         if (homePreTeleportEvent.isCancelled()){
             if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
-                plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aClanHomePreTPEvent cancelled by external source"));
+                plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aTeamHomePreTPEvent cancelled by external source"));
             }
             return;
         }
@@ -93,31 +94,36 @@ public class TeamHomeSubCommand {
                                 .replace(TIME_LEFT, Long.toString(timeLeft))));
                     } else {
                         homeCoolDownTimer.put(uuid, System.currentTimeMillis() + (teamsConfig.getLong("team-home.cool-down.time") * 1000));
-                        fireClanHomeTeleportEvent(player, team, location, player.getLocation());
+                        fireTeamHomeTeleportEvent(player, team, location, player.getLocation());
 
-                        PaperLib.teleportAsync(player, location);
+                        // Run on the appropriate thread scheduler for this platform
+                        plugin.getScheduler().entitySpecificScheduler(player).run(
+                                () -> PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN),
+                                () -> plugin.log(Level.WARNING, "User offline when teleporting: " + player.getName())
+                        );
+
                         player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
                     }
                 } else {
-                    fireClanHomeTeleportEvent(player, team, location, player.getLocation());
+                    fireTeamHomeTeleportEvent(player, team, location, player.getLocation());
 
                     PaperLib.teleportAsync(player, location);
                     player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
                 }
         } else {
-            fireClanHomeTeleportEvent(player, team, location, player.getLocation());
+            fireTeamHomeTeleportEvent(player, team, location, player.getLocation());
             PaperLib.teleportAsync(player, location);
             player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
         }
     }
 
-    private void fireClanHomePreTPEvent(Player player, Team team) {
+    private void fireTeamHomePreTPEvent(Player player, Team team) {
         TeamHomePreTeleportEvent teamHomePreTeleportEvent = new TeamHomePreTeleportEvent(player, team);
         Bukkit.getPluginManager().callEvent(teamHomePreTeleportEvent);
         homePreTeleportEvent = teamHomePreTeleportEvent;
     }
 
-    private void fireClanHomeTeleportEvent(Player player, Team team, Location homeLocation, Location tpFromLocation) {
+    private void fireTeamHomeTeleportEvent(Player player, Team team, Location homeLocation, Location tpFromLocation) {
         TeamHomeTeleportEvent teamHomeTeleportEvent = new TeamHomeTeleportEvent(player, team, homeLocation, tpFromLocation);
         Bukkit.getPluginManager().callEvent(teamHomeTeleportEvent);
     }

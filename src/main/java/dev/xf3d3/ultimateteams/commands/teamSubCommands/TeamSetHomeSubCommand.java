@@ -26,18 +26,18 @@ public class TeamSetHomeSubCommand {
         this.plugin = plugin;
     }
 
-    public boolean setClanHomeSubCommand(CommandSender sender) {
+    public boolean setTeamHomeSubCommand(CommandSender sender) {
         if (sender instanceof Player) {
             Player player = ((Player) sender).getPlayer();
             if (teamsConfig.getBoolean("team-home.enabled")){
-                if (plugin.getTeamStorageUtil().isClanOwner(player)){
+                if (plugin.getTeamStorageUtil().isTeamOwner(player)){
                     if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null){
                         Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
                         Location location = player.getLocation();
-                        fireClanHomeSetEvent(player, team, location);
+                        fireTeamHomeSetEvent(player, team, location);
 
                         if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
-                            plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFired ClanHomeSetEvent"));
+                            plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFired TeamHomeSetEvent"));
                         }
 
                         team.setTeamHomeWorld(player.getLocation().getWorld().getName());
@@ -63,7 +63,7 @@ public class TeamSetHomeSubCommand {
         return false;
     }
 
-    private static void fireClanHomeSetEvent(Player player, Team team, Location homeLocation) {
+    private void fireTeamHomeSetEvent(Player player, Team team, Location homeLocation) {
         TeamHomeCreateEvent teamHomeCreateEvent = new TeamHomeCreateEvent(player, team, homeLocation);
         Bukkit.getPluginManager().callEvent(teamHomeCreateEvent);
     }

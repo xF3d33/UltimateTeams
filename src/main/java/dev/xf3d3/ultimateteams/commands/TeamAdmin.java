@@ -9,9 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.logging.Logger;
-
-@CommandAlias("teamAdmin")
+@CommandAlias("teamAdmin|ta")
 public class TeamAdmin extends BaseCommand {
 
     private final FileConfiguration messagesConfig;
@@ -49,7 +47,7 @@ public class TeamAdmin extends BaseCommand {
         plugin.runSync(() -> {
             plugin.reloadConfig();
             plugin.msgFileManager.reloadMessagesConfig();
-            plugin.teamGUIFileManager.reloadClanGUIConfig();
+            plugin.teamGUIFileManager.reloadTeamGUIConfig();
 
             TeamCommand.updateBannedTagsList();
 

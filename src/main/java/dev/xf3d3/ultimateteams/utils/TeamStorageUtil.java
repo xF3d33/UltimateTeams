@@ -78,9 +78,9 @@ public class TeamStorageUtil {
     public boolean deleteTeam(Player player) {
         UUID uuid = player.getUniqueId();
         if (findTeamByOwner(player) != null) {
-            if (isClanOwner(player)) {
+            if (isTeamOwner(player)) {
                 if (teamsList.containsKey(uuid)) {
-                    fireClanDisbandEvent(player);
+                    fireTeamDisbandEvent(player);
 
                     teamsList.remove(uuid);
                     plugin.runAsync(() -> plugin.getDatabase().deleteTeam(uuid));
@@ -101,7 +101,7 @@ public class TeamStorageUtil {
             final Team team = findTeamByName(name);
             final UUID uuid = UUID.fromString(team.getTeamOwner());
 
-            //fireClanDisbandEvent(player);
+            //fireTeamDisbandEvent(player);
             teamsList.remove(uuid);
             plugin.runAsync(() -> plugin.getDatabase().deleteTeam(uuid));
 
@@ -111,7 +111,7 @@ public class TeamStorageUtil {
         return false;
     }
 
-    public boolean isClanOwner(Player player) {
+    public boolean isTeamOwner(Player player) {
         UUID uuid = player.getUniqueId();
         String ownerUUID = uuid.toString();
         Team team = teamsList.get(uuid);
@@ -162,7 +162,7 @@ public class TeamStorageUtil {
         return null;
     }
 
-    public Team findClanByOfflinePlayer(OfflinePlayer player) {
+    public Team findTeamByOfflinePlayer(OfflinePlayer player) {
         for (Team team : teamsList.values()) {
             if (findTeamByOfflineOwner(player) != null) {
                 return team;
@@ -181,7 +181,7 @@ public class TeamStorageUtil {
 
     public void updatePrefix(Player player, String prefix) {
         UUID uuid = player.getUniqueId();
-        if (!isClanOwner(player)) {
+        if (!isTeamOwner(player)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
             return;
         }
@@ -193,7 +193,7 @@ public class TeamStorageUtil {
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
-    public boolean addClanMember(Team team, Player player) {
+    public boolean addTeamMember(Team team, Player player) {
         UUID uuid = player.getUniqueId();
         String memberUUID = uuid.toString();
         team.addTeamMember(memberUUID);
@@ -204,9 +204,9 @@ public class TeamStorageUtil {
         return true;
     }
 
-    public void addClanEnemy(Player teamOwner, Player enemyClanOwner) {
+    public void addTeamEnemy(Player teamOwner, Player enemyTeamOwner) {
         UUID ownerUUID = teamOwner.getUniqueId();
-        UUID enemyUUID = enemyClanOwner.getUniqueId();
+        UUID enemyUUID = enemyTeamOwner.getUniqueId();
         String enemyOwnerUUID = enemyUUID.toString();
         Team team = teamsList.get(ownerUUID);
 
@@ -216,9 +216,9 @@ public class TeamStorageUtil {
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
-    public void removeClanEnemy(Player teamOwner, Player enemyClanOwner) {
+    public void removeTeamEnemy(Player teamOwner, Player enemyTeamOwner) {
         UUID ownerUUID = teamOwner.getUniqueId();
-        UUID enemyUUID = enemyClanOwner.getUniqueId();
+        UUID enemyUUID = enemyTeamOwner.getUniqueId();
         String enemyOwnerUUID = enemyUUID.toString();
         Team team = teamsList.get(ownerUUID);
 
@@ -228,9 +228,9 @@ public class TeamStorageUtil {
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
-    public void addClanAlly(Player teamOwner, Player allyClanOwner) {
+    public void addTeamAlly(Player teamOwner, Player allyTeamOwner) {
         UUID ownerUUID = teamOwner.getUniqueId();
-        UUID uuid = allyClanOwner.getUniqueId();
+        UUID uuid = allyTeamOwner.getUniqueId();
         String allyUUID = uuid.toString();
         Team team = teamsList.get(ownerUUID);
 
@@ -240,9 +240,9 @@ public class TeamStorageUtil {
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
-    public void removeClanAlly(Player teamOwner, Player allyClanOwner) {
+    public void removeTeamAlly(Player teamOwner, Player allyTeamOwner) {
         UUID ownerUUID = teamOwner.getUniqueId();
-        UUID uuid = allyClanOwner.getUniqueId();
+        UUID uuid = allyTeamOwner.getUniqueId();
         String allyUUID = uuid.toString();
         Team team = teamsList.get(ownerUUID);
 
@@ -268,13 +268,13 @@ public class TeamStorageUtil {
         return teamFinalName == null ? null : STRIP_COLOR_PATTERN.matcher(teamFinalName).replaceAll("");
     }
 
-    public Team transferClanOwner(Team originalTeam, Player originalClanOwner, Player newClanOwner) throws IOException {
-        if (findTeamByOwner(originalClanOwner) != null) {
-            if (isClanOwner(originalClanOwner)) {
-                if (!isClanOwner(newClanOwner) && findTeamByPlayer(newClanOwner) == null){
-                    String originalOwnerKey = originalClanOwner.getUniqueId().toString();
-                    UUID originalOwnerUUID = originalClanOwner.getUniqueId();
-                    UUID newOwnerUUID = newClanOwner.getUniqueId();
+    public Team transferTeamOwner(Team originalTeam, Player originalTeamOwner, Player newTeamOwner) throws IOException {
+        if (findTeamByOwner(originalTeamOwner) != null) {
+            if (isTeamOwner(originalTeamOwner)) {
+                if (!isTeamOwner(newTeamOwner) && findTeamByPlayer(newTeamOwner) == null){
+                    String originalOwnerKey = originalTeamOwner.getUniqueId().toString();
+                    UUID originalOwnerUUID = originalTeamOwner.getUniqueId();
+                    UUID newOwnerUUID = newTeamOwner.getUniqueId();
 
                     String teamFinalName = originalTeam.getTeamFinalName();
                     String teamPrefix = originalTeam.getTeamPrefix();
@@ -313,10 +313,10 @@ public class TeamStorageUtil {
                     return newTeam;
 
                 } else {
-                    originalClanOwner.sendMessage(Utils.Color(messagesConfig.getString("team-ownership-transfer-failed-target-in-team")));
+                    originalTeamOwner.sendMessage(Utils.Color(messagesConfig.getString("team-ownership-transfer-failed-target-in-team")));
                 }
             } else {
-                originalClanOwner.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
+                originalTeamOwner.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
             }
         }
         return null;
@@ -343,20 +343,20 @@ public class TeamStorageUtil {
         return teams;
     }
 
-    private void fireClanDisbandEvent(Player player) {
+    private void fireTeamDisbandEvent(Player player) {
         Team teamByOwner = findTeamByOwner(player);
         TeamDisbandEvent teamDisbandEvent = new TeamDisbandEvent(player, teamByOwner.getTeamFinalName());
         Bukkit.getPluginManager().callEvent(teamDisbandEvent);
     }
 
-    private void fireOfflineClanDisbandEvent(OfflinePlayer offlinePlayer){
+    private void fireOfflineTeamDisbandEvent(OfflinePlayer offlinePlayer){
         Team teamByOfflineOwner = findTeamByOfflineOwner(offlinePlayer);
         TeamOfflineDisbandEvent teamOfflineDisbandEvent = new TeamOfflineDisbandEvent(offlinePlayer, teamByOfflineOwner.getTeamFinalName());
         Bukkit.getPluginManager().callEvent(teamOfflineDisbandEvent);
     }
 
-    private void fireClanTransferOwnershipEvent(Player originalClanOwner, Player newClanOwner, Team newTeam){
-        TeamTransferOwnershipEvent teamTransferOwnershipEvent = new TeamTransferOwnershipEvent(originalClanOwner, originalClanOwner, newClanOwner, newTeam);
+    private void fireTeamTransferOwnershipEvent(Player originalTeamOwner, Player newTeamOwner, Team newTeam){
+        TeamTransferOwnershipEvent teamTransferOwnershipEvent = new TeamTransferOwnershipEvent(originalTeamOwner, originalTeamOwner, newTeamOwner, newTeam);
         Bukkit.getPluginManager().callEvent(teamTransferOwnershipEvent);
     }
 }

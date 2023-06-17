@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class TeamLeaveSubCommand {
 
     FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
-    private static final String CLAN_PLACEHOLDER = "%CLAN%";
+    private static final String Team_PLACEHOLDER = "%TEAM%";
 
     private final UltimateTeams plugin;
 
@@ -29,7 +29,7 @@ public class TeamLeaveSubCommand {
             Team targetTeam = plugin.getTeamStorageUtil().findTeamByPlayer(player);
             if (targetTeam != null) {
                 if (targetTeam.removeTeamMember(player.getUniqueId().toString())) {
-                    String leaveMessage = Utils.Color(messagesConfig.getString("team-leave-successful")).replace(CLAN_PLACEHOLDER, targetTeam.getTeamFinalName());
+                    String leaveMessage = Utils.Color(messagesConfig.getString("team-leave-successful")).replace(Team_PLACEHOLDER, targetTeam.getTeamFinalName());
                     player.sendMessage(leaveMessage);
                 } else {
                     player.sendMessage(Utils.Color(messagesConfig.getString("team-leave-failed")));
