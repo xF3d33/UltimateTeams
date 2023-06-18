@@ -27,36 +27,9 @@ public class TeamStorageUtil {
     }
 
     public void loadTeams() {
-        teamsList.clear();
-
-        plugin.getDatabase().getAllTeams().forEach(rawTeam -> {
-
-            final String finalName = rawTeam.getTeamFinalName();
-
-            Team team = new Team(rawTeam.getTeamOwner(), finalName);
-
-            if (finalName.contains("&") || finalName.contains("#")) {
-                team.setTeamFinalName(stripTeamNameColorCodes(team));
-            }
-
-            team.setTeamPrefix(rawTeam.getTeamPrefix());
-            team.setTeamMembers(rawTeam.getTeamMembers());
-            team.setTeamAllies(rawTeam.getTeamAllies());
-            team.setTeamEnemies(rawTeam.getTeamEnemies());
-            team.setFriendlyFireAllowed(rawTeam.isFriendlyFireAllowed());
-
-            if (rawTeam.getTeamHomeWorld() != null){
-                team.setTeamHomeWorld(rawTeam.getTeamHomeWorld());
-                team.setTeamHomeX(rawTeam.getTeamHomeX());
-                team.setTeamHomeY(rawTeam.getTeamHomeY());
-                team.setTeamHomeZ(rawTeam.getTeamHomeZ());
-                team.setTeamHomeYaw(rawTeam.getTeamHomeYaw());
-                team.setTeamHomePitch(rawTeam.getTeamHomePitch());
-            }
-
-            teamsList.put(UUID.fromString(rawTeam.getTeamOwner()), team);
-        });
-
+        plugin.getDatabase().getAllTeams().forEach(team ->
+                teamsList.put(UUID.fromString(team.getTeamOwner()), team)
+        );
     }
 
     public Team createTeam(Player player, String teamName) {
