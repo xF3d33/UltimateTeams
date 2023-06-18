@@ -114,8 +114,8 @@ The four available placeholders are:
 
 To be able to use these The latest release of [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) MUST be installed!  Without it, you can't use these placeholders.
 
-##Please report any issues in GitHub.
+## Please report any issues in GitHub.
 
 This plugin is based on ClansLite by Loving11ish
 
-##Thank you for using my plugin!
+## Thank you for using my plugin!

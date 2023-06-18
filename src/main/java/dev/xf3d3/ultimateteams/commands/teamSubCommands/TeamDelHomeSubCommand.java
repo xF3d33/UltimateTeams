@@ -28,6 +28,11 @@ public class TeamDelHomeSubCommand {
             return;
         }
 
+        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
+            return;
+        }
+
         if (teamsConfig.getBoolean("team-home.enabled")) {
             if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
                 Team teamByOwner = plugin.getTeamStorageUtil().findTeamByOwner(player);

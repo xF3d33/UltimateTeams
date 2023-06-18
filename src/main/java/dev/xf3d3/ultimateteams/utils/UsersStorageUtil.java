@@ -69,20 +69,6 @@ public class UsersStorageUtil {
 
     }
 
-    public TeamPlayer getTeamPlayerByBukkitPlayer(Player player){
-        UUID uuid = player.getUniqueId();
-        if (usermap.containsKey(uuid)){
-            TeamPlayer teamPlayer = usermap.get(uuid);
-            return teamPlayer;
-        }else {
-            logger.warning(Utils.Color(messagesConfig.getString("team-player-not-found-1")
-                    .replace(PLAYER_PLACEHOLDER, player.getName())));
-            logger.warning(Utils.Color(messagesConfig.getString("team-player-not-found-2")
-                    .replace(PLAYER_PLACEHOLDER, player.getName())));
-        }
-        return null;
-    }
-
     public TeamPlayer getTeamPlayerByBukkitOfflinePlayer(OfflinePlayer offlinePlayer){
         UUID uuid = offlinePlayer.getUniqueId();
         if (usermap.containsKey(uuid)){

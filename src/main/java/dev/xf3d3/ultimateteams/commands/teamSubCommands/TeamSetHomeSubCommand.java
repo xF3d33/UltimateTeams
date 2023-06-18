@@ -11,6 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,7 +19,6 @@ public class TeamSetHomeSubCommand {
 
     FileConfiguration teamsConfig = UltimateTeams.getPlugin().getConfig();
     FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
-    Logger logger = UltimateTeams.getPlugin().getLogger();
 
     private final UltimateTeams plugin;
 
@@ -26,41 +26,40 @@ public class TeamSetHomeSubCommand {
         this.plugin = plugin;
     }
 
-    public boolean setTeamHomeSubCommand(CommandSender sender) {
-        if (sender instanceof Player) {
-            Player player = ((Player) sender).getPlayer();
-            if (teamsConfig.getBoolean("team-home.enabled")){
-                if (plugin.getTeamStorageUtil().isTeamOwner(player)){
-                    if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null){
-                        Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
-                        Location location = player.getLocation();
-                        fireTeamHomeSetEvent(player, team, location);
-
-                        if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
-                            plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFired TeamHomeSetEvent"));
-                        }
-
-                        team.setTeamHomeWorld(player.getLocation().getWorld().getName());
-                        team.setTeamHomeX(player.getLocation().getX());
-                        team.setTeamHomeY(player.getLocation().getY());
-                        team.setTeamHomeZ(player.getLocation().getZ());
-                        team.setTeamHomeYaw(player.getLocation().getYaw());
-                        team.setTeamHomePitch(player.getLocation().getPitch());
-
-                        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
-
-                        player.sendMessage(Utils.Color(messagesConfig.getString("successfully-set-team-home")));
-                    }
-                }else {
-                    player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
-                }
-            }else {
-                player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
-            }
-            return true;
-
+    public void setTeamHomeSubCommand(CommandSender sender) {
+        if (!(sender instanceof final Player player)) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            return;
         }
-        return false;
+
+        if (teamsConfig.getBoolean("team-home.enabled")) {
+            if (plugin.getTeamStorageUtil().isTeamOwner(player)) {
+                if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
+                    Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
+                    Location location = player.getLocation();
+                    fireTeamHomeSetEvent(player, team, location);
+
+                    if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")) {
+                        plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFired TeamHomeSetEvent"));
+                    }
+
+                    team.setTeamHomeWorld(Objects.requireNonNull(player.getLocation().getWorld()).getName());
+                    team.setTeamHomeX(player.getLocation().getX());
+                    team.setTeamHomeY(player.getLocation().getY());
+                    team.setTeamHomeZ(player.getLocation().getZ());
+                    team.setTeamHomeYaw(player.getLocation().getYaw());
+                    team.setTeamHomePitch(player.getLocation().getPitch());
+
+                    plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+
+                    player.sendMessage(Utils.Color(messagesConfig.getString("successfully-set-team-home")));
+                }
+            } else {
+                player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
+            }
+        } else {
+            player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+        }
     }
 
     private void fireTeamHomeSetEvent(Player player, Team team, Location homeLocation) {

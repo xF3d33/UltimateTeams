@@ -77,6 +77,18 @@ team-join:
   #Do you want a message to be sent to team players when a player joins a team? [Default value: true]
   announce: true
 
+#Team warp system
+team-warp:
+  #Enable the '/team [setwarp|warp]' system. [Default value: true]
+  enabled: true
+
+  # This is used to determine how long of a delay should happen before the user is teleported when using /team home
+  # - If this is set to 0 there will be no delay when teleporting
+  # - This value is in seconds
+  #
+  # Possible values: [0, Any positive whole number]
+  tp-delay: 3
+
 team-chat:
   #Enable the team chat system. [Default value: true]
   enabled: true
@@ -99,7 +111,7 @@ max-team-allies: 4
 #Set the maximum amount of enemy teams that can a team can have. [Default value: 2]
 max-team-enemies: 2
 
-#Clan protections
+#Team protections
 protections:
   pvp:
     #Globally enable the team friendly fire system. [Default value: true]
@@ -108,7 +120,7 @@ protections:
     enable-bypass-permission: true
 
 
-#Clan home system
+#Team home system
 team-home:
   #Enable the '/team [sethome|home]' system. [Default value: true]
   enabled: true

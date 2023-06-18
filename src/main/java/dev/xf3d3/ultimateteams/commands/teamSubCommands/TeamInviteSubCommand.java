@@ -29,6 +29,11 @@ public class TeamInviteSubCommand {
             return;
         }
 
+        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
+            return;
+        }
+
         Player invitedPlayer = onlinePlayer.getPlayer();
 
             if (plugin.getTeamStorageUtil().findTeamByOwner(player) == null) {

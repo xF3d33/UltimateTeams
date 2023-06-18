@@ -59,7 +59,7 @@ public class SQLiteDatabase extends Database {
      */
     private void setConnection() {
         try {
-            plugin.log(Level.INFO, "[UltimateTeams] Attempting to connect to database");
+            plugin.log(Level.INFO, "Attempting to connect to database");
 
             // Ensure that the database file exists
             if (databaseFile.createNewFile()) {
@@ -77,6 +77,8 @@ public class SQLiteDatabase extends Database {
 
             // Establish the connection
             connection = DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getAbsolutePath(), config.toProperties());
+
+            plugin.log(Level.INFO, "SQLite Database Connected!");
         } catch (IOException e) {
             plugin.log(Level.SEVERE, "An exception occurred creating the database file", e);
 
@@ -86,9 +88,6 @@ public class SQLiteDatabase extends Database {
         } catch (ClassNotFoundException e) {
             plugin.log(Level.SEVERE, "Failed to load the necessary SQLite driver", e);
         }
-
-        plugin.getLogger().info("connected");
-
     }
 
 
@@ -283,6 +282,7 @@ public class SQLiteDatabase extends Database {
                 statement.executeUpdate();
 
                 System.out.println("updated team " + team.getTeamFinalName());
+                System.out.println(plugin.getGson().toJson(team));
             }
         } catch (SQLException | JsonSyntaxException e) {
             plugin.log(Level.SEVERE, "Failed to update team in table", e);

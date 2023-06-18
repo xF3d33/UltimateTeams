@@ -66,6 +66,27 @@ public class TeamCommand extends BaseCommand {
         new TeamCreateSubCommand(plugin).createTeamSubCommand(sender, name, bannedTags);
     }
 
+    @Subcommand("warp")
+    @CommandCompletion("@warps @nothing")
+    @Syntax("/team warp <name>")
+    public void onTeamWarpCommand(@NotNull CommandSender sender, @Values("@warps") String name) {
+        new TeamCreateSubCommand(plugin).createTeamSubCommand(sender, name, bannedTags);
+    }
+
+    @Subcommand("setwarp")
+    @CommandCompletion("<name> @nothing")
+    @Syntax("/team setwarp <name>")
+    public void onTeamSetWarpCommand(@NotNull CommandSender sender, String name) {
+        new TeamSetWarpSubCommand(plugin).setWarpCommand(sender, name);
+    }
+
+    @Subcommand("delwarp")
+    @CommandCompletion("@warps @nothing")
+    @Syntax("/team delwarp <name>")
+    public void onTeamDelWarpCommand(@NotNull CommandSender sender, @Values("@warps") String name) {
+        new TeamDelWarpSubCommand(plugin).delWarpCommand(sender, name);
+    }
+
     @Subcommand("disband")
     @CommandCompletion("@nothing")
     @Syntax("/team disband")

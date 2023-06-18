@@ -82,8 +82,12 @@ public class Team {
         return teamWarps.values();
     }
 
-    public void addTeamWarps(@NotNull String name, @NotNull TeamWarp warp){
-        teamWarps.put(name, warp);
+    public TeamWarp getTeamWarp(@NotNull String name){
+        return teamWarps.get(name);
+    }
+
+    public void addTeamWarp(@NotNull TeamWarp warp){
+        teamWarps.put(warp.getName(), warp);
     }
 
     public void removeTeamWarps(@NotNull String name){
@@ -106,7 +110,6 @@ public class Team {
         return teamMembers.remove(teamMember);
     }
 
-    @Nullable
     public ArrayList<String> getTeamAllies(){
         return teamAllies;
     }
@@ -135,7 +138,6 @@ public class Team {
         teamEnemies = teamEnemiesList;
     }
 
-    @Nullable
     public ArrayList<String> getTeamEnemies(){
         return teamEnemies;
     }

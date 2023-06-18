@@ -19,16 +19,21 @@ public class TeamDisbandSubCommand {
         this.plugin = plugin;
     }
 
-    public boolean disbandTeamSubCommand(CommandSender sender) {
-        if (sender instanceof Player) {
-            Player player = ((Player) sender).getPlayer();
-            if (plugin.getTeamStorageUtil().deleteTeam(player)) {
-                sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
-            } else {
-                sender.sendMessage(Utils.Color(messagesConfig.getString("team-disband-failure")));
-            }
-            return true;
+    public void disbandTeamSubCommand(CommandSender sender) {
+        if (!(sender instanceof final Player player)) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            return;
         }
-        return false;
+
+        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
+            return;
+        }
+
+        if (plugin.getTeamStorageUtil().deleteTeam(player)) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
+        } else {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("team-disband-failure")));
+        }
     }
 }

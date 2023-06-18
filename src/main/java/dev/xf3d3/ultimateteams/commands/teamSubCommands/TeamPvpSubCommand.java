@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class TeamPvpSubCommand {
 
-    private final FileConfiguration teamsConfig ;
+    private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
     private final UltimateTeams plugin;
 

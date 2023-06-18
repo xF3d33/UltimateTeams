@@ -63,6 +63,11 @@ failed-team-owner: "&3You are the owner of a team, use &6/team disband&3."
 team-leave-successful: "&3You have left &6%TEAM%."
 team-leave-failed: "&3Failed to leave team, please try again later."
 
+#Team Warp Messages
+team-warp-successful: "&3Successfully added team warp &6%WARP_NAME%&3!"
+team-warp-name-used: "&3A warp with that name already exists!"
+team-warp-deleted-successful: "&3Successfully deleted team warp &6%WARP_NAME%&3!"
+
 #Team Kick Messages
 team-member-kick-successful: "&3Player &6%KICKEDPLAYER%&3 was kicked from your team."
 team-kicked-player-message: "&3You were kicked from &6%TEAM%&3!"

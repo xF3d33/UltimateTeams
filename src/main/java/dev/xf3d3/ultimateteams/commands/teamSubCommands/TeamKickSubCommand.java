@@ -27,58 +27,40 @@ public class TeamKickSubCommand {
             return;
         }
 
+        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
+            return;
+        }
+
         if (!offlinePlayer.hasPlayedBefore() || offlinePlayer.getPlayer() != null) {
             player.sendMessage(Utils.Color(messagesConfig.getString("could-not-find-specified-player").replace(PLAYER_TO_KICK, offlinePlayer.toString())));
             return;
         }
 
-        final Player playerToKick = offlinePlayer.getPlayer();
         final Team targetTeam = plugin.getTeamStorageUtil().findTeamByOwner(player);
 
         if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
-            OfflinePlayer offlinePlayerToKick = plugin.getUsersStorageUtil().getBukkitOfflinePlayerByName(offlinePlayer.getName());
 
-            if (playerToKick != null) {
-                if (!player.getName().equalsIgnoreCase(playerToKick.getName())){
-                    Team playerTeam = plugin.getTeamStorageUtil().findTeamByPlayer(playerToKick);
+            if (!player.getName().equalsIgnoreCase(offlinePlayer.getName())) {
+                Team playerTeam = plugin.getTeamStorageUtil().findTeamByOwner(player);
 
-                    if (targetTeam.equals(playerTeam)) {
+                if (targetTeam.equals(playerTeam)) {
 
-                        targetTeam.removeTeamMember(playerToKick.getUniqueId().toString());
-                        plugin.runAsync(() -> plugin.getDatabase().updateTeam(targetTeam));
+                    targetTeam.removeTeamMember(offlinePlayer.getUniqueId().toString());
+                    plugin.runAsync(() -> plugin.getDatabase().updateTeam(targetTeam));
 
-                        String playerKickedMessage = Utils.Color(messagesConfig.getString("team-member-kick-successful")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
-                        player.sendMessage(playerKickedMessage);
-                        if (playerToKick.isOnline()) {
-                            String kickMessage = Utils.Color(messagesConfig.getString("team-kicked-player-message")).replace(TEAM_PLACEHOLDER, targetTeam.getTeamFinalName());
-                            playerToKick.sendMessage(kickMessage);
-                        }
-                    } else {
-                        String differentTeamMessage = Utils.Color(messagesConfig.getString("targeted-player-is-not-in-your-team")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
-                        player.sendMessage(differentTeamMessage);
+                    String playerKickedMessage = Utils.Color(messagesConfig.getString("team-member-kick-successful")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
+                    player.sendMessage(playerKickedMessage);
+                    if (offlinePlayer.isOnline()) {
+                        String kickMessage = Utils.Color(messagesConfig.getString("team-kicked-player-message")).replace(TEAM_PLACEHOLDER, targetTeam.getTeamFinalName());
+                        offlinePlayer.getPlayer().sendMessage(kickMessage);
                     }
                 } else {
-                    player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-kick-yourself")));
+                    String differentTeamMessage = Utils.Color(messagesConfig.getString("targeted-player-is-not-in-your-team")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
+                    player.sendMessage(differentTeamMessage);
                 }
-            } else if (offlinePlayerToKick != null){
-                if (!player.getName().equalsIgnoreCase(offlinePlayer.getName())){
-                    Team offlinePlayerTeam = plugin.getTeamStorageUtil().findTeamByOfflinePlayer(offlinePlayerToKick);
-                    if (targetTeam.equals(offlinePlayerTeam)){
-
-                        targetTeam.removeTeamMember(offlinePlayerToKick.getUniqueId().toString());
-                        plugin.runAsync(() -> plugin.getDatabase().updateTeam(targetTeam));
-
-                        String playerKickedMessage = Utils.Color(messagesConfig.getString("team-member-kick-successful")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
-                        player.sendMessage(playerKickedMessage);
-                    }else {
-                        String differentTeamMessage = Utils.Color(messagesConfig.getString("targeted-player-is-not-in-your-team")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
-                        player.sendMessage(differentTeamMessage);
-                    }
-                }else {
-                    player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-kick-yourself")));
-                }
-            }else {
-                player.sendMessage(Utils.Color(messagesConfig.getString("could-not-find-specified-player").replace(PLAYER_TO_KICK, offlinePlayer.getName())));
+            } else {
+                player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-kick-yourself")));
             }
         }else {
             player.sendMessage(Utils.Color(messagesConfig.getString("must-be-owner-to-kick")));

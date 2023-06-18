@@ -39,7 +39,7 @@ public class MySqlDatabase extends Database {
         ConfigurationSection config = plugin.getConfig().getConfigurationSection("database.mysql");
         assert config != null;
 
-        plugin.log(Level.INFO, "[UltimateTeams] Attempting to connect to database");
+        plugin.log(Level.INFO, "Attempting to connect to database");
 
         dataSource = new HikariDataSource();
         dataSource.setJdbcUrl("jdbc:mysql://" +
@@ -77,9 +77,6 @@ public class MySqlDatabase extends Database {
             put("elideSetAutoCommits", "true");
             put("maintainTimeStats", "false");
         }});
-
-        plugin.getLogger().info("connected");
-
     }
 
 
@@ -90,6 +87,8 @@ public class MySqlDatabase extends Database {
 
         // Create tables
         try (Connection connection = getConnection()) {
+            plugin.log(Level.INFO, "MySQL Database Connected!");
+
             try (Statement statement = connection.createStatement()) {
                 for (String tableCreationStatement : getSchema()) {
                     statement.execute(tableCreationStatement);
@@ -283,6 +282,7 @@ public class MySqlDatabase extends Database {
                 statement.executeUpdate();
 
                 System.out.println("updated team " + team.getTeamFinalName());
+                System.out.println(plugin.getGson().toJson(team));
             }
         } catch (SQLException | JsonSyntaxException e) {
             plugin.log(Level.SEVERE, "Failed to update team in table", e);
