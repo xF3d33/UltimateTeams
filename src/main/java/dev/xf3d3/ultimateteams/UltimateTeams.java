@@ -47,6 +47,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
     private FloodgateApi floodgateApi;
     private Database database;
+    private Utils utils;
     private ConcurrentHashMap<Integer, ScheduledTask> tasks;
     private MorePaperLib paperLib;
     private PaperCommandManager manager;
@@ -74,6 +75,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         this.teamStorageUtil = new TeamStorageUtil(this);
         this.usersStorageUtil = new UsersStorageUtil(this);
         this.teamInviteUtil = new TeamInviteUtil(this);
+        this.utils = new Utils(this);
 
         // Load the plugin configs
         getConfig().options().copyDefaults();
@@ -107,6 +109,10 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
                 team = teamStorageUtil.findTeamByPlayer(c.getPlayer());
             }
 
+            if (team == null) {
+                return new ArrayList<>();
+            }
+
             final Collection<TeamWarp> warps = team.getTeamWarps();
             final Collection<String> names = new ArrayList<>();
 
@@ -120,6 +126,10 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
                 team = teamStorageUtil.findTeamByOwner(c.getPlayer());
             } else {
                 team = teamStorageUtil.findTeamByPlayer(c.getPlayer());
+            }
+
+            if (team == null) {
+                return new ArrayList<>();
             }
 
             return team.getTeamMembers();
@@ -287,6 +297,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     @NotNull
     public Database getDatabase() {
         return database;
+    }
+
+    @NotNull
+    public Utils getUtils() {
+        return utils;
     }
 
     @NotNull
