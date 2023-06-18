@@ -18,6 +18,7 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 @CommandAlias("team")
+@CommandPermission("ultimateteams.player")
 public class TeamCommand extends BaseCommand {
 
     private final FileConfiguration teamsConfig;
@@ -48,13 +49,11 @@ public class TeamCommand extends BaseCommand {
                 return;
             }
 
-            if (teamsConfig.getBoolean("team-home.enabled") && teamsConfig.getBoolean("protections.pvp.pvp-command-enabled")) {
-                for (int i = 1; i <= 16; i++) {
-                    String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
-                    assert message != null;
+            for (int i = 1; i <= 16; i++) {
+                String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
+                assert message != null;
 
-                    sender.sendMessage(Utils.Color(message));
-                }
+                sender.sendMessage(Utils.Color(message));
             }
         }
     }
@@ -70,7 +69,7 @@ public class TeamCommand extends BaseCommand {
     @CommandCompletion("@warps @nothing")
     @Syntax("/team warp <name>")
     public void onTeamWarpCommand(@NotNull CommandSender sender, @Values("@warps") String name) {
-        new TeamCreateSubCommand(plugin).createTeamSubCommand(sender, name, bannedTags);
+        new TeamWarpSubCommand(plugin).WarpCommand(sender, name);
     }
 
     @Subcommand("setwarp")

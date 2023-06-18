@@ -31,12 +31,16 @@ public interface TaskRunner {
         return taskId;
     }
 
-    default void runSyncRepeating(@NotNull Runnable runnable, long period) {
-        getScheduler().globalRegionalScheduler().runAtFixedRate(runnable, 0, period);
+    default void runLater(@NotNull Runnable runnable, long delay) {
+        getScheduler().globalRegionalScheduler().runDelayed(runnable, delay * 20);
     }
 
     default void runSync(@NotNull Runnable runnable) {
         getScheduler().globalRegionalScheduler().run(runnable);
+    }
+
+    default void runSyncRepeating(@NotNull Runnable runnable, long period) {
+        getScheduler().globalRegionalScheduler().runAtFixedRate(runnable, 0, period);
     }
 
     @NotNull

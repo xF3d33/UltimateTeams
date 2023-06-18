@@ -1,6 +1,6 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#                                   ----[UltimateTeams]----                                          #
+#                                   ----[UltimateTeams]----                                         #
 #                                     ----[By xF3d3]----                                            #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #                                  ----[Plugin Messages File]----                                   #
@@ -67,6 +67,9 @@ team-leave-failed: "&3Failed to leave team, please try again later."
 team-warp-successful: "&3Successfully added team warp &6%WARP_NAME%&3!"
 team-warp-name-used: "&3A warp with that name already exists!"
 team-warp-deleted-successful: "&3Successfully deleted team warp &6%WARP_NAME%&3!"
+team-warp-not-found: "&3There is no warp with that name!"
+team-warp-cooldown-start: "&3You will be teleported in %SECONDS%s!"
+team-warp-teleported-successful: "&3Successfully teleported to the team warp!"
 
 #Team Kick Messages
 team-member-kick-successful: "&3Player &6%KICKEDPLAYER%&3 was kicked from your team."
@@ -162,6 +165,7 @@ friendly-fire-is-disabled: "&3Your team has friendly fire disabled."
 successfully-set-team-home: "&3You &aSuccessfully &3set the team home to your current location!"
 successfully-deleted-team-home: "&3You &aSuccessfully &3deleted the team home!"
 home-cool-down-timer-wait: "&3Sorry, you can't use that again for another &6%TIMELEFT%&r &3seconds."
+team-home-cooldown-start: "&3You will be teleported in %SECONDS%s!"
 successfully-teleported-to-home: "&3You teleported to your team's home."
 failed-no-home-set: "&3Your team does not have a home set!"
 failed-tp-not-in-team: "&3You need to be in a team first! Use &6/team &3for details how."

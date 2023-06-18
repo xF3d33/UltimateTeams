@@ -90,29 +90,40 @@ public class TeamHomeSubCommand {
                 if (!player.hasPermission("ultimateteams.bypass.homecooldown")) {
                     if (homeCoolDownTimer.get(uuid) > System.currentTimeMillis()) {
                         long timeLeft = (homeCoolDownTimer.get(uuid) - System.currentTimeMillis()) / 1000;
+
                         player.sendMessage(Utils.Color(messagesConfig.getString("home-cool-down-timer-wait")
-                                .replace(TIME_LEFT, Long.toString(timeLeft))));
+                                .replaceAll(TIME_LEFT, Long.toString(timeLeft))));
                     } else {
                         homeCoolDownTimer.put(uuid, System.currentTimeMillis() + (teamsConfig.getLong("team-home.cool-down.time") * 1000));
                         fireTeamHomeTeleportEvent(player, team, location, player.getLocation());
-
-                        // Run on the appropriate thread scheduler for this platform
-                        plugin.getScheduler().entitySpecificScheduler(player).run(
-                                () -> PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN),
-                                () -> plugin.log(Level.WARNING, "User offline when teleporting: " + player.getName())
-                        );
+                        tpHome(player, location);
 
                         player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
                     }
                 } else {
                     fireTeamHomeTeleportEvent(player, team, location, player.getLocation());
+                    tpHome(player, location);
 
-                    PaperLib.teleportAsync(player, location);
                     player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
                 }
         } else {
             fireTeamHomeTeleportEvent(player, team, location, player.getLocation());
-            PaperLib.teleportAsync(player, location);
+            tpHome(player, location);
+
+            player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
+        }
+    }
+
+    private void tpHome(@NotNull Player player, @NotNull Location location) {
+        if (teamsConfig.getLong("team-home.tp-delay") > 0) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-home-cooldown-start").replaceAll("%SECONDS%", teamsConfig.getString("team-home.tp-delay"))));
+
+            plugin.runLater(() -> {
+                plugin.getUtils().teleportPlayer(player, location);
+                player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
+            }, teamsConfig.getLong("team-home.tp-delay"));
+        } else {
+            plugin.getUtils().teleportPlayer(player, location);
             player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
         }
     }

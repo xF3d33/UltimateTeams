@@ -8,38 +8,12 @@ description: A simple and lightweight Teams plugin for Minecraft.
 softdepend:
   - PlaceholderAPI
   - floodgate
+  - HuskHomes
 libraries:
   - 'com.zaxxer:HikariCP:5.0.1'
   - 'org.xerial:sqlite-jdbc:3.41.0.0'
-commands:
-  teamadmin:
-    description: Admin commands for teams.
-    usage: "Usage: /teamadmin [save|reload|about]"
-    permission: ultimateteams.admin
-    aliases:
-      - ca
-      - cla
-  cc:
-    description: Send a message to your team members only.
-    usage: "Usage: /cc <message>"
-    permission: ultimateteams.team
-    aliases:
-      - teamchat
-      - teamc
-      - cchat
-      - chat
-  chatspy:
-    description: Allows admins to see ALL team chat messages.
-    usage: "Usage: /chatspy"
-    permission: ultimateteams.chat.spy
-    aliases:
-      - cs
-      - ccs
-      - teamchatspy
-      - spy
-
 permissions:
-  ultimateteams.team:
+  ultimateteams.player:
     default: true
   ultimateteams.maxteamsize.group1:
     default: true

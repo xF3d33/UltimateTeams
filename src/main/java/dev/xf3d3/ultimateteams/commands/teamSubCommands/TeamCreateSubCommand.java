@@ -19,7 +19,6 @@ public class TeamCreateSubCommand {
 
     private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
-    private final Logger logger;
     private static final String TEAM_PLACEHOLDER = "%TEAM%";
 
     int MIN_CHAR_LIMIT;
@@ -35,7 +34,6 @@ public class TeamCreateSubCommand {
         this.teams = plugin.getTeamStorageUtil().getTeams();
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
         this.teamsConfig = plugin.getConfig();
-        this.logger = plugin.getLogger();
         this.MIN_CHAR_LIMIT = teamsConfig.getInt("team-tags.min-character-limit");
         this.MAX_CHAR_LIMIT = teamsConfig.getInt("team-tags.max-character-limit");
     }
@@ -51,15 +49,19 @@ public class TeamCreateSubCommand {
 
         teams.forEach((teams) -> teamNamesList.add(teams.getValue().getTeamFinalName()));
 
+        System.out.println(player.getName() + " " + name);
+
         if (name.length() >= 1) {
             if (bannedTags.contains(name)) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-name-is-banned").replace(TEAM_PLACEHOLDER, name)));
                 return;
             }
+
             if (teamNamesList.contains(name)) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-name-already-taken").replace(TEAM_PLACEHOLDER, name)));
                 return;
             }
+
             for (String names : teamNamesList){
                 if (StringUtils.containsAnyIgnoreCase(names, name)){
                     player.sendMessage(Utils.Color(messagesConfig.getString("team-name-already-taken").replace(TEAM_PLACEHOLDER, name)));
@@ -67,18 +69,22 @@ public class TeamCreateSubCommand {
                 }
                 return;
             }
-            if (name.contains("&") || name.contains("#")){
+
+            if (name.contains("&") || name.contains("#")) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-name-cannot-contain-colours")));
                 return;
             }
-            if (storageUtil.isTeamOwner(player)){
+
+            if (storageUtil.isTeamOwner(player)) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-creation-failed").replace(TEAM_PLACEHOLDER, Utils.Color(name))));
                 return;
             }
+
             if (storageUtil.findTeamByPlayer(player) != null){
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-creation-failed").replace(TEAM_PLACEHOLDER, Utils.Color(name))));
                 return;
             }
+
             if (name.length() < MIN_CHAR_LIMIT) {
                 int minCharLimit = teamsConfig.getInt("team-tags.min-character-limit");
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-short").replace("%CHARMIN%", Integer.toString(minCharLimit))));

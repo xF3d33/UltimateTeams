@@ -114,6 +114,7 @@ public class SQLiteDatabase extends Database {
 
     public List<Team> getAllTeams() {
         final List<Team> teams = new ArrayList<>();
+
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     SELECT `id`, `data`
@@ -123,6 +124,7 @@ public class SQLiteDatabase extends Database {
                 while (resultSet.next()) {
                     final String data = new String(resultSet.getBytes("data"), StandardCharsets.UTF_8);
                     final Team team = plugin.getGson().fromJson(data, Team.class);
+
                     if (team != null) {
                         //team.setId(resultSet.getInt("id"));
                         teams.add(team);
@@ -133,7 +135,6 @@ public class SQLiteDatabase extends Database {
             plugin.log(Level.SEVERE, "Failed to fetch list of teams from table", e);
         }
 
-        System.out.println(teams);
         return teams;
     }
 
@@ -151,8 +152,6 @@ public class SQLiteDatabase extends Database {
                 statement.setBoolean(5, teamplayer.getCanChatSpy());
 
                 statement.executeUpdate();
-
-                System.out.println("saved team player " + teamplayer.getLastPlayerName());
             }
         } catch (SQLException e) {
             plugin.log(Level.SEVERE, "Failed to create team in table", e);
@@ -172,12 +171,9 @@ public class SQLiteDatabase extends Database {
                 statement.setBoolean(3, teamplayer.isBedrockPlayer());
                 statement.setString(4, teamplayer.getBedrockUUID());
                 statement.setBoolean(5, teamplayer.getCanChatSpy());
-
                 statement.setString(6, String.valueOf(teamplayer.getJavaUUID()));
 
                 statement.executeUpdate();
-
-                System.out.println("updated team player " + teamplayer.getLastPlayerName());
             }
         } catch (SQLException e) {
             plugin.log(Level.SEVERE, "Failed to create team in table", e);
@@ -203,8 +199,6 @@ public class SQLiteDatabase extends Database {
                             resultSet.getString("bedrockUUID"),
                             resultSet.getBoolean("canChatSpy")
                     );
-
-                    System.out.println("got team player " + teamPlayer.getLastPlayerName());
 
                     return Optional.of(teamPlayer);
                 }
@@ -235,8 +229,6 @@ public class SQLiteDatabase extends Database {
                             resultSet.getBoolean("canChatSpy")
                     );
 
-                    System.out.println("got team player from name " + teamPlayer.getLastPlayerName());
-
                     return Optional.of(teamPlayer);
                 }
             }
@@ -256,9 +248,6 @@ public class SQLiteDatabase extends Database {
                 statement.setString(1, String.valueOf(uuid));
                 statement.setString(2, team.getTeamFinalName());
                 statement.setBytes(3, plugin.getGson().toJson(team).getBytes(StandardCharsets.UTF_8));
-
-                System.out.println(uuid);
-                System.out.println(plugin.getGson().toJson(team));
 
                 statement.executeUpdate();
             }
@@ -280,9 +269,6 @@ public class SQLiteDatabase extends Database {
                 statement.setString(3, team.getTeamFinalName());
 
                 statement.executeUpdate();
-
-                System.out.println("updated team " + team.getTeamFinalName());
-                System.out.println(plugin.getGson().toJson(team));
             }
         } catch (SQLException | JsonSyntaxException e) {
             plugin.log(Level.SEVERE, "Failed to update team in table", e);
@@ -299,8 +285,6 @@ public class SQLiteDatabase extends Database {
                 statement.setString(1, String.valueOf(uuid));
 
                 statement.executeUpdate();
-
-                System.out.println("deleted team " + uuid);
             }
         } catch (SQLException e) {
             plugin.log(Level.SEVERE, "Failed to delete team in table", e);

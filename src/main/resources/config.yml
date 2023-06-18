@@ -34,6 +34,11 @@ database:
       keepalive: 30000
       timeout: 20000
 
+# use HuskHomes to teleport players instead of built-in teleport handler [Default value: true]
+#
+# You need to install HuskHomes
+use-huskhomes: true
+
 team-tags:
   #Set the minimum length of the team prefix and name. [Default value: 3]
   min-character-limit: 3
@@ -82,23 +87,24 @@ team-warp:
   #Enable the '/team [setwarp|warp]' system. [Default value: true]
   enabled: true
 
-  # This is used to determine how long of a delay should happen before the user is teleported when using /team home
+  # This is used to determine how long of a delay should happen before the user is teleported when using /team warp
   # - If this is set to 0 there will be no delay when teleporting
   # - This value is in seconds
   #
   # Possible values: [0, Any positive whole number]
+  # Ignored if HuskHomes hook is enabled
   tp-delay: 3
+  cool-down:
+    #Enable the cool down on the '/team home' command to prevent tp spamming (RECOMMENDED). [Default value: true]
+    enabled: true
+    #Cool-down time in seconds. [Default value: 120 = 2 minutes]
+    time: 120
 
 team-chat:
   #Enable the team chat system. [Default value: true]
   enabled: true
   #Below is the prefix for the team chat messages. [Default value: &6[&3CC&6]&r]
   chat-prefix: "&6[&3CC&6]&r"
-  cool-down:
-    #Enable the cool down on the '/cc <message>' command to prevent chat spamming (RECOMMENDED). [Default value: true]
-    enabled: true
-    #Cool-down time in seconds. [Default value: 5 = 5 seconds]
-    time: 5
   chat-spy:
     #Do you want players with the perm 'ultimateteams.chat.spy' be able to spy on all team chat messages? [Default value: true]
     enabled: true
@@ -124,6 +130,14 @@ protections:
 team-home:
   #Enable the '/team [sethome|home]' system. [Default value: true]
   enabled: true
+
+  # This is used to determine how long of a delay should happen before the user is teleported when using /team home
+  # - If this is set to 0 there will be no delay when teleporting
+  # - This value is in seconds
+  #
+  # Possible values: [0, Any positive whole number]
+  # Ignored if HuskHomes hook is enabled
+  tp-delay: 3
   cool-down:
     #Enable the cool down on the '/team home' command to prevent tp spamming (RECOMMENDED). [Default value: true]
     enabled: true

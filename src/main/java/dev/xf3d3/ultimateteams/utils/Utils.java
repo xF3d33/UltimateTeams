@@ -1,12 +1,38 @@
 package dev.xf3d3.ultimateteams.utils;
 
+import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.expansions.HuskHomesAPIHook;
+import io.papermc.lib.PaperLib;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
-    public static final String WITH_DELIMITER = "((?<=%1$s)|(?=%1$s))";
+    private final UltimateTeams plugin;
+
+    public Utils(@NotNull UltimateTeams plugin) {
+        this.plugin = plugin;
+    }
+
+    public void teleportPlayer(@NotNull Player player, @NotNull Location location) {
+        if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && plugin.getConfig().getBoolean("use-huskhomes")) {
+            plugin.getHuskHomesHook().teleportPlayer(player, location);
+            return;
+        }
+
+        // Run on the appropriate thread scheduler for this platform
+        plugin.getScheduler().entitySpecificScheduler(player).run(
+                () -> PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN),
+                () -> plugin.log(Level.WARNING, "User offline when teleporting: " + player.getName())
+        );
+    }
 
     /**
      * @param text The string of text to apply color/effects to
@@ -26,25 +52,5 @@ public class Utils {
 
         text = ChatColor.translateAlternateColorCodes('&', text);
         return text;
-
-        /*String[] texts = text.split(String.format(WITH_DELIMITER, "&"));
-        StringBuilder finalText = new StringBuilder();
-
-        for (int i = 0; i < texts.length; i++) {
-            if (texts[i].equalsIgnoreCase("&")) {
-                i++;
-                if (texts[i].charAt(0) == '#') {
-                    finalText
-                            .append(net.md_5.bungee.api.ChatColor.of(texts[i].substring(0, 7)))
-                            .append(texts[i].substring(7));
-                } else {
-                    finalText
-                            .append(ChatColor.translateAlternateColorCodes('&', "&" + texts[i]));
-                }
-            } else {
-                finalText.append(texts[i]);
-            }
-        }
-        return finalText.toString();*/
     }
 }

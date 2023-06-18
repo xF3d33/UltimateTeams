@@ -11,6 +11,7 @@ import dev.xf3d3.ultimateteams.commands.TeamCommand;
 import dev.xf3d3.ultimateteams.database.Database;
 import dev.xf3d3.ultimateteams.database.MySqlDatabase;
 import dev.xf3d3.ultimateteams.database.SQLiteDatabase;
+import dev.xf3d3.ultimateteams.expansions.HuskHomesAPIHook;
 import dev.xf3d3.ultimateteams.expansions.PapiExpansion;
 import dev.xf3d3.ultimateteams.files.MessagesFileManager;
 import dev.xf3d3.ultimateteams.files.TeamGUIFileManager;
@@ -54,6 +55,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     private TeamStorageUtil teamStorageUtil;
     private UsersStorageUtil usersStorageUtil;
     private TeamInviteUtil teamInviteUtil;
+    private HuskHomesAPIHook huskHomesHook;
 
     // HashMaps
     private final ConcurrentHashMap<Player, String> connectedPlayers = new ConcurrentHashMap<>();
@@ -76,6 +78,9 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         this.usersStorageUtil = new UsersStorageUtil(this);
         this.teamInviteUtil = new TeamInviteUtil(this);
         this.utils = new Utils(this);
+        if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null) {
+            this.huskHomesHook = new HuskHomesAPIHook();
+        }
 
         // Load the plugin configs
         getConfig().options().copyDefaults();
@@ -302,6 +307,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     @NotNull
     public Utils getUtils() {
         return utils;
+    }
+
+    @NotNull
+    public HuskHomesAPIHook getHuskHomesHook() {
+        return huskHomesHook;
     }
 
     @NotNull

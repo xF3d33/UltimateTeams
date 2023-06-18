@@ -1,6 +1,8 @@
 package dev.xf3d3.ultimateteams.models;
 
 import com.google.gson.annotations.Expose;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,5 +89,16 @@ public class TeamWarp {
 
     public void setWarpPitch(float warpPitch){
         this.WarpPitch = warpPitch;
+    }
+
+    public Location getLocation() {
+        return new Location(
+                Bukkit.getWorld(this.WarpWorld),
+                this.WarpX,
+                this.WarpY,
+                this.WarpZ,
+                this.WarpYaw,
+                this.WarpPitch
+        );
     }
 }

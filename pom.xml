@@ -41,10 +41,6 @@
                         <shadedPattern>dev.xf3d3.libs.paperlib</shadedPattern>
                     </relocation>
                     <relocation>
-                        <pattern>com.tcoded.folialib</pattern>
-                        <shadedPattern>dev.xf3d3.libs.folialib</shadedPattern>
-                    </relocation>
-                    <relocation>
                         <pattern>space.arim.morepaperlib</pattern>
                         <shadedPattern>dev.xf3d3.libs.morepaperlib</shadedPattern>
                     </relocation>
@@ -140,6 +136,10 @@
             <id>aikar</id>
             <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
+        <repository>
+            <id>william278.net</id>
+            <url>https://repo.william278.net/releases</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -209,6 +209,12 @@
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.41.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.william278</groupId>
+            <artifactId>huskhomes</artifactId>
+            <version>4.4</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

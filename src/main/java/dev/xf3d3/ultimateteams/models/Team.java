@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
 public class Team {
-
     @Expose
     private String teamFinalOwner;
     @Expose
@@ -78,7 +77,7 @@ public class Team {
         teamPrefix = newTeamPrefix;
     }
 
-    public Collection<TeamWarp> getTeamWarps(){
+    public Collection<TeamWarp> getTeamWarps() {
         return teamWarps.values();
     }
 
@@ -90,7 +89,7 @@ public class Team {
         teamWarps.put(warp.getName(), warp);
     }
 
-    public void removeTeamWarps(@NotNull String name){
+    public void removeTeamWarp(@NotNull String name) {
         teamWarps.remove(name);
     }
 

@@ -55,6 +55,7 @@ public class TeamListGUI {
 
         UUID target = UUID.fromString(event.getCurrentItem().getItemMeta().getPersistentDataContainer().get(new NamespacedKey(plugin, "uuid"), PersistentDataType.STRING));
 
+        // todo: complete this
         /*PlayerMenuUtility playerMenuUtility = plugin.getPlayerMenuUtility(player);
         playerMenuUtility.setOfflineClanOwner(Bukkit.getOfflinePlayer(target));
         new TeamJoinRequestMenu(plugin.getPlayerMenuUtility(player)).open();*/
