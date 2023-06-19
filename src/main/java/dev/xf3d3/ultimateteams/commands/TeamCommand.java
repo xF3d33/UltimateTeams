@@ -93,6 +93,13 @@ public class TeamCommand extends BaseCommand {
         new TeamDisbandSubCommand(plugin).disbandTeamSubCommand(sender);
     }
 
+    @Subcommand("disband confirm")
+    @CommandCompletion("@nothing")
+    @Syntax("/team disband confirm")
+    public void onTeamDisbandConfirmCommand(@NotNull CommandSender sender) {
+        new TeamDisbandConfirmSubCommand(plugin).disbandTeamSubCommand(sender);
+    }
+
     @Subcommand("invite")
     @CommandCompletion("@players @nothing")
     @Syntax("/team invite player")

@@ -7,12 +7,12 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamDisbandSubCommand {
+public class TeamDisbandConfirmSubCommand {
 
     private final FileConfiguration messagesConfig;
     private final UltimateTeams plugin;
 
-    public TeamDisbandSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamDisbandConfirmSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
@@ -28,6 +28,10 @@ public class TeamDisbandSubCommand {
             return;
         }
 
-        sender.sendMessage(Utils.Color(messagesConfig.getString("team-disband-warning")));
+        if (plugin.getTeamStorageUtil().deleteTeam(player)) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
+        } else {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("team-disband-failure")));
+        }
     }
 }

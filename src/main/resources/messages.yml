@@ -22,6 +22,7 @@ team-created-broadcast-title-1: "&6%TEAMOWNER%&3 Created a new team!"
 team-created-broadcast-title-2: "&3The new team is called &6%TEAM%&3!"
 
 #Team Disbanded Messages
+team-disband-warning: "&3If you're sure you want to delete your team type: &6/team disband confirm&3. &cThis action cannot be undone!"
 team-successfully-disbanded: "&3Team was disbanded!"
 team-disband-failure: "&3Failed to disband team - Please make sure you're the owner!"
 team-admin-disband-failure: "&3Failed to disband team - make sure that the provided player is a team owner!"
