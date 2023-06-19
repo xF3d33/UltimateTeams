@@ -11,6 +11,7 @@ import dev.xf3d3.ultimateteams.commands.TeamCommand;
 import dev.xf3d3.ultimateteams.database.Database;
 import dev.xf3d3.ultimateteams.database.MySqlDatabase;
 import dev.xf3d3.ultimateteams.database.SQLiteDatabase;
+import dev.xf3d3.ultimateteams.expansions.FloodgateAPIHook;
 import dev.xf3d3.ultimateteams.expansions.HuskHomesAPIHook;
 import dev.xf3d3.ultimateteams.expansions.PapiExpansion;
 import dev.xf3d3.ultimateteams.files.MessagesFileManager;
@@ -21,6 +22,7 @@ import dev.xf3d3.ultimateteams.listeners.PlayerDisconnectEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamWarp;
 import dev.xf3d3.ultimateteams.utils.*;
+import net.william278.huskhomes.libraries.desertwell.util.ThrowingConsumer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -46,7 +48,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     public MessagesFileManager msgFileManager;
     public TeamGUIFileManager teamGUIFileManager;
 
-    private FloodgateApi floodgateApi;
+    private FloodgateAPIHook floodgateAPIHook;
     private Database database;
     private Utils utils;
     private ConcurrentHashMap<Integer, ScheduledTask> tasks;
@@ -61,10 +63,23 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     private final ConcurrentHashMap<Player, String> connectedPlayers = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Player, String> bedrockPlayers = new ConcurrentHashMap<>();
 
+    public UltimateTeams() {
+    }
+
     @Override
     public void onLoad() {
         // Set the instance
         instance = this;
+    }
+
+    private void initialize(@NotNull String name, @NotNull ThrowingConsumer<UltimateTeams> runner) {
+        log(Level.INFO, "Initializing " + name + "...");
+        try {
+            runner.accept(this);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to initialize " + name, e);
+        }
+        log(Level.INFO, "Successfully initialized " + name);
     }
 
     @Override
@@ -78,20 +93,20 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         this.usersStorageUtil = new UsersStorageUtil(this);
         this.teamInviteUtil = new TeamInviteUtil(this);
         this.utils = new Utils(this);
-        if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null) {
-            this.huskHomesHook = new HuskHomesAPIHook();
-        }
 
         // Load the plugin configs
         getConfig().options().copyDefaults();
         saveDefaultConfig();
 
         // Initialize the database
-        this.database = switch (getConfig().getString("database.type")) {
-            case "MySQL" -> new MySqlDatabase(this);
-            default -> new SQLiteDatabase(this);
-        };
-        database.initialize();
+        initialize(Database.Type.valueOf(getConfig().getString("database.type")).getDisplayName() + " database connection", (plugin) -> {
+            this.database = switch (Database.Type.valueOf(getConfig().getString("database.type"))) {
+                case MYSQL -> new MySqlDatabase(this);
+                case SQLITE -> new SQLiteDatabase(this);
+            };
+
+            database.initialize();
+        });
 
         if (!database.hasLoaded()) {
             log(Level.SEVERE, "Failed to load database! Please check your credentials! Disabling plugin...");
@@ -99,10 +114,22 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             return;
         }
 
+        // Register commands
+        initialize("commands", (plugin) -> registerCommands());
+
+        // Register events
+        initialize("events", (plugin) -> registerEvents());
+
         // Load the teams
-        runAsync(() -> {
+        initialize("teams", (plugin) -> runAsync(() -> {
             teamStorageUtil.loadTeams();
-        });
+        }));
+
+        // Initialize huskhomes hook
+        if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && getConfig().getBoolean("use-huskhomes")) {
+            initialize("huskhomes" , (plugin) -> this.huskHomesHook = new HuskHomesAPIHook());
+        }
+
 
         // Register command completions
         this.manager.getCommandCompletions().registerAsyncCompletion("teams", c -> teamStorageUtil.getTeamsListNames());
@@ -140,26 +167,17 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             return team.getTeamMembers();
         });
 
-        // Register the plugin commands
-        this.manager.registerCommand(new TeamCommand(this));
-        this.manager.registerCommand(new TeamChatSpyCommand(this));
-        this.manager.registerCommand(new TeamChatCommand(this));
-        this.manager.registerCommand(new TeamAdmin(this));
-
-        // Register the plugin events
-        this.getServer().getPluginManager().registerEvents(new PlayerConnectEvent(this), this);
-        this.getServer().getPluginManager().registerEvents(new PlayerDisconnectEvent(this), this);
-        this.getServer().getPluginManager().registerEvents(new PlayerDamageEvent(this), this);
-
         // Update banned tags list
         TeamCommand.updateBannedTagsList();
 
         // Register PlaceHolderAPI hooks
         if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI") || isPlaceholderAPIEnabled()) {
-            new PapiExpansion(this).register();
 
             sendConsole("-------------------------------------------");
             sendConsole("&6UltimateTeams: &3PlaceholderAPI found!");
+
+            initialize("placeholderapi", (plugin) -> new PapiExpansion(this).register());
+
             sendConsole("&6UltimateTeams: &3External placeholders enabled!");
             sendConsole("-------------------------------------------");
         } else {
@@ -171,9 +189,12 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
         // Register FloodgateApi hooks
         if (getServer().getPluginManager().isPluginEnabled("floodgate") || isFloodgateEnabled()) {
-            floodgateApi = FloodgateApi.getInstance();
+
             sendConsole("-------------------------------------------");
             sendConsole("&6UltimateTeams: &3FloodgateApi found!");
+
+            initialize("floodgate", (plugin) -> this.floodgateAPIHook = new FloodgateAPIHook());
+
             sendConsole("&6UltimateTeams: &3Full Bedrock support enabled!");
             sendConsole("-------------------------------------------");
         } else {
@@ -192,7 +213,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
                         sendConsole(msgFileManager.getMessagesConfig().getString("auto-invite-wipe-complete"));
                     }
                 } catch (UnsupportedOperationException e) {
-                    getLogger().info(Utils.Color(msgFileManager.getMessagesConfig().getString("invite-wipe-failed")));
+                    log(Level.WARNING, Utils.Color(msgFileManager.getMessagesConfig().getString("invite-wipe-failed")));
                 }
             }, 20L * 900);
         }
@@ -215,6 +236,21 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         sendConsole("&6UltimateTeams: &3Has been shutdown successfully");
         sendConsole("&6UltimateTeams: &3Goodbye!");
         sendConsole("-------------------------------------------");
+    }
+
+    private void registerCommands() {
+        // Register the plugin commands
+        this.manager.registerCommand(new TeamCommand(this));
+        this.manager.registerCommand(new TeamChatSpyCommand(this));
+        this.manager.registerCommand(new TeamChatCommand(this));
+        this.manager.registerCommand(new TeamAdmin(this));
+    }
+
+    public void registerEvents() {
+        // Register the plugin events
+        this.getServer().getPluginManager().registerEvents(new PlayerConnectEvent(this), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerDisconnectEvent(this), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerDamageEvent(this), this);
     }
 
     private boolean isFloodgateEnabled() {
@@ -271,7 +307,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     }
 
     public FloodgateApi getFloodgateApi() {
-        return floodgateApi;
+        return floodgateAPIHook.getHook();
     }
 
     @NotNull
