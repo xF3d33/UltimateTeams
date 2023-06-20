@@ -11,18 +11,20 @@ import dev.xf3d3.ultimateteams.commands.TeamCommand;
 import dev.xf3d3.ultimateteams.database.Database;
 import dev.xf3d3.ultimateteams.database.MySqlDatabase;
 import dev.xf3d3.ultimateteams.database.SQLiteDatabase;
-import dev.xf3d3.ultimateteams.expansions.FloodgateAPIHook;
-import dev.xf3d3.ultimateteams.expansions.HuskHomesAPIHook;
-import dev.xf3d3.ultimateteams.expansions.PapiExpansion;
-import dev.xf3d3.ultimateteams.files.MessagesFileManager;
-import dev.xf3d3.ultimateteams.files.TeamGUIFileManager;
+import dev.xf3d3.ultimateteams.hooks.FloodgateAPIHook;
+import dev.xf3d3.ultimateteams.hooks.HuskHomesAPIHook;
+import dev.xf3d3.ultimateteams.hooks.PapiExpansion;
+import dev.xf3d3.ultimateteams.config.MessagesFileManager;
+import dev.xf3d3.ultimateteams.config.Settings;
+import dev.xf3d3.ultimateteams.config.TeamGUIFileManager;
 import dev.xf3d3.ultimateteams.listeners.PlayerConnectEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDamageEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDisconnectEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamWarp;
 import dev.xf3d3.ultimateteams.utils.*;
-import net.william278.huskhomes.libraries.desertwell.util.ThrowingConsumer;
+import net.william278.annotaml.Annotaml;
+import net.william278.desertwell.util.ThrowingConsumer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -34,6 +36,9 @@ import space.arim.morepaperlib.MorePaperLib;
 import space.arim.morepaperlib.scheduling.GracefulScheduling;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,6 +63,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     private UsersStorageUtil usersStorageUtil;
     private TeamInviteUtil teamInviteUtil;
     private HuskHomesAPIHook huskHomesHook;
+    private Settings settings;
 
     // HashMaps
     private final ConcurrentHashMap<Player, String> connectedPlayers = new ConcurrentHashMap<>();
@@ -95,12 +101,19 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         this.utils = new Utils(this);
 
         // Load the plugin configs
-        getConfig().options().copyDefaults();
-        saveDefaultConfig();
+        //getConfig().options().copyDefaults();
+        //saveDefaultConfig();
+
+        // Load settings and locales
+        initialize("plugin config & locale files", (plugin) -> {
+            if (!loadConfigs()) {
+                throw new IllegalStateException("Failed to load config files. Please check the console for errors");
+            }
+        });
 
         // Initialize the database
-        initialize(Database.Type.valueOf(getConfig().getString("database.type")).getDisplayName() + " database connection", (plugin) -> {
-            this.database = switch (Database.Type.valueOf(getConfig().getString("database.type"))) {
+        initialize(getSettings().getDatabaseType().getDisplayName() + " database connection", (plugin) -> {
+            this.database = switch (getSettings().getDatabaseType()) {
                 case MYSQL -> new MySqlDatabase(this);
                 case SQLITE -> new SQLiteDatabase(this);
             };
@@ -126,7 +139,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         }));
 
         // Initialize huskhomes hook
-        if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && getConfig().getBoolean("use-huskhomes")) {
+        if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && getSettings().useHuskHomes()) {
             initialize("huskhomes" , (plugin) -> this.huskHomesHook = new HuskHomesAPIHook());
         }
 
@@ -204,8 +217,9 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             sendConsole("-------------------------------------------");
         }
 
+        // todo: add config check and invite console message boolean in config
         // Start auto invite clear task
-        if (getConfig().getBoolean("general.run-auto-invite-wipe-task.enabled")) {
+        if (true) {
             runSyncRepeating(() -> {
                 try {
                     teamInviteUtil.emptyInviteList();
@@ -237,6 +251,34 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         sendConsole("&6UltimateTeams: &3Goodbye!");
         sendConsole("-------------------------------------------");
     }
+
+    public void setSettings(@NotNull Settings settings) {
+        this.settings = settings;
+    }
+
+     /**
+     * Reloads the {@link Settings} from its config file
+     *
+     * @return {@code true} if the reload was successful, {@code false} otherwise
+     */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public boolean loadConfigs() {
+        try {
+            // Load settings
+            setSettings(Annotaml.create(new File(getDataFolder(), "config.yml"), Settings.class).get());
+
+            return true;
+        } catch (IOException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            log(Level.SEVERE, "Failed to reload UltimateTeams config or messages file", e);
+        }
+        return false;
+    }
+
+    @NotNull
+    public Settings getSettings() {
+        return settings;
+    }
+
 
     private void registerCommands() {
         // Register the plugin commands

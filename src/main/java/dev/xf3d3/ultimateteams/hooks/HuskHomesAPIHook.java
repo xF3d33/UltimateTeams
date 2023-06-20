@@ -1,4 +1,4 @@
-package dev.xf3d3.ultimateteams.expansions;
+package dev.xf3d3.ultimateteams.hooks;
 
 import net.william278.huskhomes.api.HuskHomesAPI;
 import net.william278.huskhomes.position.Position;

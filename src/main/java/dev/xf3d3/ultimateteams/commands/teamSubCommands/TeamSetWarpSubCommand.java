@@ -9,6 +9,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 
 public class TeamSetWarpSubCommand {
@@ -41,6 +43,13 @@ public class TeamSetWarpSubCommand {
 
         if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
             final Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
+            final Collection<TeamWarp> warps = team.getTeamWarps();
+
+            if (warps != null && warps.size() >= teamsConfig.getInt("team-warp.limit")) {
+                player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-limit-reached")));
+                return;
+            }
+
 
             if (team.getTeamWarp(name) != null) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-name-used")));

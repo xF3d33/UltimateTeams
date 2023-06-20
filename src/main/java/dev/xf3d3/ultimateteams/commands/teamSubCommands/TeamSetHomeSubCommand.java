@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class TeamSetHomeSubCommand {
 

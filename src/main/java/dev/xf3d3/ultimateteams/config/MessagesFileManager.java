@@ -1,7 +1,6 @@
-package dev.xf3d3.ultimateteams.files;
+package dev.xf3d3.ultimateteams.config;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -10,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MessagesFileManager {
 

@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 public class TeamCreateSubCommand {
 

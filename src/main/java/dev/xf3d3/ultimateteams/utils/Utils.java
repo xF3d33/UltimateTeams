@@ -1,7 +1,6 @@
 package dev.xf3d3.ultimateteams.utils;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.expansions.HuskHomesAPIHook;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

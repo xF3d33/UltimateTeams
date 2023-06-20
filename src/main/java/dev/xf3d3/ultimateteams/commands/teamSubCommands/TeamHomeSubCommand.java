@@ -5,14 +5,12 @@ import dev.xf3d3.ultimateteams.api.TeamHomePreTeleportEvent;
 import dev.xf3d3.ultimateteams.api.TeamHomeTeleportEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
-import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

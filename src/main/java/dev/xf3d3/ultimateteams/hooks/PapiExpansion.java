@@ -1,4 +1,4 @@
-package dev.xf3d3.ultimateteams.expansions;
+package dev.xf3d3.ultimateteams.hooks;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;

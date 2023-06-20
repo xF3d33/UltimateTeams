@@ -67,6 +67,7 @@ team-leave-failed: "&3Failed to leave team, please try again later."
 #Team Warp Messages
 team-warp-successful: "&3Successfully added team warp &6%WARP_NAME%&3!"
 team-warp-name-used: "&3A warp with that name already exists!"
+team-warp-limit-reached: "&3You have reached the team warps limit!"
 team-warp-deleted-successful: "&3Successfully deleted team warp &6%WARP_NAME%&3!"
 team-warp-not-found: "&3There is no warp with that name!"
 team-warp-cooldown-start: "&3You will be teleported in %SECONDS%s!"
