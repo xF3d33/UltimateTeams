@@ -14,22 +14,19 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("unused")
 @CommandAlias("chatspy")
 public class TeamChatSpyCommand extends BaseCommand {
-
-    private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
     private final UltimateTeams plugin;
 
     public TeamChatSpyCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.teamsConfig = plugin.getConfig();
     }
 
     @CommandCompletion("@nothing")
     @Default
     public void onCommand(CommandSender sender) {
         if (sender instanceof final Player player) {
-            if (teamsConfig.getBoolean("team-chat.chat-spy.enabled")){
+            if (plugin.getSettings().teamChatSpyEnabled()){
                 if (player.hasPermission("ultimateteams.chat.spy")){
                     if (plugin.getUsersStorageUtil().toggleChatSpy(player)){
                         player.sendMessage(Utils.Color(messagesConfig.getString("chatspy-toggle-on")));

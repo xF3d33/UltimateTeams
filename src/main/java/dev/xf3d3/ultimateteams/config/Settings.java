@@ -27,7 +27,7 @@ public class Settings {
     private boolean useGlobalGui = true;
 
     // Database settings
-    @YamlComment("Type of database to use (MYSQL, SQLITE)")
+    @YamlComment("Type of database to use (MYSQL, SQLITE). MYSQL is preferred over SQLITE.")
     @YamlKey("database.type")
     private Database.Type databaseType = Database.Type.SQLITE;
 
@@ -66,17 +66,12 @@ public class Settings {
     @YamlKey("database.mysql.connection_pool.timeout")
     private long mySqlConnectionPoolTimeout = 20000;
 
-    /*@YamlComment("Names of tables to use on your database. Don't modify this unless you know what you're doing!")
+    @YamlComment("Names of tables to use on your database. Don't modify this unless you know what you're doing!")
     @YamlKey("database.table_names")
     private Map<String, String> tableNames = Map.of(
-            Database.Table.PLAYER_DATA.name().toLowerCase(), Database.Table.PLAYER_DATA.getDefaultName(),
-            Database.Table.PLAYER_COOLDOWNS_DATA.name().toLowerCase(), Database.Table.PLAYER_COOLDOWNS_DATA.getDefaultName(),
-            Database.Table.POSITION_DATA.name().toLowerCase(), Database.Table.POSITION_DATA.getDefaultName(),
-            Database.Table.SAVED_POSITION_DATA.name().toLowerCase(), Database.Table.SAVED_POSITION_DATA.getDefaultName(),
-            Database.Table.HOME_DATA.name().toLowerCase(), Database.Table.HOME_DATA.getDefaultName(),
-            Database.Table.WARP_DATA.name().toLowerCase(), Database.Table.WARP_DATA.getDefaultName(),
-            Database.Table.TELEPORT_DATA.name().toLowerCase(), Database.Table.TELEPORT_DATA.getDefaultName()
-    );*/
+            Database.Table.TEAM_DATA.name().toLowerCase(), Database.Table.TEAM_DATA.getDefaultName(),
+            Database.Table.USER_DATA.name().toLowerCase(), Database.Table.USER_DATA.getDefaultName()
+    );
 
     @YamlComment("use HuskHomes to teleport players instead of built-in teleport handler [Default value: true]")
     @YamlKey("use-huskhomes")
@@ -116,15 +111,6 @@ public class Settings {
     @YamlKey("team-size.default-max-team-size")
     private int maxTeamSize = 8;
 
-    // Team Creation
-    @YamlComment("Do you want a message to be sent to all players when a new team is created? [Default value: true]")
-    @YamlKey("team-creation.announce-to-all")
-    private boolean announceAll = true;
-
-    @YamlComment("Do you want the message sent as a title instead of a chat message? [Default value: true]")
-    @YamlKey("team-creation.send-as-title")
-    private boolean sendTitle = true;
-
     // Team join
     @YamlComment("Do you want a message to be sent to team players when a player joins a team? [Default value: true]")
     @YamlKey("team-join.announce")
@@ -145,11 +131,11 @@ public class Settings {
 
     @YamlComment("Enable the cool down on the '/team warp <name>' command to prevent tp spamming (RECOMMENDED). [Default value: true]")
     @YamlKey("team-warp.cool-down.enabled")
-    private boolean TeamWarpCooldownEnabled = true;
+    private boolean teamWarpCooldownEnabled = true;
 
     @YamlComment("Cool-down time in seconds. [Default value: 120 = 2 minutes]")
     @YamlKey("team-warp.cool-down.time")
-    private int TeamWarpCooldownValue = 120;
+    private int teamWarpCooldownValue = 120;
 
     // Team Chat
     @YamlComment("Enable the team chat system. [Default value: true]")
@@ -198,14 +184,13 @@ public class Settings {
 
     @YamlComment("Enable the cool down on the '/team warp <name>' command to prevent tp spamming (RECOMMENDED). [Default value: true]")
     @YamlKey("team-home.cool-down.enabled")
-    private boolean TeamHomeCooldownEnabled = true;
+    private boolean teamHomeCooldownEnabled = true;
 
     @YamlComment("Cool-down time in seconds. [Default value: 120 = 2 minutes]")
     @YamlKey("team-home.cool-down.time")
-    private int TeamHomeCooldownValue = 120;
+    private int teamHomeCooldownValue = 120;
 
     // Update Checker
-    // todo: this
     @YamlComment("Do you want to enable in game plugin update notifications? (Permission:'ultimateteams.update'). [Default value: true]")
     @YamlKey("plugin-update-notifications.enabled")
     private boolean checkForUpdates = true;
@@ -225,6 +210,10 @@ public class Settings {
 
     public boolean doCheckForUpdates() {
         return checkForUpdates;
+    }
+
+    public boolean useGlobalGui() {
+        return useGlobalGui;
     }
 
     public Database.Type getDatabaseType() {
@@ -275,14 +264,14 @@ public class Settings {
         return mySqlConnectionPoolTimeout;
     }
 
-    /*public Map<String, String> getTableNames() {
+    public Map<String, String> getTableNames() {
         return tableNames;
     }
 
     @NotNull
     public String getTableName(@NotNull Database.Table table) {
         return Optional.ofNullable(getTableNames().get(table.name().toLowerCase())).orElse(table.getDefaultName());
-    }*/
+    }
 
     public boolean useHuskHomes() {
         return useHuskhomes;
@@ -319,6 +308,90 @@ public class Settings {
 
     public String getPrefixBracketsClosing() {
         return bracketsClosing;
+    }
+
+    public int getTeamMaxSize() {
+        return maxTeamSize;
+    }
+
+    public boolean teamJoinAnnounce() {
+        return teamJoinAnnounce;
+    }
+
+    public boolean teamWarpEnabled() {
+        return teamWarpEnable;
+    }
+
+    public int getTeamWarpTpDelay() {
+        return teamWarpTpDelay;
+    }
+
+    public int getTeamWarpLimit() {
+        return teamWarpLimit;
+    }
+
+    public boolean TeamWarpCooldownEnabled() {
+        return teamWarpCooldownEnabled;
+    }
+
+    public int getTeamWarpCooldownValue() {
+        return teamWarpCooldownValue;
+    }
+
+    public boolean teamChatEnabled() {
+        return teamChatEnabled;
+    }
+
+    public String getTeamChatPrefix() {
+        return teamChatPrefix;
+    }
+
+    public boolean teamChatSpyEnabled() {
+        return teamChatSpyEnabled;
+    }
+
+    public String getTeamChatSpyPrefix() {
+        return teamChatSpyPrefix;
+    }
+
+    public int getMaxTeamAllies() {
+        return maxAllies;
+    }
+
+    public int getMaxTeamEnemies() {
+        return maxEnemies;
+    }
+
+    public boolean isPvpCommandEnabled() {
+        return pvpCommandEnabled;
+    }
+
+    public boolean enablePvPBypassPermission() {
+        return pvpCommandBypassPerm;
+    }
+
+    public boolean teamHomeEnabled() {
+        return teamHomeEnabled;
+    }
+
+    public int getTeamHomeTpDelay() {
+        return teamHomeTpDelay;
+    }
+
+    public boolean teamHomeCooldownEnabled() {
+        return teamHomeCooldownEnabled;
+    }
+
+    public int getTeamHomeCooldownValue() {
+        return teamHomeCooldownValue;
+    }
+
+    public boolean enableAutoInviteWipe() {
+        return autoInviteWipeTask;
+    }
+
+    public boolean debugModeEnabled() {
+        return debugMode;
     }
 
 }

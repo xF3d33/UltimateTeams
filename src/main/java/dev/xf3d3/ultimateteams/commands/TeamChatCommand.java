@@ -22,8 +22,6 @@ import java.util.logging.Logger;
 @SuppressWarnings("unused")
 @CommandAlias("tc|teamchat|tchat")
 public class TeamChatCommand extends BaseCommand {
-
-    private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
     private final Logger logger;
     private final UltimateTeams plugin;
@@ -31,7 +29,6 @@ public class TeamChatCommand extends BaseCommand {
     public TeamChatCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.teamsConfig = plugin.getConfig();
         this.logger = plugin.getLogger();
     }
 
@@ -45,7 +42,7 @@ public class TeamChatCommand extends BaseCommand {
         }
 
         // Check if enabled
-        if (!(teamsConfig.getBoolean("team-chat.enabled"))){
+        if (!plugin.getSettings().teamChatEnabled()){
             player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
             return;
         }
@@ -66,9 +63,9 @@ public class TeamChatCommand extends BaseCommand {
             team = plugin.getTeamStorageUtil().findTeamByPlayer(player);
         }
 
-        String chatSpyPrefix = teamsConfig.getString("team-chat.chat-spy.chat-spy-prefix");
+        String chatSpyPrefix = plugin.getSettings().getTeamChatSpyPrefix();
         StringBuilder messageString = new StringBuilder();
-        messageString.append(teamsConfig.getString("team-chat.chat-prefix")).append(" ");
+        messageString.append(plugin.getSettings().getTeamChatPrefix()).append(" ");
         messageString.append("&d").append(player.getName()).append(":&r").append(" ");
         for (String arg : args) {
             messageString.append(arg).append(" ");
@@ -81,7 +78,7 @@ public class TeamChatCommand extends BaseCommand {
             fireClanChatMessageSendEvent(
                     player,
                     team,
-                    teamsConfig.getString("team-chat.chat-prefix"),
+                    plugin.getSettings().getTeamChatPrefix(),
                     messageString.toString(),
                     playerClanMembers
             );
@@ -107,7 +104,7 @@ public class TeamChatCommand extends BaseCommand {
             }
 
             // Send spy message
-            if (teamsConfig.getBoolean("team-chat.chat-spy.enabled")) {
+            if (plugin.getSettings().teamChatSpyEnabled()) {
                 Bukkit.broadcast(Utils.Color(chatSpyPrefix + " " + messageString), "ultimateteams.chat.spy");
             }
         }

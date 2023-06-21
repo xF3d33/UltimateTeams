@@ -11,13 +11,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class TeamWarpSubCommand {
     private final FileConfiguration messagesConfig;
-    private final FileConfiguration teamsConfig;
     private final UltimateTeams plugin;
 
     public TeamWarpSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.teamsConfig = plugin.getConfig();
     }
 
     public void WarpCommand(CommandSender sender, String name) {
@@ -26,7 +24,7 @@ public class TeamWarpSubCommand {
             return;
         }
 
-        if (!teamsConfig.getBoolean("team-warp.enabled")) {
+        if (!plugin.getSettings().teamWarpEnabled()) {
             player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
             return;
         }
@@ -47,13 +45,13 @@ public class TeamWarpSubCommand {
                 return;
             }
 
-            if (teamsConfig.getLong("team-warp.tp-delay") > 0) {
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-cooldown-start").replaceAll("%SECONDS%", teamsConfig.getString("team-warp.tp-delay"))));
+            if (plugin.getSettings().getTeamWarpTpDelay() > 0) {
+                player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-cooldown-start").replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeamWarpTpDelay()))));
 
                 plugin.runLater(() -> {
                     plugin.getUtils().teleportPlayer(player, warp.getLocation());
                     player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-teleported-successful").replaceAll("%WARP_NAME%", warp.getName())));
-                }, teamsConfig.getLong("team-warp.tp-delay"));
+                }, plugin.getSettings().getTeamWarpTpDelay());
             } else {
                 plugin.getUtils().teleportPlayer(player, warp.getLocation());
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-teleported-successful").replaceAll("%WARP_NAME%", warp.getName())));

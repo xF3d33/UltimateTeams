@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class TeamJoinSubCommand {
-    private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
     private static final String PLAYER_PLACEHOLDER = "%PLAYER%";
     private static final String TEAM_PLACEHOLDER = "%TEAM%";
@@ -22,7 +21,6 @@ public class TeamJoinSubCommand {
     public TeamJoinSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.teamsConfig = plugin.getConfig();
     }
 
     public void teamJoinSubCommand(CommandSender sender) {
@@ -55,7 +53,7 @@ public class TeamJoinSubCommand {
                         .replace(TEAM_PLACEHOLDER, Utils.Color(team.getTeamFinalName()))));
 
                 // Send message to team players
-                if (teamsConfig.getBoolean("team-join.announce")) {
+                if (plugin.getSettings().teamJoinAnnounce()) {
                     for (String playerUUID : team.getTeamMembers()) {
                         final Player teamPlayer = Bukkit.getPlayer(UUID.fromString(playerUUID));
 

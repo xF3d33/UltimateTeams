@@ -15,14 +15,12 @@ import java.util.Objects;
 
 public class TeamSetWarpSubCommand {
     private final FileConfiguration messagesConfig;
-    private final FileConfiguration teamsConfig;
     private final UltimateTeams plugin;
 
     // todo: setwarp limit to 2
     public TeamSetWarpSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.teamsConfig = plugin.getConfig();
     }
 
     public void setWarpCommand(CommandSender sender, String name) {
@@ -36,7 +34,7 @@ public class TeamSetWarpSubCommand {
             return;
         }
 
-        if (!teamsConfig.getBoolean("team-warp.enabled")) {
+        if (!plugin.getSettings().teamWarpEnabled()) {
             player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
             return;
         }
@@ -45,7 +43,7 @@ public class TeamSetWarpSubCommand {
             final Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
             final Collection<TeamWarp> warps = team.getTeamWarps();
 
-            if (warps != null && warps.size() >= teamsConfig.getInt("team-warp.limit")) {
+            if (warps != null && warps.size() >= plugin.getSettings().getTeamWarpLimit()) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-limit-reached")));
                 return;
             }

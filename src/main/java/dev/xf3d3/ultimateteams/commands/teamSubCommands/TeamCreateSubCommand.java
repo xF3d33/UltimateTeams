@@ -15,8 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class TeamCreateSubCommand {
-
-    private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
     private static final String TEAM_PLACEHOLDER = "%TEAM%";
 
@@ -32,9 +30,8 @@ public class TeamCreateSubCommand {
         this.plugin = plugin;
         this.teams = plugin.getTeamStorageUtil().getTeams();
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.teamsConfig = plugin.getConfig();
-        this.MIN_CHAR_LIMIT = teamsConfig.getInt("team-tags.min-character-limit");
-        this.MAX_CHAR_LIMIT = teamsConfig.getInt("team-tags.max-character-limit");
+        this.MIN_CHAR_LIMIT = plugin.getSettings().getTeamTagsMinCharLimit();
+        this.MAX_CHAR_LIMIT = plugin.getSettings().getTeamTagsMaxCharLimit();
     }
 
     public void createTeamSubCommand(CommandSender sender, String name, List<String> bannedTags) {
@@ -85,12 +82,10 @@ public class TeamCreateSubCommand {
             }
 
             if (name.length() < MIN_CHAR_LIMIT) {
-                int minCharLimit = teamsConfig.getInt("team-tags.min-character-limit");
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-short").replace("%CHARMIN%", Integer.toString(minCharLimit))));
+                player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-short").replace("%CHARMIN%", Integer.toString(MIN_CHAR_LIMIT))));
 
             } else if (name.length() > MAX_CHAR_LIMIT) {
-                int maxCharLimit = teamsConfig.getInt("team-tags.max-character-limit");
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-long").replace("%CHARMAX%", Integer.toString(maxCharLimit))));
+                player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-long").replace("%CHARMAX%", Integer.toString(MAX_CHAR_LIMIT))));
 
             } else {
                 if (!storageUtil.isTeamExisting(player)) {

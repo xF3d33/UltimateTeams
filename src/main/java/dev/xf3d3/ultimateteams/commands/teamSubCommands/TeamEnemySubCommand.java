@@ -20,15 +20,12 @@ public class TeamEnemySubCommand {
     private static final String ENEMY_Team = "%ENEMYTEAM%";
     private static final String ENEMY_OWNER = "%ENEMYOWNER%";
     private static final String Team_OWNER = "%TEAMOWNER%";
-
-    private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
     private final UltimateTeams plugin;
 
     public TeamEnemySubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.teamsConfig = plugin.getConfig();
     }
 
     public void teamEnemySubAddCommand(CommandSender sender, String teamName) {
@@ -56,8 +53,8 @@ public class TeamEnemySubCommand {
             if (storageUtil.findTeamByOwner(player) != team) {
                 String enemyOwnerUUIDString = team.getTeamOwner();
 
-                if (team.getTeamEnemies().size() >= teamsConfig.getInt("max-team-enemies")) {
-                    int maxSize = teamsConfig.getInt("max-team-enemies");
+                if (team.getTeamEnemies().size() >= plugin.getSettings().getMaxTeamEnemies()) {
+                    int maxSize = plugin.getSettings().getMaxTeamEnemies();
                     player.sendMessage(Utils.Color(messagesConfig.getString("team-enemy-max-amount-reached")).replace("%LIMIT%", String.valueOf(maxSize)));
                     return;
                 }

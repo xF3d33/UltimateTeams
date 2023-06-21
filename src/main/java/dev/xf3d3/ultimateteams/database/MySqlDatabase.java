@@ -36,31 +36,29 @@ public class MySqlDatabase extends Database {
      * Used to set up a connection from the provided data
      */
     private void setConnection() {
-        ConfigurationSection config = plugin.getConfig().getConfigurationSection("database.mysql");
-        assert config != null;
 
         plugin.log(Level.INFO, "Attempting to connect to database");
 
         dataSource = new HikariDataSource();
         dataSource.setJdbcUrl("jdbc:mysql://" +
-                config.getString("host", "localhost") +
+                plugin.getSettings().getMySqlHost() +
                 ":" +
-                config.getInt("port", 3306) +
+                plugin.getSettings().getMySqlPort() +
                 "/" +
-                config.getString("database", "ultimateteams") +
-                config.getString("parameters", "?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8")
+                plugin.getSettings().getMySqlDatabase() +
+                plugin.getSettings().getMySqlConnectionParameters()
         );
 
         // Authenticate
-        dataSource.setUsername(config.getString("user", "root"));
-        dataSource.setPassword(config.getString("password", ""));
+        dataSource.setUsername(plugin.getSettings().getMySqlUsername());
+        dataSource.setPassword(plugin.getSettings().getMySqlPassword());
 
         // Set connection pool options
-        dataSource.setMaximumPoolSize(config.getInt("connection_pool.size", 12));
-        dataSource.setMinimumIdle(config.getInt("connection_pool.idle", 12));
-        dataSource.setMaxLifetime(config.getInt("connection_pool.lifetime", 1800000));
-        dataSource.setKeepaliveTime(config.getInt("connection_pool.keepalive", 30000));
-        dataSource.setConnectionTimeout(config.getInt("connection_pool.timeout", 20000));
+        dataSource.setMaximumPoolSize(plugin.getSettings().getMySqlConnectionPoolSize());
+        dataSource.setMinimumIdle(plugin.getSettings().getMySqlConnectionPoolIdle());
+        dataSource.setMaxLifetime(plugin.getSettings().getMySqlConnectionPoolLifetime());
+        dataSource.setKeepaliveTime(plugin.getSettings().getMySqlConnectionPoolKeepAlive());
+        dataSource.setConnectionTimeout(plugin.getSettings().getMySqlConnectionPoolTimeout());
         dataSource.setPoolName(DATA_POOL_NAME);
 
         // Set additional connection pool properties

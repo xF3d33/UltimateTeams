@@ -45,7 +45,7 @@ public class TeamAdmin extends BaseCommand {
         sender.sendMessage(Utils.Color(messagesConfig.getString("plugin-reload-begin")));
 
         plugin.runSync(() -> {
-            plugin.reloadConfig();
+            plugin.loadConfigs();
             plugin.msgFileManager.reloadMessagesConfig();
             plugin.teamGUIFileManager.reloadTeamGUIConfig();
 

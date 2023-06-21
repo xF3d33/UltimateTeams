@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class TeamInviteSubCommand {
 
-    private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
     private static final String INVITED_PLAYER = "%INVITED%";
 
@@ -20,7 +19,6 @@ public class TeamInviteSubCommand {
     public TeamInviteSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.teamsConfig = plugin.getConfig();
     }
 
     public void teamInviteSubCommand(CommandSender sender, OnlinePlayer onlinePlayer) {
@@ -47,7 +45,7 @@ public class TeamInviteSubCommand {
                         sender.sendMessage(playerAlreadyInTeam);
                     } else {
                         Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
-                        if (!(player.hasPermission("ultimateteams.maxteamsize.*") || player.hasPermission("ultimateteams.*") || player.isOp())) {
+                        /*if (!(player.hasPermission("ultimateteams.maxteamsize.*") || player.hasPermission("ultimateteams.*") || player.isOp())) {
                             if (!teamsConfig.getBoolean("team-size.tiered-team-system.enabled")) {
                                 if (team.getTeamMembers().size() >= teamsConfig.getInt("team-size.default-max-team-size")) {
                                     int maxSize = teamsConfig.getInt("team-size.default-max-team-size");
@@ -93,6 +91,12 @@ public class TeamInviteSubCommand {
                                     }
                                 }
                             }
+                        }*/
+
+                        if (team.getTeamMembers().size() >= plugin.getSettings().getTeamMaxSize()) {
+                            int maxSize = plugin.getSettings().getTeamMaxSize();
+                            player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-max-size-reached")).replace("%LIMIT%", String.valueOf(maxSize)));
+                            return;
                         }
 
 

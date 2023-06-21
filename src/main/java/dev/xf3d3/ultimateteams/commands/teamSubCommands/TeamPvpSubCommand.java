@@ -9,15 +9,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class TeamPvpSubCommand {
-
-    private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
     private final UltimateTeams plugin;
 
     public TeamPvpSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.teamsConfig = plugin.getConfig();
     }
 
     public void teamPvpSubCommand(CommandSender sender) {
@@ -26,7 +23,7 @@ public class TeamPvpSubCommand {
             return;
         }
 
-        if (!teamsConfig.getBoolean("protections.pvp.pvp-command-enabled")) {
+        if (!plugin.getSettings().isPvpCommandEnabled()) {
             player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
             return;
         }

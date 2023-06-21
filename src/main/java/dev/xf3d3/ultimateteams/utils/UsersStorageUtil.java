@@ -20,10 +20,7 @@ import java.util.logging.Logger;
 public class UsersStorageUtil {
 
     private final Logger logger = UltimateTeams.getPlugin().getLogger();
-
     private final Map<UUID, TeamPlayer> usermap = new HashMap<>();
-
-    private final FileConfiguration teamsConfig = UltimateTeams.getPlugin().getConfig();
     private final FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
 
     private static final String PLAYER_PLACEHOLDER = "%PLAYER%";
@@ -168,7 +165,7 @@ public class UsersStorageUtil {
             plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
 
             fireClanChatSpyToggledEvent(player, teamPlayer ,true);
-            if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
+            if (plugin.getSettings().debugModeEnabled()){
                 plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFired ClanChatSpyToggledEvent"));
             }
             return true;
@@ -177,7 +174,7 @@ public class UsersStorageUtil {
             plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
 
             fireClanChatSpyToggledEvent(player, teamPlayer ,false);
-            if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
+            if (plugin.getSettings().debugModeEnabled()){
                 plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFired ClanChatSpyToggledEvent"));
             }
             return false;

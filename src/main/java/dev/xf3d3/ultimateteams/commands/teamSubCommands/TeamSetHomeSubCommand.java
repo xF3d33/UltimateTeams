@@ -15,8 +15,6 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 public class TeamSetHomeSubCommand {
-
-    FileConfiguration teamsConfig = UltimateTeams.getPlugin().getConfig();
     FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
 
     private final UltimateTeams plugin;
@@ -31,14 +29,14 @@ public class TeamSetHomeSubCommand {
             return;
         }
 
-        if (teamsConfig.getBoolean("team-home.enabled")) {
+        if (plugin.getSettings().teamHomeEnabled()) {
             if (plugin.getTeamStorageUtil().isTeamOwner(player)) {
                 if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
                     Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
                     Location location = player.getLocation();
                     fireTeamHomeSetEvent(player, team, location);
 
-                    if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")) {
+                    if (plugin.getSettings().debugModeEnabled()) {
                         plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFired TeamHomeSetEvent"));
                     }
 

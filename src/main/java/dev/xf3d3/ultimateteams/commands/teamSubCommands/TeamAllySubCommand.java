@@ -18,7 +18,6 @@ import java.util.logging.Logger;
 
 public class TeamAllySubCommand {
 
-    private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
     private final Logger logger;
     private static final String ALLY_TEAM = "%ALLYTEAM%";
@@ -29,7 +28,6 @@ public class TeamAllySubCommand {
 
     public TeamAllySubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.teamsConfig = plugin.getConfig();
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
         this.logger = plugin.getLogger();
     }
@@ -57,9 +55,8 @@ public class TeamAllySubCommand {
             if (plugin.getTeamStorageUtil().findTeamByOwner(player) != team){
                 String allyOwnerUUIDString = team.getTeamOwner();
 
-                if (plugin.getTeamStorageUtil().findTeamByOwner(player).getTeamAllies().size() >= teamsConfig.getInt("max-team-allies")) {
-                    int maxSize = teamsConfig.getInt("max-team-allies");
-                    player.sendMessage(Utils.Color(messagesConfig.getString("team-ally-max-amount-reached")).replaceAll("%LIMIT%", String.valueOf(maxSize)));
+                if (plugin.getTeamStorageUtil().findTeamByOwner(player).getTeamAllies().size() >= plugin.getSettings().getMaxTeamAllies()) {
+                    player.sendMessage(Utils.Color(messagesConfig.getString("team-ally-max-amount-reached")).replaceAll("%LIMIT%", String.valueOf(plugin.getSettings().getMaxTeamAllies())));
                     return;
                 }
 

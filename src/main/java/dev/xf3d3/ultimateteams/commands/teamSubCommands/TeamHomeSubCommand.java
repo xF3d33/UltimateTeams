@@ -19,10 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class TeamHomeSubCommand {
-
-    private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
-    private final Logger logger;
     private static final String TIME_LEFT = "%TIMELEFT%";
     private static TeamHomePreTeleportEvent homePreTeleportEvent = null;
     private static final HashMap<UUID, Long> homeCoolDownTimer = new HashMap<>();
@@ -30,9 +27,7 @@ public class TeamHomeSubCommand {
 
     public TeamHomeSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.logger = plugin.getLogger();
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.teamsConfig = plugin.getConfig();
     }
 
     public void tpTeamHomeSubCommand(CommandSender sender) {
@@ -42,7 +37,7 @@ public class TeamHomeSubCommand {
         }
 
         // check if function is enabled
-        if (!teamsConfig.getBoolean("team-home.enabled")) {
+        if (!plugin.getSettings().teamHomeEnabled()) {
             player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
             return;
         }
@@ -70,7 +65,7 @@ public class TeamHomeSubCommand {
 
         fireTeamHomePreTPEvent(player, team);
         if (homePreTeleportEvent.isCancelled()){
-            if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")){
+            if (plugin.getSettings().debugModeEnabled()){
                 plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aTeamHomePreTPEvent cancelled by external source"));
             }
             return;
@@ -84,7 +79,7 @@ public class TeamHomeSubCommand {
         float pitch = team.getTeamHomePitch();
         Location location = new Location(world, x, y, z, yaw, pitch);
 
-        if (teamsConfig.getBoolean("team-home.cool-down.enabled") && homeCoolDownTimer.containsKey(uuid)) {
+        if (plugin.getSettings().teamHomeCooldownEnabled() && homeCoolDownTimer.containsKey(uuid)) {
                 if (!player.hasPermission("ultimateteams.bypass.homecooldown")) {
                     if (homeCoolDownTimer.get(uuid) > System.currentTimeMillis()) {
                         long timeLeft = (homeCoolDownTimer.get(uuid) - System.currentTimeMillis()) / 1000;
@@ -92,7 +87,7 @@ public class TeamHomeSubCommand {
                         player.sendMessage(Utils.Color(messagesConfig.getString("home-cool-down-timer-wait")
                                 .replaceAll(TIME_LEFT, Long.toString(timeLeft))));
                     } else {
-                        homeCoolDownTimer.put(uuid, System.currentTimeMillis() + (teamsConfig.getLong("team-home.cool-down.time") * 1000));
+                        homeCoolDownTimer.put(uuid, System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
                         fireTeamHomeTeleportEvent(player, team, location, player.getLocation());
                         tpHome(player, location);
 
@@ -113,13 +108,13 @@ public class TeamHomeSubCommand {
     }
 
     private void tpHome(@NotNull Player player, @NotNull Location location) {
-        if (teamsConfig.getLong("team-home.tp-delay") > 0) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-home-cooldown-start").replaceAll("%SECONDS%", teamsConfig.getString("team-home.tp-delay"))));
+        if (plugin.getSettings().getTeamHomeTpDelay() > 0) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-home-cooldown-start").replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeamHomeTpDelay()))));
 
             plugin.runLater(() -> {
                 plugin.getUtils().teleportPlayer(player, location);
                 player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
-            }, teamsConfig.getLong("team-home.tp-delay"));
+            }, plugin.getSettings().getTeamHomeTpDelay());
         } else {
             plugin.getUtils().teleportPlayer(player, location);
             player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));

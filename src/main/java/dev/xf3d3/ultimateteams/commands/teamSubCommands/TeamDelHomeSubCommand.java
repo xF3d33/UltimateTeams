@@ -11,14 +11,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class TeamDelHomeSubCommand {
-
-    private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
     private final UltimateTeams plugin;
 
     public TeamDelHomeSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.teamsConfig = plugin.getConfig();
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
 
@@ -33,7 +30,7 @@ public class TeamDelHomeSubCommand {
             return;
         }
 
-        if (teamsConfig.getBoolean("team-home.enabled")) {
+        if (plugin.getSettings().teamHomeEnabled()) {
             if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
                 Team teamByOwner = plugin.getTeamStorageUtil().findTeamByOwner(player);
 

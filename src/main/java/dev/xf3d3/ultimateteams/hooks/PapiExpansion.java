@@ -37,8 +37,7 @@ public class PapiExpansion extends PlaceholderExpansion {
     }
 
     @Override
-    public String onRequest(OfflinePlayer player, String params) {
-        FileConfiguration configFile = plugin.getConfig();
+    public String onRequest(OfflinePlayer player, String params) {;
         Team teamOwner = plugin.getTeamStorageUtil().findTeamByOfflineOwner(player);
         Team teamMember = plugin.getTeamStorageUtil().findTeamByOfflinePlayer(player);
 
@@ -53,32 +52,32 @@ public class PapiExpansion extends PlaceholderExpansion {
         }
 
         if (params.equalsIgnoreCase("teamPrefix")) {
-            String openBracket = configFile.getString("team-tags.brackets-opening");
-            String closeBracket = configFile.getString("team-tags.brackets-closing");
+            String openBracket = plugin.getSettings().getPrefixBracketsOpening();
+            String closeBracket = plugin.getSettings().getPrefixBracketsClosing();
 
             if (teamOwner != null){
-                if (configFile.getBoolean("team-tags.prefix-add-brackets")){
-                    if (configFile.getBoolean("team-tags.prefix-add-space-after")){
+                if (plugin.getSettings().addPrefixBrackets()){
+                    if (plugin.getSettings().addSpaceAfterPrefix()){
                         return Utils.Color(openBracket + teamOwner.getTeamPrefix() + closeBracket +"&r ");
                     } else {
                         return Utils.Color(openBracket + teamOwner.getTeamPrefix() + closeBracket +"&r");
                     }
                 } else {
-                    if (configFile.getBoolean("team-tags.prefix-add-space-after")){
+                    if (plugin.getSettings().addSpaceAfterPrefix()){
                         return Utils.Color(teamOwner.getTeamPrefix() + "&r ");
                     } else {
                         return Utils.Color(teamOwner.getTeamPrefix() + "&r");
                     }
                 }
             } else if (teamMember != null){
-                if (configFile.getBoolean("team-tags.prefix-add-brackets")){
-                    if (configFile.getBoolean("team-tags.prefix-add-space-after")){
+                if (plugin.getSettings().addPrefixBrackets()){
+                    if (plugin.getSettings().addSpaceAfterPrefix()){
                         return Utils.Color(openBracket + teamMember.getTeamPrefix() + closeBracket +"&r ");
                     } else {
                         return Utils.Color(openBracket + teamMember.getTeamPrefix() + closeBracket +"&r");
                     }
                 } else {
-                    if (configFile.getBoolean("team-tags.prefix-add-space-after")){
+                    if (plugin.getSettings().addSpaceAfterPrefix()){
                         return Utils.Color(teamMember.getTeamPrefix() + "&r ");
                     } else {
                         return Utils.Color(teamMember.getTeamPrefix() + "&r");

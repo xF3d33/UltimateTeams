@@ -14,8 +14,6 @@ public class TeamPrefixSubCommand {
 
     private final int MIN_CHAR_LIMIT;
     private final int MAX_CHAR_LIMIT;
-
-    private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
     private final Set<Map.Entry<UUID, Team>> teams;
     private final ArrayList<String> teamsPrefixList = new ArrayList<>();
@@ -26,9 +24,8 @@ public class TeamPrefixSubCommand {
         this.plugin = plugin;
         this.teams = plugin.getTeamStorageUtil().getTeams();
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.teamsConfig = plugin.getConfig();
-        this.MAX_CHAR_LIMIT = teamsConfig.getInt("team-tags.max-character-limit");
-        this.MIN_CHAR_LIMIT = teamsConfig.getInt("team-tags.min-character-limit");
+        this.MAX_CHAR_LIMIT = plugin.getSettings().getTeamTagsMaxCharLimit();
+        this.MIN_CHAR_LIMIT = plugin.getSettings().getTeamTagsMinCharLimit();
     }
 
     public void teamPrefixSubCommand(CommandSender sender, String prefix, List<String> bannedTags) {
@@ -59,12 +56,10 @@ public class TeamPrefixSubCommand {
                 teamsPrefixList.clear();
 
             } else if (prefix.length() > MAX_CHAR_LIMIT) {
-                int maxCharLimit = teamsConfig.getInt("team-tags.max-character-limit");
-                sender.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-too-long").replace("%CHARMAX%", String.valueOf(maxCharLimit))));
+                sender.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-too-long").replace("%CHARMAX%", String.valueOf(MAX_CHAR_LIMIT))));
                 teamsPrefixList.clear();
             } else {
-                int minCharLimit = teamsConfig.getInt("team-tags.min-character-limit");
-                sender.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-too-short").replace("%CHARMIN%", String.valueOf(minCharLimit))));
+                sender.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-too-short").replace("%CHARMIN%", String.valueOf(MIN_CHAR_LIMIT))));
                 teamsPrefixList.clear();
             }
         } else {

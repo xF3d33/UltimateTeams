@@ -43,8 +43,8 @@ public abstract class Database {
     protected final String format(@NotNull String statement) {
 
         return statement
-                .replaceAll("%team_table%", Table.TEAM_DATA.getDefaultName())
-                .replaceAll("%user_table%", Table.USER_DATA.getDefaultName());
+                .replaceAll("%team_table%", plugin.getSettings().getTableName(Table.TEAM_DATA))
+                .replaceAll("%user_table%", plugin.getSettings().getTableName(Table.USER_DATA));
     }
 
     public abstract void initialize();

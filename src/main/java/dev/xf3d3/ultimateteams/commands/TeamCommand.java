@@ -20,8 +20,6 @@ import java.util.List;
 @CommandAlias("team")
 @CommandPermission("ultimateteams.player")
 public class TeamCommand extends BaseCommand {
-
-    private final FileConfiguration teamsConfig;
     private final FileConfiguration messagesConfig;
     private static List<String> bannedTags;
     private final UltimateTeams plugin;
@@ -29,11 +27,10 @@ public class TeamCommand extends BaseCommand {
     public TeamCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.teamsConfig = plugin.getConfig();
     }
 
     public static void updateBannedTagsList() {
-        bannedTags = UltimateTeams.getPlugin().getConfig().getStringList("team-tags.disallowed-tags");
+        bannedTags = UltimateTeams.getPlugin().getSettings().getTeamTagsDisallowedList();
     }
 
     @Default
@@ -44,7 +41,7 @@ public class TeamCommand extends BaseCommand {
         }
 
         if (sender instanceof final Player player) {
-            if (teamsConfig.getBoolean("use-global-GUI-system")) {
+            if (plugin.getSettings().useGlobalGui()) {
                 new TeamListGUI(plugin).open(player);
                 return;
             }

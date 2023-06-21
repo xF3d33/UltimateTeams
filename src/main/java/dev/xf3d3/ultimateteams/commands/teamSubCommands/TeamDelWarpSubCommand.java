@@ -12,13 +12,11 @@ import org.jetbrains.annotations.NotNull;
 public class TeamDelWarpSubCommand {
 
     private final FileConfiguration messagesConfig;
-    private final FileConfiguration teamsConfig;
     private final UltimateTeams plugin;
 
     public TeamDelWarpSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
-        this.teamsConfig = plugin.getConfig();
     }
 
     public void delWarpCommand(CommandSender sender, String name) {
@@ -32,7 +30,7 @@ public class TeamDelWarpSubCommand {
             return;
         }
 
-        if (!teamsConfig.getBoolean("team-warp.enabled")) {
+        if (!plugin.getSettings().teamWarpEnabled()) {
             player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
             return;
         }

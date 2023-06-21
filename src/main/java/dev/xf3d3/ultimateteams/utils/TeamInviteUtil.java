@@ -10,8 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class TeamInviteUtil {
-
-    private final FileConfiguration teamsConfig;
     private final Logger logger;
 
     private static final Map<UUID, TeamInvite> invitesList = new HashMap<>();
@@ -21,7 +19,6 @@ public class TeamInviteUtil {
     public TeamInviteUtil(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.logger = plugin.getLogger();
-        this.teamsConfig = plugin.getConfig();
     }
     
     public TeamInvite createInvite(String inviterUUID, String inviteeUUID) {
@@ -62,7 +59,7 @@ public class TeamInviteUtil {
             if (currentTime.getTime() - teamInvite.getInviteTime().getTime() > expiryTime) {
                 invitesList.remove(teamInvite);
 
-                if (teamsConfig.getBoolean("general.developer-debug-mode.enabled")) {
+                if (plugin.getSettings().debugModeEnabled()) {
                     plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aExpired team invites removed"));
                 }
             }

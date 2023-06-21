@@ -63,14 +63,12 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     private UsersStorageUtil usersStorageUtil;
     private TeamInviteUtil teamInviteUtil;
     private HuskHomesAPIHook huskHomesHook;
+    private UpdateCheck updateChecker;
     private Settings settings;
 
     // HashMaps
     private final ConcurrentHashMap<Player, String> connectedPlayers = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Player, String> bedrockPlayers = new ConcurrentHashMap<>();
-
-    public UltimateTeams() {
-    }
 
     @Override
     public void onLoad() {
@@ -99,10 +97,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         this.usersStorageUtil = new UsersStorageUtil(this);
         this.teamInviteUtil = new TeamInviteUtil(this);
         this.utils = new Utils(this);
-
-        // Load the plugin configs
-        //getConfig().options().copyDefaults();
-        //saveDefaultConfig();
+        this.updateChecker = new UpdateCheck(this);
 
         // Load settings and locales
         initialize("plugin config & locale files", (plugin) -> {
@@ -138,9 +133,9 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             teamStorageUtil.loadTeams();
         }));
 
-        // Initialize huskhomes hook
+        // Initialize HuskHomes hook
         if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && getSettings().useHuskHomes()) {
-            initialize("huskhomes" , (plugin) -> this.huskHomesHook = new HuskHomesAPIHook());
+            initialize("huskhomes" , (plugin) -> this.huskHomesHook = new HuskHomesAPIHook(this));
         }
 
 
@@ -213,7 +208,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         } else {
             sendConsole("-------------------------------------------");
             sendConsole("&6UltimateTeams: &3FloodgateApi not found!");
-            sendConsole("&6UltimateTeams: &3Bedrock support may not function!");
+            sendConsole("&6UltimateTeams: &3Bedrock support won't work!");
             sendConsole("-------------------------------------------");
         }
 
@@ -223,13 +218,18 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             runSyncRepeating(() -> {
                 try {
                     teamInviteUtil.emptyInviteList();
-                    if (getConfig().getBoolean("general.show-auto-invite-wipe-message.enabled")){
+                    if (getSettings().enableAutoInviteWipe()){
                         sendConsole(msgFileManager.getMessagesConfig().getString("auto-invite-wipe-complete"));
                     }
                 } catch (UnsupportedOperationException e) {
                     log(Level.WARNING, Utils.Color(msgFileManager.getMessagesConfig().getString("invite-wipe-failed")));
                 }
             }, 20L * 900);
+        }
+
+        // Check for updates
+        if (getSettings().doCheckForUpdates()) {
+            updateChecker.checkForUpdates();
         }
     }
 
@@ -298,14 +298,14 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     private boolean isFloodgateEnabled() {
         try {
             Class.forName("org.geysermc.floodgate.api.FloodgateApi");
-            if (getConfig().getBoolean("general.developer-debug-mode.enabled")) {
+            if (getSettings().debugModeEnabled()) {
                 sendConsole("&6UltimateTeams-Debug: &aFound FloodgateApi class at:");
                 sendConsole("&6UltimateTeams-Debug: &dorg.geysermc.floodgate.api.FloodgateApi");
             }
             return true;
             
         } catch (ClassNotFoundException e) {
-            if (getConfig().getBoolean("general.developer-debug-mode.enabled")) {
+            if (getSettings().debugModeEnabled()) {
                 sendConsole("&6UltimateTeams-Debug: &aCould not find FloodgateApi class at:");
                 sendConsole("&6UltimateTeams-Debug: &dorg.geysermc.floodgate.api.FloodgateApi");
             }
@@ -317,14 +317,14 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         try {
             Class.forName("me.clip.placeholderapi.PlaceholderAPIPlugin");
 
-            if (getConfig().getBoolean("general.developer-debug-mode.enabled")) {
+            if (getSettings().debugModeEnabled()) {
                 sendConsole("&6UltimateTeams-Debug: &aFound PlaceholderAPI main class at:");
                 sendConsole("&6UltimateTeams-Debug: &dme.clip.placeholderapi.PlaceholderAPIPlugin");
             }
             return true;
 
         } catch (ClassNotFoundException e) {
-            if (getConfig().getBoolean("general.developer-debug-mode.enabled")) {
+            if (getSettings().debugModeEnabled()) {
                 sendConsole("&6UltimateTeams-Debug: &aCould not find PlaceholderAPI main class at:");
                 sendConsole("&6UltimateTeams-Debug: &dme.clip.placeholderapi.PlaceholderAPIPlugin");
             }
