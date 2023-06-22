@@ -77,6 +77,10 @@ public class Settings {
     @YamlKey("use-huskhomes")
     private boolean useHuskhomes = true;
 
+    @YamlComment("Hook into floodgate to handle bedrock players properly [Default value: true]. Needs FloodGate")
+    @YamlKey("floodgate-hook")
+    private boolean floodgateHook = true;
+
     // Team Tags
     @YamlComment("Set the minimum length of the team prefix and name. [Default value: 3]")
     @YamlKey("team-tags.min-character-limit")
@@ -273,8 +277,12 @@ public class Settings {
         return Optional.ofNullable(getTableNames().get(table.name().toLowerCase())).orElse(table.getDefaultName());
     }
 
-    public boolean useHuskHomes() {
+    public boolean HuskHomesHook() {
         return useHuskhomes;
+    }
+
+    public boolean FloodGateHook() {
+        return floodgateHook;
     }
 
     public int getTeamTagsMinCharLimit() {

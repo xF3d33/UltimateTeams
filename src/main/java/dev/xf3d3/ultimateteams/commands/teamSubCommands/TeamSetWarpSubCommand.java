@@ -17,7 +17,6 @@ public class TeamSetWarpSubCommand {
     private final FileConfiguration messagesConfig;
     private final UltimateTeams plugin;
 
-    // todo: setwarp limit to 2
     public TeamSetWarpSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();

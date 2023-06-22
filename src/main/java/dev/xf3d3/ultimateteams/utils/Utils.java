@@ -21,7 +21,7 @@ public class Utils {
     }
 
     public void teleportPlayer(@NotNull Player player, @NotNull Location location) {
-        if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && plugin.getSettings().useHuskHomes()) {
+        if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && plugin.getSettings().HuskHomesHook()) {
             plugin.getHuskHomesHook().teleportPlayer(player, location);
             return;
         }

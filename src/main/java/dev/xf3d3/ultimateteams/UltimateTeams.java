@@ -8,6 +8,7 @@ import dev.xf3d3.ultimateteams.commands.TeamAdmin;
 import dev.xf3d3.ultimateteams.commands.TeamChatCommand;
 import dev.xf3d3.ultimateteams.commands.TeamChatSpyCommand;
 import dev.xf3d3.ultimateteams.commands.TeamCommand;
+import dev.xf3d3.ultimateteams.config.TeamsGui;
 import dev.xf3d3.ultimateteams.database.Database;
 import dev.xf3d3.ultimateteams.database.MySqlDatabase;
 import dev.xf3d3.ultimateteams.database.SQLiteDatabase;
@@ -16,7 +17,6 @@ import dev.xf3d3.ultimateteams.hooks.HuskHomesAPIHook;
 import dev.xf3d3.ultimateteams.hooks.PapiExpansion;
 import dev.xf3d3.ultimateteams.config.MessagesFileManager;
 import dev.xf3d3.ultimateteams.config.Settings;
-import dev.xf3d3.ultimateteams.config.TeamGUIFileManager;
 import dev.xf3d3.ultimateteams.listeners.PlayerConnectEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDamageEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDisconnectEvent;
@@ -25,6 +25,9 @@ import dev.xf3d3.ultimateteams.models.TeamWarp;
 import dev.xf3d3.ultimateteams.utils.*;
 import net.william278.annotaml.Annotaml;
 import net.william278.desertwell.util.ThrowingConsumer;
+import net.william278.desertwell.util.Version;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -45,13 +48,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public final class UltimateTeams extends JavaPlugin implements TaskRunner {
+    private static final int METRICS_ID = 18842;
 
     private final PluginDescriptionFile pluginInfo = getDescription();
     private final String pluginVersion = pluginInfo.getVersion();
     private static UltimateTeams instance;
 
     public MessagesFileManager msgFileManager;
-    public TeamGUIFileManager teamGUIFileManager;
 
     private FloodgateAPIHook floodgateAPIHook;
     private Database database;
@@ -65,6 +68,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     private HuskHomesAPIHook huskHomesHook;
     private UpdateCheck updateChecker;
     private Settings settings;
+    private TeamsGui teamsGui;
 
     // HashMaps
     private final ConcurrentHashMap<Player, String> connectedPlayers = new ConcurrentHashMap<>();
@@ -91,7 +95,6 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         this.tasks = new ConcurrentHashMap<>();
         this.paperLib = new MorePaperLib(this);
         this.manager = new PaperCommandManager(this);
-        this.teamGUIFileManager = new TeamGUIFileManager(this);
         this.msgFileManager = new MessagesFileManager(this);
         this.teamStorageUtil = new TeamStorageUtil(this);
         this.usersStorageUtil = new UsersStorageUtil(this);
@@ -134,7 +137,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         }));
 
         // Initialize HuskHomes hook
-        if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && getSettings().useHuskHomes()) {
+        if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && getSettings().HuskHomesHook()) {
             initialize("huskhomes" , (plugin) -> this.huskHomesHook = new HuskHomesAPIHook(this));
         }
 
@@ -196,7 +199,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         }
 
         // Register FloodgateApi hooks
-        if (getServer().getPluginManager().isPluginEnabled("floodgate") || isFloodgateEnabled()) {
+        if (getServer().getPluginManager().isPluginEnabled("floodgate") && getSettings().FloodGateHook()) {
 
             sendConsole("-------------------------------------------");
             sendConsole("&6UltimateTeams: &3FloodgateApi found!");
@@ -212,9 +215,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             sendConsole("-------------------------------------------");
         }
 
-        // todo: add config check and invite console message boolean in config
         // Start auto invite clear task
-        if (true) {
+        if (getSettings().enableAutoInviteWipe()) {
             runSyncRepeating(() -> {
                 try {
                     teamInviteUtil.emptyInviteList();
@@ -226,6 +228,9 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
                 }
             }, 20L * 900);
         }
+
+        // Hook into bStats
+        initialize("metrics", (plugin) -> this.registerMetrics(METRICS_ID));
 
         // Check for updates
         if (getSettings().doCheckForUpdates()) {
@@ -256,6 +261,10 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         this.settings = settings;
     }
 
+    public void setGuiFile(@NotNull TeamsGui teamsGui) {
+        this.teamsGui = teamsGui;
+    }
+
      /**
      * Reloads the {@link Settings} from its config file
      *
@@ -267,6 +276,9 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             // Load settings
             setSettings(Annotaml.create(new File(getDataFolder(), "config.yml"), Settings.class).get());
 
+            // Load Gui File
+            setGuiFile(Annotaml.create(new File(getDataFolder(), "teamgui.yml"), TeamsGui.class).get());
+
             return true;
         } catch (IOException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             log(Level.SEVERE, "Failed to reload UltimateTeams config or messages file", e);
@@ -277,6 +289,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     @NotNull
     public Settings getSettings() {
         return settings;
+    }
+
+    @NotNull
+    public TeamsGui getTeamsGui() {
+        return teamsGui;
     }
 
 
@@ -295,24 +312,6 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         this.getServer().getPluginManager().registerEvents(new PlayerDamageEvent(this), this);
     }
 
-    private boolean isFloodgateEnabled() {
-        try {
-            Class.forName("org.geysermc.floodgate.api.FloodgateApi");
-            if (getSettings().debugModeEnabled()) {
-                sendConsole("&6UltimateTeams-Debug: &aFound FloodgateApi class at:");
-                sendConsole("&6UltimateTeams-Debug: &dorg.geysermc.floodgate.api.FloodgateApi");
-            }
-            return true;
-            
-        } catch (ClassNotFoundException e) {
-            if (getSettings().debugModeEnabled()) {
-                sendConsole("&6UltimateTeams-Debug: &aCould not find FloodgateApi class at:");
-                sendConsole("&6UltimateTeams-Debug: &dorg.geysermc.floodgate.api.FloodgateApi");
-            }
-            return false;
-        }
-    }
-
     private boolean isPlaceholderAPIEnabled() {
         try {
             Class.forName("me.clip.placeholderapi.PlaceholderAPIPlugin");
@@ -329,6 +328,19 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
                 sendConsole("&6UltimateTeams-Debug: &dme.clip.placeholderapi.PlaceholderAPIPlugin");
             }
             return false;
+        }
+    }
+
+    public void registerMetrics(int metricsId) {
+        try {
+            final Metrics metrics = new Metrics(this, metricsId);
+
+            metrics.addCustomChart(new SimplePie("database_type", () -> getSettings().getDatabaseType().getDisplayName()));
+            metrics.addCustomChart(new SimplePie("huskhomes_hook", () -> Boolean.toString(getSettings().HuskHomesHook())));
+            metrics.addCustomChart(new SimplePie("floodgate_hook", () -> Boolean.toString(getSettings().FloodGateHook())));
+
+        } catch (Throwable e) {
+            log(Level.WARNING, "Failed to register bStats metrics (" + e.getMessage() + ")");
         }
     }
 

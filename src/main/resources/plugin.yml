@@ -1,7 +1,7 @@
 name: UltimateTeams
 version: '${project.version}'
 main: dev.xf3d3.ultimateteams.UltimateTeams
-api-version: 1.13
+api-version: 1.16
 prefix: UltimateTeams
 authors: [ xF3d3 ]
 description: A simple and lightweight Teams plugin for Minecraft.

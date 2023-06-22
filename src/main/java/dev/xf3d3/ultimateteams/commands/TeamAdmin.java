@@ -47,7 +47,6 @@ public class TeamAdmin extends BaseCommand {
         plugin.runSync(() -> {
             plugin.loadConfigs();
             plugin.msgFileManager.reloadMessagesConfig();
-            plugin.teamGUIFileManager.reloadTeamGUIConfig();
 
             TeamCommand.updateBannedTagsList();
 
