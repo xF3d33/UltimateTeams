@@ -45,7 +45,6 @@ public class TeamCreateSubCommand {
 
         teams.forEach((teams) -> teamNamesList.add(teams.getValue().getTeamFinalName()));
 
-        System.out.println(player.getName() + " " + name);
 
         if (name.length() >= 1) {
             if (bannedTags.contains(name)) {
@@ -58,12 +57,12 @@ public class TeamCreateSubCommand {
                 return;
             }
 
-            for (String names : teamNamesList){
-                if (StringUtils.containsAnyIgnoreCase(names, name)){
+            for (String names : teamNamesList) {
+                if (StringUtils.containsAnyIgnoreCase(names, name)) {
                     player.sendMessage(Utils.Color(messagesConfig.getString("team-name-already-taken").replace(TEAM_PLACEHOLDER, name)));
 
+                    return;
                 }
-                return;
             }
 
             if (name.contains("&") || name.contains("#")) {
@@ -76,17 +75,15 @@ public class TeamCreateSubCommand {
                 return;
             }
 
-            if (storageUtil.findTeamByPlayer(player) != null){
+            if (storageUtil.findTeamByPlayer(player) != null) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-creation-failed").replace(TEAM_PLACEHOLDER, Utils.Color(name))));
                 return;
             }
 
             if (name.length() < MIN_CHAR_LIMIT) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-short").replace("%CHARMIN%", Integer.toString(MIN_CHAR_LIMIT))));
-
             } else if (name.length() > MAX_CHAR_LIMIT) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-long").replace("%CHARMAX%", Integer.toString(MAX_CHAR_LIMIT))));
-
             } else {
                 if (!storageUtil.isTeamExisting(player)) {
                     Team team = storageUtil.createTeam(player, name);
@@ -101,7 +98,6 @@ public class TeamCreateSubCommand {
                     player.sendMessage(teamNotCreated);
                 }
                 teamNamesList.clear();
-
             }
         } else {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-create-incorrect-usage")));
