@@ -7,23 +7,25 @@ import dev.xf3d3.ultimateteams.api.TeamChatMessageSendEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
-@CommandAlias("tc|teamchat|tchat")
-public class TeamChatCommand extends BaseCommand {
+@CommandAlias("ac|allychat|achat")
+public class TeamAllyChatCommand extends BaseCommand {
     private final FileConfiguration messagesConfig;
     private final Logger logger;
     private final UltimateTeams plugin;
 
-    public TeamChatCommand(@NotNull UltimateTeams plugin) {
+    public TeamAllyChatCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
         this.logger = plugin.getLogger();
@@ -31,8 +33,8 @@ public class TeamChatCommand extends BaseCommand {
 
     @Default
     @CommandCompletion("<message>")
-    @Syntax("/tc <message>")
-    @CommandPermission("ultimateteams.teamchat")
+    @Syntax("/allychat <message>")
+    @CommandPermission("ultimateteams.allychat")
     public void onCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof final Player player)){
             logger.warning(Utils.Color(messagesConfig.getString("player-only-command")));
@@ -40,7 +42,7 @@ public class TeamChatCommand extends BaseCommand {
         }
 
         // Check if enabled
-        if (!plugin.getSettings().teamChatEnabled()){
+        if (!plugin.getSettings().teamAllyChatEnabled()){
             player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
             return;
         }
@@ -49,7 +51,7 @@ public class TeamChatCommand extends BaseCommand {
         if (args.length < 1) {
             player.sendMessage(Utils.Color(
                     "&6UltimateTeams team chat usage:&3" +
-                            "\n/cc <message>"
+                            "\n/allychat <message>"
             ));
             return;
         }
@@ -63,7 +65,7 @@ public class TeamChatCommand extends BaseCommand {
 
         String chatSpyPrefix = plugin.getSettings().getTeamChatSpyPrefix();
         StringBuilder messageString = new StringBuilder();
-        messageString.append(plugin.getSettings().getTeamChatPrefix()).append(" ");
+        messageString.append(plugin.getSettings().getTeamAllyChatPrefix()).append(" ");
         messageString.append("&d").append(player.getName()).append(":&r").append(" ");
         for (String arg : args) {
             messageString.append(arg).append(" ");
@@ -73,14 +75,6 @@ public class TeamChatCommand extends BaseCommand {
         if (team != null) {
             ArrayList<String> playerClanMembers = team.getTeamMembers();
 
-            fireClanChatMessageSendEvent(
-                    player,
-                    team,
-                    plugin.getSettings().getTeamChatPrefix(),
-                    messageString.toString(),
-                    playerClanMembers
-            );
-
             // Send message to team owner
             final UUID ownerUUID = UUID.fromString(team.getTeamOwner());
             final Player playerTeamOwner = Bukkit.getPlayer(ownerUUID);
@@ -89,7 +83,6 @@ public class TeamChatCommand extends BaseCommand {
             }
 
             // Send message to team members
-            assert playerClanMembers != null;
             for (String playerTeamMember : playerClanMembers) {
                 if (playerTeamMember != null) {
                     UUID memberUUID = UUID.fromString(playerTeamMember);
@@ -101,15 +94,30 @@ public class TeamChatCommand extends BaseCommand {
                 }
             }
 
+            // Send message to team allies
+            for (String allyTeam : team.getTeamAllies()) {
+                final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(allyTeam));
+                final Team ally = plugin.getTeamStorageUtil().findTeamByOfflineOwner(offlinePlayer);
+
+                final Player teamOwner = Bukkit.getPlayer(UUID.fromString(allyTeam));
+
+                if (teamOwner != null) {
+                    teamOwner.sendMessage(Utils.Color(messageString.toString()));
+                }
+
+                for (String playerUUID : ally.getTeamMembers()) {
+                    final Player allyPlayer = Bukkit.getPlayer(UUID.fromString(playerUUID));
+
+                    if (allyPlayer != null) {
+                        allyPlayer.sendMessage(Utils.Color(messageString.toString()));
+                    }
+                }
+            }
+
             // Send spy message
             if (plugin.getSettings().teamChatSpyEnabled()) {
                 Bukkit.broadcast(Utils.Color(chatSpyPrefix + " " + messageString), "ultimateteams.chat.spy");
             }
         }
-    }
-
-    private void fireClanChatMessageSendEvent(Player player, Team team, String prefix, String message, ArrayList<String> recipients) {
-        TeamChatMessageSendEvent teamChatMessageSendEvent = new TeamChatMessageSendEvent(player, team, prefix, message, recipients);
-        Bukkit.getPluginManager().callEvent(teamChatMessageSendEvent);
     }
 }

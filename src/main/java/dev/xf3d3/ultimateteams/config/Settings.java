@@ -148,14 +148,25 @@ public class Settings {
 
     @YamlComment("Below is the prefix for the team chat messages. [Default value: &6[&3CC&6]&r]")
     @YamlKey("team-chat.prefix")
-    private String teamChatPrefix = "&6[&3CC&6]&r";
+    private String teamChatPrefix = "&6[&3TC&6]&r";
 
+    // Ally Chat
+    @YamlComment("Enable the team ally chat system. [Default value: true]")
+    @YamlKey("ally-chat.enabled")
+    private boolean teamAllyChatEnabled = true;
+
+    @YamlComment("Below is the prefix for the team ally chat messages. [Default value: &6[&3CC&6]&r]")
+    @YamlKey("ally-chat.prefix")
+    private String teamAllyChatPrefix = "&6[&eAC&6]&r";
+
+    // Chat Spy
     @YamlComment("Do you want players with the perm 'ultimateteams.chat.spy' be able to spy on all team chat messages? [Default value: true]")
-    @YamlKey("team-chat.chat-spy.enabled")
+    @YamlKey("chat-spy.enabled")
     private boolean teamChatSpyEnabled = true;
 
+
     @YamlComment("Below is the prefix for th chat spy messages. [Default value: &6[&cSPY&6]&r]")
-    @YamlKey("team-chat.chat-spy.prefix")
+    @YamlKey("chat-spy.prefix")
     private String teamChatSpyPrefix = "&6[&cSPY&6]&r";
 
     // Team Allies
@@ -352,6 +363,14 @@ public class Settings {
 
     public String getTeamChatPrefix() {
         return teamChatPrefix;
+    }
+
+    public boolean teamAllyChatEnabled() {
+        return teamAllyChatEnabled;
+    }
+
+    public String getTeamAllyChatPrefix() {
+        return teamAllyChatPrefix;
     }
 
     public boolean teamChatSpyEnabled() {

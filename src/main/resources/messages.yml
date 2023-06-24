@@ -162,6 +162,7 @@ enabled-friendly-fire: "&3You successfully &aenabled &3friendly fire.\n&3Your te
 disabled-friendly-fire: "&3You successfully &cdisabled &3friendly fire.\n&3Your team members can no longer pvp each other!"
 failed-not-in-team: "&3You need to be in a team first! Use &6/team &3for details how."
 friendly-fire-is-disabled: "&3Your team has friendly fire disabled."
+friendly-fire-is-disabled-for-allies: "&3You can't hurt a member of an allied team!"
 
 #Team Homes
 successfully-set-team-home: "&3You &aSuccessfully &3set the team home to your current location!"

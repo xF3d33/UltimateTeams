@@ -4,10 +4,8 @@ import co.aikar.commands.PaperCommandManager;
 import com.fatboyindustrial.gsonjavatime.Converters;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dev.xf3d3.ultimateteams.commands.TeamAdmin;
-import dev.xf3d3.ultimateteams.commands.TeamChatCommand;
-import dev.xf3d3.ultimateteams.commands.TeamChatSpyCommand;
-import dev.xf3d3.ultimateteams.commands.TeamCommand;
+import dev.xf3d3.ultimateteams.commands.*;
+import dev.xf3d3.ultimateteams.commands.TeamAllyChatCommand;
 import dev.xf3d3.ultimateteams.config.TeamsGui;
 import dev.xf3d3.ultimateteams.database.Database;
 import dev.xf3d3.ultimateteams.database.MySqlDatabase;
@@ -302,6 +300,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         this.manager.registerCommand(new TeamCommand(this));
         this.manager.registerCommand(new TeamChatSpyCommand(this));
         this.manager.registerCommand(new TeamChatCommand(this));
+        this.manager.registerCommand(new TeamAllyChatCommand(this));
         this.manager.registerCommand(new TeamAdmin(this));
     }
 

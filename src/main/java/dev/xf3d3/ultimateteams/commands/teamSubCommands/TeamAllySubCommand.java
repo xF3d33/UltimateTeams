@@ -68,6 +68,7 @@ public class TeamAllySubCommand {
                 if (team.getTeamAllies().contains(allyOwnerUUIDString)){
                     player.sendMessage(Utils.Color(messagesConfig.getString("failed-team-already-your-ally")));
                     return;
+
                 } else {
                     plugin.getTeamStorageUtil().addTeamAlly(player, allyTeamOwner);
                     fireTeamAllyAddEvent(player, team, allyTeamOwner, team);
