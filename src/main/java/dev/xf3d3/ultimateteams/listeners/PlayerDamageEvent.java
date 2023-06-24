@@ -5,6 +5,7 @@ import dev.xf3d3.ultimateteams.api.TeamFriendlyFireAttackEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,6 +15,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +36,7 @@ public class PlayerDamageEvent implements Listener {
             if (e.getDamager() instanceof final Player attackingPlayer) {
                 attackingPlayer.setInvulnerable(false);
 
+                // get the team of the player who attacked
                 Team attackingTeam;
                 if (plugin.getTeamStorageUtil().findTeamByOwner(attackingPlayer) != null) {
                     attackingTeam = plugin.getTeamStorageUtil().findTeamByOwner(attackingPlayer);
@@ -41,6 +44,12 @@ public class PlayerDamageEvent implements Listener {
                     attackingTeam = plugin.getTeamStorageUtil().findTeamByPlayer(attackingPlayer);
                 }
 
+                if (attackingTeam == null) {
+                    return;
+                }
+
+
+                // get the player of the player attacked
                 Team victimTeam;
                 if (plugin.getTeamStorageUtil().findTeamByOwner(hurtPlayer) != null) {
                     victimTeam = plugin.getTeamStorageUtil().findTeamByOwner(hurtPlayer);
@@ -49,27 +58,50 @@ public class PlayerDamageEvent implements Listener {
                 }
 
 
-                if (attackingTeam != null) {
-                    ArrayList<String> attackingClanMembers = attackingTeam.getTeamMembers();
-                    if (attackingClanMembers.contains(hurtUUID) || attackingTeam.getTeamOwner().equals(hurtUUID)){
-                        if (plugin.getSettings().isPvpCommandEnabled()){
-                            if (!attackingTeam.isFriendlyFireAllowed()){
-                                if (plugin.getSettings().enablePvPBypassPermission()){
-                                    if (attackingPlayer.hasPermission("ultimateteams.bypass.pvp")){
-                                        return;
-                                    }
-                                }
-                                e.setCancelled(true);
-                                fireClanFriendlyFireAttackEvent(hurtPlayer, attackingPlayer, hurtPlayer, attackingTeam, victimTeam);
-                                
-                                if (plugin.getSettings().debugModeEnabled()){
-                                    plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFired ClanFriendlyFireAttackEvent"));
-                                }
-                                attackingPlayer.sendMessage(Utils.Color(messagesConfig.getString("friendly-fire-is-disabled")));
+                final ArrayList<String> attackingTeamMembers = attackingTeam.getTeamMembers();
+
+                // check if attacked player is an ally
+                for (String AllyUUID : attackingTeam.getTeamAllies()) {
+                    final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(AllyUUID));
+                    final Team allyTeam = plugin.getTeamStorageUtil().findTeamByOfflineOwner(offlinePlayer);
+
+                    if (allyTeam.getTeamMembers().contains(hurtUUID) || allyTeam.getTeamOwner().equals(hurtUUID)) {
+                        if (plugin.getSettings().enablePvPBypassPermission()) {
+                            if (attackingPlayer.hasPermission("ultimateteams.bypass.pvp")) {
+                                return;
                             }
-                        } else {
-                            e.setCancelled(false);
                         }
+
+                        e.setCancelled(true);
+                        fireClanFriendlyFireAttackEvent(hurtPlayer, attackingPlayer, hurtPlayer, attackingTeam, allyTeam);
+
+                        if (plugin.getSettings().debugModeEnabled()){
+                            plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFired ClanFriendlyFireAttackEvent"));
+                        }
+
+                        attackingPlayer.sendMessage(Utils.Color(messagesConfig.getString("friendly-fire-is-disabled-for-allies")));
+
+                        return;
+                    }
+                }
+
+                // check if attacked player is a team member
+                if (!attackingTeam.isFriendlyFireAllowed()) {
+                    if (attackingTeamMembers.contains(hurtUUID) || attackingTeam.getTeamOwner().equals(hurtUUID)) {
+                        if (plugin.getSettings().enablePvPBypassPermission()) {
+                            if (attackingPlayer.hasPermission("ultimateteams.bypass.pvp")) {
+                                return;
+                            }
+                        }
+
+                        e.setCancelled(true);
+                        fireClanFriendlyFireAttackEvent(hurtPlayer, attackingPlayer, hurtPlayer, attackingTeam, victimTeam);
+
+                        if (plugin.getSettings().debugModeEnabled()){
+                            plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFired ClanFriendlyFireAttackEvent"));
+                        }
+
+                        attackingPlayer.sendMessage(Utils.Color(messagesConfig.getString("friendly-fire-is-disabled")));
                     }
                 }
             }
