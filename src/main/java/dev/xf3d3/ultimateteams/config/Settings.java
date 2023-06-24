@@ -75,11 +75,11 @@ public class Settings {
 
     @YamlComment("use HuskHomes to teleport players instead of built-in teleport handler [Default value: true]")
     @YamlKey("use-huskhomes")
-    private boolean useHuskhomes = true;
+    private boolean useHuskhomes = false;
 
     @YamlComment("Hook into floodgate to handle bedrock players properly [Default value: true]. Needs FloodGate")
     @YamlKey("floodgate-hook")
-    private boolean floodgateHook = true;
+    private boolean floodgateHook = false;
 
     // Team Tags
     @YamlComment("Set the minimum length of the team prefix and name. [Default value: 3]")

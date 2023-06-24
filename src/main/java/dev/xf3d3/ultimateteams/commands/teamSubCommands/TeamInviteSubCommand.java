@@ -100,31 +100,33 @@ public class TeamInviteSubCommand {
                         }
 
 
-                        if (plugin.getFloodgateApi() != null) {
-                            if (plugin.getBedrockPlayers().containsKey(invitedPlayer)) {
-                                String bedrockInvitedPlayerUUIDString = plugin.getBedrockPlayers().get(invitedPlayer);
-                                if (plugin.getTeamInviteUtil().createInvite(player.getUniqueId().toString(), bedrockInvitedPlayerUUIDString) != null) {
-                                    String confirmationString = Utils.Color(messagesConfig.getString("team-invite-successful")).replace(INVITED_PLAYER, invitedPlayer.getName());
-                                    player.sendMessage(confirmationString);
-                                    String invitationString = Utils.Color(messagesConfig.getString("team-invited-player-invite-pending")).replace("%TEAMOWNER%", player.getName());
-                                    invitedPlayer.sendMessage(invitationString);
-                                    return;
+                        if (plugin.getSettings().FloodGateHook()) {
+                            if (plugin.getFloodgateApi() != null) {
+                                if (plugin.getBedrockPlayers().containsKey(invitedPlayer)) {
+                                    String bedrockInvitedPlayerUUIDString = plugin.getBedrockPlayers().get(invitedPlayer);
+                                    if (plugin.getTeamInviteUtil().createInvite(player.getUniqueId().toString(), bedrockInvitedPlayerUUIDString) != null) {
+                                        String confirmationString = Utils.Color(messagesConfig.getString("team-invite-successful")).replace(INVITED_PLAYER, invitedPlayer.getName());
+                                        player.sendMessage(confirmationString);
+                                        String invitationString = Utils.Color(messagesConfig.getString("team-invited-player-invite-pending")).replace("%TEAMOWNER%", player.getName());
+                                        invitedPlayer.sendMessage(invitationString);
+                                        return;
+                                    } else {
+                                        String failureString = Utils.Color(messagesConfig.getString("team-invite-failed")).replace(INVITED_PLAYER, invitedPlayer.getName());
+                                        player.sendMessage(failureString);
+                                        return;
+                                    }
                                 } else {
-                                    String failureString = Utils.Color(messagesConfig.getString("team-invite-failed")).replace(INVITED_PLAYER, invitedPlayer.getName());
-                                    player.sendMessage(failureString);
-                                    return;
-                                }
-                            } else {
-                                if (plugin.getTeamInviteUtil().createInvite(player.getUniqueId().toString(), invitedPlayer.getUniqueId().toString()) != null) {
-                                    String confirmationString = Utils.Color(messagesConfig.getString("team-invite-successful")).replace(INVITED_PLAYER, invitedPlayer.getName());
-                                    player.sendMessage(confirmationString);
-                                    String invitationString = Utils.Color(messagesConfig.getString("team-invited-player-invite-pending")).replace("%TEAMOWNER%", player.getName());
-                                    invitedPlayer.sendMessage(invitationString);
-                                    return;
-                                } else {
-                                    String failureString = Utils.Color(messagesConfig.getString("team-invite-failed")).replace(INVITED_PLAYER, invitedPlayer.getName());
-                                    player.sendMessage(failureString);
-                                    return;
+                                    if (plugin.getTeamInviteUtil().createInvite(player.getUniqueId().toString(), invitedPlayer.getUniqueId().toString()) != null) {
+                                        String confirmationString = Utils.Color(messagesConfig.getString("team-invite-successful")).replace(INVITED_PLAYER, invitedPlayer.getName());
+                                        player.sendMessage(confirmationString);
+                                        String invitationString = Utils.Color(messagesConfig.getString("team-invited-player-invite-pending")).replace("%TEAMOWNER%", player.getName());
+                                        invitedPlayer.sendMessage(invitationString);
+                                        return;
+                                    } else {
+                                        String failureString = Utils.Color(messagesConfig.getString("team-invite-failed")).replace(INVITED_PLAYER, invitedPlayer.getName());
+                                        player.sendMessage(failureString);
+                                        return;
+                                    }
                                 }
                             }
                         }
