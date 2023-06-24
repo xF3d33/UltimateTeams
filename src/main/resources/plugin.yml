@@ -28,3 +28,45 @@ permissions:
             default: op
           ultimateteams.maxteamsize.*:
             default: op
+          ultimateteams.team.create:
+            default: op
+          ultimateteams.team.warp:
+            default: op
+          ultimateteams.team.setwarp:
+            default: op
+          ultimateteams.team.delwarp:
+            default: op
+          ultimateteams.team.disband:
+            default: op
+          ultimateteams.team.invite:
+            default: op
+          ultimateteams.team.sethome:
+            default: op
+          ultimateteams.team.home:
+            default: op
+          ultimateteams.team.delhome:
+            default: op
+          ultimateteams.team.pvp:
+            default: op
+          ultimateteams.team.enemy.add:
+            default: op
+          ultimateteams.team.enemy.remove:
+            default: op
+          ultimateteams.team.ally.add:
+            default: op
+          ultimateteams.team.ally.remove:
+            default: op
+          ultimateteams.team.leave:
+            default: op
+          ultimateteams.team.kick:
+            default: op
+          ultimateteams.team.join:
+            default: op
+          ultimateteams.team.list:
+            default: op
+          ultimateteams.team.transfer:
+            default: op
+          ultimateteams.team.prefix:
+            default: op
+          ultimateteams.team.info:
+            default: op
