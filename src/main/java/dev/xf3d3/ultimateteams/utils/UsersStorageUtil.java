@@ -14,13 +14,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UsersStorageUtil {
 
     private final Logger logger = UltimateTeams.getPlugin().getLogger();
-    private final Map<UUID, TeamPlayer> usermap = new HashMap<>();
+    private final Map<UUID, TeamPlayer> usermap = new ConcurrentHashMap<>();
     private final FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
 
     private static final String PLAYER_PLACEHOLDER = "%PLAYER%";
@@ -36,15 +37,17 @@ public class UsersStorageUtil {
         String javaUUID = uuid.toString();
         String lastPlayerName = player.getName();
 
-        plugin.runAsync(() -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
-                teamPlayer -> usermap.put(UUID.fromString(teamPlayer.getJavaUUID()), teamPlayer),
-                () -> {
-                    TeamPlayer teamPlayer = new TeamPlayer(javaUUID, lastPlayerName, false, null, null);
+        if (!usermap.containsKey(uuid)) {
+            plugin.runAsync(() -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
+                    teamPlayer -> usermap.put(UUID.fromString(teamPlayer.getJavaUUID()), teamPlayer),
+                    () -> {
+                        TeamPlayer teamPlayer = new TeamPlayer(javaUUID, lastPlayerName, false, null, null);
 
-                    plugin.getDatabase().createPlayer(teamPlayer);
-                    usermap.put(uuid, teamPlayer);
-                }
-        ));
+                        plugin.getDatabase().createPlayer(teamPlayer);
+                        usermap.put(uuid, teamPlayer);
+                    }
+            ));
+        }
     }
 
     public void getBedrockPlayer(Player player){
