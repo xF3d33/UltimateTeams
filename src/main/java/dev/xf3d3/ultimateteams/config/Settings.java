@@ -1,12 +1,14 @@
 package dev.xf3d3.ultimateteams.config;
 
+import dev.xf3d3.ultimateteams.database.Database;
 import net.william278.annotaml.YamlComment;
 import net.william278.annotaml.YamlFile;
 import net.william278.annotaml.YamlKey;
-import dev.xf3d3.ultimateteams.database.Database;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Plugin settings, read from config.yml

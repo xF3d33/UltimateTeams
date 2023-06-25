@@ -5,7 +5,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamPlayer;
-import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
@@ -77,8 +76,6 @@ public class MySqlDatabase extends Database {
         }});
     }
 
-
-
     public void initialize() {
         // Establish connection
         this.setConnection();
@@ -131,7 +128,6 @@ public class MySqlDatabase extends Database {
             plugin.log(Level.SEVERE, "Failed to fetch list of teams from table", e);
         }
 
-        System.out.println(teams);
         return teams;
     }
 
@@ -149,8 +145,6 @@ public class MySqlDatabase extends Database {
                 statement.setBoolean(5, teamplayer.getCanChatSpy());
 
                 statement.executeUpdate();
-
-                System.out.println("saved team player " + teamplayer.getLastPlayerName());
             }
         } catch (SQLException e) {
             plugin.log(Level.SEVERE, "Failed to create team in table", e);
@@ -174,8 +168,6 @@ public class MySqlDatabase extends Database {
                 statement.setString(6, String.valueOf(teamplayer.getJavaUUID()));
 
                 statement.executeUpdate();
-
-                System.out.println("updated team player " + teamplayer.getLastPlayerName());
             }
         } catch (SQLException e) {
             plugin.log(Level.SEVERE, "Failed to create team in table", e);
@@ -201,8 +193,6 @@ public class MySqlDatabase extends Database {
                            resultSet.getString("bedrockUUID"),
                            resultSet.getBoolean("canChatSpy")
                     );
-
-                    System.out.println("got team player " + teamPlayer.getLastPlayerName());
 
                     return Optional.of(teamPlayer);
                 }
@@ -233,8 +223,6 @@ public class MySqlDatabase extends Database {
                             resultSet.getBoolean("canChatSpy")
                     );
 
-                    System.out.println("got team player from name " + teamPlayer.getLastPlayerName());
-
                     return Optional.of(teamPlayer);
                 }
             }
@@ -254,9 +242,6 @@ public class MySqlDatabase extends Database {
                 statement.setString(1, String.valueOf(uuid));
                 statement.setString(2, team.getTeamFinalName());
                 statement.setBytes(3, plugin.getGson().toJson(team).getBytes(StandardCharsets.UTF_8));
-
-                System.out.println(uuid);
-                System.out.println(plugin.getGson().toJson(team));
 
                 statement.executeUpdate();
             }
@@ -278,9 +263,6 @@ public class MySqlDatabase extends Database {
                 statement.setString(3, team.getTeamFinalName());
 
                 statement.executeUpdate();
-
-                System.out.println("updated team " + team.getTeamFinalName());
-                System.out.println(plugin.getGson().toJson(team));
             }
         } catch (SQLException | JsonSyntaxException e) {
             plugin.log(Level.SEVERE, "Failed to update team in table", e);
@@ -297,8 +279,6 @@ public class MySqlDatabase extends Database {
                 statement.setString(1, String.valueOf(uuid));
 
                 statement.executeUpdate();
-
-                System.out.println("deleted team " + uuid);
             }
         } catch (SQLException e) {
             plugin.log(Level.SEVERE, "Failed to delete team in table", e);

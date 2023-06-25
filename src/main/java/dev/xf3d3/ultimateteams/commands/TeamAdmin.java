@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
-@CommandAlias("teamAdmin|ta")
+@CommandAlias("teamadmin|ta")
 public class TeamAdmin extends BaseCommand {
 
     private final FileConfiguration messagesConfig;

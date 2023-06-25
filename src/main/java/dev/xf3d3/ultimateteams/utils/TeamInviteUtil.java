@@ -2,7 +2,6 @@ package dev.xf3d3.ultimateteams.utils;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.TeamInvite;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

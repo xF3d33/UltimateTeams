@@ -1,12 +1,9 @@
 package dev.xf3d3.ultimateteams.config;
 
-import dev.xf3d3.ultimateteams.database.Database;
 import net.william278.annotaml.YamlComment;
 import net.william278.annotaml.YamlFile;
 import net.william278.annotaml.YamlKey;
-import org.jetbrains.annotations.NotNull;
 
-import java.nio.file.Path;
 import java.util.Map;
 
 
