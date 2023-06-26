@@ -27,9 +27,13 @@ public class TeamStorageUtil {
     }
 
     public void loadTeams() {
-        plugin.getDatabase().getAllTeams().forEach(team ->
+        final List<Team> teams = plugin.getDatabase().getAllTeams();
+
+        teams.forEach(team ->
                 teamsList.put(UUID.fromString(team.getTeamOwner()), team)
         );
+
+        plugin.sendConsole(Utils.Color("&eLoaded " + teams.size() + " teams!"));
     }
 
     public Team createTeam(Player player, String teamName) {
@@ -54,6 +58,19 @@ public class TeamStorageUtil {
             if (isTeamOwner(player)) {
                 if (teamsList.containsKey(uuid)) {
                     fireTeamDisbandEvent(player);
+
+                    // remove from allies team the deleted team
+                    final Team disbandedTeam = findTeamByOwner(player);
+                    for (String teamUUIDString : disbandedTeam.getTeamAllies()) {
+                        OfflinePlayer alliedTeamOwner = Bukkit.getOfflinePlayer(UUID.fromString(teamUUIDString));
+                        Team alliedTeam = findTeamByOfflinePlayer(alliedTeamOwner);
+
+                        alliedTeam.removeTeamAlly(uuid.toString());
+
+                        teamsList.replace(UUID.fromString(teamUUIDString), alliedTeam);
+                        plugin.runAsync(() -> plugin.getDatabase().updateTeam(alliedTeam));
+                    }
+
 
                     teamsList.remove(uuid);
                     plugin.runAsync(() -> plugin.getDatabase().deleteTeam(uuid));
@@ -178,50 +195,110 @@ public class TeamStorageUtil {
     }
 
     public void addTeamEnemy(Player teamOwner, Player enemyTeamOwner) {
+        // team uuid
         UUID ownerUUID = teamOwner.getUniqueId();
-        UUID enemyUUID = enemyTeamOwner.getUniqueId();
-        String enemyOwnerUUID = enemyUUID.toString();
+
+        // allied team uuid
+        UUID uuid = enemyTeamOwner.getUniqueId();
+
+        String allyUUIDString = uuid.toString();
+        UUID allyUUID = UUID.fromString(allyUUIDString);
+
+        // team update
         Team team = teamsList.get(ownerUUID);
+        team.addTeamEnemy(allyUUIDString);
 
-        team.addTeamEnemy(enemyOwnerUUID);
+        // allied team update
+        Team alliedTeam = teamsList.get(allyUUID);
+        alliedTeam.addTeamEnemy(String.valueOf(ownerUUID));
 
+        // Update the team
         teamsList.replace(ownerUUID, team);
+        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+
+        // Update the allied team
+        teamsList.replace(allyUUID, alliedTeam);
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
     public void removeTeamEnemy(Player teamOwner, Player enemyTeamOwner) {
+        // team uuid
         UUID ownerUUID = teamOwner.getUniqueId();
-        UUID enemyUUID = enemyTeamOwner.getUniqueId();
-        String enemyOwnerUUID = enemyUUID.toString();
+
+        // allied team uuid
+        UUID uuid = enemyTeamOwner.getUniqueId();
+
+        String allyUUIDString = uuid.toString();
+        UUID allyUUID = UUID.fromString(allyUUIDString);
+
+        // team update
         Team team = teamsList.get(ownerUUID);
+        team.removeTeamEnemy(allyUUIDString);
 
-        team.removeTeamEnemy(enemyOwnerUUID);
+        // allied team update
+        Team alliedTeam = teamsList.get(allyUUID);
+        alliedTeam.removeTeamEnemy(String.valueOf(ownerUUID));
 
+        // Update the team
         teamsList.replace(ownerUUID, team);
+        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+
+        // Update the allied team
+        teamsList.replace(allyUUID, alliedTeam);
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
     public void addTeamAlly(Player teamOwner, Player allyTeamOwner) {
+        // team uuid
         UUID ownerUUID = teamOwner.getUniqueId();
+
+        // allied team uuid
         UUID uuid = allyTeamOwner.getUniqueId();
-        String allyUUID = uuid.toString();
+
+        String allyUUIDString = uuid.toString();
+        UUID allyUUID = UUID.fromString(allyUUIDString);
+
+        // team update
         Team team = teamsList.get(ownerUUID);
+        team.addTeamAlly(allyUUIDString);
 
-        team.addTeamAlly(allyUUID);
+        // allied team update
+        Team alliedTeam = teamsList.get(allyUUID);
+        alliedTeam.addTeamAlly(String.valueOf(ownerUUID));
 
+        // Update the team
         teamsList.replace(ownerUUID, team);
+        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+
+        // Update the allied team
+        teamsList.replace(allyUUID, alliedTeam);
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
     public void removeTeamAlly(Player teamOwner, Player allyTeamOwner) {
+        // team uuid
         UUID ownerUUID = teamOwner.getUniqueId();
+
+        // allied team uuid
         UUID uuid = allyTeamOwner.getUniqueId();
-        String allyUUID = uuid.toString();
+
+        String allyUUIDString = uuid.toString();
+        UUID allyUUID = UUID.fromString(allyUUIDString);
+
+        // team update
         Team team = teamsList.get(ownerUUID);
+        team.removeTeamAlly(allyUUIDString);
 
-        team.removeTeamAlly(allyUUID);
+        // allied team update
+        Team alliedTeam = teamsList.get(allyUUID);
+        alliedTeam.removeTeamAlly(String.valueOf(ownerUUID));
 
+        // Update the team
         teamsList.replace(ownerUUID, team);
+        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+
+        // Update the allied team
+        teamsList.replace(allyUUID, alliedTeam);
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 

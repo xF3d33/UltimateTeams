@@ -134,7 +134,7 @@ public class TeamEnemySubCommand {
             if (storageUtil.findTeamByOwner(player) != team) {
                 String enemyOwnerUUIDString = team.getTeamOwner();
 
-                if (team.getTeamEnemies().contains(enemyOwnerUUIDString)){
+                if (team.getTeamEnemies().contains(enemyOwnerUUIDString)) {
                     fireTeamEnemyRemoveEvent(storageUtil, player, enemyTeamOwner, team);
                     storageUtil.removeTeamEnemy(player, enemyTeamOwner);
 

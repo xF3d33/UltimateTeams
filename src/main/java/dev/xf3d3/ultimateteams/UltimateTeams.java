@@ -26,6 +26,7 @@ import net.william278.desertwell.util.ThrowingConsumer;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,6 +42,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -170,9 +172,16 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
             if (team == null) {
                 return new ArrayList<>();
-            }
+            } else {
+                ArrayList<String> members = new ArrayList<>();
+                team.getTeamMembers().forEach(memberUUIDString -> {
+                    final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(memberUUIDString));
 
-            return team.getTeamMembers();
+                    members.add(offlinePlayer.getName());
+                });
+
+                return members;
+            }
         });
 
         // Update banned tags list
@@ -207,7 +216,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             sendConsole("-------------------------------------------");
         } else {
             sendConsole("-------------------------------------------");
-            sendConsole("&6UltimateTeams: &3FloodgateApi not found!");
+            sendConsole("&6UltimateTeams: &3FloodgateApi not found/feature disabled!");
             sendConsole("&6UltimateTeams: &3Bedrock support won't work!");
             sendConsole("-------------------------------------------");
         }
@@ -223,7 +232,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
                 } catch (UnsupportedOperationException e) {
                     log(Level.WARNING, Utils.Color(msgFileManager.getMessagesConfig().getString("invite-wipe-failed")));
                 }
-            }, 20L * 900);
+            }, 12000);
         }
 
         // Hook into bStats

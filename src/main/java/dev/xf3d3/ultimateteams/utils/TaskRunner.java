@@ -40,7 +40,8 @@ public interface TaskRunner {
     }
 
     default void runSyncRepeating(@NotNull Runnable runnable, long period) {
-        getScheduler().globalRegionalScheduler().runAtFixedRate(runnable, 0, period);
+        getScheduler().asyncScheduler().runAtFixedRate(runnable, Duration.ZERO, Duration
+                .of(period * 50L, ChronoUnit.MILLIS));
     }
 
     @NotNull

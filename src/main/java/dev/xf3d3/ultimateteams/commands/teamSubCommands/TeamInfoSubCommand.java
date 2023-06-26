@@ -108,7 +108,9 @@ public class TeamInfoSubCommand {
             teamInfo.append(Utils.Color(messagesConfig.getString("team-info-allies-header")));
             for (String teamAlly : teamAllies) {
                 if (teamAlly != null) {
-                    Player allyOwner = Bukkit.getPlayer(teamAlly);
+                    // get the ally team owner
+                    Player allyOwner = Bukkit.getPlayer(UUID.fromString(teamAlly));
+
                     if (allyOwner != null) {
                         Team allyTeam = plugin.getTeamStorageUtil().findTeamByOwner(allyOwner);
                         String teamAllyName = allyTeam.getTeamFinalName();
@@ -117,7 +119,9 @@ public class TeamInfoSubCommand {
                         UUID uuid = UUID.fromString(teamAlly);
                         OfflinePlayer offlineOwnerPlayer = Bukkit.getOfflinePlayer(uuid);
                         Team offlineAllyTeam = plugin.getTeamStorageUtil().findTeamByOfflineOwner(offlineOwnerPlayer);
+
                         String offlineAllyName = offlineAllyTeam.getTeamFinalName();
+
                         if (offlineAllyName != null) {
                             teamInfo.append(Utils.Color(messagesConfig.getString("team-ally-members").replace(ALLY_TEAM, offlineAllyName)));
                         } else {
@@ -127,6 +131,7 @@ public class TeamInfoSubCommand {
                 }
             }
         }
+
         if (teamEnemies.size() > 0) {
             teamInfo.append(" ");
             teamInfo.append(Utils.Color(messagesConfig.getString("team-info-enemies-header")));
