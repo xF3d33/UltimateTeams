@@ -46,8 +46,7 @@ public class TeamKickSubCommand {
 
                 if (targetTeam.equals(playerTeam)) {
 
-                    targetTeam.removeTeamMember(offlinePlayer.getUniqueId().toString());
-                    plugin.runAsync(() -> plugin.getDatabase().updateTeam(targetTeam));
+                    plugin.getTeamStorageUtil().kickPlayer(targetTeam, offlinePlayer);
 
                     String playerKickedMessage = Utils.Color(messagesConfig.getString("team-member-kick-successful")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
                     player.sendMessage(playerKickedMessage);
