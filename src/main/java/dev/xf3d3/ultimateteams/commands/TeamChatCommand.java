@@ -49,7 +49,7 @@ public class TeamChatCommand extends BaseCommand {
         if (args.length < 1) {
             player.sendMessage(Utils.Color(
                     "&6UltimateTeams team chat usage:&3" +
-                            "\n/cc <message>"
+                            "\n/tc <message>"
             ));
             return;
         }
