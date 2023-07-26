@@ -3,8 +3,10 @@ version: '${project.version}'
 main: dev.xf3d3.ultimateteams.UltimateTeams
 api-version: 1.16
 prefix: UltimateTeams
+website: "https://modrinth.com/plugin/ultimate-teams"
 authors: [ xF3d3 ]
 description: A simple and lightweight Teams plugin for Minecraft.
+folia-compatible: true
 softdepend:
   - PlaceholderAPI
   - floodgate

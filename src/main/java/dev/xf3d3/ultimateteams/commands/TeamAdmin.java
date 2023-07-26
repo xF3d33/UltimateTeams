@@ -30,11 +30,12 @@ public class TeamAdmin extends BaseCommand {
     @CommandPermission("ultimateteams.admin.about")
     public void aboutSubcommand(CommandSender sender) {
         sender.sendMessage(Utils.Color("&3~~~~~~~~~~ &6&nUltimateTeams&r &3~~~~~~~~~~"));
-        sender.sendMessage(Utils.Color("&3Version: &6" + UltimateTeams.getPlugin().getDescription().getVersion()));
-        sender.sendMessage(Utils.Color("&3Authors: &6" + UltimateTeams.getPlugin().getDescription().getAuthors()));
-        sender.sendMessage(Utils.Color("&3Description: &6" + UltimateTeams.getPlugin().getDescription().getDescription()));
+        sender.sendMessage(Utils.Color("&3Version: &6" + plugin.getDescription().getVersion()));
+        sender.sendMessage(Utils.Color("&3Database Type: &6" + plugin.getSettings().getDatabaseType().getDisplayName()));
+        sender.sendMessage(Utils.Color("&3Author: &6" + plugin.getDescription().getAuthors()));
+        sender.sendMessage(Utils.Color("&3Description: &6" + plugin.getDescription().getDescription()));
         sender.sendMessage(Utils.Color("&3Website: "));
-        sender.sendMessage(Utils.Color("&6" + UltimateTeams.getPlugin().getDescription().getWebsite()));
+        sender.sendMessage(Utils.Color("&6" + plugin.getDescription().getWebsite()));
         sender.sendMessage(Utils.Color("&3~~~~~~~~~~ &6&nUltimateTeams&r &3~~~~~~~~~~"));
     }
 
@@ -62,8 +63,8 @@ public class TeamAdmin extends BaseCommand {
         if (args[0].length() > 1) {
             final Team team = plugin.getTeamStorageUtil().findTeamByName(args[0]);
 
-            if (team != null){
-                if (plugin.getTeamStorageUtil().deleteTeam(team.getTeamOwner())) {
+            if (team != null) {
+                if (plugin.getTeamStorageUtil().deleteTeam(args[0])) {
                     sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
                 } else {
                     sender.sendMessage(Utils.Color(messagesConfig.getString("team-admin-disband-failure")));
