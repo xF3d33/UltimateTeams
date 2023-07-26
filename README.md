@@ -9,8 +9,8 @@ UltimateTeams DOES however offer the ability to disable friendly fire within you
 UltimateTeams does support both SQLite and MySQL, check the config for further information
 
 ## /team command
-Aliases: `/team` 
-  
+Aliases: `/team`
+
 The `/team` command is the main command of the plugin, with `/team` you can do the following:
 * `/team create <name>` - Creates A new team if not already in one
 * `/team disband` - If you are the team owner, this will destroy your team
@@ -29,10 +29,10 @@ The `/team` command is the main command of the plugin, with `/team` you can do t
 ## /teamadmin command
 Aliases: `/ta`
 
-The `/teamadmin` command is purely for server admins only. 
+The `/teamadmin` command is purely for server admins only.
 
-4 arguments are implemented which are: 
-* `/teamadmin save` - which will save all current team info to the `teams.yml` data file.  
+4 arguments are implemented which are:
+* `/teamadmin save` - which will save all current team info to the `teams.yml` data file.
 * `/teamadmin reload` - This reloads the plugins `config.yml` & the `messages.yml` files from disk.
 * `/teamadmin disband <team-name>` - This allows admins to delete any unauthorised teams.
 * `/teamadmin about` - This give you an overview of the plugin's core information.
@@ -45,52 +45,40 @@ The `/tc` command is for the sole purpose of utilising the per team chat. The fo
 `/tc <message>` - This will send a message to only the members of YOUR team or the team you are in.
 
 ## Permissions
-UltimateTeams comes with `14` permissions:
-* `ultimateteams.*`
-* `ultimateteams.team`
-* `ultimateteams.admin`
-* `ultimateteams.update`
-* `ultimateteams.bypass`
-* `ultimateteams.bypass.*`
+
+Player permissions
+* `ultimateteams.chat.spy`
+* `ultimateteams.team.create`
+* `ultimateteams.team.warp`
+* `ultimateteams.team.setwarp`
+* `ultimateteams.team.delwarp`
+* `ultimateteams.team.disband`
+* `ultimateteams.team.invite.accept`
+* `ultimateteams.team.invite.send`
+* `ultimateteams.team.invite.deny`
+* `ultimateteams.team.sethome`
+* `ultimateteams.team.home`
+* `ultimateteams.team.pvp`
+* `ultimateteams.team.enemy.add`
+* `ultimateteams.team.enemy.remove`
+* `ultimateteams.team.ally.add`
+* `ultimateteams.team.ally.remove`
+* `ultimateteams.team.leave`
+* `ultimateteams.team.kick`
+* `ultimateteams.team.join`
+* `ultimateteams.team.list`
+* `ultimateteams.team.transfer`
+* `ultimateteams.team.prefix`
+* `ultimateteams.team.info`
+
+Admin permissions:
+* `ultimateteams.admin.about`
+* `ultimateteams.admin.reload`
+* `ultimateteams.admin.about`
+* `ultimateteams.bypass.pvp`
 * `ultimateteams.bypass.homecooldown`
 * `ultimateteams.bypass.chatcooldown`
-* `ultimateteams.bypass.pvp`
-* `ultimateteams.maxteamsize.group1`
-* `ultimateteams.maxteamsize.group2`
-* `ultimateteams.maxteamsize.group3`
-* `ultimateteams.maxteamsize.group4`
-* `ultimateteams.maxteamsize.group5`
-* `ultimateteams.maxteamsize.group6`
-
-`ultimateteams.*` is a permission to allow access to ALL functions regardless of operator status.
-
-`ultimateteams.team` is by default given to everyone so they can all create, edit and manage a team.  
-
-`ultimateteams.admin` is by default given to server operators.
-
-`ultimateteams.update` is the permission node to allow a player to see in game notifications if there is a plugin update available.
-
-`ultimateteams.bypass` is the permission node to allow a player to bypass all protections and cooldowns.
-
-`ultimateteams.bypass.*` is the permission node to allow a player to bypass all protections and cooldowns.
-
-`ultimateteams.bypass.homecooldown` is the permission node to allow a player to bypass the home command cooldown.
-
-`ultimateteams.bypass.chatcooldown` - is the permission node to allow a player to bypass the team chat command cooldown.
-
-`ultimateteams.bypass.pvp` is the permission node to allow a player to bypass the friendly fire protections.
-
-`ultimateteams.maxteamsize.group1` is the permission node to allow only group 1 size of team.
-
-`ultimateteams.maxteamsize.group2` is the permission node to allow only group 2 size of team.
-
-`ultimateteams.maxteamsize.group3` is the permission node to allow only group 3 size of team.
-
-`ultimateteams.maxteamsize.group4` is the permission node to allow only group 4 size of team.
-
-`ultimateteams.maxteamsize.group5` is the permission node to allow only group 5 size of team.
-
-`ultimateteams.maxteamsize.group6` is the permission node to allow only group 6 size of team.
+* `ultimateteams.bypass.warpcooldown`
 
 ## Config
 The max team size (by default is 8), can be managed in the `plugins/UltimateTeams/config.yml` file.
@@ -114,8 +102,8 @@ The four available placeholders are:
 
 To be able to use these The latest release of [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) MUST be installed!  Without it, you can't use these placeholders.
 
-## Please report any issues in GitHub.
+## Please report any issue on GitHub.
 
-This plugin is based on ClansLite by Loving11ish
+###### This plugin is based on ClansLite by Loving11ish
 
 ## Thank you for using my plugin!
