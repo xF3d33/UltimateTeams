@@ -103,12 +103,28 @@ public class TeamCommand extends BaseCommand {
         new TeamDisbandConfirmSubCommand(plugin).disbandTeamSubCommand(sender);
     }
 
-    @Subcommand("invite")
+    @Subcommand("invite send")
     @CommandCompletion("@players @nothing")
-    @Syntax("/team invite player")
-    @CommandPermission("ultimateteams.team.invite")
-    public void onTeamInviteCommand(@NotNull CommandSender sender, @Values("@players") OnlinePlayer onlinePlayer) {
-        new TeamInviteSubCommand(plugin).teamInviteSubCommand(sender, onlinePlayer);
+    @Syntax("/team invite send player")
+    @CommandPermission("ultimateteams.team.invite.send")
+    public void onTeamInviteSendCommand(@NotNull CommandSender sender, @Values("@players") OnlinePlayer onlinePlayer) {
+        new TeamInviteSubCommand(plugin).teamInviteSendSubCommand(sender, onlinePlayer);
+    }
+
+    @Subcommand("invite accept")
+    @CommandCompletion("@nothing")
+    @Syntax("/team invite accept")
+    @CommandPermission("ultimateteams.team.invite.accept")
+    public void onTeamInviteAcceptCommand(@NotNull CommandSender sender) {
+        new TeamInviteSubCommand(plugin).teamInviteAcceptSubCommand(sender);
+    }
+
+    @Subcommand("invite deny")
+    @CommandCompletion("@nothing")
+    @Syntax("/team invite deny")
+    @CommandPermission("ultimateteams.team.invite.deny")
+    public void onTeamInviteDenyCommand(@NotNull CommandSender sender) {
+        new TeamInviteSubCommand(plugin).teamInviteDenySubCommand(sender);
     }
 
     @Subcommand("sethome")
@@ -186,13 +202,6 @@ public class TeamCommand extends BaseCommand {
     @CommandPermission("ultimateteams.team.kick")
     public void onTeamKickCommand(@NotNull CommandSender sender, @Values("@teamPlayers") OfflinePlayer offlinePlayer) {
         new TeamKickSubCommand(plugin).teamKickSubCommand(sender, offlinePlayer);
-    }
-
-    @Subcommand("join")
-    @CommandCompletion("@nothing")
-    @CommandPermission("ultimateteams.team.join")
-    public void onTeamJoinCommand(@NotNull CommandSender sender) {
-        new TeamJoinSubCommand(plugin).teamJoinSubCommand(sender);
     }
 
     @Subcommand("list")

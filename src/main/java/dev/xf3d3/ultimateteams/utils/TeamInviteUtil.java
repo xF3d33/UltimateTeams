@@ -5,19 +5,18 @@ import dev.xf3d3.ultimateteams.models.TeamInvite;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class TeamInviteUtil {
-    private final Logger logger;
 
-    private static final Map<UUID, TeamInvite> invitesList = new HashMap<>();
+    private static final Map<UUID, TeamInvite> invitesList = new ConcurrentHashMap<>();
 
     private final UltimateTeams plugin;
 
     public TeamInviteUtil(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.logger = plugin.getLogger();
     }
     
     public TeamInvite createInvite(String inviterUUID, String inviteeUUID) {
@@ -72,6 +71,18 @@ public class TeamInviteUtil {
     public void removeInvite(String inviterUUID) {
         UUID uuid = UUID.fromString(inviterUUID);
         invitesList.remove(uuid);
+    }
+
+    public boolean removeInvitee(String uuid) {
+        for (TeamInvite invite : invitesList.values()) {
+            if (invite.getInvitee().equals(uuid)) {
+                invitesList.remove(UUID.fromString(invite.getInviter()));
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public Set<Map.Entry<UUID, TeamInvite>> getInvites(){

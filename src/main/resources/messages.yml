@@ -51,6 +51,9 @@ team-invite-request-failed: "&3Failed to send request, check that the team owner
 team-invite-sent-successfully: "&3You have successfully sent a request to %TEAMOWNER%"
 team-invite-failed-own-team: "&3Failed to send request, this is YOUR team!"
 team-invite-failed-already-in-team: "&3Failed to send request, you are already in a team!"
+team-invite-deny-failed-no-invite: "&3Failed to deny invite - you don't have an active invite."
+team-invite-denied: "&3Invite successfully denied."
+team-invite-deny-fail: "&3Failed to deny the invite."
 
 #Team Join Messages
 team-join-successful: "&3Successfully joined &6%TEAM%&3!"
