@@ -351,7 +351,7 @@ public class Settings {
         return teamWarpLimit;
     }
 
-    public boolean TeamWarpCooldownEnabled() {
+    public boolean teamWarpCooldownEnabled() {
         return teamWarpCooldownEnabled;
     }
 

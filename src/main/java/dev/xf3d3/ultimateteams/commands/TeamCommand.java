@@ -212,7 +212,7 @@ public class TeamCommand extends BaseCommand {
     }
 
     @Subcommand("transfer")
-    @CommandCompletion("@players")
+    @CommandCompletion("@players @nothing")
     @Syntax("/team transfer <player>")
     @CommandPermission("ultimateteams.team.transfer")
     public void onTeamTransferCommand(@NotNull CommandSender sender, @Values("@players") OnlinePlayer onlinePlayer) {
