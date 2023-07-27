@@ -15,13 +15,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class TeamHomeSubCommand {
     private final FileConfiguration messagesConfig;
     private static final String TIME_LEFT = "%TIMELEFT%";
     private static TeamHomePreTeleportEvent homePreTeleportEvent = null;
-    private static final HashMap<UUID, Long> homeCoolDownTimer = new HashMap<>();
+    private static final ConcurrentHashMap<UUID, Long> homeCoolDownTimer = new ConcurrentHashMap<>();
     private final UltimateTeams plugin;
 
     public TeamHomeSubCommand(@NotNull UltimateTeams plugin) {
@@ -78,8 +79,8 @@ public class TeamHomeSubCommand {
         float pitch = team.getTeamHomePitch();
         Location location = new Location(world, x, y, z, yaw, pitch);
 
-        if (plugin.getSettings().teamHomeCooldownEnabled() && homeCoolDownTimer.containsKey(uuid)) {
-                if (!player.hasPermission("ultimateteams.bypass.homecooldown")) {
+        if (plugin.getSettings().teamHomeCooldownEnabled()) {
+                if (!player.hasPermission("ultimateteams.bypass.homecooldown") && homeCoolDownTimer.containsKey(uuid)) {
                     if (homeCoolDownTimer.get(uuid) > System.currentTimeMillis()) {
                         long timeLeft = (homeCoolDownTimer.get(uuid) - System.currentTimeMillis()) / 1000;
 
@@ -89,20 +90,15 @@ public class TeamHomeSubCommand {
                         homeCoolDownTimer.put(uuid, System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
                         fireTeamHomeTeleportEvent(player, team, location, player.getLocation());
                         tpHome(player, location);
-
-                        player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
                     }
                 } else {
                     fireTeamHomeTeleportEvent(player, team, location, player.getLocation());
                     tpHome(player, location);
-
-                    player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
+                    homeCoolDownTimer.put(uuid, System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
                 }
         } else {
             fireTeamHomeTeleportEvent(player, team, location, player.getLocation());
             tpHome(player, location);
-
-            player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
         }
     }
 
