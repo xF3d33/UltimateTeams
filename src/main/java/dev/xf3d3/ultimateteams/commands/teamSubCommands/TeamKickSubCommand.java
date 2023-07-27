@@ -32,7 +32,7 @@ public class TeamKickSubCommand {
             return;
         }
 
-        if (!offlinePlayer.hasPlayedBefore() || offlinePlayer.getPlayer() != null) {
+        if (!offlinePlayer.hasPlayedBefore()) {
             player.sendMessage(Utils.Color(messagesConfig.getString("could-not-find-specified-player").replace(PLAYER_TO_KICK, offlinePlayer.toString())));
             return;
         }
