@@ -29,8 +29,10 @@ public class TeamStorageUtil {
     public void loadTeams() {
         final List<Team> teams = plugin.getDatabase().getAllTeams();
 
-        teams.forEach(team ->
-                teamsList.put(UUID.fromString(team.getTeamOwner()), team)
+        teams.forEach(team -> {
+                    teamsList.put(UUID.fromString(team.getTeamOwner()), team);
+        System.out.println(team.getTeamFinalName() + " "+ team.getTeamAllies().size());
+        }
         );
 
         plugin.sendConsole(Utils.Color("&eLoaded " + teams.size() + " teams!"));
@@ -65,10 +67,12 @@ public class TeamStorageUtil {
                         OfflinePlayer alliedTeamOwner = Bukkit.getOfflinePlayer(UUID.fromString(teamUUIDString));
                         Team alliedTeam = findTeamByOfflinePlayer(alliedTeamOwner);
 
-                        alliedTeam.removeTeamAlly(uuid.toString());
+                        if (alliedTeam != null) {
+                            alliedTeam.removeTeamAlly(uuid.toString());
 
-                        teamsList.replace(UUID.fromString(teamUUIDString), alliedTeam);
-                        plugin.runAsync(() -> plugin.getDatabase().updateTeam(alliedTeam));
+                            teamsList.replace(UUID.fromString(teamUUIDString), alliedTeam);
+                            plugin.runAsync(() -> plugin.getDatabase().updateTeam(alliedTeam));
+                        }
                     }
 
 
@@ -253,10 +257,9 @@ public class TeamStorageUtil {
         UUID ownerUUID = teamOwner.getUniqueId();
 
         // allied team uuid
-        UUID uuid = allyTeamOwner.getUniqueId();
+        UUID allyUUID = allyTeamOwner.getUniqueId();
 
-        String allyUUIDString = uuid.toString();
-        UUID allyUUID = UUID.fromString(allyUUIDString);
+        String allyUUIDString = allyUUID.toString();
 
         // team update
         Team team = teamsList.get(ownerUUID);
@@ -272,7 +275,7 @@ public class TeamStorageUtil {
 
         // Update the allied team
         teamsList.replace(allyUUID, alliedTeam);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(() -> plugin.getDatabase().updateTeam(alliedTeam));
     }
 
     public void removeTeamAlly(Player teamOwner, Player allyTeamOwner) {
@@ -299,7 +302,7 @@ public class TeamStorageUtil {
 
         // Update the allied team
         teamsList.replace(allyUUID, alliedTeam);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(() -> plugin.getDatabase().updateTeam(alliedTeam));
     }
 
     public boolean isHomeSet(Team team){
