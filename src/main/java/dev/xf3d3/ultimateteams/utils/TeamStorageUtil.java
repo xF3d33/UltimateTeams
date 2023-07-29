@@ -29,10 +29,7 @@ public class TeamStorageUtil {
     public void loadTeams() {
         final List<Team> teams = plugin.getDatabase().getAllTeams();
 
-        teams.forEach(team -> {
-                    teamsList.put(UUID.fromString(team.getTeamOwner()), team);
-        System.out.println(team.getTeamFinalName() + " "+ team.getTeamAllies().size());
-        }
+        teams.forEach(team -> teamsList.put(UUID.fromString(team.getTeamOwner()), team)
         );
 
         plugin.sendConsole(Utils.Color("&eLoaded " + teams.size() + " teams!"));
