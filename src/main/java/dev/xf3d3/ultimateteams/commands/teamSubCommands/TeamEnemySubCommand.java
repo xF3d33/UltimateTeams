@@ -59,12 +59,14 @@ public class TeamEnemySubCommand {
                     return;
                 }
 
-                if (team.getTeamAllies().contains(enemyOwnerUUIDString)) {
+                final String playerUUID = player.getUniqueId().toString();
+
+                if (team.getTeamAllies().contains(playerUUID)) {
                     player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-enemy-allied-team")));
                     return;
                 }
 
-                if (team.getTeamEnemies().contains(enemyOwnerUUIDString)) {
+                if (team.getTeamEnemies().contains(playerUUID)) {
                     player.sendMessage(Utils.Color(messagesConfig.getString("failed-team-already-your-enemy")));
                     return;
                 }
@@ -132,9 +134,9 @@ public class TeamEnemySubCommand {
             }
 
             if (storageUtil.findTeamByOwner(player) != team) {
-                String enemyOwnerUUIDString = team.getTeamOwner();
+                final String playerUUID = player.getUniqueId().toString();
 
-                if (team.getTeamEnemies().contains(enemyOwnerUUIDString)) {
+                if (team.getTeamEnemies().contains(playerUUID)) {
                     fireTeamEnemyRemoveEvent(storageUtil, player, enemyTeamOwner, team);
                     storageUtil.removeTeamEnemy(player, enemyTeamOwner);
 

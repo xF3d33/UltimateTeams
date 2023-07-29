@@ -52,7 +52,7 @@ public class TeamAllySubCommand {
                 return;
             }
 
-            if (plugin.getTeamStorageUtil().findTeamByOwner(player) != team){
+            if (plugin.getTeamStorageUtil().findTeamByOwner(player) != team) {
                 String allyOwnerUUIDString = team.getTeamOwner();
 
                 if (plugin.getTeamStorageUtil().findTeamByOwner(player).getTeamAllies().size() >= plugin.getSettings().getMaxTeamAllies()) {
@@ -60,12 +60,14 @@ public class TeamAllySubCommand {
                     return;
                 }
 
-                if (team.getTeamEnemies().contains(allyOwnerUUIDString)){
+                final String playerUUID = player.getUniqueId().toString();
+
+                if (team.getTeamEnemies().contains(playerUUID)) {
                     player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-ally-enemy-team")));
                     return;
                 }
 
-                if (team.getTeamAllies().contains(allyOwnerUUIDString)){
+                if (team.getTeamAllies().contains(playerUUID)) {
                     player.sendMessage(Utils.Color(messagesConfig.getString("failed-team-already-your-ally")));
                     return;
 
@@ -99,6 +101,7 @@ public class TeamAllySubCommand {
                     // send message to ally team owner
                     allyTeamOwner.sendMessage(Utils.Color(messagesConfig.getString("team-added-to-other-allies").replaceAll(TEAM_OWNER, player.getName())));
                 }
+
             } else {
                 player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-ally-your-own-team")));
             }
