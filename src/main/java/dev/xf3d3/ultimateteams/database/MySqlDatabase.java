@@ -118,6 +118,7 @@ public class MySqlDatabase extends Database {
                 while (resultSet.next()) {
                     final String data = new String(resultSet.getBytes("data"), StandardCharsets.UTF_8);
                     final Team team = plugin.getGson().fromJson(data, Team.class);
+
                     if (team != null) {
                         //team.setId(resultSet.getInt("id"));
                         teams.add(team);
