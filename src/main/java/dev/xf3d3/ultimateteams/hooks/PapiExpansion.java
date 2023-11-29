@@ -40,7 +40,7 @@ public class PapiExpansion extends PlaceholderExpansion {
         Team teamOwner = plugin.getTeamStorageUtil().findTeamByOfflineOwner(player);
         Team teamMember = plugin.getTeamStorageUtil().findTeamByOfflinePlayer(player);
 
-        if (params.equalsIgnoreCase("teamName")){
+        if (params.equalsIgnoreCase("teamName")) {
             if (teamOwner != null) {
                 return Utils.Color(teamOwner.getTeamFinalName() + "&r ");
             } else if (teamMember != null){
@@ -55,8 +55,8 @@ public class PapiExpansion extends PlaceholderExpansion {
             String closeBracket = plugin.getSettings().getPrefixBracketsClosing();
 
             if (teamOwner != null){
-                if (plugin.getSettings().addPrefixBrackets()){
-                    if (plugin.getSettings().addSpaceAfterPrefix()){
+                if (plugin.getSettings().addPrefixBrackets()) {
+                    if (plugin.getSettings().addSpaceAfterPrefix()) {
                         return Utils.Color(openBracket + teamOwner.getTeamPrefix() + closeBracket +"&r ");
                     } else {
                         return Utils.Color(openBracket + teamOwner.getTeamPrefix() + closeBracket +"&r");
@@ -68,9 +68,9 @@ public class PapiExpansion extends PlaceholderExpansion {
                         return Utils.Color(teamOwner.getTeamPrefix() + "&r");
                     }
                 }
-            } else if (teamMember != null){
-                if (plugin.getSettings().addPrefixBrackets()){
-                    if (plugin.getSettings().addSpaceAfterPrefix()){
+            } else if (teamMember != null) {
+                if (plugin.getSettings().addPrefixBrackets()) {
+                    if (plugin.getSettings().addSpaceAfterPrefix()) {
                         return Utils.Color(openBracket + teamMember.getTeamPrefix() + closeBracket +"&r ");
                     } else {
                         return Utils.Color(openBracket + teamMember.getTeamPrefix() + closeBracket +"&r");
@@ -87,27 +87,27 @@ public class PapiExpansion extends PlaceholderExpansion {
             }
         }
 
-        if (params.equalsIgnoreCase("friendlyFire")){
-            if (teamOwner != null){
+        if (params.equalsIgnoreCase("friendlyFire")) {
+            if (teamOwner != null) {
                 return String.valueOf(teamOwner.isFriendlyFireAllowed());
-            }else if (teamMember != null){
+            }else if (teamMember != null) {
                 return String.valueOf(teamMember.isFriendlyFireAllowed());
             }else {
                 return "";
             }
         }
 
-        if (params.equalsIgnoreCase("teamHomeSet")){
-            if (teamOwner != null){
+        if (params.equalsIgnoreCase("teamHomeSet")) {
+            if (teamOwner != null) {
                 return String.valueOf(plugin.getTeamStorageUtil().isHomeSet(teamOwner));
-            } else if (teamMember != null){
+            } else if (teamMember != null) {
                 return String.valueOf(plugin.getTeamStorageUtil().isHomeSet(teamMember));
             } else {
                 return "";
             }
         }
 
-        if (params.equalsIgnoreCase("teamMembersSize")){
+        if (params.equalsIgnoreCase("teamMembersSize")) {
             if (teamOwner != null){
                 return String.valueOf(teamOwner.getTeamMembers().size());
             } else if (teamMember != null){
@@ -117,24 +117,32 @@ public class PapiExpansion extends PlaceholderExpansion {
             }
         }
 
-        if (params.equalsIgnoreCase("teamAllySize")){
+        if (params.equalsIgnoreCase("teamAllySize")) {
 
-            if (teamOwner != null){
+            if (teamOwner != null) {
                 return String.valueOf(teamOwner.getTeamAllies().size());
-            } else if (teamMember != null){
+            } else if (teamMember != null) {
                 return String.valueOf(teamMember.getTeamAllies().size());
             } else {
                 return "";
             }
         }
 
-        if (params.equalsIgnoreCase("teamEnemySize")){
-            if (teamOwner != null){
+        if (params.equalsIgnoreCase("teamEnemySize")) {
+            if (teamOwner != null) {
                 return String.valueOf(teamOwner.getTeamEnemies().size());
-            } else if (teamMember != null){
+            } else if (teamMember != null) {
                 return String.valueOf(teamMember.getTeamEnemies().size());
             } else {
                 return "";
+            }
+        }
+
+        if (params.equalsIgnoreCase("isInTeam")) {
+            if (teamOwner != null || teamMember != null) {
+                return String.valueOf(true);
+            } else {
+                return String.valueOf(false);
             }
         }
 
