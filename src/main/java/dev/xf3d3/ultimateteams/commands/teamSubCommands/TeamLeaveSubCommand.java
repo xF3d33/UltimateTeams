@@ -3,12 +3,14 @@ package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-// todo: message when someone leave
+import java.util.UUID;
+
 public class TeamLeaveSubCommand {
 
     FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
@@ -32,6 +34,19 @@ public class TeamLeaveSubCommand {
                 if (targetTeam.removeTeamMember(player.getUniqueId().toString())) {
                     String leaveMessage = Utils.Color(messagesConfig.getString("team-leave-successful")).replace(Team_PLACEHOLDER, targetTeam.getTeamFinalName());
                     player.sendMessage(leaveMessage);
+
+                    // Send message to team players
+                    if (plugin.getSettings().teamLeftAnnounce()) {
+                        for (String playerUUID : targetTeam.getTeamMembers()) {
+                            final Player teamPlayer = Bukkit.getPlayer(UUID.fromString(playerUUID));
+
+                            if (teamPlayer != null) {
+                                teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-left-broadcast-chat")
+                                        .replace("%PLAYER%", player.getName())
+                                        .replace("%TEAM%", Utils.Color(targetTeam.getTeamFinalName()))));
+                            }
+                        }
+                    }
                 } else {
                     player.sendMessage(Utils.Color(messagesConfig.getString("team-leave-failed")));
                 }

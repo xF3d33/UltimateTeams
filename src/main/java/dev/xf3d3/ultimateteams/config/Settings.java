@@ -122,6 +122,10 @@ public class Settings {
     @YamlKey("team-join.announce")
     private boolean teamJoinAnnounce = true;
 
+    @YamlComment("Do you want a message to be sent to team players when a player leaves a team? [Default value: true]")
+    @YamlKey("team-leave.announce")
+    private boolean teamLeftAnnounce = true;
+
     // Team Warp
     @YamlComment("Enable the '/team [setwarp|warp]' system. [Default value: true]")
     @YamlKey("team-warp.enable")
@@ -337,6 +341,10 @@ public class Settings {
 
     public boolean teamJoinAnnounce() {
         return teamJoinAnnounce;
+    }
+
+    public boolean teamLeftAnnounce() {
+        return teamLeftAnnounce;
     }
 
     public boolean teamWarpEnabled() {

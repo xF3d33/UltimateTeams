@@ -66,6 +66,7 @@ team-join-broadcast-chat: "&3The player &6%PLAYER%&3 has joined your team!"
 failed-team-owner: "&3You are the owner of a team, use &6/team disband&3."
 team-leave-successful: "&3You have left &6%TEAM%."
 team-leave-failed: "&3Failed to leave team, please try again later."
+team-left-broadcast-chat: "&3The player &6%PLAYER%&3 has left your team!"
 
 #Team Warp Messages
 team-warp-successful: "&3Successfully added team warp &6%WARP_NAME%&3!"
