@@ -2,12 +2,18 @@ package dev.xf3d3.ultimateteams.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.models.TeamInvite;
 import dev.xf3d3.ultimateteams.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 @CommandAlias("teamadmin|ta")
 public class TeamAdmin extends BaseCommand {
@@ -55,9 +61,9 @@ public class TeamAdmin extends BaseCommand {
         });
     }
 
-    @Subcommand("disband")
+    @Subcommand("team disband")
     @CommandCompletion("@teams")
-    @CommandPermission("ultimateteams.admin.disband")
+    @CommandPermission("ultimateteams.admin.team.disband")
     @Syntax("/teamadmin disband <teamName>")
     public void disbandSubcommand(CommandSender sender, String[] args) {
         if (args[0].length() > 1) {
@@ -74,6 +80,64 @@ public class TeamAdmin extends BaseCommand {
             }
         } else {
             sender.sendMessage(Utils.Color(messagesConfig.getString("incorrect-disband-command-usage")));
+        }
+    }
+
+    @Subcommand("team join")
+    @CommandCompletion("@players @teams @nothing")
+    @CommandPermission("ultimateteams.admin.team.join")
+    @Syntax("/teamadmin team join <Player> <teamName>")
+    public void teamInviteAcceptSubCommand(CommandSender sender, @Values("@players") Player player, @Values("@teams") String teamName) {
+        //final Player player = OnlinePlayer.getPlayer();
+
+        Team playerTeam;
+        if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
+            playerTeam = plugin.getTeamStorageUtil().findTeamByOwner(player);
+        } else {
+            playerTeam = plugin.getTeamStorageUtil().findTeamByPlayer(player);
+        }
+
+        if (playerTeam != null) {
+            String joinMessage = Utils.Color(messagesConfig.getString("team-invite-invited-already-in-team"));
+            sender.sendMessage(joinMessage);
+
+            return;
+        }
+
+        Team team = plugin.getTeamStorageUtil().findTeamByName(teamName);
+        if (team != null) {
+            if (plugin.getTeamStorageUtil().addTeamMember(team, player)) {
+
+                String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace("%TEAM%", team.getTeamFinalName());
+                sender.sendMessage(joinMessage);
+
+                // Send message to team owner
+                Player owner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
+
+                if (owner != null) {
+                    player.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
+                            .replace("%PLAYER%", player.getName())
+                            .replace("%TEAM%", Utils.Color(team.getTeamFinalName()))));
+                }
+
+                // Send message to team players
+                if (plugin.getSettings().teamJoinAnnounce()) {
+                    for (String playerUUID : team.getTeamMembers()) {
+                        final Player teamPlayer = Bukkit.getPlayer(UUID.fromString(playerUUID));
+
+                        if (teamPlayer != null) {
+                            teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
+                                    .replace("%PLAYER%", player.getName())
+                                    .replace("%TEAM%", Utils.Color(team.getTeamFinalName()))));
+                        }
+                    }
+                }
+            } else {
+                String failureMessage = Utils.Color(messagesConfig.getString("team-join-failed")).replace("%TEAM%", team.getTeamFinalName());
+                sender.sendMessage(failureMessage);
+            }
+        } else {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("team-join-failed-no-valid-team")));
         }
     }
 

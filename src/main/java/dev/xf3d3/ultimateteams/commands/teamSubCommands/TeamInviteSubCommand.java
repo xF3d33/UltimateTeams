@@ -63,6 +63,12 @@ public class TeamInviteSubCommand {
                 return;
             }
 
+            // Check if the player has another active invite
+            if (plugin.getTeamInviteUtil().hasInvitee(invitedPlayer.getUniqueId().toString())) {
+                player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-failed").replaceAll("%INVITED%", invitedPlayer.getName())));
+                return;
+            }
+
             Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
 
             if (team.getTeamMembers().size() >= plugin.getSettings().getTeamMaxSize()) {

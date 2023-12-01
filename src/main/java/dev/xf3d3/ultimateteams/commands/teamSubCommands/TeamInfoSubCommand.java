@@ -146,8 +146,9 @@ public class TeamInfoSubCommand {
                         UUID uuid = UUID.fromString(teamEnemy);
                         OfflinePlayer offlineOwnerPlayer = Bukkit.getOfflinePlayer(uuid);
                         Team offlineEnemyTeam = plugin.getTeamStorageUtil().findTeamByOfflineOwner(offlineOwnerPlayer);
-                        String offlineEnemyName = offlineEnemyTeam.getTeamFinalName();
-                        if (offlineEnemyName != null) {
+
+                        if (offlineEnemyTeam != null) {
+                            String offlineEnemyName = offlineEnemyTeam.getTeamFinalName();
                             teamInfo.append(Utils.Color(messagesConfig.getString("team-enemy-members").replace(ENEMY_TEAM, offlineEnemyName)));
                         } else {
                             teamInfo.append(Utils.Color(messagesConfig.getString("team-enemy-members-not-found")));

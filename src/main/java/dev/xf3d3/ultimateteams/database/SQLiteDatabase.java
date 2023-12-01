@@ -269,6 +269,7 @@ public class SQLiteDatabase extends Database {
                 statement.setString(3, team.getTeamFinalName());
 
                 statement.executeUpdate();
+                statement.clearParameters();
             }
         } catch (SQLException | JsonSyntaxException e) {
             plugin.log(Level.SEVERE, "Failed to update team in table", e);

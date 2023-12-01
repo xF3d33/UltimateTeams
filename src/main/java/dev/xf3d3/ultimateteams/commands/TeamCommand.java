@@ -48,7 +48,6 @@ public class TeamCommand extends BaseCommand {
 
             for (int i = 1; i <= 16; i++) {
                 String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
-                assert message != null;
 
                 sender.sendMessage(Utils.Color(message));
             }

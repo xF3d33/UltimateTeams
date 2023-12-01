@@ -47,7 +47,7 @@ public class TeamCreateSubCommand {
 
 
         if (name.length() >= 1) {
-            if (bannedTags.contains(name)) {
+            if (bannedTags.contains(name) || name.contains(" ")) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-name-is-banned").replace(TEAM_PLACEHOLDER, name)));
                 return;
             }

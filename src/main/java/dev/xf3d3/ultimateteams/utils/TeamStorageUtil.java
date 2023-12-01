@@ -5,6 +5,7 @@ import dev.xf3d3.ultimateteams.api.TeamDisbandEvent;
 import dev.xf3d3.ultimateteams.api.TeamOfflineDisbandEvent;
 import dev.xf3d3.ultimateteams.api.TeamTransferOwnershipEvent;
 import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.models.TeamWarp;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 public class TeamStorageUtil {
@@ -335,31 +337,41 @@ public class TeamStorageUtil {
                     UUID originalOwnerUUID = originalTeamOwner.getUniqueId();
                     UUID newOwnerUUID = newTeamOwner.getUniqueId();
 
-                    String teamFinalName = originalTeam.getTeamFinalName();
-                    String teamPrefix = originalTeam.getTeamPrefix();
-                    ArrayList<String> teamMembers = new ArrayList<>(originalTeam.getTeamMembers());
-                    ArrayList<String> teamAllies = new ArrayList<>(originalTeam.getTeamAllies());
-                    ArrayList<String> teamEnemies = new ArrayList<>(originalTeam.getTeamEnemies());
-                    boolean friendlyFire = originalTeam.isFriendlyFireAllowed();
-                    String teamHomeWorld = originalTeam.getTeamHomeWorld();
-                    double teamHomeX = originalTeam.getTeamHomeX();
-                    double teamHomeY = originalTeam.getTeamHomeY();
-                    double teamHomeZ = originalTeam.getTeamHomeZ();
-                    float teamHomeYaw = originalTeam.getTeamHomeYaw();
-                    float teamHomePitch = originalTeam.getTeamHomePitch();
+                    Team newTeam = new Team(newOwnerUUID.toString(), originalTeam.getTeamFinalName());
 
-                    Team newTeam = new Team(newOwnerUUID.toString(), teamFinalName);
-                    newTeam.setTeamPrefix(teamPrefix);
-                    newTeam.setTeamMembers(teamMembers);
-                    newTeam.setTeamAllies(teamAllies);
-                    newTeam.setTeamEnemies(teamEnemies);
-                    newTeam.setFriendlyFireAllowed(friendlyFire);
-                    newTeam.setTeamHomeWorld(teamHomeWorld);
-                    newTeam.setTeamHomeX(teamHomeX);
-                    newTeam.setTeamHomeY(teamHomeY);
-                    newTeam.setTeamHomeZ(teamHomeZ);
-                    newTeam.setTeamHomeYaw(teamHomeYaw);
-                    newTeam.setTeamHomePitch(teamHomePitch);
+                    if (originalTeam.getTeamHomeWorld() != null) {
+                        newTeam.setTeamHomeWorld(originalTeam.getTeamHomeWorld());
+                    }
+
+                    try {
+                        newTeam.setTeamHomeX(originalTeam.getTeamHomeX());
+                        newTeam.setTeamHomeY(originalTeam.getTeamHomeY());
+                        newTeam.setTeamHomeZ(originalTeam.getTeamHomeZ());
+                        newTeam.setTeamHomeYaw(originalTeam.getTeamHomeYaw());
+                        newTeam.setTeamHomePitch(originalTeam.getTeamHomePitch());
+                    } catch (NullPointerException ignored) {}
+
+                    if (originalTeam.getTeamMembers() != null) {
+                        newTeam.setTeamMembers(originalTeam.getTeamMembers());
+                    }
+
+                    if (originalTeam.getTeamAllies() != null) {
+                        newTeam.setTeamAllies(originalTeam.getTeamAllies());
+                    }
+
+                    if (originalTeam.getTeamEnemies() != null) {
+                        newTeam.setTeamEnemies(originalTeam.getTeamEnemies());
+                    }
+
+                    if (originalTeam.getTeamWarps() != null) {
+                        for (TeamWarp warp : originalTeam.getTeamWarps()) {
+                            newTeam.addTeamWarp(warp);
+                        }
+                    }
+
+                    newTeam.setTeamPrefix(originalTeam.getTeamPrefix());
+                    newTeam.setFriendlyFireAllowed(originalTeam.isFriendlyFireAllowed());
+
 
                     // delete old team
                     teamsList.remove(originalOwnerUUID);
