@@ -123,7 +123,7 @@ public class SQLiteDatabase extends Database {
                 final ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     final String data = new String(resultSet.getBytes("data"), StandardCharsets.UTF_8);
-                    final Team team = plugin.getGson().fromJson(data, Team.class);
+                    final Team team = plugin.getTeamFromJson(data);
 
                     if (team != null) {
                         //team.setId(resultSet.getInt("id"));

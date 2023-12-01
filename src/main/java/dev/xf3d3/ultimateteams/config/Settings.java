@@ -1,6 +1,7 @@
 package dev.xf3d3.ultimateteams.config;
 
 import dev.xf3d3.ultimateteams.database.Database;
+import dev.xf3d3.ultimateteams.network.Broker;
 import net.william278.annotaml.YamlComment;
 import net.william278.annotaml.YamlFile;
 import net.william278.annotaml.YamlKey;
@@ -75,6 +76,29 @@ public class Settings {
             Database.Table.USER_DATA.name().toLowerCase(), Database.Table.USER_DATA.getDefaultName()
     );
 
+    // Cross-server settings
+    @YamlComment("Synchronise teams across a proxy network. Requires MySQL. Don't forget to update server.yml")
+    @YamlKey("cross_server.enabled")
+    private boolean crossServer = false;
+
+    @YamlComment("The type of message broker to use for cross-server communication. Options: PLUGIN_MESSAGE, REDIS")
+    @YamlKey("cross_server.messenger_type")
+    private Broker.Type brokerType = Broker.Type.REDIS;
+
+    @YamlComment("Specify credentials here if you are using REDIS as your messenger_type")
+    @YamlKey("cross_server.redis.host")
+    private String redisHost = "localhost";
+
+    @YamlKey("cross_server.redis.port")
+    private int redisPort = 6379;
+
+    @YamlKey("cross_server.redis.password")
+    private String redisPassword = "";
+
+    @YamlKey("cross_server.redis.ssl")
+    private boolean redisSsl = false;
+
+    // Hooks
     @YamlComment("use HuskHomes to teleport players instead of built-in teleport handler [Default value: true]")
     @YamlKey("use-huskhomes")
     private boolean useHuskhomes = false;
@@ -293,6 +317,35 @@ public class Settings {
     public String getTableName(@NotNull Database.Table table) {
         return Optional.ofNullable(getTableNames().get(table.name().toLowerCase())).orElse(table.getDefaultName());
     }
+
+
+    public boolean doCrossServer() {
+        return crossServer;
+    }
+
+    @NotNull
+    public Broker.Type getBrokerType() {
+        return brokerType;
+    }
+
+    public String getRedisHost() {
+        return redisHost;
+    }
+
+    public int getRedisPort() {
+        return redisPort;
+    }
+
+    @NotNull
+    public String getRedisPassword() {
+        return redisPassword;
+    }
+
+    public boolean useRedisSsl() {
+        return redisSsl;
+    }
+
+
 
     public boolean HuskHomesHook() {
         return useHuskhomes;

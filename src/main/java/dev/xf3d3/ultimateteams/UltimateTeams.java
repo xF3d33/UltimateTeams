@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 import dev.xf3d3.ultimateteams.commands.*;
 import dev.xf3d3.ultimateteams.commands.TeamAllyChatCommand;
 import dev.xf3d3.ultimateteams.config.MessagesFileManager;
+import dev.xf3d3.ultimateteams.config.Server;
 import dev.xf3d3.ultimateteams.config.Settings;
 import dev.xf3d3.ultimateteams.config.TeamsGui;
 import dev.xf3d3.ultimateteams.database.Database;
@@ -20,6 +21,8 @@ import dev.xf3d3.ultimateteams.listeners.PlayerDamageEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDisconnectEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamWarp;
+import dev.xf3d3.ultimateteams.network.Broker;
+import dev.xf3d3.ultimateteams.network.PluginMessages;
 import dev.xf3d3.ultimateteams.utils.*;
 import net.william278.annotaml.Annotaml;
 import net.william278.desertwell.util.ThrowingConsumer;
@@ -30,6 +33,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,12 +46,14 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public final class UltimateTeams extends JavaPlugin implements TaskRunner {
+public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonProvider, PluginMessageListener {
     private static final int METRICS_ID = 18842;
+    private UpdateCheck updateChecker;
 
     private final PluginDescriptionFile pluginInfo = getDescription();
     private final String pluginVersion = pluginInfo.getVersion();
@@ -55,19 +61,29 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
     public MessagesFileManager msgFileManager;
 
-    private FloodgateAPIHook floodgateAPIHook;
-    private Database database;
+
     private Utils utils;
     private ConcurrentHashMap<Integer, ScheduledTask> tasks;
     private MorePaperLib paperLib;
     private PaperCommandManager manager;
+
+    // Communication
+    private Database database;
+    private Broker broker;
+
+    // Handlers
     private TeamStorageUtil teamStorageUtil;
     private UsersStorageUtil usersStorageUtil;
     private TeamInviteUtil teamInviteUtil;
+
+    // Hooks
     private HuskHomesAPIHook huskHomesHook;
-    private UpdateCheck updateChecker;
+    private FloodgateAPIHook floodgateAPIHook;
+
+    // Configs
     private Settings settings;
     private TeamsGui teamsGui;
+    private Server server;
 
     // HashMaps
     private final ConcurrentHashMap<Player, String> connectedPlayers = new ConcurrentHashMap<>();
@@ -100,11 +116,16 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         this.teamInviteUtil = new TeamInviteUtil(this);
         this.utils = new Utils(this);
         this.updateChecker = new UpdateCheck(this);
+        this.broker = this.loadBroker();
 
         // Load settings and locales
         initialize("plugin config & locale files", (plugin) -> {
             if (!loadConfigs()) {
                 throw new IllegalStateException("Failed to load config files. Please check the console for errors");
+            }
+
+            if (getSettings().doCrossServer()) {
+                setServer(Annotaml.create(new File(getDataFolder(), "server.yml"), Server.class).get());
             }
         });
 
@@ -256,6 +277,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         // Close database connection
         database.close();
 
+        getMessageBroker().ifPresent(Broker::close);
+
         // Final plugin shutdown message
         sendConsole("&6UltimateTeams: &3Plugin Version: &d&l" + pluginVersion);
         sendConsole("&6UltimateTeams: &3Has been shutdown successfully");
@@ -269,6 +292,10 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
     public void setGuiFile(@NotNull TeamsGui teamsGui) {
         this.teamsGui = teamsGui;
+    }
+
+    public void setServer(@NotNull Server server) {
+        this.server = server;
     }
 
      /**
@@ -300,6 +327,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     @NotNull
     public TeamsGui getTeamsGui() {
         return teamsGui;
+    }
+
+    @NotNull
+    public String getServerName() {
+        return server != null ? server.getName() : "server";
     }
 
 
@@ -359,6 +391,20 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         getLogger().log(level, message);
     }
 
+    @Override
+    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte[] message) {
+        if (broker != null && broker instanceof PluginMessages pluginMessenger
+                && getSettings().getBrokerType() == Broker.Type.PLUGIN_MESSAGE) {
+            pluginMessenger.onReceive(channel, Player, message);
+        }
+    }
+
+    public void initializePluginChannels() {
+        Bukkit.getMessenger().registerIncomingPluginChannel(this, PluginMessages.BUNGEE_CHANNEL_ID, this);
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, PluginMessages.BUNGEE_CHANNEL_ID);
+    }
+
+
     public void sendConsole(String text) {
         Bukkit.getConsoleSender().sendMessage(Utils.Color(text));
     }
@@ -397,6 +443,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     }
 
     @NotNull
+    public Optional<Broker> getMessageBroker() {
+        return Optional.ofNullable(broker);
+    }
+
+    @NotNull
     public Database getDatabase() {
         return database;
     }
@@ -409,11 +460,6 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     @NotNull
     public HuskHomesAPIHook getHuskHomesHook() {
         return huskHomesHook;
-    }
-
-    @NotNull
-    public Gson getGson() {
-        return Converters.registerOffsetDateTime(new GsonBuilder().excludeFieldsWithoutExposeAnnotation()).create();
     }
 
     @Override

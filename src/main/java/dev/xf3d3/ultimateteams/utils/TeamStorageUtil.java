@@ -314,13 +314,15 @@ public class TeamStorageUtil {
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
-    public void kickPlayer(Team team, OfflinePlayer player) {
+    public boolean kickPlayer(Team team, OfflinePlayer player) {
         UUID uuid = UUID.fromString(team.getTeamOwner());
 
-        team.removeTeamMember(player.getUniqueId().toString());
+        boolean removed = team.removeTeamMember(player.getUniqueId().toString());
         teamsList.replace(uuid, team);
 
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+
+        return removed;
     }
 
     public String stripTeamNameColorCodes(Team team) {
