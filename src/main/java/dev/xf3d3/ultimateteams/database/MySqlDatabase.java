@@ -3,8 +3,9 @@ package dev.xf3d3.ultimateteams.database;
 import com.google.gson.JsonSyntaxException;
 import com.zaxxer.hikari.HikariDataSource;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.models.TeamPlayer;
+import dev.xf3d3.ultimateteams.team.Team;
+import dev.xf3d3.ultimateteams.team.TeamPlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
@@ -120,7 +121,7 @@ public class MySqlDatabase extends Database {
                     final Team team = plugin.getTeamFromJson(data);
 
                     if (team != null) {
-                        //team.setId(resultSet.getInt("id"));
+                        team.setID(resultSet.getInt("id"));
                         teams.add(team);
                     }
                 }
@@ -233,22 +234,29 @@ public class MySqlDatabase extends Database {
         return Optional.empty();
     }
 
-    public void createTeam(@NotNull Team team, @NotNull UUID uuid) {
+    public Team createTeam(@NotNull String name, @NotNull Player player) {
+        Team team = new Team(player.getUniqueId().toString(), name);
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     INSERT INTO `%team_table%` (`uuid`, `name`, `data`)
                     VALUES (?, ?, ?)
-                    """))) {
+                    """), Statement.RETURN_GENERATED_KEYS)) {
 
-                statement.setString(1, String.valueOf(uuid));
+                statement.setString(1, String.valueOf(player.getUniqueId()));
                 statement.setString(2, team.getTeamFinalName());
                 statement.setBytes(3, plugin.getGson().toJson(team).getBytes(StandardCharsets.UTF_8));
 
                 statement.executeUpdate();
+
+                final ResultSet insertedRow = statement.getGeneratedKeys();
+                if (insertedRow.next()) {
+                    team.setID(insertedRow.getInt(1));
+                }
             }
         } catch (SQLException | JsonSyntaxException e) {
             plugin.log(Level.SEVERE, "Failed to create team in table", e);
         }
+        return team;
     }
 
     public void updateTeam(@NotNull Team team) {

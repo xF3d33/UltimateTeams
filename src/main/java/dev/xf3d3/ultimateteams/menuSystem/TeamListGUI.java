@@ -5,7 +5,7 @@ import dev.triumphteam.gui.builder.item.SkullBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.team.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

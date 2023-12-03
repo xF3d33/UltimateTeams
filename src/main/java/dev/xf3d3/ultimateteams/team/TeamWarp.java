@@ -1,4 +1,4 @@
-package dev.xf3d3.ultimateteams.models;
+package dev.xf3d3.ultimateteams.team;
 
 import com.google.gson.annotations.Expose;
 import org.bukkit.Bukkit;

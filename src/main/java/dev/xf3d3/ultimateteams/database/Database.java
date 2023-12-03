@@ -1,8 +1,9 @@
 package dev.xf3d3.ultimateteams.database;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.models.TeamPlayer;
+import dev.xf3d3.ultimateteams.team.Team;
+import dev.xf3d3.ultimateteams.team.TeamPlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -59,7 +60,7 @@ public abstract class Database {
 
     public abstract Optional<TeamPlayer> getPlayer(@NotNull String name);
 
-    public abstract void createTeam(@NotNull Team team, @NotNull UUID uuid);
+    public abstract Team createTeam(@NotNull String name, @NotNull Player player);
 
     public abstract void updateTeam(@NotNull Team team);
 

@@ -4,8 +4,8 @@ import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamDisbandEvent;
 import dev.xf3d3.ultimateteams.api.TeamOfflineDisbandEvent;
 import dev.xf3d3.ultimateteams.api.TeamTransferOwnershipEvent;
-import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.models.TeamWarp;
+import dev.xf3d3.ultimateteams.team.Team;
+import dev.xf3d3.ultimateteams.team.TeamWarp;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 public class TeamStorageUtil {
@@ -39,13 +38,12 @@ public class TeamStorageUtil {
 
     public Team createTeam(Player player, String teamName) {
         UUID ownerUUID = player.getUniqueId();
-        String ownerUUIDString = player.getUniqueId().toString();
-        Team newTeam = new Team(ownerUUIDString, teamName);
+        //Team newTeam = new Team(ownerUUIDString, teamName);
 
-        teamsList.put(ownerUUID, newTeam);
-        plugin.runAsync(() -> plugin.getDatabase().createTeam(newTeam, ownerUUID));
+        final Team team = plugin.getDatabase().createTeam(teamName, player);
+        teamsList.put(ownerUUID, team);
 
-        return newTeam;
+        return team;
     }
 
     public boolean isTeamExisting(Player player) {
@@ -331,6 +329,7 @@ public class TeamStorageUtil {
         return teamFinalName == null ? null : STRIP_COLOR_PATTERN.matcher(teamFinalName).replaceAll("");
     }
 
+    // TODO: make it works again
     public Team transferTeamOwner(Team originalTeam, Player originalTeamOwner, Player newTeamOwner) throws IOException {
         if (findTeamByOwner(originalTeamOwner) != null) {
             if (isTeamOwner(originalTeamOwner)) {

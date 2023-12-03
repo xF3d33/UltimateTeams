@@ -2,7 +2,7 @@ package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamCreateEvent;
-import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.team.Team;
 import dev.xf3d3.ultimateteams.utils.TeamStorageUtil;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.apache.commons.lang3.StringUtils;

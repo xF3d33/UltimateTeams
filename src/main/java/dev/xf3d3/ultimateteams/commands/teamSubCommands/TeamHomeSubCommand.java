@@ -3,7 +3,7 @@ package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamHomePreTeleportEvent;
 import dev.xf3d3.ultimateteams.api.TeamHomeTeleportEvent;
-import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.team.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,7 +13,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;

@@ -1,6 +1,6 @@
 package dev.xf3d3.ultimateteams.api;
 
-import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.team.Team;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

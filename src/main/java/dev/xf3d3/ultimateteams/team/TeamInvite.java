@@ -1,4 +1,4 @@
-package dev.xf3d3.ultimateteams.models;
+package dev.xf3d3.ultimateteams.team;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -3,7 +3,7 @@ package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamAllyAddEvent;
 import dev.xf3d3.ultimateteams.api.TeamAllyRemoveEvent;
-import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.team.Team;
 import dev.xf3d3.ultimateteams.utils.TeamStorageUtil;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;

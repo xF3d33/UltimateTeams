@@ -1,9 +1,6 @@
 package dev.xf3d3.ultimateteams;
 
 import co.aikar.commands.PaperCommandManager;
-import com.fatboyindustrial.gsonjavatime.Converters;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import dev.xf3d3.ultimateteams.commands.*;
 import dev.xf3d3.ultimateteams.commands.TeamAllyChatCommand;
 import dev.xf3d3.ultimateteams.config.MessagesFileManager;
@@ -19,8 +16,8 @@ import dev.xf3d3.ultimateteams.hooks.PapiExpansion;
 import dev.xf3d3.ultimateteams.listeners.PlayerConnectEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDamageEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDisconnectEvent;
-import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.models.TeamWarp;
+import dev.xf3d3.ultimateteams.team.Team;
+import dev.xf3d3.ultimateteams.team.TeamWarp;
 import dev.xf3d3.ultimateteams.network.Broker;
 import dev.xf3d3.ultimateteams.network.PluginMessages;
 import dev.xf3d3.ultimateteams.utils.*;

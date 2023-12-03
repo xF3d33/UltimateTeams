@@ -2,8 +2,8 @@ package dev.xf3d3.ultimateteams.database;
 
 import com.google.gson.JsonSyntaxException;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.models.TeamPlayer;
+import dev.xf3d3.ultimateteams.team.Team;
+import dev.xf3d3.ultimateteams.team.TeamPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.sqlite.SQLiteConfig;
 

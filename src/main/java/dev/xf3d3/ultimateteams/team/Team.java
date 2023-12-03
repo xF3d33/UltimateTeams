@@ -1,4 +1,4 @@
-package dev.xf3d3.ultimateteams.models;
+package dev.xf3d3.ultimateteams.team;
 
 import com.google.gson.annotations.Expose;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
 public class Team {
+    private int id;
     @Expose
     private String teamFinalOwner;
     @Expose
@@ -46,6 +47,7 @@ public class Team {
     private Float teamHomePitch;
 
     public Team(@NotNull String teamOwner, @NotNull String teamName) {
+        id = 0;
         teamFinalOwner = teamOwner;
         teamFinalName = teamName;
         teamPrefix = teamFinalName;
@@ -55,6 +57,14 @@ public class Team {
         teamWarps = new ConcurrentHashMap<>();
         friendlyFire = false;
         teamHomeWorld = null;
+    }
+
+    public int getID() {
+        return id;
+    }
+
+    public void setID(int id) {
+        this.id = id;
     }
 
     public String getTeamOwner(){
