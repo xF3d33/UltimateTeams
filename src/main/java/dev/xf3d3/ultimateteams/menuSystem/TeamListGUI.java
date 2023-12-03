@@ -86,7 +86,7 @@ public class TeamListGUI {
 
                 SkullBuilder ownerHead = ItemBuilder.skull()
                         .owner(getServer().getOfflinePlayer(ownerUUID))
-                        .name(Component.text(Utils.Color(team.getTeamFinalName())));
+                        .name(Component.text(Utils.Color(team.getName())));
 
                 ArrayList<String> teamMembersList = team.getTeamMembers();
                 ArrayList<String> teamAlliesList = team.getTeamAllies();

@@ -65,17 +65,13 @@ public class TeamAdmin extends BaseCommand {
     @Syntax("/teamadmin disband <teamName>")
     public void disbandSubcommand(CommandSender sender, String[] args) {
         if (args[0].length() > 1) {
-            final Team team = plugin.getTeamStorageUtil().findTeamByName(args[0]);
-
-            if (team != null) {
-                if (plugin.getTeamStorageUtil().deleteTeam(args[0])) {
-                    sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
-                } else {
-                    sender.sendMessage(Utils.Color(messagesConfig.getString("team-admin-disband-failure")));
-                }
-            } else {
-                sender.sendMessage(Utils.Color(messagesConfig.getString("could-not-find-specified-player").replace(PLAYER_TO_KICK, args[1])));
-            }
+                plugin.getTeamStorageUtil().getTeamByName(args[0]).ifPresentOrElse(
+                        team -> {
+                            plugin.getTeamStorageUtil().deleteTeam(team);
+                            sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
+                        },
+                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-admin-disband-failure")))
+                );
         } else {
             sender.sendMessage(Utils.Color(messagesConfig.getString("incorrect-disband-command-usage")));
         }
@@ -102,11 +98,11 @@ public class TeamAdmin extends BaseCommand {
             return;
         }
 
-        Team team = plugin.getTeamStorageUtil().findTeamByName(teamName);
+        Team team = plugin.getTeamStorageUtil().getTeamByName(teamName);
         if (team != null) {
             if (plugin.getTeamStorageUtil().addTeamMember(team, player)) {
 
-                String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace("%TEAM%", team.getTeamFinalName());
+                String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace("%TEAM%", team.getName());
                 sender.sendMessage(joinMessage);
 
                 // Send message to team owner
@@ -115,7 +111,7 @@ public class TeamAdmin extends BaseCommand {
                 if (owner != null) {
                     player.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
                             .replace("%PLAYER%", player.getName())
-                            .replace("%TEAM%", Utils.Color(team.getTeamFinalName()))));
+                            .replace("%TEAM%", Utils.Color(team.getName()))));
                 }
 
                 // Send message to team players
@@ -126,12 +122,12 @@ public class TeamAdmin extends BaseCommand {
                         if (teamPlayer != null) {
                             teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
                                     .replace("%PLAYER%", player.getName())
-                                    .replace("%TEAM%", Utils.Color(team.getTeamFinalName()))));
+                                    .replace("%TEAM%", Utils.Color(team.getName()))));
                         }
                     }
                 }
             } else {
-                String failureMessage = Utils.Color(messagesConfig.getString("team-join-failed")).replace("%TEAM%", team.getTeamFinalName());
+                String failureMessage = Utils.Color(messagesConfig.getString("team-join-failed")).replace("%TEAM%", team.getName());
                 sender.sendMessage(failureMessage);
             }
         } else {
@@ -161,12 +157,12 @@ public class TeamAdmin extends BaseCommand {
             return;
         }
 
-        Team team = plugin.getTeamStorageUtil().findTeamByName(teamName);
+        Team team = plugin.getTeamStorageUtil().getTeamByName(teamName);
         if (team != null) {
             if (plugin.getTeamStorageUtil().kickPlayer(team, player)) {
 
                 //TODO: change with not in team
-                String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace("%TEAM%", team.getTeamFinalName());
+                String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace("%TEAM%", team.getName());
                 sender.sendMessage(joinMessage);
 
                 // Send message to team owner
@@ -176,7 +172,7 @@ public class TeamAdmin extends BaseCommand {
                     //TODO: change with not in team
                     player.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
                             .replace("%PLAYER%", player.getName())
-                            .replace("%TEAM%", Utils.Color(team.getTeamFinalName()))));
+                            .replace("%TEAM%", Utils.Color(team.getName()))));
                 }
 
                 // Send message to team players
@@ -188,13 +184,13 @@ public class TeamAdmin extends BaseCommand {
                             //TODO: change with not in team
                             teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
                                     .replace("%PLAYER%", player.getName())
-                                    .replace("%TEAM%", Utils.Color(team.getTeamFinalName()))));
+                                    .replace("%TEAM%", Utils.Color(team.getName()))));
                         }
                     }
                 }
             } else {
                 //TODO: change with not in team
-                String failureMessage = Utils.Color(messagesConfig.getString("team-join-failed")).replace("%TEAM%", team.getTeamFinalName());
+                String failureMessage = Utils.Color(messagesConfig.getString("team-join-failed")).replace("%TEAM%", team.getName());
                 sender.sendMessage(failureMessage);
             }
         } else {

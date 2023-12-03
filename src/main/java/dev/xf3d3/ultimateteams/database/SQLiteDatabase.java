@@ -249,7 +249,7 @@ public class SQLiteDatabase extends Database {
                     """), Statement.RETURN_GENERATED_KEYS)) {
 
                 statement.setString(1, String.valueOf(player.getUniqueId()));
-                statement.setString(2, team.getTeamFinalName());
+                statement.setString(2, team.getName());
                 statement.setBytes(3, plugin.getGson().toJson(team).getBytes(StandardCharsets.UTF_8));
 
                 statement.executeUpdate();
@@ -274,9 +274,9 @@ public class SQLiteDatabase extends Database {
                     WHERE `name` = ?
                     """))) {
 
-                statement.setString(1, team.getTeamFinalName());
+                statement.setString(1, team.getName());
                 statement.setBytes(2, plugin.getGson().toJson(team).getBytes(StandardCharsets.UTF_8));
-                statement.setString(3, team.getTeamFinalName());
+                statement.setString(3, team.getName());
 
                 statement.executeUpdate();
                 statement.clearParameters();
@@ -286,14 +286,14 @@ public class SQLiteDatabase extends Database {
         }
     }
 
-    public void deleteTeam(@NotNull UUID uuid) {
+    public void deleteTeam(int id) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     DELETE FROM `%team_table%`
-                    WHERE `uuid` = ?
+                    WHERE `id` = ?
                     """))) {
 
-                statement.setString(1, String.valueOf(uuid));
+                statement.setInt(1, id);
 
                 statement.executeUpdate();
             }

@@ -43,12 +43,12 @@ public class TeamAllySubCommand {
             return;
         }
 
-        if (plugin.getTeamStorageUtil().findTeamByName(teamName) != null) {
-            Team team = plugin.getTeamStorageUtil().findTeamByName(teamName);
+        if (plugin.getTeamStorageUtil().getTeamByName(teamName) != null) {
+            Team team = plugin.getTeamStorageUtil().getTeamByName(teamName);
             Player allyTeamOwner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
 
             if (allyTeamOwner == null) {
-                player.sendMessage(Utils.Color(messagesConfig.getString("ally-team-add-owner-offline").replaceAll("%ALLYTEAM%", team.getTeamFinalName())));
+                player.sendMessage(Utils.Color(messagesConfig.getString("ally-team-add-owner-offline").replaceAll("%ALLYTEAM%", team.getName())));
                 return;
             }
 
@@ -76,7 +76,7 @@ public class TeamAllySubCommand {
                     fireTeamAllyAddEvent(player, team, allyTeamOwner, team);
 
                     // send message to player
-                    player.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-allies").replaceAll(ALLY_TEAM, team.getTeamFinalName())));
+                    player.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-allies").replaceAll(ALLY_TEAM, team.getName())));
                 }
 
                 // send message to player team
@@ -84,7 +84,7 @@ public class TeamAllySubCommand {
                     Player teamPlayer = Bukkit.getPlayer(UUID.fromString(teamPlayerString));
 
                     if (teamPlayer != null) {
-                        teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-allies").replaceAll(ALLY_TEAM, team.getTeamFinalName())));
+                        teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-allies").replaceAll(ALLY_TEAM, team.getName())));
                     }
                 }
 
@@ -93,7 +93,7 @@ public class TeamAllySubCommand {
                     Player teamPlayer = Bukkit.getPlayer(UUID.fromString(teamPlayerString));
 
                     if (teamPlayer != null) {
-                        teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-allies").replaceAll(ALLY_TEAM, team.getTeamFinalName())));
+                        teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-allies").replaceAll(ALLY_TEAM, team.getName())));
                     }
                 }
 
@@ -119,12 +119,12 @@ public class TeamAllySubCommand {
             return;
         }
 
-        if (plugin.getTeamStorageUtil().findTeamByName(teamName) != null) {
-            Team team = plugin.getTeamStorageUtil().findTeamByName(teamName);
+        if (plugin.getTeamStorageUtil().getTeamByName(teamName) != null) {
+            Team team = plugin.getTeamStorageUtil().getTeamByName(teamName);
             Player allyTeamOwner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
 
             if (allyTeamOwner == null) {
-                player.sendMessage(Utils.Color(messagesConfig.getString("ally-team-remove-owner-offline").replaceAll("%ALLYTEAM%", team.getTeamFinalName())));
+                player.sendMessage(Utils.Color(messagesConfig.getString("ally-team-remove-owner-offline").replaceAll("%ALLYTEAM%", team.getName())));
                 return;
             }
 
@@ -138,14 +138,14 @@ public class TeamAllySubCommand {
                 plugin.getTeamStorageUtil().removeTeamAlly(player, allyTeamOwner);
 
                 // send message to player
-                player.sendMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-allies").replaceAll(ALLY_TEAM, team.getTeamFinalName())));
+                player.sendMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-allies").replaceAll(ALLY_TEAM, team.getName())));
 
                 // send message to player team
                 for (String teamPlayerString : plugin.getTeamStorageUtil().findTeamByOwner(player).getTeamMembers()) {
                     Player teamPlayer = Bukkit.getPlayer(UUID.fromString(teamPlayerString));
 
                     if (teamPlayer != null) {
-                        teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-owner-removed-team-from-allies").replaceAll("%TEAM%", team.getTeamFinalName())));
+                        teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-owner-removed-team-from-allies").replaceAll("%TEAM%", team.getName())));
                     }
                 }
 
@@ -154,13 +154,13 @@ public class TeamAllySubCommand {
                     Player teamPlayer = Bukkit.getPlayer(UUID.fromString(teamPlayerString));
 
                     if (teamPlayer != null) {
-                        teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-removed-from-other-allies").replaceAll("%TEAM%", team.getTeamFinalName())));
+                        teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-removed-from-other-allies").replaceAll("%TEAM%", team.getName())));
                     }
                 }
 
                 if (allyTeamOwner.isOnline()) {
                     // send message to ally team owner
-                    allyTeamOwner.sendMessage(Utils.Color(messagesConfig.getString("team-removed-from-other-allies").replaceAll("%TEAM%", team.getTeamFinalName())));
+                    allyTeamOwner.sendMessage(Utils.Color(messagesConfig.getString("team-removed-from-other-allies").replaceAll("%TEAM%", team.getName())));
                 }
             } else {
                 player.sendMessage(Utils.Color(messagesConfig.getString("failed-to-remove-team-from-allies").replaceAll(ALLY_OWNER, teamName)));

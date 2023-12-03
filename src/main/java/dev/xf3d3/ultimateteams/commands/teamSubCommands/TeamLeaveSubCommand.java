@@ -32,7 +32,7 @@ public class TeamLeaveSubCommand {
             Team targetTeam = plugin.getTeamStorageUtil().findTeamByPlayer(player);
             if (targetTeam != null) {
                 if (targetTeam.removeTeamMember(player.getUniqueId().toString())) {
-                    String leaveMessage = Utils.Color(messagesConfig.getString("team-leave-successful")).replace(Team_PLACEHOLDER, targetTeam.getTeamFinalName());
+                    String leaveMessage = Utils.Color(messagesConfig.getString("team-leave-successful")).replace(Team_PLACEHOLDER, targetTeam.getName());
                     player.sendMessage(leaveMessage);
 
                     // Send message to team players
@@ -43,7 +43,7 @@ public class TeamLeaveSubCommand {
                             if (teamPlayer != null) {
                                 teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-left-broadcast-chat")
                                         .replace("%PLAYER%", player.getName())
-                                        .replace("%TEAM%", Utils.Color(targetTeam.getTeamFinalName()))));
+                                        .replace("%TEAM%", Utils.Color(targetTeam.getName()))));
                             }
                         }
                     }

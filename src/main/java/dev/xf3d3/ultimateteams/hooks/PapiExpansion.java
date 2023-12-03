@@ -42,9 +42,9 @@ public class PapiExpansion extends PlaceholderExpansion {
 
         if (params.equalsIgnoreCase("teamName")) {
             if (teamOwner != null) {
-                return Utils.Color(teamOwner.getTeamFinalName() + "&r ");
+                return Utils.Color(teamOwner.getName() + "&r ");
             } else if (teamMember != null){
-                return Utils.Color(teamMember.getTeamFinalName() + "&r ");
+                return Utils.Color(teamMember.getName() + "&r ");
             } else {
                 return "";
             }

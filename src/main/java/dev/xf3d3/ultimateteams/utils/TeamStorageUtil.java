@@ -13,12 +13,15 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public class TeamStorageUtil {
     private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + '&' + "[0-9A-FK-OR]");
-    private static final Map<UUID, Team> teamsList = new HashMap<>();
+    //private static final Map<UUID, Team> teamsList = new HashMap<>();
 
     private final FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
     private final UltimateTeams plugin;
@@ -30,25 +33,31 @@ public class TeamStorageUtil {
     public void loadTeams() {
         final List<Team> teams = plugin.getDatabase().getAllTeams();
 
-        teams.forEach(team -> teamsList.put(UUID.fromString(team.getTeamOwner()), team)
-        );
+        plugin.log(Level.INFO, "Loading teams from the database...");
+        LocalTime startTime = LocalTime.now();
+        plugin.setTeams(teams);
 
-        plugin.sendConsole(Utils.Color("&eLoaded " + teams.size() + " teams!"));
+        final int teamCount = plugin.getTeams().size();
+        final int memberCount = plugin.getTeams().stream().mapToInt(town -> town.getTeamMembers().size()).sum();
+        plugin.log(Level.INFO, "Loaded " + teamCount + " team(s) with " + memberCount + " member(s) in " +
+                (ChronoUnit.MILLIS.between(startTime, LocalTime.now()) / 1000d) + " seconds");
     }
+
+    public Optional<Team> getTeamByName(@NotNull String townName) {
+        return plugin.getTeams().stream()
+                .filter(town -> town.getName().equalsIgnoreCase(townName))
+                .findFirst();
+    }
+
 
     public Team createTeam(Player player, String teamName) {
         UUID ownerUUID = player.getUniqueId();
         //Team newTeam = new Team(ownerUUIDString, teamName);
 
         final Team team = plugin.getDatabase().createTeam(teamName, player);
-        teamsList.put(ownerUUID, team);
+        plugin.getTeams().add(team);
 
         return team;
-    }
-
-    public boolean isTeamExisting(Player player) {
-        UUID uuid = player.getUniqueId();
-        return teamsList.containsKey(uuid);
     }
 
     public boolean deleteTeam(Player player) {
@@ -86,62 +95,40 @@ public class TeamStorageUtil {
         return false;
     }
 
-    public boolean deleteTeam(String name) {
+    public void updateTeam(@NotNull Team team) {
+        plugin.getTeams().removeIf(t -> t.getID() == team.getID());
+        plugin.getTeams().add(team);
+    }
 
-        if (findTeamByName(name) != null) {
-            final Team team = findTeamByName(name);
-            final UUID uuid = UUID.fromString(team.getTeamOwner());
-
-            //fireTeamDisbandEvent(player);
-            teamsList.remove(uuid);
-            plugin.runAsync(() -> plugin.getDatabase().deleteTeam(uuid));
-
-            return true;
-        }
-
-        return false;
+    public void deleteTeam(Team team) {
+        plugin.getDatabase().deleteTeam(team.getID());
+        plugin.getTeams().removeIf(t -> t.getID() == team.getID());
     }
 
     public boolean isTeamOwner(Player player) {
         UUID uuid = player.getUniqueId();
         String ownerUUID = uuid.toString();
-        Team team = teamsList.get(uuid);
 
-        if (team != null) {
-            if (team.getTeamOwner() == null) {
-                return false;
-            } else {
-                return team.getTeamOwner().equals(ownerUUID);
-            }
+        for (Team team : plugin.getTeams()) {
+            if (Objects.equals(team.getTeamOwner(), ownerUUID))
+                return true;
         }
         return false;
     }
 
-    public Team findTeamByName(String name) {
-        Map<String, Team> teamsMap = new HashMap<>();
-
-        for (Team team : teamsList.values())
-            teamsMap.put(team.getTeamFinalName(), team);
-
-        return teamsMap.get(name);
-    }
-
-    public Team findTeamByOwner(Player player) {
+    //TODO: removed findTeamByOfflineOwner because this can be used
+    public Optional<Team> findTeamByOwner(Player player) {
         UUID uuid = player.getUniqueId();
-        return teamsList.get(uuid);
-    }
 
-    public Team findTeamByOfflineOwner(OfflinePlayer offlinePlayer) {
-        UUID uuid = offlinePlayer.getUniqueId();
-        return teamsList.get(uuid);
+        for (Team team : plugin.getTeams()) {
+            if (Objects.equals(team.getTeamOwner(), String.valueOf(uuid)))
+                return Optional.of(team);
+        }
+        return Optional.empty();
     }
 
     public Team findTeamByPlayer(Player player) {
-        for (Team team : teamsList.values()) {
-            if (findTeamByOwner(player) != null) {
-                return team;
-            }
-
+        for (Team team : plugin.getTeams()) {
             if (team.getTeamMembers() != null) {
                 for (String member : team.getTeamMembers()) {
                     if (member.equals(player.getUniqueId().toString())) {
@@ -154,11 +141,7 @@ public class TeamStorageUtil {
     }
 
     public Team findTeamByOfflinePlayer(OfflinePlayer player) {
-        for (Team team : teamsList.values()) {
-            if (findTeamByOfflineOwner(player) != null) {
-                return team;
-            }
-
+        for (Team team : plugin.getTeams()) {
             if (team.getTeamMembers() != null) {
                 for (String member : team.getTeamMembers()) {
                     if (member.equals(player.getUniqueId().toString())) {
@@ -170,17 +153,16 @@ public class TeamStorageUtil {
         return null;
     }
 
-    public void updatePrefix(Player player, String prefix) {
+    public void updatePrefix(Team team, Player player, String prefix) {
         UUID uuid = player.getUniqueId();
         if (!isTeamOwner(player)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
             return;
         }
 
-        Team team = teamsList.get(uuid);
         team.setTeamPrefix(prefix);
 
-        teamsList.replace(uuid, team);
+        updateTeam(team);
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
@@ -189,7 +171,7 @@ public class TeamStorageUtil {
         String memberUUID = uuid.toString();
         team.addTeamMember(memberUUID);
 
-        teamsList.replace(uuid, team);
+        updateTeam(team);
         plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
 
         return true;
@@ -324,7 +306,7 @@ public class TeamStorageUtil {
     }
 
     public String stripTeamNameColorCodes(Team team) {
-        String teamFinalName = team.getTeamFinalName();
+        String teamFinalName = team.getName();
 
         return teamFinalName == null ? null : STRIP_COLOR_PATTERN.matcher(teamFinalName).replaceAll("");
     }
@@ -338,7 +320,7 @@ public class TeamStorageUtil {
                     UUID originalOwnerUUID = originalTeamOwner.getUniqueId();
                     UUID newOwnerUUID = newTeamOwner.getUniqueId();
 
-                    Team newTeam = new Team(newOwnerUUID.toString(), originalTeam.getTeamFinalName());
+                    Team newTeam = new Team(newOwnerUUID.toString(), originalTeam.getName());
 
                     if (originalTeam.getTeamHomeWorld() != null) {
                         newTeam.setTeamHomeWorld(originalTeam.getTeamHomeWorld());
@@ -410,20 +392,20 @@ public class TeamStorageUtil {
         List<String> teams = new ArrayList<>();
 
         for (Team team : teamsList.values())
-            teams.add(team.getTeamFinalName());
+            teams.add(team.getName());
 
         return teams;
     }
 
     private void fireTeamDisbandEvent(Player player) {
         Team teamByOwner = findTeamByOwner(player);
-        TeamDisbandEvent teamDisbandEvent = new TeamDisbandEvent(player, teamByOwner.getTeamFinalName());
+        TeamDisbandEvent teamDisbandEvent = new TeamDisbandEvent(player, teamByOwner.getName());
         Bukkit.getPluginManager().callEvent(teamDisbandEvent);
     }
 
     private void fireOfflineTeamDisbandEvent(OfflinePlayer offlinePlayer){
         Team teamByOfflineOwner = findTeamByOfflineOwner(offlinePlayer);
-        TeamOfflineDisbandEvent teamOfflineDisbandEvent = new TeamOfflineDisbandEvent(offlinePlayer, teamByOfflineOwner.getTeamFinalName());
+        TeamOfflineDisbandEvent teamOfflineDisbandEvent = new TeamOfflineDisbandEvent(offlinePlayer, teamByOfflineOwner.getName());
         Bukkit.getPluginManager().callEvent(teamOfflineDisbandEvent);
     }
 

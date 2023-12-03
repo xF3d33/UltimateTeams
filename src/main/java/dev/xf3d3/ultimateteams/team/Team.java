@@ -71,7 +71,7 @@ public class Team {
         return teamFinalOwner;
     }
 
-    public String getTeamFinalName(){
+    public String getName(){
         return teamFinalName;
     }
 

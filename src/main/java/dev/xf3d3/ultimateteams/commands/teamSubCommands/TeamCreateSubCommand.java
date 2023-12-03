@@ -43,7 +43,7 @@ public class TeamCreateSubCommand {
 
         final TeamStorageUtil storageUtil = plugin.getTeamStorageUtil();
 
-        teams.forEach((teams) -> teamNamesList.add(teams.getValue().getTeamFinalName()));
+        teams.forEach((teams) -> teamNamesList.add(teams.getValue().getName()));
 
 
         if (name.length() >= 1) {
@@ -85,7 +85,6 @@ public class TeamCreateSubCommand {
             } else if (name.length() > MAX_CHAR_LIMIT) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-long").replace("%CHARMAX%", Integer.toString(MAX_CHAR_LIMIT))));
             } else {
-                if (!storageUtil.isTeamExisting(player)) {
                     Team team = storageUtil.createTeam(player, name);
                     String teamCreated = Utils.Color(messagesConfig.getString("team-created-successfully")).replace(TEAM_PLACEHOLDER, Utils.Color(name));
 
@@ -93,10 +92,6 @@ public class TeamCreateSubCommand {
 
                     fireTeamCreateEvent(player, team);
 
-                } else {
-                    String teamNotCreated = Utils.Color(messagesConfig.getString("team-creation-failed")).replace(TEAM_PLACEHOLDER, Utils.Color(name));
-                    player.sendMessage(teamNotCreated);
-                }
                 teamNamesList.clear();
             }
         } else {

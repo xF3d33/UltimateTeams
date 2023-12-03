@@ -41,8 +41,8 @@ public class TeamEnemySubCommand {
             return;
         }
 
-        if (storageUtil.findTeamByName(teamName) != null) {
-            Team team = storageUtil.findTeamByName(teamName);
+        if (storageUtil.getTeamByName(teamName) != null) {
+            Team team = storageUtil.getTeamByName(teamName);
             Player enemyTeamOwner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
 
             if (enemyTeamOwner == null) {
@@ -75,7 +75,7 @@ public class TeamEnemySubCommand {
                 fireTeamEnemyAddEvent(player, team, enemyTeamOwner, team);
 
                 // send message to player
-                player.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getTeamFinalName())));
+                player.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getName())));
 
                 // send message to player team
                 ArrayList<String> playerTeamMembers = storageUtil.findTeamByOwner(player).getTeamMembers();
@@ -84,7 +84,7 @@ public class TeamEnemySubCommand {
                         UUID memberUUID = UUID.fromString(playerTeamMember);
                         Player playerTeamPlayer = Bukkit.getPlayer(memberUUID);
                         if (playerTeamPlayer != null) {
-                            playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getTeamFinalName())));
+                            playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getName())));
                         }
                     }
                 }
@@ -96,7 +96,7 @@ public class TeamEnemySubCommand {
                         UUID memberUUID = UUID.fromString(playerTeamMember);
                         Player playerTeamPlayer = Bukkit.getPlayer(memberUUID);
                         if (playerTeamPlayer != null) {
-                            playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getTeamFinalName())));
+                            playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getName())));
                         }
                     }
                 }
@@ -124,12 +124,12 @@ public class TeamEnemySubCommand {
             return;
         }
 
-        if (storageUtil.findTeamByName(teamName) != null) {
-            Team team = storageUtil.findTeamByName(teamName);
+        if (storageUtil.getTeamByName(teamName) != null) {
+            Team team = storageUtil.getTeamByName(teamName);
             Player enemyTeamOwner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
 
             if (enemyTeamOwner == null) {
-                player.sendMessage(Utils.Color(messagesConfig.getString("enemy-team-remove-owner-offline").replaceAll("%ENEMYTEAM%", team.getTeamFinalName())));
+                player.sendMessage(Utils.Color(messagesConfig.getString("enemy-team-remove-owner-offline").replaceAll("%ENEMYTEAM%", team.getName())));
                 return;
             }
 
@@ -141,7 +141,7 @@ public class TeamEnemySubCommand {
                     storageUtil.removeTeamEnemy(player, enemyTeamOwner);
 
                     // message to team owner
-                    player.sendMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_Team, team.getTeamFinalName())));
+                    player.sendMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_Team, team.getName())));
 
                     // message to team players
                     ArrayList<String> playerTeamMembers = storageUtil.findTeamByOwner(player).getTeamMembers();
@@ -150,7 +150,7 @@ public class TeamEnemySubCommand {
                             UUID memberUUID = UUID.fromString(playerTeamMember);
                             Player playerTeamPlayer = Bukkit.getPlayer(memberUUID);
                             if (playerTeamPlayer != null){
-                                playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_Team, team.getTeamFinalName())));
+                                playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_Team, team.getName())));
                             }
                         }
                     }
@@ -162,7 +162,7 @@ public class TeamEnemySubCommand {
                             UUID memberUUID = UUID.fromString(playerTeamMember);
                             Player playerTeamPlayer = Bukkit.getPlayer(memberUUID);
                             if (playerTeamPlayer != null){
-                                playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_Team, team.getTeamFinalName())));
+                                playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_Team, team.getName())));
                             }
                         }
                     }

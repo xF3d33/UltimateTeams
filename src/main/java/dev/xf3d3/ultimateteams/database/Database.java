@@ -64,7 +64,7 @@ public abstract class Database {
 
     public abstract void updateTeam(@NotNull Team team);
 
-    public abstract void deleteTeam(@NotNull UUID uuid);
+    public abstract void deleteTeam(int id);
 
     public abstract void close();
 

@@ -51,7 +51,7 @@ public class TeamKickSubCommand {
                     String playerKickedMessage = Utils.Color(messagesConfig.getString("team-member-kick-successful")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
                     player.sendMessage(playerKickedMessage);
                     if (offlinePlayer.isOnline()) {
-                        String kickMessage = Utils.Color(messagesConfig.getString("team-kicked-player-message")).replace(TEAM_PLACEHOLDER, targetTeam.getTeamFinalName());
+                        String kickMessage = Utils.Color(messagesConfig.getString("team-kicked-player-message")).replace(TEAM_PLACEHOLDER, targetTeam.getName());
                         offlinePlayer.getPlayer().sendMessage(kickMessage);
                     }
                 } else {

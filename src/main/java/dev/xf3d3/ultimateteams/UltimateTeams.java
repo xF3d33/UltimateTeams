@@ -42,11 +42,9 @@ import space.arim.morepaperlib.scheduling.ScheduledTask;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 
 public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonProvider, PluginMessageListener {
@@ -86,6 +84,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonP
     // HashMaps
     private final ConcurrentHashMap<Player, String> connectedPlayers = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Player, String> bedrockPlayers = new ConcurrentHashMap<>();
+    private ConcurrentLinkedQueue<Team> teams = new ConcurrentLinkedQueue<>();
 
     @Override
     public void onLoad() {
@@ -423,6 +422,14 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonP
 
     public static UltimateTeams getPlugin() {
         return instance;
+    }
+
+    public ConcurrentLinkedQueue<Team> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(@NotNull List<Team> teams) {
+        this.teams = new ConcurrentLinkedQueue<>(teams);
     }
 
     public FloodgateApi getFloodgateApi() {

@@ -160,13 +160,13 @@ public class TeamInviteSubCommand {
             if (plugin.getTeamStorageUtil().addTeamMember(team, player)) {
                 plugin.getTeamInviteUtil().removeInvite(inviterUUIDString);
 
-                String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace(TEAM_PLACEHOLDER, team.getTeamFinalName());
+                String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace(TEAM_PLACEHOLDER, team.getName());
                 player.sendMessage(joinMessage);
 
                 // Send message to team owner
                 inviterPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
                         .replace(PLAYER_PLACEHOLDER, player.getName())
-                        .replace(TEAM_PLACEHOLDER, Utils.Color(team.getTeamFinalName()))));
+                        .replace(TEAM_PLACEHOLDER, Utils.Color(team.getName()))));
 
                 // Send message to team players
                 if (plugin.getSettings().teamJoinAnnounce()) {
@@ -176,12 +176,12 @@ public class TeamInviteSubCommand {
                         if (teamPlayer != null) {
                             teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
                                     .replace(PLAYER_PLACEHOLDER, player.getName())
-                                    .replace(TEAM_PLACEHOLDER, Utils.Color(team.getTeamFinalName()))));
+                                    .replace(TEAM_PLACEHOLDER, Utils.Color(team.getName()))));
                         }
                     }
                 }
             } else {
-                String failureMessage = Utils.Color(messagesConfig.getString("team-join-failed")).replace(TEAM_PLACEHOLDER, team.getTeamFinalName());
+                String failureMessage = Utils.Color(messagesConfig.getString("team-join-failed")).replace(TEAM_PLACEHOLDER, team.getName());
                 player.sendMessage(failureMessage);
             }
         } else {

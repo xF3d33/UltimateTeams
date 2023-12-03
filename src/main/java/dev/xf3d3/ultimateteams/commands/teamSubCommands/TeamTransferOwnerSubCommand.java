@@ -41,7 +41,7 @@ public class TeamTransferOwnerSubCommand {
                             player.sendMessage(Utils.Color(messagesConfig.getString("team-ownership-transfer-successful")
                                     .replace(PLAYER_PLACEHOLDER, newTeamOwner.getName())));
                             newTeamOwner.sendMessage(Utils.Color(messagesConfig.getString("team-ownership-transfer-new-owner")
-                                    .replace(OLD_OWNER_PLACEHOLDER, player.getName()).replace(NEW_Team_NAME, newTeam.getTeamFinalName())));
+                                    .replace(OLD_OWNER_PLACEHOLDER, player.getName()).replace(NEW_Team_NAME, newTeam.getName())));
                         }
                     } catch (IOException e) {
                         sender.sendMessage(Utils.Color(messagesConfig.getString("teams-update-error-1")));

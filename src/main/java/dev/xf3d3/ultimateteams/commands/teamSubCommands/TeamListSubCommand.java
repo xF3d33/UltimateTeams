@@ -30,7 +30,7 @@ public class TeamListSubCommand {
             } else {
                 teamsString.append(Utils.Color(messagesConfig.getString("teams-list-header") + "\n"));
 
-                teams.forEach((team) -> teamsString.append(Utils.Color(team.getValue().getTeamFinalName() + "\n")));
+                teams.forEach((team) -> teamsString.append(Utils.Color(team.getValue().getName() + "\n")));
 
                 teamsString.append(" ");
                 teamsString.append(Utils.Color(messagesConfig.getString("teams-list-footer")));
