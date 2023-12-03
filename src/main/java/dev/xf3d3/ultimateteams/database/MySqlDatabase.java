@@ -36,7 +36,6 @@ public class MySqlDatabase extends Database {
      * Used to set up a connection from the provided data
      */
     private void setConnection() {
-
         plugin.log(Level.INFO, "Attempting to connect to database");
 
         dataSource = new HikariDataSource();
@@ -236,6 +235,7 @@ public class MySqlDatabase extends Database {
 
     public Team createTeam(@NotNull String name, @NotNull Player player) {
         Team team = new Team(player.getUniqueId().toString(), name);
+
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     INSERT INTO `%team_table%` (`uuid`, `name`, `data`)

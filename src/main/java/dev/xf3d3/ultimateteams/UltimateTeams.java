@@ -16,6 +16,7 @@ import dev.xf3d3.ultimateteams.hooks.PapiExpansion;
 import dev.xf3d3.ultimateteams.listeners.PlayerConnectEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDamageEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDisconnectEvent;
+import dev.xf3d3.ultimateteams.network.RedisBroker;
 import dev.xf3d3.ultimateteams.team.Team;
 import dev.xf3d3.ultimateteams.team.TeamWarp;
 import dev.xf3d3.ultimateteams.network.Broker;
@@ -155,7 +156,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonP
 
         // Initialize HuskHomes hook
         if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && getSettings().HuskHomesHook()) {
-            initialize("huskhomes" , (plugin) -> this.huskHomesHook = new HuskHomesAPIHook(this));
+            initialize("HuskHomes" , (plugin) -> this.huskHomesHook = new HuskHomesAPIHook(this));
         }
 
 
@@ -380,6 +381,20 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonP
         }
     }
 
+    public Broker loadBroker() throws RuntimeException {
+        if (!getSettings().doCrossServer()) {
+            return null;
+        }
+
+        final Broker broker = switch (getSettings().getBrokerType()) {
+            case PLUGIN_MESSAGE -> new PluginMessages(this);
+            case REDIS -> new RedisBroker(this);
+        };
+        broker.initialize();
+        log(Level.INFO, "Successfully initialized the " + getSettings().getBrokerType().getDisplayName() + " broker");
+        return broker;
+    }
+
     public void log(@NotNull Level level, @NotNull String message, @Nullable Throwable... throwable) {
         if (throwable != null && throwable.length > 0) {
             getLogger().log(level, message, throwable[0]);
@@ -392,7 +407,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonP
     public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte[] message) {
         if (broker != null && broker instanceof PluginMessages pluginMessenger
                 && getSettings().getBrokerType() == Broker.Type.PLUGIN_MESSAGE) {
-            pluginMessenger.onReceive(channel, Player, message);
+            pluginMessenger.onReceive(channel, player, message);
         }
     }
 

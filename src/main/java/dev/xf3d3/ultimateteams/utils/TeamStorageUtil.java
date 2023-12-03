@@ -380,7 +380,7 @@ public class TeamStorageUtil {
 
                     // create new team
                     teamsList.put(newOwnerUUID, newTeam);
-                    plugin.runAsync(() -> plugin.getDatabase().createTeam(newTeam, newOwnerUUID));
+                    //plugin.runAsync(() -> plugin.getDatabase().createTeam(newTeam, newOwnerUUID));
 
                     return newTeam;
 
