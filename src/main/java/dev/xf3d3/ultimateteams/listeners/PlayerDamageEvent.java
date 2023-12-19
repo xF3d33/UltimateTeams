@@ -40,7 +40,7 @@ public class PlayerDamageEvent implements Listener {
                 if (plugin.getTeamStorageUtil().findTeamByOwner(attackingPlayer) != null) {
                     attackingTeam = plugin.getTeamStorageUtil().findTeamByOwner(attackingPlayer);
                 } else {
-                    attackingTeam = plugin.getTeamStorageUtil().findTeamByPlayer(attackingPlayer);
+                    attackingTeam = plugin.getTeamStorageUtil().findTeamByMember(attackingPlayer);
                 }
 
                 if (attackingTeam == null) {
@@ -53,7 +53,7 @@ public class PlayerDamageEvent implements Listener {
                 if (plugin.getTeamStorageUtil().findTeamByOwner(hurtPlayer) != null) {
                     victimTeam = plugin.getTeamStorageUtil().findTeamByOwner(hurtPlayer);
                 } else {
-                    victimTeam = plugin.getTeamStorageUtil().findTeamByPlayer(hurtPlayer);
+                    victimTeam = plugin.getTeamStorageUtil().findTeamByMember(hurtPlayer);
                 }
 
 

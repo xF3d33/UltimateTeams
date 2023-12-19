@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class TeamInfoSubCommand {
+public class TeamInfo {
 
     FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
     private static final String TEAM_PLACEHOLDER = "%TEAM%";
@@ -25,7 +25,7 @@ public class TeamInfoSubCommand {
 
     private final UltimateTeams plugin;
 
-    public TeamInfoSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamInfo(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
     }
 
@@ -39,7 +39,7 @@ public class TeamInfoSubCommand {
                 if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
                     team = plugin.getTeamStorageUtil().findTeamByOwner(player);
                 } else {
-                    team = plugin.getTeamStorageUtil().findTeamByPlayer(player);
+                    team = plugin.getTeamStorageUtil().findTeamByMember(player);
                 }
             }
 

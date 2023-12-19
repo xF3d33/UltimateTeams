@@ -4,13 +4,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 
-public class TeamInvite {
+public class Invite {
 
     private final String inviter;
     private final String invitee;
     final Date inviteTime;
 
-    public TeamInvite(@NotNull String inviter, @NotNull String invitee) {
+    public Invite(@NotNull String inviter, @NotNull String invitee) {
         this.inviter = inviter;
         this.invitee = invitee;
         this.inviteTime = new Date();

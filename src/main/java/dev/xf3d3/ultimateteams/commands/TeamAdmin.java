@@ -11,6 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @CommandAlias("teamadmin|ta")
@@ -65,7 +66,7 @@ public class TeamAdmin extends BaseCommand {
     @Syntax("/teamadmin disband <teamName>")
     public void disbandSubcommand(CommandSender sender, String[] args) {
         if (args[0].length() > 1) {
-                plugin.getTeamStorageUtil().getTeamByName(args[0]).ifPresentOrElse(
+                plugin.getManager().getTeamByName(args[0]).ifPresentOrElse(
                         team -> {
                             plugin.getTeamStorageUtil().deleteTeam(team);
                             sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
@@ -84,55 +85,28 @@ public class TeamAdmin extends BaseCommand {
     public void teamInviteAcceptSubCommand(CommandSender sender, @Values("@players") Player player, @Values("@teams") String teamName) {
         //final Player player = OnlinePlayer.getPlayer();
 
-        Team playerTeam;
-        if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
-            playerTeam = plugin.getTeamStorageUtil().findTeamByOwner(player);
-        } else {
-            playerTeam = plugin.getTeamStorageUtil().findTeamByPlayer(player);
-        }
-
-        if (playerTeam != null) {
+        if (plugin.getTeamStorageUtil().findTeamByMember(player).isPresent()) {
             String joinMessage = Utils.Color(messagesConfig.getString("team-invite-invited-already-in-team"));
             sender.sendMessage(joinMessage);
 
             return;
         }
 
-        Team team = plugin.getTeamStorageUtil().getTeamByName(teamName);
-        if (team != null) {
-            if (plugin.getTeamStorageUtil().addTeamMember(team, player)) {
+        plugin.getTeamStorageUtil().getTeamByName(teamName).ifPresentOrElse(
 
-                String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace("%TEAM%", team.getName());
-                sender.sendMessage(joinMessage);
+                team -> {
+                    if (plugin.getTeamStorageUtil().addTeamMember(team, player)) {
 
-                // Send message to team owner
-                Player owner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
-
-                if (owner != null) {
-                    player.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
-                            .replace("%PLAYER%", player.getName())
-                            .replace("%TEAM%", Utils.Color(team.getName()))));
-                }
-
-                // Send message to team players
-                if (plugin.getSettings().teamJoinAnnounce()) {
-                    for (String playerUUID : team.getTeamMembers()) {
-                        final Player teamPlayer = Bukkit.getPlayer(UUID.fromString(playerUUID));
-
-                        if (teamPlayer != null) {
-                            teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
-                                    .replace("%PLAYER%", player.getName())
-                                    .replace("%TEAM%", Utils.Color(team.getName()))));
-                        }
+                        // Send the join message to all players
+                        plugin.getUtils().sendMessageToTeamPlayers(team, "team-join-successful", player);
+                    } else {
+                        String failureMessage = Utils.Color(messagesConfig.getString("team-join-failed")).replace("%TEAM%", team.getName());
+                        sender.sendMessage(failureMessage);
                     }
-                }
-            } else {
-                String failureMessage = Utils.Color(messagesConfig.getString("team-join-failed")).replace("%TEAM%", team.getName());
-                sender.sendMessage(failureMessage);
-            }
-        } else {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("team-join-failed-no-valid-team")));
-        }
+                },
+                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-join-failed-no-valid-team")).replace("%TEAM%", teamName))
+
+        );
     }
 
     @Subcommand("team kick")
@@ -142,61 +116,55 @@ public class TeamAdmin extends BaseCommand {
     public void teamKickSubCommand(CommandSender sender, @Values("@players") Player player, @Values("@teams") String teamName) {
         //final Player player = OnlinePlayer.getPlayer();
 
-        Team playerTeam;
-        if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
-            playerTeam = plugin.getTeamStorageUtil().findTeamByOwner(player);
-        } else {
-            playerTeam = plugin.getTeamStorageUtil().findTeamByPlayer(player);
-        }
-
-        if (playerTeam == null) {
-            //TODO: change with not in team
+        if (plugin.getTeamStorageUtil().findTeamByMember(player).isEmpty()) {
+            //TODO: change message with not in a team
             String joinMessage = Utils.Color(messagesConfig.getString("team-invite-invited-already-in-team"));
             sender.sendMessage(joinMessage);
 
             return;
         }
 
-        Team team = plugin.getTeamStorageUtil().getTeamByName(teamName);
-        if (team != null) {
-            if (plugin.getTeamStorageUtil().kickPlayer(team, player)) {
+        plugin.getTeamStorageUtil().getTeamByName(teamName).ifPresentOrElse(
+                team -> {
+                    if (plugin.getTeamStorageUtil().kickPlayer(team, player)) {
 
-                //TODO: change with not in team
-                String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace("%TEAM%", team.getName());
-                sender.sendMessage(joinMessage);
+                        //TODO: change with kick team
+                        String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace("%TEAM%", team.getName());
+                        sender.sendMessage(joinMessage);
 
-                // Send message to team owner
-                Player owner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
+                        // Send message to team owner
+                        Player owner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
 
-                if (owner != null) {
-                    //TODO: change with not in team
-                    player.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
-                            .replace("%PLAYER%", player.getName())
-                            .replace("%TEAM%", Utils.Color(team.getName()))));
-                }
-
-                // Send message to team players
-                if (plugin.getSettings().teamJoinAnnounce()) {
-                    for (String playerUUID : team.getTeamMembers()) {
-                        final Player teamPlayer = Bukkit.getPlayer(UUID.fromString(playerUUID));
-
-                        if (teamPlayer != null) {
-                            //TODO: change with not in team
-                            teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
+                        if (owner != null) {
+                            //TODO: change with kick team
+                            player.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
                                     .replace("%PLAYER%", player.getName())
                                     .replace("%TEAM%", Utils.Color(team.getName()))));
                         }
+
+                        // Send message to team players
+                        if (plugin.getSettings().teamJoinAnnounce()) {
+                            for (String playerUUID : team.getTeamMembers()) {
+                                final Player teamPlayer = Bukkit.getPlayer(UUID.fromString(playerUUID));
+
+                                if (teamPlayer != null) {
+                                    //TODO: change with kick team
+                                    teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
+                                            .replace("%PLAYER%", player.getName())
+                                            .replace("%TEAM%", Utils.Color(team.getName()))));
+                                }
+                            }
+                        }
+                    } else {
+                        //TODO: change with not in team
+                        String failureMessage = Utils.Color(messagesConfig.getString("team-join-failed")).replace("%TEAM%", team.getName());
+                        sender.sendMessage(failureMessage);
                     }
-                }
-            } else {
-                //TODO: change with not in team
-                String failureMessage = Utils.Color(messagesConfig.getString("team-join-failed")).replace("%TEAM%", team.getName());
-                sender.sendMessage(failureMessage);
-            }
-        } else {
-            //TODO: change with not in team
-            sender.sendMessage(Utils.Color(messagesConfig.getString("team-join-failed-no-valid-team")));
-        }
+                },
+                () -> //TODO: change with not in team
+                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-join-failed-no-valid-team")))
+        );
+
     }
 
 }

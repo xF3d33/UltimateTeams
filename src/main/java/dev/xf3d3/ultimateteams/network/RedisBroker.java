@@ -48,7 +48,7 @@ public class RedisBroker extends PluginMessages {
                         final Message message = plugin.getMessageFromJson(encodedMessage);
                         if (message.getTargetType() == Message.TargetType.PLAYER) {
                             plugin.getOnlineUsers().stream()
-                                    .filter(online -> online.getUsername().equalsIgnoreCase(message.getTarget()))
+                                    .filter(online -> online.getName().equalsIgnoreCase(message.getTarget()))
                                     .findFirst()
                                     .ifPresent(receiver -> handle(receiver, message));
                             return;

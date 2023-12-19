@@ -4,7 +4,7 @@ import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamAllyAddEvent;
 import dev.xf3d3.ultimateteams.api.TeamAllyRemoveEvent;
 import dev.xf3d3.ultimateteams.team.Team;
-import dev.xf3d3.ultimateteams.utils.TeamStorageUtil;
+import dev.xf3d3.ultimateteams.manager.TeamsManager;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-public class TeamAllySubCommand {
+public class TeamAlly {
 
     private final FileConfiguration messagesConfig;
     private final Logger logger;
@@ -26,7 +26,7 @@ public class TeamAllySubCommand {
 
     private final UltimateTeams plugin;
 
-    public TeamAllySubCommand(@NotNull UltimateTeams plugin) {
+    public TeamAlly(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
         this.logger = plugin.getLogger();
@@ -38,12 +38,12 @@ public class TeamAllySubCommand {
             return;
         }
 
-        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
+        if (!plugin.getManager().teams().isTeamOwner(player)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
             return;
         }
 
-        if (plugin.getTeamStorageUtil().getTeamByName(teamName) != null) {
+        if (plugin.getManager().teams().getTeamByName(teamName) != null) {
             Team team = plugin.getTeamStorageUtil().getTeamByName(teamName);
             Player allyTeamOwner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
 
@@ -169,7 +169,7 @@ public class TeamAllySubCommand {
         }
     }
 
-    private void fireTeamAllyRemoveEvent(TeamStorageUtil storageUtil, Player player, Player allyTeamOwner, Team allyTeam) {
+    private void fireTeamAllyRemoveEvent(TeamsManager storageUtil, Player player, Player allyTeamOwner, Team allyTeam) {
         TeamAllyRemoveEvent teamAllyRemoveEvent = new TeamAllyRemoveEvent(player, storageUtil.findTeamByOwner(player), allyTeam, allyTeamOwner);
         Bukkit.getPluginManager().callEvent(teamAllyRemoveEvent);
     }

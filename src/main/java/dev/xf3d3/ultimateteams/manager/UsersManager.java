@@ -1,8 +1,9 @@
-package dev.xf3d3.ultimateteams.utils;
+package dev.xf3d3.ultimateteams.manager;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamChatSpyToggledEvent;
 import dev.xf3d3.ultimateteams.team.TeamPlayer;
+import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class UsersStorageUtil {
+public class UsersManager {
 
     private final Logger logger = UltimateTeams.getPlugin().getLogger();
     private final Map<UUID, TeamPlayer> usermap = new ConcurrentHashMap<>();
@@ -26,7 +27,7 @@ public class UsersStorageUtil {
     private static final String PLAYER_PLACEHOLDER = "%PLAYER%";
     private final UltimateTeams plugin;
 
-    public UsersStorageUtil(@NotNull UltimateTeams plugin) {
+    public UsersManager(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
     }
 

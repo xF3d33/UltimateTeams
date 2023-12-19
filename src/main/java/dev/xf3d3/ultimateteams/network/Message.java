@@ -126,15 +126,11 @@ public class Message {
         /**
          * Indicates the target server should pull and cache new town data from the database for a town by ID.
          */
-        TOWN_UPDATE,
+        TEAM_UPDATE,
         /**
          * Indicates the target server should remove all claims for a town by ID and remove it from the cache.
          */
         TOWN_DELETE,
-        /**
-         * Indicates the target server should remove all claims for a town by ID from its claim world cache
-         */
-        TOWN_DELETE_ALL_CLAIMS,
         /**
          * A message sent to handle a cross-server invite
          */
@@ -144,10 +140,6 @@ public class Message {
          */
         TOWN_INVITE_REPLY,
         /**
-         * A notification message that a town has leveled up
-         */
-        TOWN_LEVEL_UP,
-        /**
          * A notification message that a town has transferred ownership
          */
         TOWN_TRANSFERRED,
@@ -156,25 +148,9 @@ public class Message {
          */
         TOWN_EVICTED,
         /**
-         * A notification message that a town has promoted a member
-         */
-        TOWN_PROMOTED,
-        /**
-         * A notification message that a town has demoted a member
-         */
-        TOWN_DEMOTED,
-        /**
          * A notification message that a town has renamed
          */
         TOWN_RENAMED,
-        /**
-         * A message for dispatching a cross-server war declaration
-         */
-        TOWN_WAR_DECLARATION_SENT,
-        /**
-         * A message for dispatching a cross-server war declaration acceptance
-         */
-        TOWN_WAR_DECLARATION_ACCEPTED,
         /**
          * A message for dispatching a cross-server town chat message
          */
@@ -183,11 +159,6 @@ public class Message {
          * Request other servers for a list of online users
          */
         REQUEST_USER_LIST,
-        /**
-         * A message requesting that a server end a war for a town (by integer ID payload) if there is an active
-         * war involving them.
-         */
-        TOWN_WAR_END,
         /**
          * A message containing a list of users on a server
          */

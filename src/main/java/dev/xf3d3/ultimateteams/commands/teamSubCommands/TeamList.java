@@ -11,13 +11,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class TeamListSubCommand {
+public class TeamList {
 
     FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
 
     private final UltimateTeams plugin;
 
-    public TeamListSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamList(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
     }
 

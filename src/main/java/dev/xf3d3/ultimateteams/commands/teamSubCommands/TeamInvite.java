@@ -2,8 +2,8 @@ package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.team.Invite;
 import dev.xf3d3.ultimateteams.team.Team;
-import dev.xf3d3.ultimateteams.team.TeamInvite;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class TeamInviteSubCommand {
+public class TeamInvite {
 
     private final FileConfiguration messagesConfig;
     private static final String INVITED_PLAYER = "%INVITED%";
@@ -22,7 +22,7 @@ public class TeamInviteSubCommand {
 
     private final UltimateTeams plugin;
 
-    public TeamInviteSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamInvite(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
@@ -50,7 +50,7 @@ public class TeamInviteSubCommand {
         } else {
 
             // Check if the player is already in a team
-            if (plugin.getTeamStorageUtil().findTeamByPlayer(invitedPlayer) != null) {
+            if (plugin.getTeamStorageUtil().findTeamByMember(invitedPlayer) != null) {
                 String playerAlreadyInTeam = Utils.Color(messagesConfig.getString("team-invite-invited-already-in-team")).replace(INVITED_PLAYER, invitedPlayer.getName());
                 sender.sendMessage(playerAlreadyInTeam);
                 return;
@@ -150,7 +150,7 @@ public class TeamInviteSubCommand {
             return;
         }
 
-        TeamInvite invite = plugin.getTeamInviteUtil().getInvitee(player.getUniqueId().toString());
+        Invite invite = plugin.getTeamInviteUtil().getInvitee(player.getUniqueId().toString());
         String inviterUUIDString = invite.getInviter();
 
         Player inviterPlayer = Bukkit.getPlayer(UUID.fromString(inviterUUIDString));

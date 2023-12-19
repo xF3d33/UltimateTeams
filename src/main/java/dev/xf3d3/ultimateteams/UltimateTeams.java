@@ -16,14 +16,17 @@ import dev.xf3d3.ultimateteams.hooks.PapiExpansion;
 import dev.xf3d3.ultimateteams.listeners.PlayerConnectEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDamageEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDisconnectEvent;
+import dev.xf3d3.ultimateteams.manager.Manager;
 import dev.xf3d3.ultimateteams.network.RedisBroker;
 import dev.xf3d3.ultimateteams.team.Team;
-import dev.xf3d3.ultimateteams.team.TeamWarp;
+import dev.xf3d3.ultimateteams.team.Warp;
 import dev.xf3d3.ultimateteams.network.Broker;
 import dev.xf3d3.ultimateteams.network.PluginMessages;
 import dev.xf3d3.ultimateteams.utils.*;
+import net.kyori.adventure.key.Key;
 import net.william278.annotaml.Annotaml;
 import net.william278.desertwell.util.ThrowingConsumer;
+import net.william278.desertwell.util.Version;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
@@ -33,6 +36,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.geysermc.floodgate.api.FloodgateApi;
+import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import space.arim.morepaperlib.MorePaperLib;
@@ -61,16 +65,14 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonP
     private Utils utils;
     private ConcurrentHashMap<Integer, ScheduledTask> tasks;
     private MorePaperLib paperLib;
-    private PaperCommandManager manager;
+    private PaperCommandManager Commandsmanager;
 
     // Communication
     private Database database;
     private Broker broker;
 
     // Handlers
-    private TeamStorageUtil teamStorageUtil;
-    private UsersStorageUtil usersStorageUtil;
-    private TeamInviteUtil teamInviteUtil;
+    private Manager manager;
 
     // Hooks
     private HuskHomesAPIHook huskHomesHook;
@@ -106,11 +108,9 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonP
     public void onEnable() {
         this.tasks = new ConcurrentHashMap<>();
         this.paperLib = new MorePaperLib(this);
-        this.manager = new PaperCommandManager(this);
+        this.Commandsmanager = new PaperCommandManager(this);
         this.msgFileManager = new MessagesFileManager(this);
-        this.teamStorageUtil = new TeamStorageUtil(this);
-        this.usersStorageUtil = new UsersStorageUtil(this);
-        this.teamInviteUtil = new TeamInviteUtil(this);
+        this.manager = new Manager(this);
         this.utils = new Utils(this);
         this.updateChecker = new UpdateCheck(this);
         this.broker = this.loadBroker();
@@ -150,7 +150,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonP
 
         // Load the teams
         initialize("teams", (plugin) -> runAsync(() -> {
-            teamStorageUtil.loadTeams();
+            getManager().teams().loadTeams();
         }));
 
         // Initialize HuskHomes hook
@@ -160,39 +160,31 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonP
 
 
         // Register command completions
-        this.manager.getCommandCompletions().registerAsyncCompletion("teams", c -> teamStorageUtil.getTeamsListNames());
-        this.manager.getCommandCompletions().registerAsyncCompletion("warps", c -> {
-            Team team;
-            if (teamStorageUtil.findTeamByOwner(c.getPlayer()) != null) {
-                team = teamStorageUtil.findTeamByOwner(c.getPlayer());
-            } else {
-                team = teamStorageUtil.findTeamByPlayer(c.getPlayer());
-            }
+        this.Commandsmanager.getCommandCompletions().registerAsyncCompletion("teams", c -> getManager().getTeamNames());
+        this.Commandsmanager.getCommandCompletions().registerAsyncCompletion("warps", c -> {
+            Optional<Team> team = getManager().teams().findTeamByMember(c.getPlayer());
 
-            if (team == null) {
+            if (team.isPresent()) {
+                final Collection<Warp> warps = team.get().getTeamWarps();
+                final Collection<String> names = new ArrayList<>();
+
+                warps.forEach(warp -> names.add(warp.getName()));
+
+                return names;
+            } else {
                 return new ArrayList<>();
             }
 
-            final Collection<TeamWarp> warps = team.getTeamWarps();
-            final Collection<String> names = new ArrayList<>();
 
-            warps.forEach(warp -> names.add(warp.getName()));
-
-            return names;
         });
-        this.manager.getCommandCompletions().registerAsyncCompletion("teamPlayers", c -> {
-            Team team;
-            if (teamStorageUtil.findTeamByOwner(c.getPlayer()) != null) {
-                team = teamStorageUtil.findTeamByOwner(c.getPlayer());
-            } else {
-                team = teamStorageUtil.findTeamByPlayer(c.getPlayer());
-            }
+        this.Commandsmanager.getCommandCompletions().registerAsyncCompletion("teamPlayers", c -> {
+            Optional<Team> team = getManager().teams().findTeamByMember(c.getPlayer());
 
-            if (team == null) {
+            if (team.isEmpty()) {
                 return new ArrayList<>();
             } else {
                 ArrayList<String> members = new ArrayList<>();
-                team.getTeamMembers().forEach(memberUUIDString -> {
+                team.get().getTeamMembers().forEach(memberUUIDString -> {
                     final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(memberUUIDString));
 
                     members.add(offlinePlayer.getName());
@@ -243,7 +235,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonP
         if (getSettings().enableAutoInviteWipe()) {
             runSyncRepeating(() -> {
                 try {
-                    teamInviteUtil.emptyInviteList();
+                    getManager().invite().emptyInviteList();
                     if (getSettings().enableAutoInviteWipe()){
                         sendConsole(msgFileManager.getMessagesConfig().getString("auto-invite-wipe-complete"));
                     }
@@ -334,11 +326,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonP
 
     private void registerCommands() {
         // Register the plugin commands
-        this.manager.registerCommand(new TeamCommand(this));
-        this.manager.registerCommand(new TeamChatSpyCommand(this));
-        this.manager.registerCommand(new TeamChatCommand(this));
-        this.manager.registerCommand(new TeamAllyChatCommand(this));
-        this.manager.registerCommand(new TeamAdmin(this));
+        this.Commandsmanager.registerCommand(new TeamCommand(this));
+        this.Commandsmanager.registerCommand(new TeamChatSpyCommand(this));
+        this.Commandsmanager.registerCommand(new TeamChatCommand(this));
+        this.Commandsmanager.registerCommand(new TeamAllyChatCommand(this));
+        this.Commandsmanager.registerCommand(new TeamAdmin(this));
     }
 
     public void registerEvents() {
@@ -415,6 +407,30 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonP
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, PluginMessages.BUNGEE_CHANNEL_ID);
     }
 
+    @NotNull
+    public Key getKey(@NotNull String... data) {
+        if (data.length == 0) {
+            throw new IllegalArgumentException("Cannot create a key with no data");
+        }
+        @Subst("foo") final String joined = String.join("/", data);
+        return Key.key("husktowns", joined);
+    }
+
+    @NotNull
+    public Version getVersion() {
+        return Version.fromString(getDescription().getVersion(), "-");
+    }
+
+    @NotNull
+    public List<? extends Player> getOnlineUsers() {
+        return Bukkit.getOnlinePlayers().stream().toList();
+    }
+
+    @NotNull
+    public Manager getManager() {
+        return manager;
+    }
+
 
     public void sendConsole(String text) {
         Bukkit.getConsoleSender().sendMessage(Utils.Color(text));
@@ -428,27 +444,17 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonP
         return teams;
     }
 
+    public void updateTeam(@NotNull Team team) {
+        getTeams().removeIf(t -> t.getID() == team.getID());
+        getTeams().add(team);
+    }
+
     public void setTeams(@NotNull List<Team> teams) {
         this.teams = new ConcurrentLinkedQueue<>(teams);
     }
 
     public FloodgateApi getFloodgateApi() {
         return floodgateAPIHook.getHook();
-    }
-
-    @NotNull
-    public TeamStorageUtil getTeamStorageUtil() {
-        return teamStorageUtil;
-    }
-
-    @NotNull
-    public UsersStorageUtil getUsersStorageUtil() {
-        return usersStorageUtil;
-    }
-
-    @NotNull
-    public TeamInviteUtil getTeamInviteUtil() {
-        return teamInviteUtil;
     }
 
     @NotNull

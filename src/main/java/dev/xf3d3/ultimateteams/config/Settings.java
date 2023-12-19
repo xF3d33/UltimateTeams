@@ -85,6 +85,10 @@ public class Settings {
     @YamlKey("cross_server.messenger_type")
     private Broker.Type brokerType = Broker.Type.REDIS;
 
+    @YamlComment("Specify a common ID for grouping servers running HuskTowns on your proxy. Don't modify this unless you know what you're doing!")
+    @YamlKey("cross_server.cluster_id")
+    private String clusterId = "main";
+
     @YamlComment("Specify credentials here if you are using REDIS as your messenger_type")
     @YamlKey("cross_server.redis.host")
     private String redisHost = "localhost";
@@ -326,6 +330,11 @@ public class Settings {
     @NotNull
     public Broker.Type getBrokerType() {
         return brokerType;
+    }
+
+    @NotNull
+    public String getClusterId() {
+        return clusterId;
     }
 
     public String getRedisHost() {

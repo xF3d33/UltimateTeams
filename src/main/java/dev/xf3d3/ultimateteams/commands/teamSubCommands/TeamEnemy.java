@@ -4,7 +4,7 @@ import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamEnemyAddEvent;
 import dev.xf3d3.ultimateteams.api.TeamEnemyRemoveEvent;
 import dev.xf3d3.ultimateteams.team.Team;
-import dev.xf3d3.ultimateteams.utils.TeamStorageUtil;
+import dev.xf3d3.ultimateteams.manager.TeamsManager;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class TeamEnemySubCommand {
+public class TeamEnemy {
 
     private static final String ENEMY_Team = "%ENEMYTEAM%";
     private static final String ENEMY_OWNER = "%ENEMYOWNER%";
@@ -23,7 +23,7 @@ public class TeamEnemySubCommand {
     private final FileConfiguration messagesConfig;
     private final UltimateTeams plugin;
 
-    public TeamEnemySubCommand(@NotNull UltimateTeams plugin) {
+    public TeamEnemy(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
@@ -34,82 +34,85 @@ public class TeamEnemySubCommand {
             return;
         }
 
-        final TeamStorageUtil storageUtil = plugin.getTeamStorageUtil();
+        final TeamsManager teamManager = plugin.getManager().teams();
 
-        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
+        if (!teamManager.isTeamOwner(player)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
             return;
         }
 
-        if (storageUtil.getTeamByName(teamName) != null) {
-            Team team = storageUtil.getTeamByName(teamName);
-            Player enemyTeamOwner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
+        // Get enemy team
+        plugin.getManager().getTeamByName(teamName).ifPresent(enemyTeam -> {
+            Player enemyTeamOwner = Bukkit.getPlayer(UUID.fromString(enemyTeam.getTeamOwner()));
 
+            // Check if enemy team owner is online
             if (enemyTeamOwner == null) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("ally-team-add-owner-offline").replaceAll("%ALLYOWNER%", player.getName())));
                 return;
             }
 
-            if (storageUtil.findTeamByOwner(player) != team) {
-                String enemyOwnerUUIDString = team.getTeamOwner();
+            // Check if the player (command sender) team exists
+            teamManager.findTeamByOwner(player).ifPresentOrElse(
+                    team -> {
+                        String enemyOwnerUUIDString = team.getTeamOwner();
 
-                if (team.getTeamEnemies().size() >= plugin.getSettings().getMaxTeamEnemies()) {
-                    int maxSize = plugin.getSettings().getMaxTeamEnemies();
-                    player.sendMessage(Utils.Color(messagesConfig.getString("team-enemy-max-amount-reached")).replace("%LIMIT%", String.valueOf(maxSize)));
-                    return;
-                }
-
-                final String playerUUID = player.getUniqueId().toString();
-
-                if (team.getTeamAllies().contains(playerUUID)) {
-                    player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-enemy-allied-team")));
-                    return;
-                }
-
-                if (team.getTeamEnemies().contains(playerUUID)) {
-                    player.sendMessage(Utils.Color(messagesConfig.getString("failed-team-already-your-enemy")));
-                    return;
-                }
-
-                storageUtil.addTeamEnemy(player, enemyTeamOwner);
-                fireTeamEnemyAddEvent(player, team, enemyTeamOwner, team);
-
-                // send message to player
-                player.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getName())));
-
-                // send message to player team
-                ArrayList<String> playerTeamMembers = storageUtil.findTeamByOwner(player).getTeamMembers();
-                for (String playerTeamMember : playerTeamMembers) {
-                    if (playerTeamMember != null) {
-                        UUID memberUUID = UUID.fromString(playerTeamMember);
-                        Player playerTeamPlayer = Bukkit.getPlayer(memberUUID);
-                        if (playerTeamPlayer != null) {
-                            playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getName())));
+                        if (team.getTeamEnemies().size() >= plugin.getSettings().getMaxTeamEnemies()) {
+                            int maxSize = plugin.getSettings().getMaxTeamEnemies();
+                            player.sendMessage(Utils.Color(messagesConfig.getString("team-enemy-max-amount-reached")).replace("%LIMIT%", String.valueOf(maxSize)));
+                            return;
                         }
-                    }
-                }
 
-                // send message to enemy team
-                ArrayList<String> enemyTeamMembers = storageUtil.findTeamByOwner(enemyTeamOwner).getTeamMembers();
-                for (String playerTeamMember : enemyTeamMembers) {
-                    if (playerTeamMember != null) {
-                        UUID memberUUID = UUID.fromString(playerTeamMember);
-                        Player playerTeamPlayer = Bukkit.getPlayer(memberUUID);
-                        if (playerTeamPlayer != null) {
-                            playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getName())));
+                        final String playerUUID = player.getUniqueId().toString();
+
+                        if (team.getTeamAllies().contains(playerUUID)) {
+                            player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-enemy-allied-team")));
+                            return;
                         }
-                    }
-                }
 
-                // send message to enemy team owner
-                if (enemyTeamOwner.isOnline()) {
-                    enemyTeamOwner.sendMessage(Utils.Color(messagesConfig.getString("team-added-to-other-enemies").replace(Team_OWNER, player.getName())));
-                }
+                        if (team.getTeamEnemies().contains(playerUUID)) {
+                            player.sendMessage(Utils.Color(messagesConfig.getString("failed-team-already-your-enemy")));
+                            return;
+                        }
 
-            } else {
-                player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-enemy-your-own-team")));
-            }
-        }
+                        teamManager.addTeamEnemy(player, enemyTeamOwner);
+                        fireTeamEnemyAddEvent(player, team, enemyTeamOwner, team);
+
+                        // send message to player
+                        player.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getName())));
+
+                        // send message to player team
+                        ArrayList<String> playerTeamMembers = teamManager.findTeamByOwner(player).getTeamMembers();
+                        for (String playerTeamMember : playerTeamMembers) {
+                            if (playerTeamMember != null) {
+                                UUID memberUUID = UUID.fromString(playerTeamMember);
+                                Player playerTeamPlayer = Bukkit.getPlayer(memberUUID);
+                                if (playerTeamPlayer != null) {
+                                    playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getName())));
+                                }
+                            }
+                        }
+
+                        // send message to enemy team
+                        ArrayList<String> enemyTeamMembers = teamManager.findTeamByOwner(enemyTeamOwner).getTeamMembers();
+                        for (String playerTeamMember : enemyTeamMembers) {
+                            if (playerTeamMember != null) {
+                                UUID memberUUID = UUID.fromString(playerTeamMember);
+                                Player playerTeamPlayer = Bukkit.getPlayer(memberUUID);
+                                if (playerTeamPlayer != null) {
+                                    playerTeamPlayer.sendMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replace(ENEMY_Team, team.getName())));
+                                }
+                            }
+                        }
+
+                        // send message to enemy team owner
+                        if (enemyTeamOwner.isOnline()) {
+                            enemyTeamOwner.sendMessage(Utils.Color(messagesConfig.getString("team-added-to-other-enemies").replace(Team_OWNER, player.getName())));
+                        }
+                    },
+                    () -> player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-enemy-your-own-team")))
+            );
+
+        });
     }
 
     public void teamEnemySubRemoveCommand(CommandSender sender, String teamName) {
@@ -117,9 +120,9 @@ public class TeamEnemySubCommand {
             sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
             return;
         }
-        final TeamStorageUtil storageUtil = plugin.getTeamStorageUtil();
+        final TeamsManager storageUtil = plugin.getManager().teams();
 
-        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
+        if (!plugin.getManager().teams().isTeamOwner(player)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
             return;
         }
@@ -180,8 +183,8 @@ public class TeamEnemySubCommand {
         }
     }
 
-    private void fireTeamEnemyRemoveEvent(TeamStorageUtil storageUtil, Player player, Player enemyTeamOwner, Team enemyTeam) {
-        TeamEnemyRemoveEvent teamEnemyRemoveEvent = new TeamEnemyRemoveEvent(player, storageUtil.findTeamByPlayer(player), enemyTeam, enemyTeamOwner);
+    private void fireTeamEnemyRemoveEvent(TeamsManager storageUtil, Player player, Player enemyTeamOwner, Team enemyTeam) {
+        TeamEnemyRemoveEvent teamEnemyRemoveEvent = new TeamEnemyRemoveEvent(player, storageUtil.findTeamByMember(player), enemyTeam, enemyTeamOwner);
         Bukkit.getPluginManager().callEvent(teamEnemyRemoveEvent);
     }
     private void fireTeamEnemyAddEvent(Player player, Team team, Player enemyTeamOwner, Team enemyTeam) {

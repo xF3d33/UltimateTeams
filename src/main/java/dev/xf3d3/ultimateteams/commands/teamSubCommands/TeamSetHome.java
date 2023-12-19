@@ -14,12 +14,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.logging.Level;
 
-public class TeamSetHomeSubCommand {
+public class TeamSetHome {
     FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
 
     private final UltimateTeams plugin;
 
-    public TeamSetHomeSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamSetHome(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
     }
 

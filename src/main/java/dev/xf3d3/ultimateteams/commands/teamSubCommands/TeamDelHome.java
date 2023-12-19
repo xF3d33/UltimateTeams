@@ -10,11 +10,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamDelHomeSubCommand {
+public class TeamDelHome {
     private final FileConfiguration messagesConfig;
     private final UltimateTeams plugin;
 
-    public TeamDelHomeSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamDelHome(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
@@ -25,29 +25,28 @@ public class TeamDelHomeSubCommand {
             return;
         }
 
-        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
+        if (!plugin.getManager().teams().isTeamOwner(player)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
             return;
         }
 
-        if (plugin.getSettings().teamHomeEnabled()) {
-            if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
-                Team teamByOwner = plugin.getTeamStorageUtil().findTeamByOwner(player);
-
-                if (plugin.getTeamStorageUtil().isHomeSet(teamByOwner)) {
-                    fireTeamHomeDeleteEvent(player, teamByOwner);
-
-                    plugin.getTeamStorageUtil().deleteHome(teamByOwner);
-                    player.sendMessage(Utils.Color(messagesConfig.getString("successfully-deleted-team-home")));
-                } else {
-                    player.sendMessage(Utils.Color(messagesConfig.getString("failed-no-home-set")));
-                }
-            } else {
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
-            }
-        } else {
+        if (!plugin.getSettings().teamHomeEnabled()) {
             player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
         }
+
+        plugin.getManager().teams().findTeamByOwner(player).ifPresentOrElse(
+                team -> {
+                    if (plugin.getManager().teams().isHomeSet(team)) {
+                        fireTeamHomeDeleteEvent(player, team);
+
+                        plugin.getManager().teams().deleteHome(player, team);
+                        player.sendMessage(Utils.Color(messagesConfig.getString("successfully-deleted-team-home")));
+                    } else {
+                        player.sendMessage(Utils.Color(messagesConfig.getString("failed-no-home-set")));
+                    }
+                },
+                () -> player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")))
+        );
     }
 
     private void fireTeamHomeDeleteEvent(Player player, Team team) {

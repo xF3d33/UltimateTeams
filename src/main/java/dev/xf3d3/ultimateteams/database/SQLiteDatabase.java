@@ -271,12 +271,12 @@ public class SQLiteDatabase extends Database {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     UPDATE `%team_table%`
                     SET `name` = ?, `data` = ?
-                    WHERE `name` = ?
+                    WHERE `id` = ?
                     """))) {
 
                 statement.setString(1, team.getName());
                 statement.setBytes(2, plugin.getGson().toJson(team).getBytes(StandardCharsets.UTF_8));
-                statement.setString(3, team.getName());
+                statement.setInt(3, team.getID());
 
                 statement.executeUpdate();
                 statement.clearParameters();

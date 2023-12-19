@@ -1,29 +1,30 @@
-package dev.xf3d3.ultimateteams.utils;
+package dev.xf3d3.ultimateteams.manager;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.team.TeamInvite;
+import dev.xf3d3.ultimateteams.team.Invite;
+import dev.xf3d3.ultimateteams.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public class TeamInviteUtil {
+public class InviteManager {
 
-    private static final Map<UUID, TeamInvite> invitesList = new ConcurrentHashMap<>();
+    private static final Map<UUID, Invite> invitesList = new ConcurrentHashMap<>();
 
     private final UltimateTeams plugin;
 
-    public TeamInviteUtil(@NotNull UltimateTeams plugin) {
+    public InviteManager(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
     }
     
-    public TeamInvite createInvite(String inviterUUID, String inviteeUUID) {
+    public Invite createInvite(String inviterUUID, String inviteeUUID) {
         UUID uuid = UUID.fromString(inviterUUID);
         clearExpiredInvites();
 
         if (!invitesList.containsKey(uuid)) {
-            invitesList.put(uuid, new TeamInvite(inviterUUID, inviteeUUID));
+            invitesList.put(uuid, new Invite(inviterUUID, inviteeUUID));
             return invitesList.get(uuid);
         } else {
             return null;
@@ -31,7 +32,7 @@ public class TeamInviteUtil {
     }
 
     public boolean hasInvitee(String inviteeUUID) {
-        for (TeamInvite invite : invitesList.values()) {
+        for (Invite invite : invitesList.values()) {
             if (invite.getInvitee().equals(inviteeUUID)) {
                 return true;
             }
@@ -39,8 +40,8 @@ public class TeamInviteUtil {
         return false;
     }
 
-    public TeamInvite getInvitee(String inviteeUUID) {
-        for (TeamInvite invite : invitesList.values()) {
+    public Invite getInvitee(String inviteeUUID) {
+        for (Invite invite : invitesList.values()) {
             if (invite.getInvitee().equals(inviteeUUID)) {
                 return invite;
             }
@@ -52,7 +53,7 @@ public class TeamInviteUtil {
         int expiryTime = 25 * 1000;
         Date currentTime = new Date();
 
-        for (TeamInvite teamInvite : invitesList.values()) {
+        for (Invite teamInvite : invitesList.values()) {
             if (currentTime.getTime() - teamInvite.getInviteTime().getTime() > expiryTime) {
                 invitesList.remove(teamInvite);
 
@@ -73,7 +74,7 @@ public class TeamInviteUtil {
     }
 
     public boolean removeInvitee(String uuid) {
-        for (TeamInvite invite : invitesList.values()) {
+        for (Invite invite : invitesList.values()) {
             if (invite.getInvitee().equals(uuid)) {
                 invitesList.remove(UUID.fromString(invite.getInviter()));
 
@@ -84,7 +85,7 @@ public class TeamInviteUtil {
         return false;
     }
 
-    public Set<Map.Entry<UUID, TeamInvite>> getInvites(){
+    public Set<Map.Entry<UUID, Invite>> getInvites(){
         return invitesList.entrySet();
     }
 }

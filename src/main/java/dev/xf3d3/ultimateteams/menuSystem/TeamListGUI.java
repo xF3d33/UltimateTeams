@@ -43,7 +43,7 @@ public class TeamListGUI {
         if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
             playerTeam = plugin.getTeamStorageUtil().findTeamByOwner(player);
         } else {
-            playerTeam = plugin.getTeamStorageUtil().findTeamByPlayer(player);
+            playerTeam = plugin.getTeamStorageUtil().findTeamByMember(player);
         }
 
         if (playerTeam != null) {

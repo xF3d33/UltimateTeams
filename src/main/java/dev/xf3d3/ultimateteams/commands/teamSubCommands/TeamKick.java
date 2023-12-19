@@ -9,7 +9,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamKickSubCommand {
+public class TeamKick {
 
     FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
     private static final String TEAM_PLACEHOLDER = "%TEAM%";
@@ -17,7 +17,7 @@ public class TeamKickSubCommand {
 
     private final UltimateTeams plugin;
 
-    public TeamKickSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamKick(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
     }
 

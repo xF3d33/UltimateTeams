@@ -58,7 +58,7 @@ public class TeamAllyChatCommand extends BaseCommand {
         if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
             team = plugin.getTeamStorageUtil().findTeamByOwner(player);
         } else {
-            team = plugin.getTeamStorageUtil().findTeamByPlayer(player);
+            team = plugin.getTeamStorageUtil().findTeamByMember(player);
         }
 
         String chatSpyPrefix = plugin.getSettings().getTeamChatSpyPrefix();

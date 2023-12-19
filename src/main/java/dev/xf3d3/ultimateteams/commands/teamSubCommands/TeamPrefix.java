@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class TeamPrefixSubCommand {
+public class TeamPrefix {
 
     private final int MIN_CHAR_LIMIT;
     private final int MAX_CHAR_LIMIT;
@@ -20,7 +20,7 @@ public class TeamPrefixSubCommand {
 
     private final UltimateTeams plugin;
 
-    public TeamPrefixSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamPrefix(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.teams = plugin.getTeamStorageUtil().getTeams();
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();

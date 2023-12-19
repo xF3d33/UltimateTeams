@@ -8,11 +8,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamPvpSubCommand {
+public class TeamPvp {
     private final FileConfiguration messagesConfig;
     private final UltimateTeams plugin;
 
-    public TeamPvpSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamPvp(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }

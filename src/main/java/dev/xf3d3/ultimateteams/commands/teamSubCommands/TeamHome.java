@@ -17,14 +17,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public class TeamHomeSubCommand {
+public class TeamHome {
     private final FileConfiguration messagesConfig;
     private static final String TIME_LEFT = "%TIMELEFT%";
     private static TeamHomePreTeleportEvent homePreTeleportEvent = null;
     private static final ConcurrentHashMap<UUID, Long> homeCoolDownTimer = new ConcurrentHashMap<>();
     private final UltimateTeams plugin;
 
-    public TeamHomeSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamHome(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
@@ -44,7 +44,7 @@ public class TeamHomeSubCommand {
         UUID uuid = player.getUniqueId();
 
         // check if team exists
-        if (!(plugin.getTeamStorageUtil().findTeamByOwner(player) != null || plugin.getTeamStorageUtil().findTeamByPlayer(player) != null)) {
+        if (!(plugin.getTeamStorageUtil().findTeamByOwner(player) != null || plugin.getTeamStorageUtil().findTeamByMember(player) != null)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("failed-tp-not-in-team")));
             return;
         }
@@ -53,7 +53,7 @@ public class TeamHomeSubCommand {
         if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
             team = plugin.getTeamStorageUtil().findTeamByOwner(player);
         } else {
-            team = plugin.getTeamStorageUtil().findTeamByPlayer(player);
+            team = plugin.getTeamStorageUtil().findTeamByMember(player);
         }
 
         // check if home exists

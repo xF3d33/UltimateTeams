@@ -54,7 +54,7 @@ public abstract class Broker {
                         plugin.getMapHook().ifPresent(mapHook -> mapHook.removeClaimMarkers(town));
                         plugin.getClaimWorlds().values().forEach(world -> world.removeTownClaims(town.getId()));
                     }));
-            case TOWN_UPDATE -> plugin.runAsync(() -> message.getPayload().getInteger()
+            case TEAM_UPDATE -> plugin.runAsync(() -> message.getPayload().getInteger()
                     .flatMap(id -> plugin.getDatabase().getTown(id))
                     .ifPresentOrElse(
                             plugin::updateTown,
@@ -216,7 +216,7 @@ public abstract class Broker {
     protected abstract void send(@NotNull Message message, @NotNull Player sender);
 
     /**
-     * Move an {@link OnlineUser} to a new server on the proxy network
+     * Move an {@link Player} to a new server on the proxy network
      *
      * @param user   the user to move
      * @param server the server to move the user to

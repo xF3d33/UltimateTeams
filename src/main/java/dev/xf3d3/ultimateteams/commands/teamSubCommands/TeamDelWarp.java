@@ -2,19 +2,19 @@ package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.team.Team;
-import dev.xf3d3.ultimateteams.team.TeamWarp;
+import dev.xf3d3.ultimateteams.team.Warp;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamDelWarpSubCommand {
+public class TeamDelWarp {
 
     private final FileConfiguration messagesConfig;
     private final UltimateTeams plugin;
 
-    public TeamDelWarpSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamDelWarp(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
@@ -37,7 +37,7 @@ public class TeamDelWarpSubCommand {
 
         if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
             final Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
-            final TeamWarp warp = team.getTeamWarp(name);
+            final Warp warp = team.getTeamWarp(name);
 
             team.removeTeamWarp(name);
             plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));

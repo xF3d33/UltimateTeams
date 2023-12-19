@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
@@ -19,7 +19,7 @@ public class Team {
     @Expose
     private String teamPrefix;
     @Expose
-    private ConcurrentHashMap<String, TeamWarp> teamWarps;
+    private ConcurrentHashMap<String, Warp> teamWarps;
     @Expose
     private ArrayList<String> teamMembers;
     @Expose
@@ -29,6 +29,7 @@ public class Team {
     @Expose
     private boolean friendlyFire;
     @Expose
+    @Nullable
     private String teamHomeWorld;
     @Expose
     @Nullable
@@ -67,6 +68,9 @@ public class Team {
         this.id = id;
     }
 
+    public void setTeamOwner(String newOwner){
+        this.teamFinalOwner = newOwner;
+    }
     public String getTeamOwner(){
         return teamFinalOwner;
     }
@@ -87,15 +91,15 @@ public class Team {
         teamPrefix = newTeamPrefix;
     }
 
-    public Collection<TeamWarp> getTeamWarps() {
+    public Collection<Warp> getTeamWarps() {
         return teamWarps.values();
     }
 
-    public TeamWarp getTeamWarp(@NotNull String name){
+    public Warp getTeamWarp(@NotNull String name){
         return teamWarps.get(name);
     }
 
-    public void addTeamWarp(@NotNull TeamWarp warp){
+    public void addTeamWarp(@NotNull Warp warp){
         teamWarps.put(warp.getName(), warp);
     }
 
@@ -115,7 +119,7 @@ public class Team {
         teamMembers.add(teamMember);
     }
 
-    public Boolean removeTeamMember(String teamMember){
+    public Boolean removeTeamMember(String teamMember) {
         return teamMembers.remove(teamMember);
     }
 
@@ -160,48 +164,48 @@ public class Team {
     }
 
     @Nullable
-    public String getTeamHomeWorld(){
-        return teamHomeWorld;
+    public Optional<String> getTeamHomeWorld(){
+        return Optional.ofNullable(teamHomeWorld);
     }
 
     public void setTeamHomeWorld(@Nullable String teamHomeWorld){
         this.teamHomeWorld = teamHomeWorld;
     }
 
-    public double getTeamHomeX() {
-        return Objects.requireNonNullElseGet(teamHomeX, null);
+    public Optional<Double> getTeamHomeX() {
+        return Optional.ofNullable(teamHomeX);
     }
 
     public void setTeamHomeX(double teamHomeX){
         this.teamHomeX = teamHomeX;
     }
 
-    public double getTeamHomeY(){
-        return Objects.requireNonNullElseGet(teamHomeY, null);
+    public Optional<Double> getTeamHomeY(){
+        return Optional.ofNullable(teamHomeY);
     }
 
     public void setTeamHomeY(double teamHomeY){
         this.teamHomeY = teamHomeY;
     }
 
-    public double getTeamHomeZ(){
-        return Objects.requireNonNullElseGet(teamHomeZ, null);
+    public Optional<Double> getTeamHomeZ(){
+        return Optional.ofNullable(teamHomeZ);
     }
 
     public void setTeamHomeZ(double teamHomeZ){
         this.teamHomeZ = teamHomeZ;
     }
 
-    public float getTeamHomeYaw(){
-        return Objects.requireNonNullElseGet(teamHomeYaw, null);
+    public Optional<Float> getTeamHomeYaw(){
+        return Optional.ofNullable(teamHomeYaw);
     }
 
     public void setTeamHomeYaw(float teamHomeYaw){
         this.teamHomeYaw = teamHomeYaw;
     }
 
-    public float getTeamHomePitch(){
-        return Objects.requireNonNullElseGet(teamHomePitch, null);
+    public Optional<Float> getTeamHomePitch(){
+        return Optional.ofNullable(teamHomePitch);
     }
 
     public void setTeamHomePitch(float teamHomePitch){

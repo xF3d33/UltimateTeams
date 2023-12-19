@@ -2,7 +2,7 @@ package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.team.Team;
-import dev.xf3d3.ultimateteams.team.TeamWarp;
+import dev.xf3d3.ultimateteams.team.Warp;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -12,13 +12,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TeamWarpSubCommand {
+public class TeamWarp {
     private final FileConfiguration messagesConfig;
     private final UltimateTeams plugin;
     private static final ConcurrentHashMap<UUID, Long> warpCoolDownTimer = new ConcurrentHashMap<>();
     private static final String TIME_LEFT = "%TIMELEFT%";
 
-    public TeamWarpSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamWarp(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
@@ -38,7 +38,7 @@ public class TeamWarpSubCommand {
         if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
             team = plugin.getTeamStorageUtil().findTeamByOwner(player);
         } else {
-            team = plugin.getTeamStorageUtil().findTeamByPlayer(player);
+            team = plugin.getTeamStorageUtil().findTeamByMember(player);
         }
 
         if (team == null) {
@@ -72,7 +72,7 @@ public class TeamWarpSubCommand {
     }
 
     private void tpWarp(Player player, Team team, String name) {
-        final TeamWarp warp = team.getTeamWarp(name);
+        final Warp warp = team.getTeamWarp(name);
 
         if (warp == null) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-not-found")));

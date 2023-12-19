@@ -10,7 +10,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class HuskHomesAPIHook {
 
@@ -27,8 +29,11 @@ public class HuskHomesAPIHook {
         OnlineUser onlineUser = huskHomesAPI.adaptUser(player);
 
         Position position = Position.at(
-                location.getX(), location.getY(), location.getZ(),
-                World.from(location.getWorld().getName(), UUID.randomUUID()), ""
+                location.getX(),
+                location.getY(),
+                location.getZ(),
+                World.from(Objects.requireNonNull(location.getWorld()).getName(), UUID.randomUUID()),
+                ""
         );
 
         try {
@@ -38,7 +43,29 @@ public class HuskHomesAPIHook {
                     .toTimedTeleport()
                     .execute();
         } catch (TeleportationException e) {
-            e.printStackTrace();
+            plugin.log(Level.SEVERE, "error while trying to teleport player with HuskHomes" , e);
+        }
+    }
+
+    public void teleportPlayer(@NotNull Player player, @NotNull String server, @NotNull Location location) {
+        OnlineUser onlineUser = huskHomesAPI.adaptUser(player);
+
+        Position position = Position.at(
+                location.getX(),
+                location.getY(),
+                location.getZ(),
+                World.from(Objects.requireNonNull(location.getWorld()).getName(), UUID.randomUUID()),
+                server
+        );
+
+        try {
+            huskHomesAPI.teleportBuilder()
+                    .teleporter(onlineUser)
+                    .target(position)
+                    .toTimedTeleport()
+                    .execute();
+        } catch (TeleportationException e) {
+            plugin.log(Level.SEVERE, "error while trying to teleport player with HuskHomes on another server" , e);
         }
     }
 

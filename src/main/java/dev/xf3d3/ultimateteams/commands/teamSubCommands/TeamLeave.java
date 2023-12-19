@@ -11,14 +11,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class TeamLeaveSubCommand {
+public class TeamLeave {
 
     FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
     private static final String Team_PLACEHOLDER = "%TEAM%";
 
     private final UltimateTeams plugin;
 
-    public TeamLeaveSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamLeave(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
     }
 
@@ -29,7 +29,7 @@ public class TeamLeaveSubCommand {
                 player.sendMessage(Utils.Color(messagesConfig.getString("failed-team-owner")));
                 return true;
             }
-            Team targetTeam = plugin.getTeamStorageUtil().findTeamByPlayer(player);
+            Team targetTeam = plugin.getTeamStorageUtil().findTeamByMember(player);
             if (targetTeam != null) {
                 if (targetTeam.removeTeamMember(player.getUniqueId().toString())) {
                     String leaveMessage = Utils.Color(messagesConfig.getString("team-leave-successful")).replace(Team_PLACEHOLDER, targetTeam.getName());

@@ -59,7 +59,7 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team create <name>")
     @CommandPermission("ultimateteams.team.create")
     public void onTeamCreateCommand(@NotNull CommandSender sender, String name) {
-        new TeamCreateSubCommand(plugin).createTeamSubCommand(sender, name, bannedTags);
+        new TeamCreate(plugin).createTeamSubCommand(sender, name, bannedTags);
     }
 
     @Subcommand("warp")
@@ -67,7 +67,7 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team warp <name>")
     @CommandPermission("ultimateteams.team.warp")
     public void onTeamWarpCommand(@NotNull CommandSender sender, @Values("@warps") String name) {
-        new TeamWarpSubCommand(plugin).WarpCommand(sender, name);
+        new TeamWarp(plugin).WarpCommand(sender, name);
     }
 
     @Subcommand("setwarp")
@@ -75,7 +75,7 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team setwarp <name>")
     @CommandPermission("ultimateteams.team.setwarp")
     public void onTeamSetWarpCommand(@NotNull CommandSender sender, String name) {
-        new TeamSetWarpSubCommand(plugin).setWarpCommand(sender, name);
+        new TeamSetWarp(plugin).setWarpCommand(sender, name);
     }
 
     @Subcommand("delwarp")
@@ -83,7 +83,7 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team delwarp <name>")
     @CommandPermission("ultimateteams.team.delwarp")
     public void onTeamDelWarpCommand(@NotNull CommandSender sender, @Values("@warps") String name) {
-        new TeamDelWarpSubCommand(plugin).delWarpCommand(sender, name);
+        new TeamDelWarp(plugin).delWarpCommand(sender, name);
     }
 
     @Subcommand("disband")
@@ -91,7 +91,7 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team disband")
     @CommandPermission("ultimateteams.team.disband")
     public void onTeamDisbandCommand(@NotNull CommandSender sender) {
-        new TeamDisbandSubCommand(plugin).disbandTeamSubCommand(sender);
+        new TeamDisband(plugin).disbandTeamSubCommand(sender);
     }
 
     @Subcommand("disband confirm")
@@ -99,7 +99,7 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team disband confirm")
     @CommandPermission("ultimateteams.team.disband")
     public void onTeamDisbandConfirmCommand(@NotNull CommandSender sender) {
-        new TeamDisbandConfirmSubCommand(plugin).disbandTeamSubCommand(sender);
+        new TeamDisbandConfirm(plugin).disbandTeamSubCommand(sender);
     }
 
     @Subcommand("invite send")
@@ -107,7 +107,7 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team invite send player")
     @CommandPermission("ultimateteams.team.invite.send")
     public void onTeamInviteSendCommand(@NotNull CommandSender sender, @Values("@players") OnlinePlayer onlinePlayer) {
-        new TeamInviteSubCommand(plugin).teamInviteSendSubCommand(sender, onlinePlayer);
+        new TeamInvite(plugin).teamInviteSendSubCommand(sender, onlinePlayer);
     }
 
     @Subcommand("invite accept")
@@ -115,7 +115,7 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team invite accept")
     @CommandPermission("ultimateteams.team.invite.accept")
     public void onTeamInviteAcceptCommand(@NotNull CommandSender sender) {
-        new TeamInviteSubCommand(plugin).teamInviteAcceptSubCommand(sender);
+        new TeamInvite(plugin).teamInviteAcceptSubCommand(sender);
     }
 
     @Subcommand("invite deny")
@@ -123,28 +123,28 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team invite deny")
     @CommandPermission("ultimateteams.team.invite.deny")
     public void onTeamInviteDenyCommand(@NotNull CommandSender sender) {
-        new TeamInviteSubCommand(plugin).teamInviteDenySubCommand(sender);
+        new TeamInvite(plugin).teamInviteDenySubCommand(sender);
     }
 
     @Subcommand("sethome")
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.team.sethome")
     public void onTeamSetHomeCommand(@NotNull CommandSender sender) {
-        new TeamSetHomeSubCommand(plugin).setTeamHomeSubCommand(sender);
+        new TeamSetHome(plugin).setTeamHomeSubCommand(sender);
     }
 
     @Subcommand("delhome")
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.team.delhome")
     public void onTeamDelHomeCommand(@NotNull CommandSender sender) {
-        new TeamDelHomeSubCommand(plugin).deleteTeamHomeSubCommand(sender);
+        new TeamDelHome(plugin).deleteTeamHomeSubCommand(sender);
     }
 
     @Subcommand("home")
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.team.home")
     public void onTeamHomeCommand(@NotNull CommandSender sender) {
-        new TeamHomeSubCommand(plugin).tpTeamHomeSubCommand(sender);
+        new TeamHome(plugin).tpTeamHomeSubCommand(sender);
     }
 
 
@@ -153,7 +153,7 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team pvp <true/false>")
     @CommandPermission("ultimateteams.team.pvp")
     public void onTeamPvPCommand(@NotNull CommandSender sender) {
-        new TeamPvpSubCommand(plugin).teamPvpSubCommand(sender);
+        new TeamPvp(plugin).teamPvpSubCommand(sender);
     }
 
 
@@ -162,7 +162,7 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team enemy add <name>")
     @CommandPermission("ultimateteams.team.enemy.add")
     public void onTeamEnemyAddCommand(@NotNull CommandSender sender, @Values("@teams") String teamName) {
-        new TeamEnemySubCommand(plugin).teamEnemySubAddCommand(sender, teamName);
+        new TeamEnemy(plugin).teamEnemySubAddCommand(sender, teamName);
     }
 
     @Subcommand("enemy remove")
@@ -170,7 +170,7 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team enemy remove <name>")
     @CommandPermission("ultimateteams.team.enemy.remove")
     public void onTeamEnemyRemoveCommand(@NotNull CommandSender sender, @Values("@teams") String teamName) {
-        new TeamEnemySubCommand(plugin).teamEnemySubRemoveCommand(sender, teamName);
+        new TeamEnemy(plugin).teamEnemySubRemoveCommand(sender, teamName);
     }
 
     @Subcommand("ally add")
@@ -178,7 +178,7 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team ally add <name>")
     @CommandPermission("ultimateteams.team.ally.add")
     public void onTeamAllyAddCommand(@NotNull CommandSender sender, @Values("@teams") String teamName) {
-        new TeamAllySubCommand(plugin).teamAllyAddSubCommand(sender, teamName);
+        new TeamAlly(plugin).teamAllyAddSubCommand(sender, teamName);
     }
 
     @Subcommand("ally remove")
@@ -186,13 +186,13 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team ally remove <name>")
     @CommandPermission("ultimateteams.team.ally.remove")
     public void onTeamAllyRemoveCommand(@NotNull CommandSender sender, @Values("@teams") String teamName) {
-        new TeamAllySubCommand(plugin).teamAllyRemoveSubCommand(sender, teamName);
+        new TeamAlly(plugin).teamAllyRemoveSubCommand(sender, teamName);
     }
     @Subcommand("leave")
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.team.leave")
     public void onTeamLeaveCommand(@NotNull CommandSender sender) {
-        new TeamLeaveSubCommand(plugin).teamLeaveSubCommand(sender);
+        new TeamLeave(plugin).teamLeaveSubCommand(sender);
     }
 
     @Subcommand("kick")
@@ -200,14 +200,14 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team kick <player>")
     @CommandPermission("ultimateteams.team.kick")
     public void onTeamKickCommand(@NotNull CommandSender sender, @Values("@teamPlayers") OfflinePlayer offlinePlayer) {
-        new TeamKickSubCommand(plugin).teamKickSubCommand(sender, offlinePlayer);
+        new TeamKick(plugin).teamKickSubCommand(sender, offlinePlayer);
     }
 
     @Subcommand("list")
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.team.list")
     public void onTeamListCommand(@NotNull CommandSender sender) {
-        new TeamListSubCommand(plugin).teamListSubCommand(sender);
+        new TeamList(plugin).teamListSubCommand(sender);
     }
 
     @Subcommand("transfer")
@@ -215,7 +215,7 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team transfer <player>")
     @CommandPermission("ultimateteams.team.transfer")
     public void onTeamTransferCommand(@NotNull CommandSender sender, @Values("@players") OnlinePlayer onlinePlayer) {
-        new TeamTransferOwnerSubCommand(plugin).transferTeamOwnerSubCommand(sender, onlinePlayer);
+        new TeamTransferOwner(plugin).transferTeamOwnerSubCommand(sender, onlinePlayer);
     }
 
     @Subcommand("prefix")
@@ -223,13 +223,13 @@ public class TeamCommand extends BaseCommand {
     @Syntax("/team prefix <prefix>")
     @CommandPermission("ultimateteams.team.prefix")
     public void onTeamPrefixCommand(@NotNull CommandSender sender, String prefix) {
-        new TeamPrefixSubCommand(plugin).teamPrefixSubCommand(sender, prefix, bannedTags);
+        new TeamPrefix(plugin).teamPrefixSubCommand(sender, prefix, bannedTags);
     }
 
     @Subcommand("info")
     @CommandCompletion("@teams")
     @CommandPermission("ultimateteams.team.info")
     public void onTeamInfoCommand(@NotNull CommandSender sender, @Optional @Values("@teams") String teamName) {
-        new TeamInfoSubCommand(plugin).teamInfoSubCommand(sender, teamName);
+        new TeamInfo(plugin).teamInfoSubCommand(sender, teamName);
     }
 }
