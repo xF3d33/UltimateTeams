@@ -102,7 +102,7 @@ public class UsersManager {
             if (teamPlayer.getLastPlayerName().equalsIgnoreCase(name)){
                 return Bukkit.getOfflinePlayer(UUID.fromString(teamPlayer.getJavaUUID()));
             } else {
-                plugin.getDatabase().getPlayer(name).isPresent();
+
 
                 logger.warning(Utils.Color(messagesConfig.getString("team-player-not-found-1")
                         .replace(PLAYER_PLACEHOLDER, name)));

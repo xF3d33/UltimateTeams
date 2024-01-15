@@ -7,6 +7,9 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 public class PapiExpansion extends PlaceholderExpansion {
 
     private final UltimateTeams plugin;
@@ -37,14 +40,12 @@ public class PapiExpansion extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {;
-        Team teamOwner = plugin.getTeamStorageUtil().findTeamByOfflineOwner(player);
-        Team teamMember = plugin.getTeamStorageUtil().findTeamByOfflinePlayer(player);
+        //Team teamOwner = plugin.getTeamStorageUtil().findTeamByOfflineOwner(player);
+        Optional<Team> teamMember = plugin.getManager().teams().findTeamByPlayer(player);
 
         if (params.equalsIgnoreCase("teamName")) {
-            if (teamOwner != null) {
-                return Utils.Color(teamOwner.getName() + "&r ");
-            } else if (teamMember != null){
-                return Utils.Color(teamMember.getName() + "&r ");
+            if (teamMember.isPresent()){
+                return Utils.Color(teamMember.get().getName() + "&r ");
             } else {
                 return "";
             }

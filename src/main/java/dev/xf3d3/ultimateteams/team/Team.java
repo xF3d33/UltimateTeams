@@ -30,22 +30,7 @@ public class Team {
     private boolean friendlyFire;
     @Expose
     @Nullable
-    private String teamHomeWorld;
-    @Expose
-    @Nullable
-    private Double teamHomeX;
-    @Expose
-    @Nullable
-    private Double teamHomeY;
-    @Expose
-    @Nullable
-    private Double teamHomeZ;
-    @Expose
-    @Nullable
-    private Float teamHomeYaw;
-    @Expose
-    @Nullable
-    private Float teamHomePitch;
+    private Home home;
 
     public Team(@NotNull String teamOwner, @NotNull String teamName) {
         id = 0;
@@ -57,7 +42,6 @@ public class Team {
         teamEnemies = new ArrayList<>();
         teamWarps = new ConcurrentHashMap<>();
         friendlyFire = false;
-        teamHomeWorld = null;
     }
 
     public int getID() {
@@ -163,52 +147,15 @@ public class Team {
         this.friendlyFire = friendlyFire;
     }
 
-    @Nullable
-    public Optional<String> getTeamHomeWorld(){
-        return Optional.ofNullable(teamHomeWorld);
+    public Optional<Home> getHome() {
+        return Optional.ofNullable(home);
     }
 
-    public void setTeamHomeWorld(@Nullable String teamHomeWorld){
-        this.teamHomeWorld = teamHomeWorld;
+    public void setHome(@NotNull Home home) {
+        this.home = home;
     }
 
-    public Optional<Double> getTeamHomeX() {
-        return Optional.ofNullable(teamHomeX);
-    }
-
-    public void setTeamHomeX(double teamHomeX){
-        this.teamHomeX = teamHomeX;
-    }
-
-    public Optional<Double> getTeamHomeY(){
-        return Optional.ofNullable(teamHomeY);
-    }
-
-    public void setTeamHomeY(double teamHomeY){
-        this.teamHomeY = teamHomeY;
-    }
-
-    public Optional<Double> getTeamHomeZ(){
-        return Optional.ofNullable(teamHomeZ);
-    }
-
-    public void setTeamHomeZ(double teamHomeZ){
-        this.teamHomeZ = teamHomeZ;
-    }
-
-    public Optional<Float> getTeamHomeYaw(){
-        return Optional.ofNullable(teamHomeYaw);
-    }
-
-    public void setTeamHomeYaw(float teamHomeYaw){
-        this.teamHomeYaw = teamHomeYaw;
-    }
-
-    public Optional<Float> getTeamHomePitch(){
-        return Optional.ofNullable(teamHomePitch);
-    }
-
-    public void setTeamHomePitch(float teamHomePitch){
-        this.teamHomePitch = teamHomePitch;
+    public void clearHome() {
+        this.home = null;
     }
 }

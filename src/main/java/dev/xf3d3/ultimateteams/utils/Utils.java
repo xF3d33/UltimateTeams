@@ -1,7 +1,9 @@
 package dev.xf3d3.ultimateteams.utils;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.team.Position;
 import dev.xf3d3.ultimateteams.team.Team;
+import dev.xf3d3.ultimateteams.user.Preferences;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,6 +13,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -23,15 +26,30 @@ public class Utils {
         this.plugin = plugin;
     }
 
-    public void teleportPlayer(@NotNull Player player, @NotNull Location location) {
+    public void teleportPlayer(@NotNull Player player, @NotNull Position position, @Nullable String server, boolean instant) {
+        final String targetServer = server != null ? server : plugin.getServerName();
+
         if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && plugin.getSettings().HuskHomesHook()) {
-            plugin.getHuskHomesHook().teleportPlayer(player, location);
+            plugin.getHuskHomesHook().teleport(player, position, targetServer, instant);
+            return;
+        }
+
+        if (plugin.getSettings().doCrossServer() && !targetServer.equals(plugin.getServerName())) {
+            final Optional<Preferences> optionalPreferences = getUserPreferences(user.getUuid());
+            optionalPreferences.ifPresent(preferences -> plugin.runAsync(() -> {
+                preferences.setTeleportTarget(position);
+                plugin.getDatabase().updateUser(user, preferences);
+                plugin.getMessageBroker().ifPresent(broker -> broker.changeServer(player, targetServer));
+            }));
             return;
         }
 
         // Run on the appropriate thread scheduler for this platform
         plugin.getScheduler().entitySpecificScheduler(player).run(
-                () -> PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN),
+                () -> PaperLib.teleportAsync(player, new Location(Bukkit.getWorld(position.getWorld().getName()) == null
+                        ? Bukkit.getWorld(position.getWorld().getUID())
+                        : Bukkit.getWorld(position.getWorld().getName()),
+                        position.getX(), position.getY(), position.getZ(), position.getYaw(), position.getPitch())),
                 () -> plugin.log(Level.WARNING, "User offline when teleporting: " + player.getName())
         );
     }

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Spawn {
+public class Home {
 
     @Expose
     private Position position;
@@ -16,7 +16,7 @@ public class Spawn {
     @SerializedName("public")
     private boolean isPublic = false;
 
-    private Spawn(@NotNull Position position, @Nullable String server) {
+    private Home(@NotNull Position position, @Nullable String server) {
         this.position = position;
         this.server = server;
     }
@@ -29,12 +29,12 @@ public class Spawn {
      * @return the spawn
      */
     @NotNull
-    public static Spawn of(@NotNull Position position, @Nullable String server) {
-        return new Spawn(position, server);
+    public static Home of(@NotNull Position position, @Nullable String server) {
+        return new Home(position, server);
     }
 
     @SuppressWarnings("unused")
-    private Spawn() {
+    private Home() {
     }
 
     /**
