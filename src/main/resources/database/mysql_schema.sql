@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS `%user_table%`
     `username`    varchar(16) NOT NULL,
     `isBedrock`   boolean     NOT NULL,
     `bedrockUUID` varchar(36),
-    `canChatSpy`  boolean     NOT NULL
+    `canChatSpy`  boolean     NOT NULL,
+    `data`        longblob    NOT NULL
 ) CHARACTER SET utf8
     COLLATE utf8_unicode_ci;
 

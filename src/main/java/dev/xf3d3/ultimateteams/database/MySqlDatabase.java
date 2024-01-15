@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.team.Team;
 import dev.xf3d3.ultimateteams.team.TeamPlayer;
+import dev.xf3d3.ultimateteams.user.Preferences;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -132,11 +133,11 @@ public class MySqlDatabase extends Database {
         return teams;
     }
 
-    public void createPlayer(@NotNull TeamPlayer teamplayer) {
+    public void createPlayer(@NotNull TeamPlayer teamplayer, @NotNull Preferences preferences) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    INSERT INTO `%user_table%` (`uuid`, `username`, `isBedrock`, `bedrockUUID`, `canChatSpy`)
-                    VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO `%user_table%` (`uuid`, `username`, `isBedrock`, `bedrockUUID`, `canChatSpy`, `data`)
+                    VALUES (?, ?, ?, ?, ?, ?)
                     """))) {
 
                 statement.setString(1, String.valueOf(teamplayer.getJavaUUID()));
@@ -144,6 +145,7 @@ public class MySqlDatabase extends Database {
                 statement.setBoolean(3, teamplayer.isBedrockPlayer());
                 statement.setString(4, teamplayer.getBedrockUUID());
                 statement.setBoolean(5, teamplayer.getCanChatSpy());
+                statement.setBytes(6, plugin.getGson().toJson(preferences).getBytes(StandardCharsets.UTF_8));
 
                 statement.executeUpdate();
             }
