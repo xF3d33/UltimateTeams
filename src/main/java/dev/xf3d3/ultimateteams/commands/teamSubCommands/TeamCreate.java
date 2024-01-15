@@ -100,12 +100,14 @@ public class TeamCreate {
 
                 // Team player not found, proceed with team creation
                 () -> {
-                    Team team = storageUtil.createTeam(player, name);
-                    String teamCreated = Utils.Color(messagesConfig.getString("team-created-successfully")).replace(TEAM_PLACEHOLDER, Utils.Color(name));
+                    storageUtil.createTeam(player, name).thenAccept(team -> {
+                        String teamCreated = Utils.Color(messagesConfig.getString("team-created-successfully")).replace(TEAM_PLACEHOLDER, Utils.Color(name));
 
-                    player.sendMessage(teamCreated);
-
-                    fireTeamCreateEvent(player, team);
+                        plugin.runSync(() ->{
+                            player.sendMessage(teamCreated);
+                            fireTeamCreateEvent(player, team);
+                        });
+                    });
 
                     teamNamesList.clear();
                 }

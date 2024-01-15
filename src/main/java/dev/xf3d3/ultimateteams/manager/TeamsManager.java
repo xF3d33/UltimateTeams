@@ -13,10 +13,12 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
@@ -46,20 +48,23 @@ public class TeamsManager extends Manager {
     }
 
 
-    public Team createTeam(Player player, String teamName) {
-        UUID ownerUUID = player.getUniqueId();
-        //Team newTeam = new Team(ownerUUIDString, teamName);
+    public CompletableFuture<Team> createTeam(Player player, String teamName) {
+        return CompletableFuture.supplyAsync(() -> {
+            final Team team = plugin.getDatabase().createTeam(teamName, player);
 
-        final Team team = plugin.getDatabase().createTeam(teamName, player);
-        plugin.getTeams().add(team);
-        plugin.getMessageBroker().ifPresent(broker -> Message.builder()
-                .type(Message.Type.TEAM_UPDATE)
-                .payload(Payload.integer(team.getID()))
-                .target(Message.TARGET_ALL, Message.TargetType.SERVER)
-                .build()
-                .send(broker, player));
+            plugin.getTeams().add(team);
+            plugin.getMessageBroker().ifPresent(broker -> Message.builder()
+                    .type(Message.Type.TEAM_UPDATE)
+                    .payload(Payload.integer(team.getID()))
+                    .target(Message.TARGET_ALL, Message.TargetType.SERVER)
+                    .build()
+                    .send(broker, player));
 
-        return team;
+            return team;
+        });
+
+
+
     }
 
     public void deleteTeam(Player player) {
@@ -122,6 +127,23 @@ public class TeamsManager extends Manager {
     }
 
     public Optional<Team> findTeamByPlayer(Player player) {
+        UUID uuid = player.getUniqueId();
+
+        for (Team team : plugin.getTeams()) {
+            if (team.getTeamMembers() != null) {
+                for (String member : team.getTeamMembers()) {
+                    if (Objects.equals(team.getTeamOwner(), String.valueOf(uuid)))
+                        return Optional.of(team);
+
+                    if (Objects.equals(member, String.valueOf(uuid)))
+                        return Optional.of(team);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Team> findTeamByPlayer(OfflinePlayer player) {
         UUID uuid = player.getUniqueId();
 
         for (Team team : plugin.getTeams()) {
@@ -280,11 +302,11 @@ public class TeamsManager extends Manager {
     }
 
     public boolean isHomeSet(Team team) {
-        return Optional.ofNullable(team.getTeamHomeWorld()).isPresent();
+        return Optional.ofNullable(team.getHome()).isPresent();
     }
 
     public void deleteHome(Player player, Team team) {
-        team.setTeamHomeWorld(null);
+        team.clearHome();
 
         plugin.runAsync(() -> plugin.getManager().updateTeamData(player, team));
     }
