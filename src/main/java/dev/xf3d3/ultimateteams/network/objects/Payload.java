@@ -1,6 +1,7 @@
-package dev.xf3d3.ultimateteams.network;
+package dev.xf3d3.ultimateteams.network.objects;
 
 import com.google.gson.annotations.Expose;
+import dev.xf3d3.ultimateteams.team.Invite;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +18,10 @@ public class Payload {
     @Nullable
     @Expose
     private Integer integer;
+
+    @Nullable
+    @Expose
+    private Invite invite;
 
     @Nullable
     @Expose
@@ -44,6 +49,13 @@ public class Payload {
     public static Payload integer(int integer) {
         final Payload payload = new Payload();
         payload.integer = integer;
+        return payload;
+    }
+
+    @NotNull
+    public static Payload invite(@NotNull Invite invite) {
+        final Payload payload = new Payload();
+        payload.invite = invite;
         return payload;
     }
 
@@ -80,6 +92,9 @@ public class Payload {
         return Optional.ofNullable(integer);
     }
 
+    public Optional<Invite> getInvite() {
+        return Optional.ofNullable(invite);
+    }
 
     public Optional<Boolean> getBool() {
         return Optional.ofNullable(bool);

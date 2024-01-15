@@ -108,6 +108,7 @@ public class MySqlDatabase extends Database {
         plugin.getLogger().info("Database tables created");
     }
 
+    @Override
     public List<Team> getAllTeams() {
         final List<Team> teams = new ArrayList<>();
         try (Connection connection = getConnection()) {
@@ -133,6 +134,7 @@ public class MySqlDatabase extends Database {
         return teams;
     }
 
+    /*@Override
     public void createPlayer(@NotNull TeamPlayer teamplayer, @NotNull Preferences preferences) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
@@ -152,8 +154,9 @@ public class MySqlDatabase extends Database {
         } catch (SQLException e) {
             plugin.log(Level.SEVERE, "Failed to create team in table", e);
         }
-    }
+    }*/
 
+    @Override
     public void updatePlayer(@NotNull TeamPlayer teamplayer) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
@@ -177,6 +180,7 @@ public class MySqlDatabase extends Database {
         }
     }
 
+    @Override
     public Optional<TeamPlayer> getPlayer(@NotNull UUID uuid) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
@@ -206,6 +210,7 @@ public class MySqlDatabase extends Database {
         return Optional.empty();
     }
 
+    @Override
     public Optional<TeamPlayer> getPlayer(@NotNull String name) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
@@ -235,6 +240,32 @@ public class MySqlDatabase extends Database {
         return Optional.empty();
     }
 
+    @Override
+    public Optional<Team> getTeam(int teamID) {
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(format("""
+                    SELECT `id`, `data`
+                    FROM `%town_data%`
+                    WHERE `id` = ?""")
+            )) {
+                statement.setInt(1, teamID);
+                final ResultSet resultSet = statement.executeQuery();
+
+                if (resultSet.next()) {
+                    final String data = new String(resultSet.getBytes("data"), StandardCharsets.UTF_8);
+                    final Team town = plugin.getTeamFromJson(data);
+                    town.setID(resultSet.getInt("id"));
+
+                    return Optional.of(town);
+                }
+            }
+        } catch (SQLException | JsonSyntaxException e) {
+            plugin.log(Level.SEVERE, "Failed to fetch team data from table by ID", e);
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public Team createTeam(@NotNull String name, @NotNull Player player) {
         Team team = new Team(player.getUniqueId().toString(), name);
 
@@ -261,6 +292,7 @@ public class MySqlDatabase extends Database {
         return team;
     }
 
+    @Override
     public void updateTeam(@NotNull Team team) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
@@ -280,6 +312,7 @@ public class MySqlDatabase extends Database {
         }
     }
 
+    @Override
     public void deleteTeam(int id) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
@@ -296,6 +329,7 @@ public class MySqlDatabase extends Database {
         }
     }
 
+    @Override
     public void close() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();

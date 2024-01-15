@@ -60,6 +60,8 @@ public abstract class Database {
 
     public abstract Optional<TeamPlayer> getPlayer(@NotNull String name);
 
+    public abstract Optional<Team> getTeam(int teamID);
+
     public abstract Team createTeam(@NotNull String name, @NotNull Player player);
 
     public abstract void updateTeam(@NotNull Team team);

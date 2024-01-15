@@ -1,6 +1,7 @@
 package dev.xf3d3.ultimateteams.network;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.network.objects.Message;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;

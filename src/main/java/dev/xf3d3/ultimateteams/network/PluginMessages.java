@@ -4,6 +4,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.network.objects.Message;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

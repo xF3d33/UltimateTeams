@@ -1,17 +1,14 @@
 package dev.xf3d3.ultimateteams.manager;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.network.Message;
-import dev.xf3d3.ultimateteams.network.Payload;
+import dev.xf3d3.ultimateteams.network.objects.Message;
+import dev.xf3d3.ultimateteams.network.objects.Payload;
 import dev.xf3d3.ultimateteams.team.Team;
-import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 public class Manager {
     private final UltimateTeams plugin;

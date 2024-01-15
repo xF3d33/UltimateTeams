@@ -444,6 +444,10 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonP
         return teams;
     }
 
+    public void removeTeam(@NotNull Team team) {
+        getTeams().removeIf(t -> t.getID() == team.getID());
+    }
+
     public void updateTeam(@NotNull Team team) {
         getTeams().removeIf(t -> t.getID() == team.getID());
         getTeams().add(team);

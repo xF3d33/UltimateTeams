@@ -1,7 +1,8 @@
-package dev.xf3d3.ultimateteams.network;
+package dev.xf3d3.ultimateteams.network.objects;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import dev.xf3d3.ultimateteams.network.Broker;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

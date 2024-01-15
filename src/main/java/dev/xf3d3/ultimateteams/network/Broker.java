@@ -1,6 +1,8 @@
 package dev.xf3d3.ultimateteams.network;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.network.objects.Message;
+import dev.xf3d3.ultimateteams.network.objects.Payload;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,42 +33,25 @@ public abstract class Broker {
             return;
         }
         switch (message.getType()) {
-            case TOWN_DELETE -> message.getPayload().getInteger()
-                    .flatMap(townId -> plugin.getTowns().stream().filter(town -> town.getId() == townId).findFirst())
-                    .ifPresent(town -> plugin.runAsync(() -> {
-                        plugin.getManager().sendTownMessage(town, plugin.getLocales()
-                                .getLocale("town_deleted_notification", town.getName())
-                                .map(MineDown::toComponent).orElse(Component.empty()));
-                        plugin.getMapHook().ifPresent(mapHook -> mapHook.removeClaimMarkers(town));
-                        plugin.removeTown(town);
-                        plugin.getClaimWorlds().values().forEach(world -> {
-                            if (world.removeTownClaims(town.getId()) > 0) {
-                                plugin.getDatabase().updateClaimWorld(world);
-                            }
-                        });
-                    }));
-            case TOWN_DELETE_ALL_CLAIMS -> message.getPayload().getInteger()
-                    .flatMap(townId -> plugin.getTowns().stream().filter(town -> town.getId() == townId).findFirst())
-                    .ifPresent(town -> plugin.runAsync(() -> {
-                        plugin.getManager().sendTownMessage(town, plugin.getLocales()
-                                .getLocale("deleted_all_claims_notification", town.getName())
-                                .map(MineDown::toComponent).orElse(Component.empty()));
-                        plugin.getMapHook().ifPresent(mapHook -> mapHook.removeClaimMarkers(town));
-                        plugin.getClaimWorlds().values().forEach(world -> world.removeTownClaims(town.getId()));
-                    }));
             case TEAM_UPDATE -> plugin.runAsync(() -> message.getPayload().getInteger()
-                    .flatMap(id -> plugin.getDatabase().getTown(id))
+                    .flatMap(id -> plugin.getDatabase().getTeam(id))
                     .ifPresentOrElse(
-                            plugin::updateTown,
-                            () -> plugin.log(Level.WARNING, "Failed to update town: Town not found")
+                            plugin::updateTeam,
+                            () -> plugin.log(Level.WARNING, "Failed to update team: Town not found")
                     ));
+            case TOWN_DELETE -> message.getPayload().getInteger()
+                    .flatMap(teamID -> plugin.getTeams().stream().filter(team -> team.getID() == teamID).findFirst())
+                    .ifPresent(team -> plugin.runAsync(() -> {
+                        plugin.getManager().sendTeamMessage(team,"team deleted");
+                        plugin.removeTeam(team);
+                    }));
             case TOWN_INVITE_REQUEST -> {
                 if (receiver == null) {
                     return;
                 }
                 message.getPayload().getInvite().ifPresentOrElse(
-                        invite -> plugin.getManager().towns().handleInboundInvite(receiver, invite),
-                        () -> plugin.log(Level.WARNING, "Invalid town invite request payload!")
+                        invite -> plugin.getManager().teams().handleInboundInvite(receiver, invite),
+                        () -> plugin.log(Level.WARNING, "Invalid team invite request payload!")
                 );
             }
             case TOWN_INVITE_REPLY -> message.getPayload().getBool().ifPresent(accepted -> {
@@ -89,8 +74,8 @@ public abstract class Broker {
             });
             case TOWN_CHAT_MESSAGE -> message.getPayload().getString()
                     .ifPresent(text -> plugin.getDatabase().getUser(message.getSender())
-                            .flatMap(sender -> plugin.getUserTown(sender.user()))
-                            .ifPresent(member -> plugin.getManager().towns().sendLocalChatMessage(text, member, plugin)));
+                            .flatMap(sender -> plugin.getManager().teams().findTeamByPlayer(sender.user()))
+                            .ifPresent(member -> plugin.getManager().teams().sendLocalChatMessage(text, member, plugin)));
             case REQUEST_USER_LIST -> {
                 if (receiver == null) {
                     return;
@@ -104,98 +89,17 @@ public abstract class Broker {
             case USER_LIST -> message.getPayload()
                     .getUserList()
                     .ifPresent(players -> plugin.setUserList(message.getSourceServer(), players));
-            case TOWN_LEVEL_UP, TOWN_TRANSFERRED, TOWN_RENAMED ->
-                    message.getPayload().getInteger().flatMap(id -> plugin.getTowns().stream()
-                            .filter(town -> town.getId() == id).findFirst()).ifPresent(town -> {
-                        final Component locale = switch (message.getType()) {
-                            case TOWN_LEVEL_UP -> plugin.getLocales().getLocale("town_levelled_up",
-                                    Integer.toString(town.getLevel())).map(MineDown::toComponent).orElse(Component.empty());
-                            case TOWN_RENAMED -> plugin.getLocales().getLocale("town_renamed",
-                                    town.getName()).map(MineDown::toComponent).orElse(Component.empty());
-                            case TOWN_TRANSFERRED -> plugin.getLocales().getLocale("town_transferred",
-                                            town.getName(), plugin.getDatabase().getUser(town.getMayor())
-                                                    .map(SavedUser::user).map(User::getUsername).orElse("?"))
-                                    .map(MineDown::toComponent).orElse(Component.empty());
-                            default -> Component.empty();
-                        };
-                        plugin.getManager().sendTownMessage(town, locale);
-                    });
-            case TOWN_DEMOTED, TOWN_PROMOTED, TOWN_EVICTED -> {
+            case TOWN_EVICTED -> {
                 if (receiver == null) {
                     return;
                 }
-                switch (message.getType()) {
-                    case TOWN_DEMOTED -> plugin.getLocales().getLocale("demoted_you",
-                            plugin.getRoles().fromWeight(message.getPayload().getInteger().orElse(-1))
-                                    .map(Role::getName).orElse("?"),
-                            message.getSender()).ifPresent(receiver::sendMessage);
-                    case TOWN_PROMOTED -> plugin.getLocales().getLocale("promoted_you",
-                            plugin.getRoles().fromWeight(message.getPayload().getInteger().orElse(-1))
-                                    .map(Role::getName).orElse("?"),
-                            message.getSender()).ifPresent(receiver::sendMessage);
-                    case TOWN_EVICTED -> {
-                        plugin.getLocales().getLocale("evicted_you",
-                                plugin.getUserTown(receiver).map(Member::town).map(Town::getName).orElse("?"),
-                                message.getSender()).ifPresent(receiver::sendMessage);
-                        plugin.editUserPreferences(receiver, preferences -> preferences.setTownChatTalking(false));
-                    }
-                }
+                plugin.getLocales().getLocale("evicted_you",
+                        plugin.getUserTown(receiver).map(Member::town).map(Town::getName).orElse("?"),
+                        message.getSender()).ifPresent(receiver::sendMessage);
+                plugin.editUserPreferences(receiver, preferences -> preferences.setTownChatTalking(false));
             }
-            case TOWN_WAR_DECLARATION_SENT -> plugin.getManager().wars().ifPresent(manager -> message.getPayload()
-                    .getDeclaration().ifPresent(declaration -> {
-                        final Optional<Town> town = declaration.getAttackingTown(plugin);
-                        final Optional<Town> defending = declaration.getDefendingTown(plugin);
-                        if (town.isEmpty() || defending.isEmpty()) {
-                            return;
-                        }
 
-                        // Add pending declaration
-                        manager.getPendingDeclarations().add(declaration);
 
-                        // Send notification
-                        plugin.getLocales().getLocale("war_declaration_notification",
-                                        town.get().getName(), defending.get().getName(),
-                                        plugin.formatMoney(declaration.wager()),
-                                        Long.toString(plugin.getSettings().getWarDeclarationExpiry()))
-                                .ifPresent(t -> {
-                                    plugin.getManager().sendTownMessage(town.get(), t.toComponent());
-                                    plugin.getManager().sendTownMessage(defending.get(), t.toComponent());
-                                });
-
-                        // Send options to the defending town.
-                        plugin.getLocales().getLocale("war_declaration_options", town.get().getName())
-                                .ifPresent(l -> plugin.getManager().sendTownMessage(defending.get(), l.toComponent()));
-                    }));
-            case TOWN_WAR_DECLARATION_ACCEPTED -> plugin.getManager().wars().ifPresent(manager -> message.getPayload()
-                    .getDeclaration().ifPresent(declaration -> {
-                        manager.getPendingDeclarations().remove(declaration);
-                        if (receiver == null) {
-                            return;
-                        }
-
-                        final Optional<String> optionalServer = declaration.getWarServerName(plugin);
-                        final Optional<Town> attacking = declaration.getAttackingTown(plugin);
-                        final Optional<Town> defending = declaration.getDefendingTown(plugin);
-                        if (optionalServer.isEmpty() || attacking.isEmpty() || defending.isEmpty()) {
-                            return;
-                        }
-
-                        final String server = optionalServer.get();
-                        if (plugin.getServerName().equalsIgnoreCase(server)) {
-                            manager.startWar(
-                                    receiver, attacking.get(), defending.get(), declaration.wager(),
-                                    (startedWar) -> startedWar.teleportUsers(plugin)
-                            );
-                        }
-
-                        plugin.getLocales().getLocale("war_declaration_accepted",
-                                        attacking.get().getName(), defending.get().getName(),
-                                        Long.toString(plugin.getSettings().getWarZoneRadius()))
-                                .ifPresent(l -> {
-                                    plugin.getManager().sendTownMessage(attacking.get(), l.toComponent());
-                                    plugin.getManager().sendTownMessage(defending.get(), l.toComponent());
-                                });
-                    }));
             default -> plugin.log(Level.SEVERE, "Received unknown message type: " + message.getType());
         }
     }
