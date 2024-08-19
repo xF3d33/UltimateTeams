@@ -54,17 +54,17 @@ public class UsersStorageUtil {
         UUID uuid = player.getUniqueId();
 
         plugin.runAsync(() -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
-                teamPlayer -> usermap.put(UUID.fromString(teamPlayer.getJavaUUID()), teamPlayer),
-                () -> {
-                    FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(uuid);
-                    UUID bedrockPlayerUUID = floodgatePlayer.getJavaUniqueId();
-                    String javaUUID = floodgatePlayer.getJavaUniqueId().toString();
-                    String lastPlayerName = floodgatePlayer.getUsername();
-                    TeamPlayer teamPlayer = new TeamPlayer(javaUUID, lastPlayerName, true, floodgatePlayer.getCorrectUniqueId().toString(), null);
+            teamPlayer -> usermap.put(UUID.fromString(teamPlayer.getJavaUUID()), teamPlayer),
+            () -> {
+                FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(uuid);
+                UUID bedrockPlayerUUID = floodgatePlayer.getJavaUniqueId();
+                String javaUUID = floodgatePlayer.getJavaUniqueId().toString();
+                String lastPlayerName = floodgatePlayer.getUsername();
+                TeamPlayer teamPlayer = new TeamPlayer(javaUUID, lastPlayerName, true, floodgatePlayer.getCorrectUniqueId().toString(), null);
 
-                    plugin.getDatabase().createPlayer(teamPlayer);
-                    usermap.put(bedrockPlayerUUID, teamPlayer);
-                }
+                plugin.getDatabase().createPlayer(teamPlayer);
+                usermap.put(bedrockPlayerUUID, teamPlayer);
+            }
         ));
 
     }

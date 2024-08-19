@@ -6,14 +6,17 @@ prefix: UltimateTeams
 website: "https://modrinth.com/plugin/ultimate-teams"
 authors: [ xF3d3 ]
 description: A simple and lightweight Teams plugin for Minecraft.
-folia-compatible: true
+folia-supported: true
+
 softdepend:
   - PlaceholderAPI
   - floodgate
   - HuskHomes
+
 libraries:
   - 'com.zaxxer:HikariCP:5.0.1'
   - 'org.xerial:sqlite-jdbc:3.41.0.0'
+  
 permissions:
   ultimateteams.player:
     default: true
