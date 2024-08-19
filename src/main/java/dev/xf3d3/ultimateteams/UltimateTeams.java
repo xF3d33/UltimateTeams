@@ -1,9 +1,7 @@
 package dev.xf3d3.ultimateteams;
 
 import co.aikar.commands.PaperCommandManager;
-import com.fatboyindustrial.gsonjavatime.Converters;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import dev.xf3d3.ultimateteams.commands.*;
 import dev.xf3d3.ultimateteams.commands.TeamAllyChatCommand;
 import dev.xf3d3.ultimateteams.config.MessagesFileManager;
@@ -19,6 +17,7 @@ import dev.xf3d3.ultimateteams.listeners.PlayerDisconnectEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamWarp;
 import dev.xf3d3.ultimateteams.utils.*;
+import dev.xf3d3.ultimateteams.utils.gson.GsonUtils;
 import net.william278.annotaml.Annotaml;
 import net.william278.desertwell.util.ThrowingConsumer;
 import org.bstats.bukkit.Metrics;
@@ -400,7 +399,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
     @NotNull
     public Gson getGson() {
-        return Converters.registerOffsetDateTime(new GsonBuilder().excludeFieldsWithoutExposeAnnotation()).create();
+        return GsonUtils.getGson();
     }
 
     @Override
