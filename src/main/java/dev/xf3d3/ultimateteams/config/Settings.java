@@ -68,12 +68,12 @@ public class Settings {
     @YamlKey("database.mysql.connection_pool.timeout")
     private long mySqlConnectionPoolTimeout = 20000;
 
-    @YamlComment("Names of tables to use on your database. Don't modify this unless you know what you're doing!")
-    @YamlKey("database.table_names")
-    private Map<String, String> tableNames = Map.of(
-            Database.Table.TEAM_DATA.name().toLowerCase(), Database.Table.TEAM_DATA.getDefaultName(),
-            Database.Table.USER_DATA.name().toLowerCase(), Database.Table.USER_DATA.getDefaultName()
-    );
+    // @YamlComment("Names of tables to use on your database. Don't modify this unless you know what you're doing!")
+    // @YamlKey("database.table_names")
+    // private Map<String, String> tableNames = Map.of(
+    //     Database.Table.TEAM_DATA.name().toLowerCase(), Database.Table.TEAM_DATA.getDefaultName(),
+    //     Database.Table.USER_DATA.name().toLowerCase(), Database.Table.USER_DATA.getDefaultName()
+    // );
 
     @YamlComment("use HuskHomes to teleport players instead of built-in teleport handler [Default value: true]")
     @YamlKey("use-huskhomes")
@@ -283,15 +283,6 @@ public class Settings {
 
     public long getMySqlConnectionPoolTimeout() {
         return mySqlConnectionPoolTimeout;
-    }
-
-    public Map<String, String> getTableNames() {
-        return tableNames;
-    }
-
-    @NotNull
-    public String getTableName(@NotNull Database.Table table) {
-        return Optional.ofNullable(getTableNames().get(table.name().toLowerCase())).orElse(table.getDefaultName());
     }
 
     public boolean HuskHomesHook() {

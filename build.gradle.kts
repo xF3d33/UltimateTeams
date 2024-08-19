@@ -34,6 +34,7 @@ tasks {
 }
 
 dependencies {
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
     compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("io.papermc:paperlib:1.0.8")
     compileOnly("com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.2")
@@ -46,8 +47,8 @@ dependencies {
     compileOnly("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.3")
     compileOnly("org.geysermc.floodgate:api:2.2.0-SNAPSHOT")
-    compileOnly("com.zaxxer:HikariCP:5.0.1")
-    compileOnly("org.xerial:sqlite-jdbc:3.42.0.0")
+    implementation("com.j256.ormlite:ormlite-jdbc:6.1")
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.0.3")
 
     compileOnly("net.william278:annotaml:2.0.2")
     compileOnly("net.william278:DesertWell:2.0.4")
