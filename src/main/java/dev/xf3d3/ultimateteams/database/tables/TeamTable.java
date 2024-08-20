@@ -16,7 +16,7 @@ public class TeamTable {
     @DatabaseField
     private String name;
 
-    @DatabaseField
+    @DatabaseField(dataType = DataType.BYTE_ARRAY)
     private byte[] data;
 
     public String getUUID() {

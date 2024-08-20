@@ -41,7 +41,7 @@ dependencies {
     compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.3")
     compileOnly("org.geysermc.floodgate:api:2.2.0-SNAPSHOT")
-    compileOnly("org.bstats:bstats-bukkit:3.0.2")
+    implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("dev.triumphteam:triumph-gui:3.1.5")
     
     // PaperLib
@@ -51,13 +51,14 @@ dependencies {
     // Libs
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     implementation("com.google.code.gson:gson:2.10.1")
-    
+    implementation("dev.dejvokep:boosted-yaml:1.3.1")
+
     // Database
     implementation("com.j256.ormlite:ormlite-jdbc:6.1")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.0.3")
 
-    compileOnly("net.william278:annotaml:2.0.2")
-    compileOnly("net.william278:DesertWell:2.0.4")
+    implementation("net.william278:annotaml:2.0.2")
+    implementation("net.william278:DesertWell:2.0.4")
     compileOnly("net.william278:huskhomes:4.4")
 }
 

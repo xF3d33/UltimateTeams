@@ -1,5 +1,5 @@
 name: UltimateTeams
-version: '${project.version}'
+version: "2.0.5"
 main: dev.xf3d3.ultimateteams.UltimateTeams
 api-version: 1.16
 prefix: UltimateTeams
