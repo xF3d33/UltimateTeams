@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
+import dev.xf3d3.ultimateteams.database.daos.TeamDao;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -63,7 +63,7 @@ public class TeamSetWarpSubCommand {
             );
 
             team.addTeamWarp(warp);
-            plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+            plugin.runAsync(() -> TeamDao.updateTeam(team));
 
             player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-successful").replaceAll("%WARP_NAME%", warp.getName())));
         } else {

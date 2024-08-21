@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
+import dev.xf3d3.ultimateteams.database.daos.TeamDao;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -47,7 +47,7 @@ public class TeamSetHomeSubCommand {
                     team.setTeamHomeYaw(player.getLocation().getYaw());
                     team.setTeamHomePitch(player.getLocation().getPitch());
 
-                    plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+                    plugin.runAsync(() -> TeamDao.updateTeam(team));
 
                     player.sendMessage(Utils.Color(messagesConfig.getString("successfully-set-team-home")));
                 }
