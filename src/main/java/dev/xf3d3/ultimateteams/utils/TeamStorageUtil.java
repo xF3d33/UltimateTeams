@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import dev.xf3d3.ultimateteams.database.daos.TeamDao;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 public class TeamStorageUtil {

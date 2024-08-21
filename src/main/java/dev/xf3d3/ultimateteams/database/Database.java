@@ -17,7 +17,7 @@ public final class Database {
 			connectionSource = new JdbcConnectionSource("jdbc:mysql://" + host + ":" + port + "/" + database + connectedParam, username, password, new MysqlDatabaseType());
 			setupData();
 		} catch (Exception e) {
-			e.printStackTrace();
+			UltimateTeams.getPlugin().log(Level.SEVERE, "Error connecting to MySQL", e);
 			connectionSource = null;
 		}
 	}
@@ -32,7 +32,7 @@ public final class Database {
 			connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + databaseFile.getAbsolutePath());
 			setupData();
 		} catch (Exception e) {
-			e.printStackTrace();
+			UltimateTeams.getPlugin().log(Level.SEVERE, "Error connecting to SQLite", e);
 			connectionSource = null;
 		}
 	}

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public final class TeamDao {
     private static Dao<TeamTable, String> teamTable; 
@@ -23,19 +24,19 @@ public final class TeamDao {
             TableUtils.createTableIfNotExists(Database.connectionSource, TeamTable.class);
             teamTable = DaoManager.createDao(Database.connectionSource, TeamTable.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            UltimateTeams.getPlugin().getLogger().log(Level.SEVERE, "Error while trying to create team table", e);
         }
     }
 
     public static TeamTable queryForEq(String key, Object value) {
         try {
             List<TeamTable> result = teamTable.queryForEq(key, value);
-            if (result.size() <= 0)
+            if (result.isEmpty())
                 return null;
 
             return result.get(0);
         } catch (Exception e) {
-            e.printStackTrace();
+            UltimateTeams.getPlugin().getLogger().log(Level.SEVERE, "Error while trying to fetch data from teams table", e);
         }
         return null;
     }
@@ -52,7 +53,7 @@ public final class TeamDao {
                 if (team != null) teams.add(team);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            UltimateTeams.getPlugin().getLogger().log(Level.SEVERE, "Error while trying to fetch data from teams table", e);
         }
 
         return teams;
@@ -66,7 +67,7 @@ public final class TeamDao {
             teamData.setData(UltimateTeams.getPlugin().getGson().toJson(team).getBytes(StandardCharsets.UTF_8));
             teamTable.create(teamData);
         } catch (Exception e) {
-            e.printStackTrace();
+            UltimateTeams.getPlugin().getLogger().log(Level.SEVERE, "Error while trying to create team into teams table", e);
         }
     }
 
@@ -81,7 +82,7 @@ public final class TeamDao {
             teamData.setData(UltimateTeams.getPlugin().getGson().toJson(team).getBytes(StandardCharsets.UTF_8));
             teamTable.update(teamData);
         } catch (Exception e) {
-            e.printStackTrace();
+            UltimateTeams.getPlugin().getLogger().log(Level.SEVERE, "Error while trying to update team into teams table", e);
         }
     }
     
@@ -94,7 +95,7 @@ public final class TeamDao {
 
             teamTable.delete(teamData);
         } catch (Exception e) {
-            e.printStackTrace();
+            UltimateTeams.getPlugin().getLogger().log(Level.SEVERE, "Error while trying to delete team from teams table", e);
         }
     }
 }

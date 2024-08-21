@@ -3,6 +3,7 @@ package dev.xf3d3.ultimateteams.database.daos;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.table.TableUtils;
+import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.TeamPlayer;
 import dev.xf3d3.ultimateteams.database.tables.UserTable;
 import dev.xf3d3.ultimateteams.database.Database;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import java.util.List;
 
 import java.util.UUID;
+import java.util.logging.Level;
 
 public final class UserDao {
     private static Dao<UserTable, String> userTable; 
@@ -20,19 +22,19 @@ public final class UserDao {
             TableUtils.createTableIfNotExists(Database.connectionSource, UserTable.class);
             userTable = DaoManager.createDao(Database.connectionSource, UserTable.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            UltimateTeams.getPlugin().getLogger().log(Level.SEVERE, "Error while trying to create user table", e);
         }
     }
 
     public static UserTable queryForEq(String key, Object value) {
         try {
             List<UserTable> result = userTable.queryForEq(key, value);
-            if (result.size() <= 0)
+            if (result.isEmpty())
                 return null;
 
             return result.get(0);
         } catch (Exception e) {
-            e.printStackTrace();
+            UltimateTeams.getPlugin().getLogger().log(Level.SEVERE, "Error while trying to fetch data from user table", e);
         }
         return null;
     }
@@ -47,7 +49,7 @@ public final class UserDao {
             user.setChatSpy(teamplayer.getCanChatSpy());
             userTable.create(user);
         } catch (Exception e) {
-            e.printStackTrace();
+            UltimateTeams.getPlugin().getLogger().log(Level.SEVERE, "Error while trying to create player into user table", e);
         }
     }
 
@@ -65,7 +67,7 @@ public final class UserDao {
             user.setChatSpy(teamplayer.getCanChatSpy());
             userTable.update(user);
         } catch (Exception e) {
-            e.printStackTrace();
+            UltimateTeams.getPlugin().getLogger().log(Level.SEVERE, "Error while trying to update player into user table", e);
         }
     }
 
@@ -80,7 +82,7 @@ public final class UserDao {
                 user.getUUID(), user.getUsername(), user.isBedrock(), user.getBedrockUUID(), user.canChatSpy()
             ));
         } catch (Exception e) {
-            e.printStackTrace();
+            UltimateTeams.getPlugin().getLogger().log(Level.SEVERE, "Error while trying to get player from user table", e);
         }
 
         return Optional.empty();
@@ -97,7 +99,7 @@ public final class UserDao {
                 user.getUUID(), user.getUsername(), user.isBedrock(), user.getBedrockUUID(), user.canChatSpy()
             ));
         } catch (Exception e) {
-            e.printStackTrace();
+            UltimateTeams.getPlugin().getLogger().log(Level.SEVERE, "Error while trying to get player from user table", e);
         }
 
         return Optional.empty();
