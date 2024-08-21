@@ -5,7 +5,6 @@ import dev.xf3d3.ultimateteams.api.TeamCreateEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.TeamStorageUtil;
 import dev.xf3d3.ultimateteams.utils.Utils;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -58,9 +57,8 @@ public class TeamCreateSubCommand {
             }
 
             for (String names : teamNamesList) {
-                if (StringUtils.containsAnyIgnoreCase(names, name)) {
+                if (names.toLowerCase().contains(name.toLowerCase())) {
                     player.sendMessage(Utils.Color(messagesConfig.getString("team-name-already-taken").replace(TEAM_PLACEHOLDER, name)));
-
                     return;
                 }
             }

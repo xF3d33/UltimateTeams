@@ -4,10 +4,12 @@ import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.TeamInvite;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class TeamInviteUtil {
 

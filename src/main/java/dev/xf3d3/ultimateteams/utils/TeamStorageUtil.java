@@ -4,6 +4,7 @@ import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamDisbandEvent;
 import dev.xf3d3.ultimateteams.api.TeamOfflineDisbandEvent;
 import dev.xf3d3.ultimateteams.api.TeamTransferOwnershipEvent;
+import dev.xf3d3.ultimateteams.database.daos.TeamDao;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamWarp;
 import org.bukkit.Bukkit;
@@ -14,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 public class TeamStorageUtil {
@@ -29,7 +29,7 @@ public class TeamStorageUtil {
     }
 
     public void loadTeams() {
-        final List<Team> teams = plugin.getDatabase().getAllTeams();
+        final List<Team> teams = TeamDao.getAllTeams();
 
         teams.forEach(team -> teamsList.put(UUID.fromString(team.getTeamOwner()), team)
         );
@@ -43,7 +43,7 @@ public class TeamStorageUtil {
         Team newTeam = new Team(ownerUUIDString, teamName);
 
         teamsList.put(ownerUUID, newTeam);
-        plugin.runAsync(() -> plugin.getDatabase().createTeam(newTeam, ownerUUID));
+        plugin.runAsync(() -> TeamDao.createTeam(newTeam, ownerUUID));
 
         return newTeam;
     }
@@ -70,13 +70,13 @@ public class TeamStorageUtil {
                             alliedTeam.removeTeamAlly(uuid.toString());
 
                             teamsList.replace(UUID.fromString(teamUUIDString), alliedTeam);
-                            plugin.runAsync(() -> plugin.getDatabase().updateTeam(alliedTeam));
+                            plugin.runAsync(() -> TeamDao.updateTeam(alliedTeam));
                         }
                     }
 
 
                     teamsList.remove(uuid);
-                    plugin.runAsync(() -> plugin.getDatabase().deleteTeam(uuid));
+                    plugin.runAsync(() -> TeamDao.deleteTeam(uuid));
 
                     return true;
                 } else {
@@ -96,7 +96,7 @@ public class TeamStorageUtil {
 
             //fireTeamDisbandEvent(player);
             teamsList.remove(uuid);
-            plugin.runAsync(() -> plugin.getDatabase().deleteTeam(uuid));
+            plugin.runAsync(() -> TeamDao.deleteTeam(uuid));
 
             return true;
         }
@@ -183,7 +183,7 @@ public class TeamStorageUtil {
         team.setTeamPrefix(prefix);
 
         teamsList.replace(uuid, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(() -> TeamDao.updateTeam(team));
     }
 
     public boolean addTeamMember(Team team, Player player) {
@@ -192,7 +192,7 @@ public class TeamStorageUtil {
         team.addTeamMember(memberUUID);
 
         teamsList.replace(uuid, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(() -> TeamDao.updateTeam(team));
 
         return true;
     }
@@ -217,11 +217,11 @@ public class TeamStorageUtil {
 
         // Update the team
         teamsList.replace(ownerUUID, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(() -> TeamDao.updateTeam(team));
 
         // Update the allied team
         teamsList.replace(allyUUID, alliedTeam);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(() -> TeamDao.updateTeam(team));
     }
 
     public void removeTeamEnemy(Player teamOwner, Player enemyTeamOwner) {
@@ -244,11 +244,11 @@ public class TeamStorageUtil {
 
         // Update the team
         teamsList.replace(ownerUUID, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(() -> TeamDao.updateTeam(team));
 
         // Update the allied team
         teamsList.replace(allyUUID, alliedTeam);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(() -> TeamDao.updateTeam(team));
     }
 
     public void addTeamAlly(Player teamOwner, Player allyTeamOwner) {
@@ -270,11 +270,11 @@ public class TeamStorageUtil {
 
         // Update the team
         teamsList.replace(ownerUUID, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(() -> TeamDao.updateTeam(team));
 
         // Update the allied team
         teamsList.replace(allyUUID, alliedTeam);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(alliedTeam));
+        plugin.runAsync(() -> TeamDao.updateTeam(alliedTeam));
     }
 
     public void removeTeamAlly(Player teamOwner, Player allyTeamOwner) {
@@ -297,11 +297,11 @@ public class TeamStorageUtil {
 
         // Update the team
         teamsList.replace(ownerUUID, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(() -> TeamDao.updateTeam(team));
 
         // Update the allied team
         teamsList.replace(allyUUID, alliedTeam);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(alliedTeam));
+        plugin.runAsync(() -> TeamDao.updateTeam(alliedTeam));
     }
 
     public boolean isHomeSet(Team team){
@@ -311,7 +311,7 @@ public class TeamStorageUtil {
     public void deleteHome(Team team) {
         team.setTeamHomeWorld(null);
 
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(() -> TeamDao.updateTeam(team));
     }
 
     public void kickPlayer(Team team, OfflinePlayer player) {
@@ -320,7 +320,7 @@ public class TeamStorageUtil {
         team.removeTeamMember(player.getUniqueId().toString());
         teamsList.replace(uuid, team);
 
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(() -> TeamDao.updateTeam(team));
     }
 
     public String stripTeamNameColorCodes(Team team) {
@@ -375,11 +375,11 @@ public class TeamStorageUtil {
 
                     // delete old team
                     teamsList.remove(originalOwnerUUID);
-                    plugin.runAsync(() -> plugin.getDatabase().deleteTeam(originalOwnerUUID));
+                    plugin.runAsync(() -> TeamDao.deleteTeam(originalOwnerUUID));
 
                     // create new team
                     teamsList.put(newOwnerUUID, newTeam);
-                    plugin.runAsync(() -> plugin.getDatabase().createTeam(newTeam, newOwnerUUID));
+                    plugin.runAsync(() -> TeamDao.createTeam(newTeam, newOwnerUUID));
 
                     return newTeam;
 
