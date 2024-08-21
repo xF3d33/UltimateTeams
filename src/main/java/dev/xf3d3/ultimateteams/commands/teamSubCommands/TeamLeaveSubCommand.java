@@ -1,6 +1,7 @@
 package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.database.daos.TeamDao;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
@@ -22,16 +23,19 @@ public class TeamLeaveSubCommand {
         this.plugin = plugin;
     }
 
-    public boolean teamLeaveSubCommand(CommandSender sender) {
-        if (sender instanceof Player) {
-            Player player = ((Player) sender).getPlayer();
+    public void teamLeaveSubCommand(CommandSender sender) {
+        if (sender instanceof final Player player) {
+
             if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("failed-team-owner")));
-                return true;
+                return;
             }
+
             Team targetTeam = plugin.getTeamStorageUtil().findTeamByPlayer(player);
             if (targetTeam != null) {
                 if (targetTeam.removeTeamMember(player.getUniqueId().toString())) {
+                    plugin.runAsync(() -> TeamDao.updateTeam(targetTeam));
+
                     String leaveMessage = Utils.Color(messagesConfig.getString("team-leave-successful")).replace(Team_PLACEHOLDER, targetTeam.getTeamFinalName());
                     player.sendMessage(leaveMessage);
 
@@ -51,9 +55,7 @@ public class TeamLeaveSubCommand {
                     player.sendMessage(Utils.Color(messagesConfig.getString("team-leave-failed")));
                 }
             }
-            return true;
 
         }
-        return false;
     }
 }
