@@ -2,6 +2,7 @@ package dev.xf3d3.ultimateteams.utils;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamChatSpyToggledEvent;
+import dev.xf3d3.ultimateteams.database.daos.UserDao;
 import dev.xf3d3.ultimateteams.models.TeamPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -9,8 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.geysermc.floodgate.api.player.FloodgatePlayer;
 import org.jetbrains.annotations.NotNull;
-import dev.xf3d3.ultimateteams.database.daos.UserDao;
-import java.util.HashMap;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;

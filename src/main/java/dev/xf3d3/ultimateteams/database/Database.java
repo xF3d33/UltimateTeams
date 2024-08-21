@@ -2,10 +2,11 @@ package dev.xf3d3.ultimateteams.database;
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.jdbc.db.MysqlDatabaseType;
-import dev.xf3d3.ultimateteams.database.daos.UserDao;
-import dev.xf3d3.ultimateteams.database.daos.TeamDao;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.database.daos.TeamDao;
+import dev.xf3d3.ultimateteams.database.daos.UserDao;
 import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.util.logging.Level;
 
@@ -40,6 +41,18 @@ public final class Database {
 	private static void setupData() {
 		UserDao.init();
 		TeamDao.init();
+	}
+
+	public static void close() {
+		if (connectionSource != null) {
+			try {
+				connectionSource.close();
+				UltimateTeams.getPlugin().log(Level.INFO, "Database connection closed");
+
+			} catch (Exception e) {
+				UltimateTeams.getPlugin().log(Level.SEVERE, "Error while closing database connection", e);
+			}
+		}
 	}
 
 	public enum Type {

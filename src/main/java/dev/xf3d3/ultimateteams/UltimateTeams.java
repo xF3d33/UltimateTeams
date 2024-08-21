@@ -247,6 +247,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         // Cancel plugin tasks
         getScheduler().cancelGlobalTasks();
 
+        Database.close();
+
         // Final plugin shutdown message
         sendConsole("&6UltimateTeams: &3Plugin Version: &d&l" + pluginVersion);
         sendConsole("&6UltimateTeams: &3Has been shutdown successfully");

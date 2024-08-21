@@ -7,8 +7,6 @@ import net.william278.annotaml.YamlKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Plugin settings, read from config.yml

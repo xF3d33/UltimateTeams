@@ -4,15 +4,14 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.table.TableUtils;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.models.TeamPlayer;
-import dev.xf3d3.ultimateteams.database.tables.TeamTable;
 import dev.xf3d3.ultimateteams.database.Database;
+import dev.xf3d3.ultimateteams.database.tables.TeamTable;
 import dev.xf3d3.ultimateteams.models.Team;
 import org.jetbrains.annotations.NotNull;
-import java.util.Optional;
-import java.util.List;
-import java.util.ArrayList;
+
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
