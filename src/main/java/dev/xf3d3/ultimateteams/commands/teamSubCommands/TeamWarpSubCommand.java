@@ -79,16 +79,7 @@ public class TeamWarpSubCommand {
             return;
         }
 
-        if (plugin.getSettings().getTeamWarpTpDelay() > 0) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-cooldown-start").replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeamWarpTpDelay()))));
-
-            plugin.runLater(() -> {
-                plugin.getUtils().teleportPlayer(player, warp.getLocation());
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-teleported-successful").replaceAll("%WARP_NAME%", warp.getName())));
-            }, plugin.getSettings().getTeamWarpTpDelay());
-        } else {
-            plugin.getUtils().teleportPlayer(player, warp.getLocation());
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-teleported-successful").replaceAll("%WARP_NAME%", warp.getName())));
-        }
+        plugin.getUtils().teleportPlayer(player, warp.getLocation(), Utils.TeleportType.WARP, name);
+        player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-teleported-successful").replaceAll("%WARP_NAME%", warp.getName())));
     }
 }

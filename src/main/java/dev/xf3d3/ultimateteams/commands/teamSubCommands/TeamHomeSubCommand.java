@@ -103,17 +103,8 @@ public class TeamHomeSubCommand {
     }
 
     private void tpHome(@NotNull Player player, @NotNull Location location) {
-        if (plugin.getSettings().getTeamHomeTpDelay() > 0) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-home-cooldown-start").replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeamHomeTpDelay()))));
-
-            plugin.runLater(() -> {
-                plugin.getUtils().teleportPlayer(player, location);
-                player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
-            }, plugin.getSettings().getTeamHomeTpDelay());
-        } else {
-            plugin.getUtils().teleportPlayer(player, location);
-            player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
-        }
+        plugin.getUtils().teleportPlayer(player, location, Utils.TeleportType.HOME, null);
+        //player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
     }
 
     private void fireTeamHomePreTPEvent(Player player, Team team) {

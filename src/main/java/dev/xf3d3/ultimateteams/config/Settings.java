@@ -131,7 +131,7 @@ public class Settings {
     @YamlKey("team-warp.enable")
     private boolean teamWarpEnable = true;
 
-    @YamlComment("Define the delay (cooldown) in seconds before the tp starts")
+    @YamlComment("Define the delay (cooldown) in seconds before the tp starts.\nThis value has no effect if using HuskHomes as teleport handler")
     @YamlKey("team-warp.tp-delay")
     private int teamWarpTpDelay = 3;
 
@@ -199,7 +199,7 @@ public class Settings {
     @YamlKey("team-home.enabled")
     private boolean teamHomeEnabled = true;
 
-    @YamlComment("Define the delay (cooldown) in seconds before the tp starts")
+    @YamlComment("Define the delay (cooldown) in seconds before the tp starts.\nThis value has no effect if using HuskHomes as teleport handler")
     @YamlKey("team-home.tp-delay")
     private int teamHomeTpDelay = 3;
 

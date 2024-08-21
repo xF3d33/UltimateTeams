@@ -5,9 +5,12 @@ import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -15,14 +18,51 @@ import java.util.regex.Pattern;
 
 public class Utils {
     private final UltimateTeams plugin;
+    private final FileConfiguration messagesConfig;
 
     public Utils(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
+        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
 
-    public void teleportPlayer(@NotNull Player player, @NotNull Location location) {
+    public void teleportPlayer(@NotNull Player player, @NotNull Location location, @NotNull TeleportType teleportType, @Nullable String warpName) {
+        // Execute tp immediately if HuskHome is in use
         if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && plugin.getSettings().HuskHomesHook()) {
             plugin.getHuskHomesHook().teleportPlayer(player, location);
+            return;
+        }
+
+        // if tp is Home and cooldown is enabled handle teleport
+        if ((plugin.getSettings().getTeamHomeTpDelay() > 0) && teleportType.equals(TeleportType.HOME)) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-home-cooldown-start").replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeamHomeTpDelay()))));
+
+            plugin.runLater(() -> {
+                // Run on the appropriate thread scheduler for this platform
+                plugin.getScheduler().entitySpecificScheduler(player).run(
+                        () -> PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN),
+                        () -> plugin.log(Level.WARNING, "User offline when teleporting: " + player.getName())
+                );
+
+                player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
+            }, plugin.getSettings().getTeamHomeTpDelay());
+
+            return;
+        }
+
+        // if tp is Warp and cooldown is enabled handle teleport
+        if ((plugin.getSettings().getTeamWarpTpDelay() > 0) && teleportType.equals(TeleportType.WARP)) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-cooldown-start").replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeamWarpTpDelay()))));
+
+            plugin.runLater(() -> {
+                // Run on the appropriate thread scheduler for this platform
+                plugin.getScheduler().entitySpecificScheduler(player).run(
+                        () -> PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN),
+                        () -> plugin.log(Level.WARNING, "User offline when teleporting: " + player.getName())
+                );
+                player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-teleported-successful").replaceAll("%WARP_NAME%", String.valueOf(warpName))));
+
+            }, plugin.getSettings().getTeamWarpTpDelay());
+
             return;
         }
 
@@ -51,5 +91,10 @@ public class Utils {
 
         text = ChatColor.translateAlternateColorCodes('&', text);
         return text;
+    }
+
+    public enum TeleportType {
+        WARP,
+        HOME
     }
 }
