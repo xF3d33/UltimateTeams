@@ -62,29 +62,20 @@ public class TeamAdmin extends BaseCommand {
     @Subcommand("team disband")
     @CommandCompletion("@teams")
     @CommandPermission("ultimateteams.admin.team.disband")
-    @Syntax("/teamadmin disband <teamName>")
-    public void disbandSubcommand(CommandSender sender, String[] args) {
-        if (args[0].length() > 1) {
-            final Team team = plugin.getTeamStorageUtil().findTeamByName(args[0]);
+    @Syntax("<teamName>")
+    public void disbandSubcommand(CommandSender sender, @Values("@teams") String teamName) {
 
-            if (team != null) {
-                if (plugin.getTeamStorageUtil().deleteTeam(args[0])) {
-                    sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
-                } else {
-                    sender.sendMessage(Utils.Color(messagesConfig.getString("team-admin-disband-failure")));
-                }
-            } else {
-                sender.sendMessage(Utils.Color(messagesConfig.getString("could-not-find-specified-player").replace(PLAYER_TO_KICK, args[1])));
-            }
+        if (plugin.getTeamStorageUtil().deleteTeam(teamName)) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
         } else {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("incorrect-disband-command-usage")));
+            sender.sendMessage(Utils.Color(messagesConfig.getString("team-admin-disband-failure")));
         }
     }
 
     @Subcommand("team join")
     @CommandCompletion("@players @teams @nothing")
     @CommandPermission("ultimateteams.admin.team.join")
-    @Syntax("/teamadmin team join <Player> <teamName>")
+    @Syntax("<Player> <teamName>")
     public void teamInviteAcceptSubCommand(CommandSender sender, @Values("@players") Player player, @Values("@teams") String teamName) {
         //final Player player = OnlinePlayer.getPlayer();
 
