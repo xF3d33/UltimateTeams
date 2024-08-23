@@ -15,6 +15,7 @@ import java.util.*;
 
 public class TeamCreateSubCommand {
     private final FileConfiguration messagesConfig;
+    private final TeamStorageUtil storageUtil;
     private static final String TEAM_PLACEHOLDER = "%TEAM%";
 
     int MIN_CHAR_LIMIT;
@@ -23,12 +24,12 @@ public class TeamCreateSubCommand {
     private final Set<Map.Entry<UUID, Team>> teams;
     ArrayList<String> teamNamesList = new ArrayList<>();
 
-    private final UltimateTeams plugin;
-
     public TeamCreateSubCommand(@NotNull UltimateTeams plugin) {
-        this.plugin = plugin;
+
+        this.storageUtil = plugin.getTeamStorageUtil();
         this.teams = plugin.getTeamStorageUtil().getTeams();
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
+
         this.MIN_CHAR_LIMIT = plugin.getSettings().getTeamTagsMinCharLimit();
         this.MAX_CHAR_LIMIT = plugin.getSettings().getTeamTagsMaxCharLimit();
     }
@@ -40,65 +41,64 @@ public class TeamCreateSubCommand {
             return;
         }
 
-        final TeamStorageUtil storageUtil = plugin.getTeamStorageUtil();
-
         teams.forEach((teams) -> teamNamesList.add(teams.getValue().getTeamFinalName()));
 
 
-        if (name.length() >= 1) {
-            if (bannedTags.contains(name) || name.contains(" ")) {
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-name-is-banned").replace(TEAM_PLACEHOLDER, name)));
-                return;
-            }
+        if (name.contains(" ")) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-name-contains-space").replace(TEAM_PLACEHOLDER, name)));
+            return;
+        }
 
-            if (teamNamesList.contains(name)) {
+        if (bannedTags.contains(name)) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-name-is-banned").replace(TEAM_PLACEHOLDER, name)));
+            return;
+        }
+
+        if (teamNamesList.contains(name)) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-name-already-taken").replace(TEAM_PLACEHOLDER, name)));
+            return;
+        }
+
+        for (String names : teamNamesList) {
+            if (names.toLowerCase().contains(name.toLowerCase())) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-name-already-taken").replace(TEAM_PLACEHOLDER, name)));
                 return;
             }
+        }
 
-            for (String names : teamNamesList) {
-                if (names.toLowerCase().contains(name.toLowerCase())) {
-                    player.sendMessage(Utils.Color(messagesConfig.getString("team-name-already-taken").replace(TEAM_PLACEHOLDER, name)));
-                    return;
-                }
-            }
+        if (name.contains("&") || name.contains("#")) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-name-cannot-contain-colours")));
+            return;
+        }
 
-            if (name.contains("&") || name.contains("#")) {
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-name-cannot-contain-colours")));
-                return;
-            }
+        if (storageUtil.isTeamOwner(player)) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-creation-failed").replace(TEAM_PLACEHOLDER, Utils.Color(name))));
+            return;
+        }
 
-            if (storageUtil.isTeamOwner(player)) {
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-creation-failed").replace(TEAM_PLACEHOLDER, Utils.Color(name))));
-                return;
-            }
+        if (storageUtil.findTeamByPlayer(player) != null) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-creation-failed").replace(TEAM_PLACEHOLDER, Utils.Color(name))));
+            return;
+        }
 
-            if (storageUtil.findTeamByPlayer(player) != null) {
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-creation-failed").replace(TEAM_PLACEHOLDER, Utils.Color(name))));
-                return;
-            }
-
-            if (name.length() < MIN_CHAR_LIMIT) {
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-short").replace("%CHARMIN%", Integer.toString(MIN_CHAR_LIMIT))));
-            } else if (name.length() > MAX_CHAR_LIMIT) {
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-long").replace("%CHARMAX%", Integer.toString(MAX_CHAR_LIMIT))));
-            } else {
-                if (!storageUtil.isTeamExisting(player)) {
-                    Team team = storageUtil.createTeam(player, name);
-                    String teamCreated = Utils.Color(messagesConfig.getString("team-created-successfully")).replace(TEAM_PLACEHOLDER, Utils.Color(name));
-
-                    player.sendMessage(teamCreated);
-
-                    fireTeamCreateEvent(player, team);
-
-                } else {
-                    String teamNotCreated = Utils.Color(messagesConfig.getString("team-creation-failed")).replace(TEAM_PLACEHOLDER, Utils.Color(name));
-                    player.sendMessage(teamNotCreated);
-                }
-                teamNamesList.clear();
-            }
+        if (name.length() < MIN_CHAR_LIMIT) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-short").replace("%CHARMIN%", Integer.toString(MIN_CHAR_LIMIT))));
+        } else if (name.length() > MAX_CHAR_LIMIT) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-long").replace("%CHARMAX%", Integer.toString(MAX_CHAR_LIMIT))));
         } else {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-create-incorrect-usage")));
+            if (!storageUtil.isTeamExisting(player)) {
+                Team team = storageUtil.createTeam(player, name);
+                String teamCreated = Utils.Color(messagesConfig.getString("team-created-successfully")).replace(TEAM_PLACEHOLDER, Utils.Color(name));
+
+                player.sendMessage(teamCreated);
+
+                fireTeamCreateEvent(player, team);
+
+            } else {
+                String teamNotCreated = Utils.Color(messagesConfig.getString("team-creation-failed")).replace(TEAM_PLACEHOLDER, Utils.Color(name));
+                player.sendMessage(teamNotCreated);
+            }
+            teamNamesList.clear();
         }
     }
 

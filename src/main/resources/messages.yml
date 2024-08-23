@@ -15,6 +15,7 @@ team-name-too-long: "&3Team name too long - maximum length is &6%CHARMAX% &3char
 team-created-successfully: "&3Team &6%TEAM% &3was Created!"
 team-name-already-taken: "&3Sorry but &6%TEAM% &3is already taken.\n&3Please choose another!"
 team-name-is-banned: "&3Sorry but &6%TEAM% &3is a &cBANNED &3name!\n&3Please choose another!"
+team-name-contains-space: "&3Sorry but, since it contains a space, &6%TEAM% &3is a &cBANNED &3name!\n&3Please choose another!"
 team-name-cannot-contain-colours: "&3Sorry, the team name cannot contain '&' or '#' characters."
 team-creation-failed: "&3Team &6%TEAM% &3was NOT created, please make sure you're not already in a team!"
 team-created-broadcast-chat: "&6%TEAMOWNER%&3 Created a new team!\n&3The new team is called &6%TEAM%&3!"
