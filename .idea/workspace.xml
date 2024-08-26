@@ -4,27 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="efb41445-9941-437c-9287-f7e8e68db5d7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/database/H2Database.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/database/MySqlDatabase.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/database/PostgreSqlDatabase.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/database/SQLiteDatabase.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/database/h2_schema.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/database/mariadb_schema.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/database/mysql_schema.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/database/postgresql_schema.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/database/sqlite_schema.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/dev.xf3d3.UltimateTeams.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/dev.xf3d3.UltimateTeams.main.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/UltimateTeams.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/UltimateTeams.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/TeamChatCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/TeamChatCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/config/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/config/Settings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/database/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/database/Database.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
-    </list>
+    <list default="true" id="efb41445-9941-437c-9287-f7e8e68db5d7" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -166,7 +146,7 @@
       <workItem from="1724680510399" duration="2885000" />
       <workItem from="1724698128325" duration="4270000" />
       <workItem from="1724703906664" duration="21000" />
-      <workItem from="1724704037660" duration="4601000" />
+      <workItem from="1724704037660" duration="4967000" />
     </task>
     <servers />
   </component>

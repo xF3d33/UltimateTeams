@@ -6,14 +6,15 @@ import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamPlayer;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
-import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Level;
 
 @SuppressWarnings("DuplicatedCode")

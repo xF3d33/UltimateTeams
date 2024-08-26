@@ -2,7 +2,6 @@ package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamHomeCreateEvent;
-import dev.xf3d3.ultimateteams.database.daos.TeamDao;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;

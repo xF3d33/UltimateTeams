@@ -3,7 +3,6 @@ package dev.xf3d3.ultimateteams;
 import co.aikar.commands.PaperCommandManager;
 import com.google.gson.Gson;
 import dev.xf3d3.ultimateteams.commands.*;
-import dev.xf3d3.ultimateteams.commands.TeamAllyChatCommand;
 import dev.xf3d3.ultimateteams.config.MessagesFileManager;
 import dev.xf3d3.ultimateteams.config.Settings;
 import dev.xf3d3.ultimateteams.config.TeamsGui;

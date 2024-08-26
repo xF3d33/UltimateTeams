@@ -4,7 +4,6 @@ import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamDisbandEvent;
 import dev.xf3d3.ultimateteams.api.TeamOfflineDisbandEvent;
 import dev.xf3d3.ultimateteams.api.TeamTransferOwnershipEvent;
-import dev.xf3d3.ultimateteams.database.daos.TeamDao;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamWarp;
 import org.bukkit.Bukkit;
