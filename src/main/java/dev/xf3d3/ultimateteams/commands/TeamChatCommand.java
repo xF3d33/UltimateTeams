@@ -71,14 +71,14 @@ public class TeamChatCommand extends BaseCommand {
 
 
         if (team != null) {
-            ArrayList<String> playerClanMembers = team.getTeamMembers();
+            ArrayList<String> playerTeamMembers = team.getTeamMembers();
 
-            fireClanChatMessageSendEvent(
+            fireTeamChatMessageSendEvent(
                     player,
                     team,
                     plugin.getSettings().getTeamChatPrefix(),
                     messageString.toString(),
-                    playerClanMembers
+                    playerTeamMembers
             );
 
             // Send message to team owner
@@ -89,8 +89,7 @@ public class TeamChatCommand extends BaseCommand {
             }
 
             // Send message to team members
-            assert playerClanMembers != null;
-            for (String playerTeamMember : playerClanMembers) {
+            for (String playerTeamMember : playerTeamMembers) {
                 if (playerTeamMember != null) {
                     UUID memberUUID = UUID.fromString(playerTeamMember);
                     Player TeamPlayer = Bukkit.getPlayer(memberUUID);
@@ -108,7 +107,7 @@ public class TeamChatCommand extends BaseCommand {
         }
     }
 
-    private void fireClanChatMessageSendEvent(Player player, Team team, String prefix, String message, ArrayList<String> recipients) {
+    private void fireTeamChatMessageSendEvent(Player player, Team team, String prefix, String message, ArrayList<String> recipients) {
         TeamChatMessageSendEvent teamChatMessageSendEvent = new TeamChatMessageSendEvent(player, team, prefix, message, recipients);
         Bukkit.getPluginManager().callEvent(teamChatMessageSendEvent);
     }

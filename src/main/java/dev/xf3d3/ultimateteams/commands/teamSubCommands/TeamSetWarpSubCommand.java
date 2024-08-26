@@ -64,7 +64,7 @@ public class TeamSetWarpSubCommand {
             );
 
             team.addTeamWarp(warp);
-            plugin.runAsync(() -> TeamDao.updateTeam(team));
+            plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
 
             player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-successful").replaceAll("%WARP_NAME%", warp.getName())));
         } else {

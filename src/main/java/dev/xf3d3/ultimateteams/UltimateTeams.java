@@ -7,7 +7,7 @@ import dev.xf3d3.ultimateteams.commands.TeamAllyChatCommand;
 import dev.xf3d3.ultimateteams.config.MessagesFileManager;
 import dev.xf3d3.ultimateteams.config.Settings;
 import dev.xf3d3.ultimateteams.config.TeamsGui;
-import dev.xf3d3.ultimateteams.database.Database;
+import dev.xf3d3.ultimateteams.database.*;
 import dev.xf3d3.ultimateteams.hooks.FloodgateAPIHook;
 import dev.xf3d3.ultimateteams.hooks.HuskHomesAPIHook;
 import dev.xf3d3.ultimateteams.hooks.PapiExpansion;
@@ -51,6 +51,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     private static UltimateTeams instance;
 
     public MessagesFileManager msgFileManager;
+
+    private Database database;
 
     private FloodgateAPIHook floodgateAPIHook;
     private Utils utils;
@@ -106,13 +108,17 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
         // Initialize the database
         initialize(getSettings().getDatabaseType().getDisplayName() + " database connection", (plugin) -> {
-            switch (getSettings().getDatabaseType()) {
-                case MYSQL -> Database.connectMysql(settings.getMySqlHost(), String.valueOf(settings.getMySqlPort()), settings.getMySqlUsername(), settings.getMySqlPassword(), settings.getMySqlDatabase(), settings.getMySqlConnectionParameters());
-                case SQLITE -> Database.connectSqlite();
+            this.database = switch (getSettings().getDatabaseType()) {
+                case MYSQL, MARIADB -> new MySqlDatabase(this);
+                case SQLITE -> new SQLiteDatabase(this);
+                case H2 -> new H2Database(this);
+                case POSTGRESQL -> new PostgreSqlDatabase(this);
             };
+
+            database.initialize();
         });
 
-        if (Database.connectionSource == null) {
+        if (!database.hasLoaded()) {
             log(Level.SEVERE, "Failed to load database! Please check your credentials! Disabling plugin...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
@@ -247,7 +253,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         // Cancel plugin tasks
         getScheduler().cancelGlobalTasks();
 
-        Database.close();
+        database.close();
 
         // Final plugin shutdown message
         sendConsole("&6UltimateTeams: &3Plugin Version: &d&l" + pluginVersion);
@@ -358,6 +364,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
     public static UltimateTeams getPlugin() {
         return instance;
+    }
+
+    @NotNull
+    public Database getDatabase() {
+        return database;
     }
 
     public FloodgateApi getFloodgateApi() {

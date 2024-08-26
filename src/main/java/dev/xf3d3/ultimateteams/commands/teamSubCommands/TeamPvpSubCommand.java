@@ -36,12 +36,12 @@ public class TeamPvpSubCommand {
                 if (team.isFriendlyFireAllowed()){
 
                     team.setFriendlyFireAllowed(false);
-                    plugin.runAsync(() -> TeamDao.updateTeam(team));
+                    plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
 
                     player.sendMessage(Utils.Color(messagesConfig.getString("disabled-friendly-fire")));
                 } else {
                     team.setFriendlyFireAllowed(true);
-                    plugin.runAsync(() -> TeamDao.updateTeam(team));
+                    plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
 
                     player.sendMessage(Utils.Color(messagesConfig.getString("enabled-friendly-fire")));
                 }

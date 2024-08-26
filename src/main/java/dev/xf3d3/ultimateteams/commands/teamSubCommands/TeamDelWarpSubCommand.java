@@ -41,7 +41,7 @@ public class TeamDelWarpSubCommand {
             final TeamWarp warp = team.getTeamWarp(name);
 
             team.removeTeamWarp(name);
-            plugin.runAsync(() -> TeamDao.updateTeam(team));
+            plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
 
             player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-deleted-successful").replaceAll("%WARP_NAME%", warp.getName())));
         } else {
