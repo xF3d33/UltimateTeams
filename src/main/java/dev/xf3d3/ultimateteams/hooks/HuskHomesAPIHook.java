@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class HuskHomesAPIHook {
 
@@ -38,7 +39,8 @@ public class HuskHomesAPIHook {
                     .toTimedTeleport()
                     .execute();
         } catch (TeleportationException e) {
-            e.printStackTrace();
+            plugin.log(Level.SEVERE, "Error while trying to teleport a player using HuskHomes", e);
+            e.displayMessage(onlineUser);
         }
     }
 
