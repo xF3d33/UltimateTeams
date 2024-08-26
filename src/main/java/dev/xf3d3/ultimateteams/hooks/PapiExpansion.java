@@ -42,9 +42,9 @@ public class PapiExpansion extends PlaceholderExpansion {
 
         if (params.equalsIgnoreCase("teamName")) {
             if (teamOwner != null) {
-                return Utils.Color(teamOwner.getTeamFinalName() + "&r ");
+                return Utils.Color(teamOwner.getTeamFinalName());
             } else if (teamMember != null){
-                return Utils.Color(teamMember.getTeamFinalName() + "&r ");
+                return Utils.Color(teamMember.getTeamFinalName());
             } else {
                 return "";
             }
@@ -57,9 +57,9 @@ public class PapiExpansion extends PlaceholderExpansion {
             if (teamOwner != null){
                 if (plugin.getSettings().addPrefixBrackets()) {
                     if (plugin.getSettings().addSpaceAfterPrefix()) {
-                        return Utils.Color(openBracket + teamOwner.getTeamPrefix() + closeBracket +"&r ");
+                        return Utils.Color(openBracket + teamOwner.getTeamPrefix() + closeBracket);
                     } else {
-                        return Utils.Color(openBracket + teamOwner.getTeamPrefix() + closeBracket +"&r");
+                        return Utils.Color(openBracket + teamOwner.getTeamPrefix() + closeBracket);
                     }
                 } else {
                     if (plugin.getSettings().addSpaceAfterPrefix()){
@@ -71,9 +71,9 @@ public class PapiExpansion extends PlaceholderExpansion {
             } else if (teamMember != null) {
                 if (plugin.getSettings().addPrefixBrackets()) {
                     if (plugin.getSettings().addSpaceAfterPrefix()) {
-                        return Utils.Color(openBracket + teamMember.getTeamPrefix() + closeBracket +"&r ");
+                        return Utils.Color(openBracket + teamMember.getTeamPrefix() + closeBracket);
                     } else {
-                        return Utils.Color(openBracket + teamMember.getTeamPrefix() + closeBracket +"&r");
+                        return Utils.Color(openBracket + teamMember.getTeamPrefix() + closeBracket);
                     }
                 } else {
                     if (plugin.getSettings().addSpaceAfterPrefix()){
