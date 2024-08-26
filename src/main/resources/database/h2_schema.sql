@@ -1,5 +1,5 @@
 -- Create the users table if it does not exist
-CREATE TABLE IF NOT EXISTS user_table
+CREATE TABLE IF NOT EXISTS %user_table%
 (
     id SERIAL PRIMARY KEY,
     uuid UUID NOT NULL UNIQUE,
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS user_table
 );
 
 -- Create the teams table if it does not exist
-CREATE TABLE IF NOT EXISTS team_table
+CREATE TABLE IF NOT EXISTS %team_table%
 (
     id SERIAL PRIMARY KEY,
     uuid UUID NOT NULL UNIQUE,

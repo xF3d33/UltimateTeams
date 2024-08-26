@@ -117,12 +117,6 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             database.initialize();
         });
 
-        if (!database.hasLoaded()) {
-            log(Level.SEVERE, "Failed to load database! Please check your credentials! Disabling plugin...");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
-
         // Register commands
         initialize("commands", (plugin) -> registerCommands());
 
@@ -306,7 +300,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         this.manager.registerCommand(new TeamCommand(this));
         this.manager.registerCommand(new TeamChatSpyCommand(this));
         this.manager.registerCommand(new TeamChatCommand(this));
-        this.manager.registerCommand(new TeamAllyChatCommand(this));
+        //this.manager.registerCommand(new TeamAllyChatCommand(this));
         this.manager.registerCommand(new TeamAdmin(this));
     }
 
