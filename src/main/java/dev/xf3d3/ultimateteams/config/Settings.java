@@ -86,9 +86,13 @@ public class Settings {
     @YamlKey("team-tags.min-character-limit")
     private int minCharacterLimit = 3;
 
-    @YamlComment("Set the minimum length of the team prefix and name. [Default value: 32]")
+    @YamlComment("Set the minimum length of the team prefix and name. [Default value: 8]")
     @YamlKey("team-tags.max-character-limit")
-    private int maxCharacterLimit = 32;
+    private int maxCharacterLimit = 8;
+
+    @YamlComment("Should the plugin ignore color codes while checking the prefix length? [Default value: false]")
+    @YamlKey("team-tags.ignore-color-codes")
+    private boolean ignoreColorCodes = false;
 
     @YamlComment("Set below names that are not allowed to be used in prefixes or names. [They ARE case & syntax sensitive]")
     @YamlKey("team-tags.disallowed-tags")
@@ -297,6 +301,10 @@ public class Settings {
 
     public int getTeamTagsMaxCharLimit() {
         return maxCharacterLimit;
+    }
+
+    public boolean isIgnoreColorCodes() {
+        return ignoreColorCodes;
     }
 
     public boolean isTagsBanned(@NotNull String tag) {
