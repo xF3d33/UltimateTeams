@@ -144,7 +144,7 @@ public class Settings {
     private int teamWarpLimit = 2;
 
     @YamlComment("If true, the default warp limit will be stacked with permission limit.\n If a player has ultimateteams.maxwarps.3 and the default limit is 2, he will be able to set 5 warps.")
-    @YamlKey("team-warp.limit")
+    @YamlKey("team-warp.stack-warps")
     private boolean stackWarpLimitWithPermission = false;
 
     @YamlComment("Enable the cool down on the '/team warp <name>' command to prevent tp spamming (RECOMMENDED). [Default value: true]")
