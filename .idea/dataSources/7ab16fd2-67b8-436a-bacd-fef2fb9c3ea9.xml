@@ -169,13 +169,14 @@
     <schema id="162" parent="2" name="INFORMATION_SCHEMA"/>
     <schema id="163" parent="2" name="PUBLIC">
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2024-08-26.22:10:40</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2024-08-26.22:12:26</LastIntrospectionLocalTimestamp>
     </schema>
     <user id="164" parent="2" name="SA">
       <Admin>1</Admin>
     </user>
     <table id="165" parent="163" name="ULTIMATETEAMS_TEAMS"/>
-    <column id="166" parent="165" name="ID">
+    <table id="166" parent="163" name="ULTIMATETEAMS_USERS"/>
+    <column id="167" parent="165" name="ID">
       <ColumnKind>generated-stored</ColumnKind>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -185,46 +186,90 @@
       <SequenceStartValue>1</SequenceStartValue>
       <SequenceStoredType>INTEGER|0s</SequenceStoredType>
     </column>
-    <column id="167" parent="165" name="UUID">
+    <column id="168" parent="165" name="UUID">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>UUID|0s</StoredType>
     </column>
-    <column id="168" parent="165" name="USERNAME">
+    <column id="169" parent="165" name="NAME">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>CHARACTER VARYING(16)|0s</StoredType>
     </column>
-    <column id="169" parent="165" name="ISBEDROCK">
+    <column id="170" parent="165" name="DATA">
       <NotNull>1</NotNull>
       <Position>4</Position>
-      <StoredType>BOOLEAN|0s</StoredType>
+      <StoredType>BINARY LARGE OBJECT|0s</StoredType>
     </column>
-    <column id="170" parent="165" name="BEDROCKUUID">
-      <Position>5</Position>
-      <StoredType>CHARACTER VARYING(36)|0s</StoredType>
-    </column>
-    <column id="171" parent="165" name="CANCHATSPY">
-      <NotNull>1</NotNull>
-      <Position>6</Position>
-      <StoredType>BOOLEAN|0s</StoredType>
-    </column>
-    <index id="172" parent="165" name="PRIMARY_KEY_8">
+    <index id="171" parent="165" name="PRIMARY_KEY_89">
       <ColNames>ID</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <Unique>1</Unique>
     </index>
-    <index id="173" parent="165" name="CONSTRAINT_INDEX_8">
+    <index id="172" parent="165" name="CONSTRAINT_INDEX_89">
       <ColNames>UUID</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <Unique>1</Unique>
     </index>
-    <key id="174" parent="165" name="CONSTRAINT_8">
+    <key id="173" parent="165" name="CONSTRAINT_89D">
       <ColNames>ID</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
     </key>
-    <key id="175" parent="165" name="CONSTRAINT_89">
+    <key id="174" parent="165" name="CONSTRAINT_89D8">
+      <ColNames>UUID</ColNames>
+      <NameSurrogate>1</NameSurrogate>
+    </key>
+    <column id="175" parent="166" name="ID">
+      <ColumnKind>generated-stored</ColumnKind>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>INTEGER|0s</StoredType>
+      <SequenceInline>1</SequenceInline>
+      <SequenceSequenceIdentity>1(1)</SequenceSequenceIdentity>
+      <SequenceStartValue>1</SequenceStartValue>
+      <SequenceStoredType>INTEGER|0s</SequenceStoredType>
+    </column>
+    <column id="176" parent="166" name="UUID">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>UUID|0s</StoredType>
+    </column>
+    <column id="177" parent="166" name="USERNAME">
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+      <StoredType>CHARACTER VARYING(16)|0s</StoredType>
+    </column>
+    <column id="178" parent="166" name="ISBEDROCK">
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+      <StoredType>BOOLEAN|0s</StoredType>
+    </column>
+    <column id="179" parent="166" name="BEDROCKUUID">
+      <Position>5</Position>
+      <StoredType>CHARACTER VARYING(36)|0s</StoredType>
+    </column>
+    <column id="180" parent="166" name="CANCHATSPY">
+      <NotNull>1</NotNull>
+      <Position>6</Position>
+      <StoredType>BOOLEAN|0s</StoredType>
+    </column>
+    <index id="181" parent="166" name="PRIMARY_KEY_8">
+      <ColNames>ID</ColNames>
+      <NameSurrogate>1</NameSurrogate>
+      <Unique>1</Unique>
+    </index>
+    <index id="182" parent="166" name="CONSTRAINT_INDEX_8">
+      <ColNames>UUID</ColNames>
+      <NameSurrogate>1</NameSurrogate>
+      <Unique>1</Unique>
+    </index>
+    <key id="183" parent="166" name="CONSTRAINT_8">
+      <ColNames>ID</ColNames>
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+    </key>
+    <key id="184" parent="166" name="CONSTRAINT_89">
       <ColNames>UUID</ColNames>
       <NameSurrogate>1</NameSurrogate>
     </key>

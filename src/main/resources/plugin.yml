@@ -1,5 +1,5 @@
 name: UltimateTeams
-version: "2.3"
+version: "2.4-alpha"
 main: dev.xf3d3.ultimateteams.UltimateTeams
 api-version: 1.16
 prefix: UltimateTeams
@@ -16,6 +16,8 @@ libraries:
   - 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
   - 'org.xerial:sqlite-jdbc:3.46.1.0'
   - 'com.h2database:h2:2.3.232'
+  - 'com.zaxxer:HikariCP:5.1.0'
+  - 'org.postgresql:postgresql:42.7.3'
 
 permissions:
   ultimateteams.player:

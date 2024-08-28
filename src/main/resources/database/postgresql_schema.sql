@@ -1,19 +1,17 @@
-# Create the users table if it does not exist
-CREATE TABLE IF NOT EXISTS `%user_table%`
-(
-    `id`          int         NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `uuid`        char(36)    NOT NULL UNIQUE,
-    `username`    varchar(16) NOT NULL,
-    `isBedrock`   boolean     NOT NULL,
-    `bedrockUUID` varchar(36),
-    `canChatSpy`  boolean     NOT NULL
+-- Create the users table if it does not exist
+CREATE TABLE IF NOT EXISTS user_table (
+                                          id SERIAL PRIMARY KEY,
+                                          uuid CHAR(36) NOT NULL UNIQUE,
+                                          username VARCHAR(16) NOT NULL,
+                                          isBedrock BOOLEAN NOT NULL,
+                                          bedrockUUID VARCHAR(36),
+                                          canChatSpy BOOLEAN NOT NULL
 );
 
-# Create the teams table if it does not exist
-CREATE TABLE IF NOT EXISTS `%team_table%`
-(
-    `id`   int         NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `uuid` varchar(36) NOT NULL UNIQUE,
-    `name` varchar(16) NOT NULL,
-    `data` longblob    NOT NULL
+-- Create the teams table if it does not exist
+CREATE TABLE IF NOT EXISTS team_table (
+                                          id SERIAL PRIMARY KEY,
+                                          uuid CHAR(36) NOT NULL UNIQUE,
+                                          name VARCHAR(16) NOT NULL,
+                                          data BYTEA NOT NULL
 );

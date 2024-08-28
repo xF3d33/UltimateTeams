@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.xf3d3"
-version = "2.3"
+version = "2.4-alpha"
 
 repositories {
     mavenLocal()
@@ -64,6 +64,7 @@ dependencies {
     compileOnly("com.mysql:mysql-connector-j:9.0.0")
     compileOnly("com.zaxxer:HikariCP:5.1.0")
     compileOnly("com.h2database:h2:2.3.232")
+    compileOnly("org.postgresql:postgresql:42.7.3")
 
     implementation("net.william278:annotaml:2.0.2")
     implementation("net.william278:DesertWell:2.0.4")
@@ -78,5 +79,18 @@ tasks {
     shadowJar {
         archiveFileName.set("${rootProject.name}-${rootProject.version}.jar")
         archiveClassifier.set("main")
+
+        relocate("org.bstats", "dev.xf3d3.libraries.bstats")
+        relocate("space.arim.morepaperlib", "dev.xf3d3.libraries.morepaperlib")
+        relocate("co.aikar", "dev.xf3d3.libraries.aikar")
+        relocate("com.google.gson", "dev.xf3d3.libraries.gson")
+        relocate("org.jetbrains", "dev.xf3d3.libraries.jetbrains")
+        relocate("org.intellij", "dev.xf3d3.libraries.intellij")
+        relocate("org.json", "dev.xf3d3.libraries.json")
+        relocate("dev.triumphteam", "dev.xf3d3.libraries.triumphteam")
+        relocate("dev.dejvokep", "dev.xf3d3.libraries.boostedyaml")
+        relocate("io.papermc", "dev.xf3d3.libraries.papermc")
+        relocate("net.kyori", "dev.xf3d3.libraries.kyori")
+        relocate("net.william278", "dev.xf3d3.libraries.william278")
     }
 }
