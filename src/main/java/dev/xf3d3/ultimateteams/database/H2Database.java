@@ -102,7 +102,7 @@ public class H2Database extends Database {
                 statement.setString(2, teamplayer.getLastPlayerName());
                 statement.setBoolean(3, teamplayer.isBedrockPlayer());
                 statement.setString(4, teamplayer.getBedrockUUID());
-                statement.setBoolean(5, teamplayer.getCanChatSpy());
+                statement.setBoolean(5, teamplayer.isCanChatSpy());
 
                 statement.executeUpdate();
             }
@@ -123,7 +123,7 @@ public class H2Database extends Database {
                 statement.setString(2, teamplayer.getLastPlayerName());
                 statement.setBoolean(3, teamplayer.isBedrockPlayer());
                 statement.setString(4, teamplayer.getBedrockUUID());
-                statement.setBoolean(5, teamplayer.getCanChatSpy());
+                statement.setBoolean(5, teamplayer.isCanChatSpy());
 
                 statement.setString(6, String.valueOf(teamplayer.getJavaUUID()));
 
@@ -204,6 +204,11 @@ public class H2Database extends Database {
                 statement.setBytes(3, plugin.getGson().toJson(team).getBytes(StandardCharsets.UTF_8));
 
                 statement.executeUpdate();
+
+                final ResultSet insertedRow = statement.getGeneratedKeys();
+                if (insertedRow.next()) {
+                    team.setId(insertedRow.getInt(1));
+                }
             }
         } catch (SQLException | JsonSyntaxException e) {
             plugin.log(Level.SEVERE, "Failed to create team in table", e);
@@ -215,12 +220,12 @@ public class H2Database extends Database {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     UPDATE `%team_table%`
                     SET `name` = ?, `data` = ?
-                    WHERE `name` = ?
+                    WHERE `id` = ?
                     """))) {
 
                 statement.setString(1, team.getTeamFinalName());
                 statement.setBytes(2, plugin.getGson().toJson(team).getBytes(StandardCharsets.UTF_8));
-                statement.setString(3, team.getTeamFinalName());
+                statement.setInt(3, team.getId());
 
                 statement.executeUpdate();
             }

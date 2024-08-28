@@ -14,11 +14,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 public class TeamStorageUtil {
     private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + '&' + "[0-9A-FK-OR]");
-    private static final Map<UUID, Team> teamsList = new HashMap<>();
+    private static final Map<UUID, Team> teamsList = new ConcurrentHashMap<>();
 
     private final FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
     private final UltimateTeams plugin;
@@ -50,6 +51,13 @@ public class TeamStorageUtil {
     public boolean isTeamExisting(Player player) {
         UUID uuid = player.getUniqueId();
         return teamsList.containsKey(uuid);
+    }
+
+    public void updateTeam(Team team) {
+        UUID uuid = UUID.fromString(team.getTeamOwner());
+
+        teamsList.replace(uuid, team);
+        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
     }
 
     public boolean deleteTeam(Player player) {
