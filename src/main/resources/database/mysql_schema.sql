@@ -1,19 +1,29 @@
-# Create the users table if it does not exist
-CREATE TABLE IF NOT EXISTS user_table
-(
-    id SERIAL PRIMARY KEY,
-    uuid CHAR(36) NOT NULL UNIQUE,
-    username VARCHAR(16) NOT NULL,
-    isBedrock BOOLEAN NOT NULL,
-    bedrockUUID VARCHAR(36),
-    canChatSpy BOOLEAN NOT NULL
-);
+# Set the storage engine
+SET DEFAULT_STORAGE_ENGINE = INNODB;
 
--- Create the teams table if it does not exist
-CREATE TABLE IF NOT EXISTS team_table
+# Enable foreign key constraints
+SET FOREIGN_KEY_CHECKS = 1;
+
+# Create the users table if it does not exist
+CREATE TABLE IF NOT EXISTS `%user_table%`
 (
-    id SERIAL PRIMARY KEY,
-    uuid VARCHAR(36) NOT NULL UNIQUE,
-    name VARCHAR(16) NOT NULL,
-    data BYTEA NOT NULL
-);
+    `id`          int         NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `uuid`        char(36)    NOT NULL UNIQUE,
+    `username`    varchar(16) NOT NULL,
+    `isBedrock`   boolean     NOT NULL,
+    `bedrockUUID` varchar(36),
+    `canChatSpy`  boolean     NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+# Create the teams table if it does not exist
+CREATE TABLE IF NOT EXISTS `%team_table%`
+(
+    `id`   int         NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `uuid` varchar(36) NOT NULL UNIQUE,
+    `name` varchar(16) NOT NULL,
+    `data` longblob    NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
