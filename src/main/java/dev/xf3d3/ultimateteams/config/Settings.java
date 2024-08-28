@@ -225,6 +225,10 @@ public class Settings {
     @YamlKey("general.run-auto-invite-wipe-task")
     private boolean autoInviteWipeTask = true;
 
+    @YamlComment("Do you want the plugin to send a message in console when it does the auto-wipe of the invites list? [Default value: true]")
+    @YamlKey("general.run-auto-invite-wipe-task-log")
+    private boolean autoInviteWipeTaskLog = true;
+
     @YamlComment("Do you want to see a lot of debug messages in console when most actions are performed? [Default value: false]")
     @YamlKey("general.developer-debug-mode")
     private boolean debugMode = false;
@@ -433,6 +437,10 @@ public class Settings {
 
     public boolean enableAutoInviteWipe() {
         return autoInviteWipeTask;
+    }
+
+    public boolean enableAutoInviteWipeLog() {
+        return autoInviteWipeTaskLog;
     }
 
     public boolean debugModeEnabled() {

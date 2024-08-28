@@ -219,7 +219,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             runSyncRepeating(() -> {
                 try {
                     teamInviteUtil.emptyInviteList();
-                    if (getSettings().enableAutoInviteWipe()){
+                    if (getSettings().enableAutoInviteWipeLog()){
                         sendConsole(msgFileManager.getMessagesConfig().getString("auto-invite-wipe-complete"));
                     }
                 } catch (UnsupportedOperationException e) {
