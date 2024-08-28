@@ -1,16 +1,27 @@
 package dev.xf3d3.ultimateteams.models;
 
+import dev.xf3d3.ultimateteams.UltimateTeams;
+import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
 
 @SuppressWarnings("unused")
 public class TeamPlayer {
 
-    private String javaUUID;
-    private String lastPlayerName;
-    private boolean isBedrockPlayer;
-    private String bedrockUUID;
-    private boolean canChatSpy;
+    private final UltimateTeams plugin = UltimateTeams.getPlugin();
+
+    @Getter @Setter private String javaUUID;
+    @Getter @Setter private String lastPlayerName;
+    @Getter @Setter private boolean isBedrockPlayer;
+    @Getter @Setter private String bedrockUUID;
+    @Getter @Setter private boolean canChatSpy;
 
     public TeamPlayer(@NotNull String UUID, @NotNull String playerName, @Nullable Boolean isBedrock, @Nullable String bedrockUuid, @Nullable Boolean canSpy) {
         javaUUID = UUID;
@@ -20,44 +31,26 @@ public class TeamPlayer {
         canChatSpy = canSpy != null ? canSpy : false;
     }
 
-    public String getJavaUUID() {
-        return javaUUID;
+    public final int getMaxWarps(final Player player, final int defaultMaxWarps, final boolean stackWarps) {
+        final List<Integer> warps = plugin.getUtils().getNumberPermission(player, "ultimateteams.max_warps.");
+
+        if (warps.isEmpty()) {
+            if (plugin.getSettings().debugModeEnabled())
+                plugin.log(Level.INFO, "Max Warps (default - permission empty)" + defaultMaxWarps);
+
+            return defaultMaxWarps;
+        }
+        if (stackWarps) {
+            if (plugin.getSettings().debugModeEnabled())
+                plugin.log(Level.INFO, "Max Warps (stacked)" + defaultMaxWarps + warps.stream().reduce(0, Integer::sum));
+
+            return defaultMaxWarps + warps.stream().reduce(0, Integer::sum);
+        } else {
+            if (plugin.getSettings().debugModeEnabled())
+                plugin.log(Level.INFO, "Max Warps (permission)" + warps.get(0));
+
+            return warps.get(0);
+        }
     }
 
-    public void setJavaUUID(String javaUUID) {
-        this.javaUUID = javaUUID;
-    }
-
-    public String getLastPlayerName() {
-        return lastPlayerName;
-    }
-
-    public void setLastPlayerName(String lastPlayerName) {
-        this.lastPlayerName = lastPlayerName;
-    }
-
-
-    public boolean getCanChatSpy() {
-        return canChatSpy;
-    }
-
-    public void setCanChatSpy(boolean canChatSpy) {
-        this.canChatSpy = canChatSpy;
-    }
-
-    public boolean isBedrockPlayer() {
-        return isBedrockPlayer;
-    }
-
-    public void setBedrockPlayer(boolean bedrockPlayer) {
-        isBedrockPlayer = bedrockPlayer;
-    }
-
-    public String getBedrockUUID() {
-        return bedrockUUID;
-    }
-
-    public void setBedrockUUID(String bedrockUUID) {
-        this.bedrockUUID = bedrockUUID;
-    }
 }

@@ -8,12 +8,17 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Utils {
     private final UltimateTeams plugin;
@@ -70,6 +75,32 @@ public class Utils {
                 () -> PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN),
                 () -> plugin.log(Level.WARNING, "User offline when teleporting: " + player.getName())
         );
+    }
+
+    public List<Integer> getNumberPermission(@NotNull Player player, @NotNull String permissionPrefix) {
+        final Map<String, Boolean> playerPermissions = player.getEffectivePermissions()
+                .stream()
+                .collect(Collectors.toMap(
+                        PermissionAttachmentInfo::getPermission,
+                        PermissionAttachmentInfo::getValue, (a, b) -> b
+                ));
+
+        return playerPermissions.entrySet().stream()
+                .filter(Map.Entry::getValue)
+                .filter(permission -> permission.getKey().startsWith(permissionPrefix))
+                .filter(permission -> {
+                    try {
+                        Integer.parseInt(permission.getKey().substring(permissionPrefix.length()));
+
+                    } catch (final NumberFormatException e) {
+                        return false;
+                    }
+
+                    return true;
+                })
+                .map(permission -> Integer.parseInt(permission.getKey().substring(permissionPrefix.length())))
+                .sorted(Collections.reverseOrder())
+                .toList();
     }
 
     /**
