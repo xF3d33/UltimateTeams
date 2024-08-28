@@ -1,6 +1,8 @@
 package dev.xf3d3.ultimateteams.models;
 
 import com.google.gson.annotations.Expose;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,6 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
 public class Team {
+    public @Getter @Setter int id;
+
     @Expose
     private String teamFinalOwner;
     @Expose

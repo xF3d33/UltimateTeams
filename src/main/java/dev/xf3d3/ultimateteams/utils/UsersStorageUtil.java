@@ -31,7 +31,11 @@ public class UsersStorageUtil {
     }
 
 
-    public void getPlayer(Player player){
+    public TeamPlayer getPlayer(UUID uuid) {
+        return usermap.get(uuid);
+    }
+
+    public void getPlayer(Player player) {
         UUID uuid = player.getUniqueId();
         String javaUUID = uuid.toString();
         String lastPlayerName = player.getName();
@@ -166,7 +170,7 @@ public class UsersStorageUtil {
     public boolean toggleChatSpy(Player player){
         UUID uuid = player.getUniqueId();
         TeamPlayer teamPlayer = usermap.get(uuid);
-        if (!teamPlayer.getCanChatSpy()){
+        if (!teamPlayer.isCanChatSpy()){
             teamPlayer.setCanChatSpy(true);
             plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
 
