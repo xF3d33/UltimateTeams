@@ -2,7 +2,6 @@ package dev.xf3d3.ultimateteams.utils;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamChatSpyToggledEvent;
-import dev.xf3d3.ultimateteams.database.daos.UserDao;
 import dev.xf3d3.ultimateteams.models.TeamPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -32,18 +31,22 @@ public class UsersStorageUtil {
     }
 
 
-    public void getPlayer(Player player){
+    public TeamPlayer getPlayer(UUID uuid) {
+        return usermap.get(uuid);
+    }
+
+    public void getPlayer(Player player) {
         UUID uuid = player.getUniqueId();
         String javaUUID = uuid.toString();
         String lastPlayerName = player.getName();
 
         if (!usermap.containsKey(uuid)) {
-            plugin.runAsync(() -> UserDao.getPlayer(uuid).ifPresentOrElse(
+            plugin.runAsync(() -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
                     teamPlayer -> usermap.put(UUID.fromString(teamPlayer.getJavaUUID()), teamPlayer),
                     () -> {
                         TeamPlayer teamPlayer = new TeamPlayer(javaUUID, lastPlayerName, false, null, null);
 
-                        UserDao.createPlayer(teamPlayer);
+                        plugin.getDatabase().createPlayer(teamPlayer);
                         usermap.put(uuid, teamPlayer);
                     }
             ));
@@ -53,7 +56,7 @@ public class UsersStorageUtil {
     public void getBedrockPlayer(Player player){
         UUID uuid = player.getUniqueId();
 
-        plugin.runAsync(() -> UserDao.getPlayer(uuid).ifPresentOrElse(
+        plugin.runAsync(() -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
             teamPlayer -> usermap.put(UUID.fromString(teamPlayer.getJavaUUID()), teamPlayer),
             () -> {
                 FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(uuid);
@@ -62,7 +65,7 @@ public class UsersStorageUtil {
                 String lastPlayerName = floodgatePlayer.getUsername();
                 TeamPlayer teamPlayer = new TeamPlayer(javaUUID, lastPlayerName, true, floodgatePlayer.getCorrectUniqueId().toString(), null);
 
-                UserDao.createPlayer(teamPlayer);
+                plugin.getDatabase().createPlayer(teamPlayer);
                 usermap.put(bedrockPlayerUUID, teamPlayer);
             }
         ));
@@ -102,7 +105,7 @@ public class UsersStorageUtil {
             if (teamPlayer.getLastPlayerName().equalsIgnoreCase(name)){
                 return Bukkit.getOfflinePlayer(UUID.fromString(teamPlayer.getJavaUUID()));
             } else {
-                UserDao.getPlayer(name).isPresent();
+                plugin.getDatabase().getPlayer(name).isPresent();
 
                 logger.warning(Utils.Color(messagesConfig.getString("team-player-not-found-1")
                         .replace(PLAYER_PLACEHOLDER, name)));
@@ -144,7 +147,7 @@ public class UsersStorageUtil {
         TeamPlayer teamPlayer = usermap.get(uuid);
         teamPlayer.setLastPlayerName(newPlayerName);
 
-        plugin.runAsync(() -> UserDao.updatePlayer(teamPlayer));
+        plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
         usermap.replace(uuid, teamPlayer);
     }
 
@@ -157,7 +160,7 @@ public class UsersStorageUtil {
                 String newJavaUUID = floodgatePlayer.getJavaUniqueId().toString();
                 teamPlayer.setJavaUUID(newJavaUUID);
 
-                plugin.runAsync(() -> UserDao.updatePlayer(teamPlayer));
+                plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
                 usermap.replace(uuid, teamPlayer);
             }
         }
@@ -167,9 +170,9 @@ public class UsersStorageUtil {
     public boolean toggleChatSpy(Player player){
         UUID uuid = player.getUniqueId();
         TeamPlayer teamPlayer = usermap.get(uuid);
-        if (!teamPlayer.getCanChatSpy()){
+        if (!teamPlayer.isCanChatSpy()){
             teamPlayer.setCanChatSpy(true);
-            plugin.runAsync(() -> UserDao.updatePlayer(teamPlayer));
+            plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
 
             fireClanChatSpyToggledEvent(player, teamPlayer ,true);
             if (plugin.getSettings().debugModeEnabled()){
@@ -178,7 +181,7 @@ public class UsersStorageUtil {
             return true;
         } else {
             teamPlayer.setCanChatSpy(false);
-            plugin.runAsync(() -> UserDao.updatePlayer(teamPlayer));
+            plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
 
             fireClanChatSpyToggledEvent(player, teamPlayer ,false);
             if (plugin.getSettings().debugModeEnabled()){

@@ -1,7 +1,6 @@
 package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.database.daos.TeamDao;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.command.CommandSender;
@@ -36,12 +35,12 @@ public class TeamPvpSubCommand {
                 if (team.isFriendlyFireAllowed()){
 
                     team.setFriendlyFireAllowed(false);
-                    plugin.runAsync(() -> TeamDao.updateTeam(team));
+                    plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
 
                     player.sendMessage(Utils.Color(messagesConfig.getString("disabled-friendly-fire")));
                 } else {
                     team.setFriendlyFireAllowed(true);
-                    plugin.runAsync(() -> TeamDao.updateTeam(team));
+                    plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
 
                     player.sendMessage(Utils.Color(messagesConfig.getString("enabled-friendly-fire")));
                 }

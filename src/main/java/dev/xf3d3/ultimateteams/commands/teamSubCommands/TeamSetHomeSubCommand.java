@@ -2,7 +2,6 @@ package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamHomeCreateEvent;
-import dev.xf3d3.ultimateteams.database.daos.TeamDao;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
@@ -48,7 +47,7 @@ public class TeamSetHomeSubCommand {
                     team.setTeamHomeYaw(player.getLocation().getYaw());
                     team.setTeamHomePitch(player.getLocation().getPitch());
 
-                    plugin.runAsync(() -> TeamDao.updateTeam(team));
+                    plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
 
                     player.sendMessage(Utils.Color(messagesConfig.getString("successfully-set-team-home")));
                 }

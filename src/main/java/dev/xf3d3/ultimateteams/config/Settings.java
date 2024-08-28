@@ -7,6 +7,8 @@ import net.william278.annotaml.YamlKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Plugin settings, read from config.yml
@@ -27,7 +29,7 @@ public class Settings {
     private boolean useGlobalGui = true;
 
     // Database settings
-    @YamlComment("Type of database to use (MYSQL, SQLITE). MYSQL is preferred over SQLITE.")
+    @YamlComment("Type of database to use (SQLITE, H2, MYSQL, MARIADB, or POSTGRESQL). MARIADB is preferred over MYSQL. H2 is preferred over SQLITE")
     @YamlKey("database.type")
     private Database.Type databaseType = Database.Type.SQLITE;
 
@@ -50,7 +52,7 @@ public class Settings {
     @YamlKey("database.mysql.parameters")
     private String mySqlConnectionParameters = "?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8";
 
-    @YamlComment("MYSQL database Hikari connection pool properties. Don't modify this unless you know what you're doing!")
+    @YamlComment("MYSQL / MARIADB / POSTGRESQL database connection pool properties. Don't modify this unless you know what you're doing!")
     @YamlKey("database.mysql.connection_pool.size")
     private int mySqlConnectionPoolSize = 12;
 
@@ -66,12 +68,12 @@ public class Settings {
     @YamlKey("database.mysql.connection_pool.timeout")
     private long mySqlConnectionPoolTimeout = 20000;
 
-    // @YamlComment("Names of tables to use on your database. Don't modify this unless you know what you're doing!")
-    // @YamlKey("database.table_names")
-    // private Map<String, String> tableNames = Map.of(
-    //     Database.Table.TEAM_DATA.name().toLowerCase(), Database.Table.TEAM_DATA.getDefaultName(),
-    //     Database.Table.USER_DATA.name().toLowerCase(), Database.Table.USER_DATA.getDefaultName()
-    // );
+    @YamlComment("Names of tables to use on your database. Don't modify this unless you know what you're doing!")
+    @YamlKey("database.table_names")
+    private Map<String, String> tableNames = Map.of(
+        Database.Table.TEAM_DATA.name().toLowerCase(), Database.Table.TEAM_DATA.getDefaultName(),
+        Database.Table.USER_DATA.name().toLowerCase(), Database.Table.USER_DATA.getDefaultName()
+    );
 
     @YamlComment("use HuskHomes to teleport players instead of built-in teleport handler [Default value: true]")
     @YamlKey("use-huskhomes")
@@ -137,9 +139,13 @@ public class Settings {
     @YamlKey("team-warp.tp-delay")
     private int teamWarpTpDelay = 3;
 
-    @YamlComment("Decide how many warps a team can have")
+    @YamlComment("Decide how many warps a team owner can set.\n Can be overwritten by ultimateteams.max_warps.<number>")
     @YamlKey("team-warp.limit")
     private int teamWarpLimit = 2;
+
+    @YamlComment("If true, the default warp limit will be stacked with permission limit.\n If a player has ultimateteams.maxwarps.3 and the default limit is 2, he will be able to set 5 warps.")
+    @YamlKey("team-warp.limit")
+    private boolean stackWarpLimitWithPermission = false;
 
     @YamlComment("Enable the cool down on the '/team warp <name>' command to prevent tp spamming (RECOMMENDED). [Default value: true]")
     @YamlKey("team-warp.cool-down.enabled")
@@ -223,6 +229,10 @@ public class Settings {
     @YamlKey("general.run-auto-invite-wipe-task")
     private boolean autoInviteWipeTask = true;
 
+    @YamlComment("Do you want the plugin to send a message in console when it does the auto-wipe of the invites list? [Default value: true]")
+    @YamlKey("general.run-auto-invite-wipe-task-log")
+    private boolean autoInviteWipeTaskLog = true;
+
     @YamlComment("Do you want to see a lot of debug messages in console when most actions are performed? [Default value: false]")
     @YamlKey("general.developer-debug-mode")
     private boolean debugMode = false;
@@ -285,6 +295,15 @@ public class Settings {
 
     public long getMySqlConnectionPoolTimeout() {
         return mySqlConnectionPoolTimeout;
+    }
+
+    public Map<String, String> getTableNames() {
+        return tableNames;
+    }
+
+    @NotNull
+    public String getTableName(@NotNull Database.Table table) {
+        return Optional.ofNullable(getTableNames().get(table.name().toLowerCase())).orElse(table.getDefaultName());
     }
 
     public boolean HuskHomesHook() {
@@ -356,6 +375,10 @@ public class Settings {
         return teamWarpLimit;
     }
 
+    public boolean getTeamWarpStackEnabled() {
+        return stackWarpLimitWithPermission;
+    }
+
     public boolean teamWarpCooldownEnabled() {
         return teamWarpCooldownEnabled;
     }
@@ -422,6 +445,10 @@ public class Settings {
 
     public boolean enableAutoInviteWipe() {
         return autoInviteWipeTask;
+    }
+
+    public boolean enableAutoInviteWipeLog() {
+        return autoInviteWipeTaskLog;
     }
 
     public boolean debugModeEnabled() {

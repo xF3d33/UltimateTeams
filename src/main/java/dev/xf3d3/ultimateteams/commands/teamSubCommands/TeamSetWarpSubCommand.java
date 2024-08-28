@@ -1,8 +1,8 @@
 package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.database.daos.TeamDao;
 import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.models.TeamPlayer;
 import dev.xf3d3.ultimateteams.models.TeamWarp;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.command.CommandSender;
@@ -38,37 +38,36 @@ public class TeamSetWarpSubCommand {
             return;
         }
 
-        if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
-            final Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
-            final Collection<TeamWarp> warps = team.getTeamWarps();
 
-            if (warps != null && warps.size() >= plugin.getSettings().getTeamWarpLimit()) {
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-limit-reached")));
-                return;
-            }
+        final Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
+        final TeamPlayer teamPlayer = plugin.getUsersStorageUtil().getPlayer(player.getUniqueId());
 
+        final Collection<TeamWarp> warps = team.getTeamWarps();
 
-            if (team.getTeamWarp(name) != null) {
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-name-used")));
-                return;
-            }
-
-            final TeamWarp warp = new TeamWarp(
-                    name,
-                    Objects.requireNonNull(player.getLocation().getWorld()).getName(),
-                    player.getLocation().getX(),
-                    player.getLocation().getY(),
-                    player.getLocation().getZ(),
-                    player.getLocation().getYaw(),
-                    player.getLocation().getPitch()
-            );
-
-            team.addTeamWarp(warp);
-            plugin.runAsync(() -> TeamDao.updateTeam(team));
-
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-successful").replaceAll("%WARP_NAME%", warp.getName())));
-        } else {
-            player.sendMessage(Utils.Color(messagesConfig.getString("failed-not-in-team")));
+        if (warps != null && warps.size() >= teamPlayer.getMaxWarps(player, plugin.getSettings().getTeamWarpLimit(), plugin.getSettings().getTeamWarpStackEnabled())) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-limit-reached")));
+            return;
         }
+
+
+        if (team.getTeamWarp(name) != null) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-name-used")));
+            return;
+        }
+
+        final TeamWarp warp = new TeamWarp(
+                name,
+                Objects.requireNonNull(player.getLocation().getWorld()).getName(),
+                player.getLocation().getX(),
+                player.getLocation().getY(),
+                player.getLocation().getZ(),
+                player.getLocation().getYaw(),
+                player.getLocation().getPitch()
+        );
+
+        team.addTeamWarp(warp);
+        plugin.getTeamStorageUtil().updateTeam(team);
+
+        player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-successful").replaceAll("%WARP_NAME%", warp.getName())));
     }
 }

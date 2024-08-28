@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.xf3d3"
-version = "2.2"
+version = "2.3"
 
 repositories {
     mavenLocal()
@@ -37,6 +37,12 @@ dependencies {
     // Kotlin
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
 
+    compileOnly("org.projectlombok:lombok:1.18.34")
+    annotationProcessor("org.projectlombok:lombok:1.18.34")
+
+    testCompileOnly("org.projectlombok:lombok:1.18.34")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.34")
+
     // Folia and Spigot
     compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.3")
@@ -54,8 +60,10 @@ dependencies {
     implementation("dev.dejvokep:boosted-yaml:1.3.1")
 
     // Database
-    implementation("com.j256.ormlite:ormlite-jdbc:6.1")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.0.3")
+    compileOnly("org.xerial:sqlite-jdbc:3.46.1.0")
+    compileOnly("com.mysql:mysql-connector-j:9.0.0")
+    compileOnly("com.zaxxer:HikariCP:5.1.0")
+    compileOnly("com.h2database:h2:2.3.232")
 
     implementation("net.william278:annotaml:2.0.2")
     implementation("net.william278:DesertWell:2.0.4")

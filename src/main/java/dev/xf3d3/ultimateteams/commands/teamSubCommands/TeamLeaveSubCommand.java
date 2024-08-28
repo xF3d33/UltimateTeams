@@ -1,7 +1,6 @@
 package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.database.daos.TeamDao;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
@@ -34,7 +33,7 @@ public class TeamLeaveSubCommand {
             Team targetTeam = plugin.getTeamStorageUtil().findTeamByPlayer(player);
             if (targetTeam != null) {
                 if (targetTeam.removeTeamMember(player.getUniqueId().toString())) {
-                    plugin.runAsync(() -> TeamDao.updateTeam(targetTeam));
+                    plugin.runAsync(() -> plugin.getDatabase().updateTeam(targetTeam));
 
                     String leaveMessage = Utils.Color(messagesConfig.getString("team-leave-successful")).replace(Team_PLACEHOLDER, targetTeam.getTeamFinalName());
                     player.sendMessage(leaveMessage);
