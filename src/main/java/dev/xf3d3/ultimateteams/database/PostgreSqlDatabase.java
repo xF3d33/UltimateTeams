@@ -112,8 +112,8 @@ public class PostgreSqlDatabase extends Database {
         final List<Team> teams = new ArrayList<>();
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    SELECT `id`, `data`
-                    FROM `%team_table%`
+                    SELECT id, data
+                    FROM \"%team_table%\"
                     """))) {
                 final ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
@@ -136,7 +136,7 @@ public class PostgreSqlDatabase extends Database {
     public void createPlayer(@NotNull TeamPlayer teamplayer) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    INSERT INTO `%user_table%` (`uuid`, `username`, `isBedrock`, `bedrockUUID`, `canChatSpy`)
+                    INSERT INTO \"%user_table%\" (uuid, username, isBedrock, bedrockUUID, canChatSpy)
                     VALUES (?, ?, ?, ?, ?)
                     """))) {
 
@@ -156,9 +156,9 @@ public class PostgreSqlDatabase extends Database {
     public void updatePlayer(@NotNull TeamPlayer teamplayer) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    UPDATE `%user_table%`
-                    SET `uuid` = ?, `username` = ?, `isBedrock` = ?, `bedrockUUID` = ?, `canChatSpy` = ?
-                    WHERE `uuid` = ?
+                    UPDATE \"%user_table%\"
+                    SET uuid = ?, username = ?, isBedrock = ?, bedrockUUID = ?, canChatSpy = ?
+                    WHERE uuid = ?
                     """))) {
 
                 statement.setString(1, String.valueOf(teamplayer.getJavaUUID()));
@@ -180,8 +180,8 @@ public class PostgreSqlDatabase extends Database {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     SELECT *
-                    FROM `%user_table%`
-                    WHERE `uuid` = ?
+                    FROM \"%user_table%\"
+                    WHERE uuid = ?
                     """))) {
                 statement.setString(1, String.valueOf(uuid));
 
@@ -209,8 +209,8 @@ public class PostgreSqlDatabase extends Database {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     SELECT *
-                    FROM `%user_table%`
-                    WHERE `username` = ?
+                    FROM \"%user_table%\"
+                    WHERE username = ?
                     """))) {
                 statement.setString(1, name);
 
@@ -237,7 +237,7 @@ public class PostgreSqlDatabase extends Database {
     public void createTeam(@NotNull Team team, @NotNull UUID uuid) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    INSERT INTO `%team_table%` (`uuid`, `name`, `data`)
+                    INSERT INTO \"%team_table%\" (uuid, name, data)
                     VALUES (?, ?, ?)
                     """))) {
 
@@ -260,9 +260,9 @@ public class PostgreSqlDatabase extends Database {
     public void updateTeam(@NotNull Team team) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    UPDATE `%team_table%`
-                    SET `name` = ?, `data` = ?
-                    WHERE `id` = ?
+                    UPDATE \"%team_table%\"
+                    SET name = ?, data = ?
+                    WHERE id = ?
                     """))) {
 
                 statement.setString(1, team.getTeamFinalName());
@@ -279,8 +279,8 @@ public class PostgreSqlDatabase extends Database {
     public void deleteTeam(@NotNull UUID uuid) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    DELETE FROM `%team_table%`
-                    WHERE `uuid` = ?
+                    DELETE FROM \"%team_table%\"
+                    WHERE uuid = ?
                     """))) {
 
                 statement.setString(1, String.valueOf(uuid));
