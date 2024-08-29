@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
 import java.util.logging.Level;
 
 public class HuskHomesAPIHook {
@@ -29,7 +28,7 @@ public class HuskHomesAPIHook {
 
         Position position = Position.at(
                 location.getX(), location.getY(), location.getZ(),
-                World.from(location.getWorld().getName(), UUID.randomUUID()), ""
+                World.from(location.getWorld().getName(), location.getWorld().getUID()), "server"
         );
 
         try {

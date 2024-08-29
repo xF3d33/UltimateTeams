@@ -79,7 +79,7 @@ public class Settings {
     @YamlKey("use-huskhomes")
     private boolean useHuskhomes = false;
 
-    @YamlComment("Hook into floodgate to handle bedrock players properly [Default value: true]. Needs FloodGate")
+    @YamlComment("Hook into floodgate to handle bedrock players properly [Default value: false]. Needs FloodGate")
     @YamlKey("floodgate-hook")
     private boolean floodgateHook = false;
 
