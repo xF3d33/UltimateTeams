@@ -68,7 +68,7 @@ dependencies {
 
     implementation("net.william278:annotaml:2.0.2")
     implementation("net.william278:DesertWell:2.0.4")
-    compileOnly("net.william278:huskhomes:4.4")
+    compileOnly("net.william278.huskhomes:huskhomes-bukkit:4.7")
 }
 
 tasks {
@@ -91,6 +91,7 @@ tasks {
         relocate("dev.dejvokep", "dev.xf3d3.libraries.boostedyaml")
         relocate("io.papermc", "dev.xf3d3.libraries.papermc")
         relocate("net.kyori", "dev.xf3d3.libraries.kyori")
-        relocate("net.william278", "dev.xf3d3.libraries.william278")
+        relocate("net.william278.desertwell", "dev.xf3d3.libraries.william278.desertwell")
+        relocate("net.william278.annotaml", "dev.xf3d3.libraries.william278.annotaml")
     }
 }
