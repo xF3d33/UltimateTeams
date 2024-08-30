@@ -53,6 +53,12 @@ public class TeamStorageUtil {
         return teamsList.containsKey(uuid);
     }
 
+    public void updateTeamLocal(Team team) {
+        UUID uuid = UUID.fromString(team.getTeamOwner());
+
+        teamsList.replace(uuid, team);
+    }
+
     public void updateTeam(Team team) {
         UUID uuid = UUID.fromString(team.getTeamOwner());
 

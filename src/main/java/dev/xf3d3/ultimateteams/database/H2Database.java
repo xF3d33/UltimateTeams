@@ -79,7 +79,7 @@ public class H2Database extends Database {
                     final Team team = plugin.getGson().fromJson(data, Team.class);
 
                     if (team != null) {
-                        //team.setId(resultSet.getInt("id"));
+                        team.setId(resultSet.getInt("id"));
                         teams.add(team);
                     }
                 }
@@ -197,7 +197,7 @@ public class H2Database extends Database {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     INSERT INTO `%team_table%` (`uuid`, `name`, `data`)
                     VALUES (?, ?, ?)
-                    """))) {
+                    """), Statement.RETURN_GENERATED_KEYS)) {
 
                 statement.setString(1, String.valueOf(uuid));
                 statement.setString(2, team.getTeamFinalName());
@@ -208,6 +208,7 @@ public class H2Database extends Database {
                 final ResultSet insertedRow = statement.getGeneratedKeys();
                 if (insertedRow.next()) {
                     team.setId(insertedRow.getInt(1));
+                    plugin.getTeamStorageUtil().updateTeamLocal(team);
                 }
             }
         } catch (SQLException | JsonSyntaxException e) {

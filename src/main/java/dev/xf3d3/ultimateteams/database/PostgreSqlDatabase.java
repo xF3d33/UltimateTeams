@@ -113,7 +113,7 @@ public class PostgreSqlDatabase extends Database {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     SELECT id, data
-                    FROM \"%team_table%\"
+                    FROM %team_table%;
                     """))) {
                 final ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
@@ -121,7 +121,7 @@ public class PostgreSqlDatabase extends Database {
                     final Team team = plugin.getGson().fromJson(data, Team.class);
 
                     if (team != null) {
-                        //team.setId(resultSet.getInt("id"));
+                        team.setId(resultSet.getInt("id"));
                         teams.add(team);
                     }
                 }
@@ -136,8 +136,8 @@ public class PostgreSqlDatabase extends Database {
     public void createPlayer(@NotNull TeamPlayer teamplayer) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    INSERT INTO \"%user_table%\" (uuid, username, isBedrock, bedrockUUID, canChatSpy)
-                    VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO %user_table% (uuid, username, isBedrock, bedrockUUID, canChatSpy)
+                    VALUES (?, ?, ?, ?, ?);
                     """))) {
 
                 statement.setString(1, String.valueOf(teamplayer.getJavaUUID()));
@@ -156,9 +156,9 @@ public class PostgreSqlDatabase extends Database {
     public void updatePlayer(@NotNull TeamPlayer teamplayer) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    UPDATE \"%user_table%\"
+                    UPDATE %user_table%
                     SET uuid = ?, username = ?, isBedrock = ?, bedrockUUID = ?, canChatSpy = ?
-                    WHERE uuid = ?
+                    WHERE uuid = ?;
                     """))) {
 
                 statement.setString(1, String.valueOf(teamplayer.getJavaUUID()));
@@ -180,8 +180,8 @@ public class PostgreSqlDatabase extends Database {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     SELECT *
-                    FROM \"%user_table%\"
-                    WHERE uuid = ?
+                    FROM %user_table%
+                    WHERE uuid = ?;
                     """))) {
                 statement.setString(1, String.valueOf(uuid));
 
@@ -209,8 +209,8 @@ public class PostgreSqlDatabase extends Database {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     SELECT *
-                    FROM \"%user_table%\"
-                    WHERE username = ?
+                    FROM %user_table%
+                    WHERE username = ?;
                     """))) {
                 statement.setString(1, name);
 
@@ -237,9 +237,9 @@ public class PostgreSqlDatabase extends Database {
     public void createTeam(@NotNull Team team, @NotNull UUID uuid) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    INSERT INTO \"%team_table%\" (uuid, name, data)
-                    VALUES (?, ?, ?)
-                    """))) {
+                    INSERT INTO %team_table% (uuid, name, data)
+                    VALUES (?, ?, ?);
+                    """), Statement.RETURN_GENERATED_KEYS)) {
 
                 statement.setString(1, String.valueOf(uuid));
                 statement.setString(2, team.getTeamFinalName());
@@ -248,9 +248,15 @@ public class PostgreSqlDatabase extends Database {
                 statement.executeUpdate();
 
                 final ResultSet insertedRow = statement.getGeneratedKeys();
+                plugin.log(Level.WARNING, "test1");
                 if (insertedRow.next()) {
                     team.setId(insertedRow.getInt(1));
+                    plugin.getTeamStorageUtil().updateTeamLocal(team);
+
+                    plugin.log(Level.WARNING, String.valueOf(team.id));
+                    plugin.log(Level.WARNING, "test2");
                 }
+                plugin.log(Level.WARNING, "test3");
             }
         } catch (SQLException | JsonSyntaxException e) {
             plugin.log(Level.SEVERE, "Failed to create team in table", e);
@@ -260,9 +266,9 @@ public class PostgreSqlDatabase extends Database {
     public void updateTeam(@NotNull Team team) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    UPDATE \"%team_table%\"
+                    UPDATE %team_table%
                     SET name = ?, data = ?
-                    WHERE id = ?
+                    WHERE id = ?;
                     """))) {
 
                 statement.setString(1, team.getTeamFinalName());
@@ -279,8 +285,8 @@ public class PostgreSqlDatabase extends Database {
     public void deleteTeam(@NotNull UUID uuid) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    DELETE FROM \"%team_table%\"
-                    WHERE uuid = ?
+                    DELETE FROM %team_table%
+                    WHERE uuid = ?;
                     """))) {
 
                 statement.setString(1, String.valueOf(uuid));
