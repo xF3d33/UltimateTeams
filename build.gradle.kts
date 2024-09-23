@@ -45,18 +45,18 @@ dependencies {
 
     // Folia and Spigot
     compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.3")
+    compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("org.geysermc.floodgate:api:2.2.0-SNAPSHOT")
     implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("dev.triumphteam:triumph-gui:3.1.5")
+    implementation("dev.triumphteam:triumph-gui:3.1.10")
     
     // PaperLib
     implementation("io.papermc:paperlib:1.0.8")
-    implementation("space.arim.morepaperlib:morepaperlib:0.4.2")
+    implementation("space.arim.morepaperlib:morepaperlib:0.4.3")
 
     // Libs
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.google.code.gson:gson:2.11.0")
     implementation("dev.dejvokep:boosted-yaml:1.3.1")
 
     // Database

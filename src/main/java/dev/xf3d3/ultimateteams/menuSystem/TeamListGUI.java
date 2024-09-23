@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import static org.bukkit.Bukkit.getServer;
 
@@ -33,7 +34,11 @@ public class TeamListGUI {
     }
 
     public void open(Player player) {
-        createGui(player);
+        try {
+            createGui(player);
+        } catch (Exception e) {
+            plugin.log(Level.SEVERE, "Error while creating GUI", e);
+        }
     }
 
     public void handleMenu(InventoryClickEvent event) {
@@ -60,98 +65,95 @@ public class TeamListGUI {
     }
 
     public void createGui(Player player) {
-        plugin.runAsync(() -> {
 
-            PaginatedGui teams_gui = Gui.paginated()
-                    .title(Component.text(Utils.Color(plugin.getTeamsGui().getTeamsListGuiName())))
-                    .rows(6)
-                    .pageSize(45)
-                    .create();
+        PaginatedGui teams_gui = Gui.paginated()
+                .title(Component.text(Utils.Color(plugin.getTeamsGui().getTeamsListGuiName())))
+                .rows(6)
+                .pageSize(45)
+                .create();
 
-            // Cancel click event by default
-            teams_gui.setDefaultClickAction(event -> event.setCancelled(true));
+        // Cancel click event by default
+        teams_gui.setDefaultClickAction(event -> event.setCancelled(true));
 
-            // Previous item
-            teams_gui.setItem(48, ItemBuilder.from(Material.STONE_BUTTON).setName(Utils.Color(plugin.getTeamsGui().getPreviousPageName())).asGuiItem(event -> teams_gui.previous()));
-            // Next item
-            teams_gui.setItem(50, ItemBuilder.from(Material.STONE_BUTTON).setName(Utils.Color(plugin.getTeamsGui().getNextPageName())).asGuiItem(event -> teams_gui.next()));
-            // Close item
-            teams_gui.setItem(49, ItemBuilder.from(Material.BARRIER).setName(Utils.Color(plugin.getTeamsGui().getCloseGuiName())).asGuiItem(event -> teams_gui.close(event.getWhoClicked())));
+        // Previous item
+        teams_gui.setItem(48, ItemBuilder.from(Material.STONE_BUTTON).setName(Utils.Color(plugin.getTeamsGui().getPreviousPageName())).asGuiItem(event -> teams_gui.previous()));
+        // Next item
+        teams_gui.setItem(50, ItemBuilder.from(Material.STONE_BUTTON).setName(Utils.Color(plugin.getTeamsGui().getNextPageName())).asGuiItem(event -> teams_gui.next()));
+        // Close item
+        teams_gui.setItem(49, ItemBuilder.from(Material.BARRIER).setName(Utils.Color(plugin.getTeamsGui().getCloseGuiName())).asGuiItem(event -> teams_gui.close(event.getWhoClicked())));
 
-            //Pagination loop template
-            for (Team team : plugin.getTeamStorageUtil().getTeamsList()) {
-                String teamOwnerUUIDString = team.getTeamOwner();
-                UUID ownerUUID = UUID.fromString(teamOwnerUUIDString);
-                OfflinePlayer teamOwnerPlayer = Bukkit.getOfflinePlayer(ownerUUID);
+        //Pagination loop template
+        for (Team team : plugin.getTeamStorageUtil().getTeamsList()) {
+            String teamOwnerUUIDString = team.getTeamOwner();
+            UUID ownerUUID = UUID.fromString(teamOwnerUUIDString);
+            OfflinePlayer teamOwnerPlayer = Bukkit.getOfflinePlayer(ownerUUID);
 
-                SkullBuilder ownerHead = ItemBuilder.skull()
-                        .owner(getServer().getOfflinePlayer(ownerUUID))
-                        .name(Component.text(Utils.Color(team.getTeamFinalName())));
+            SkullBuilder ownerHead = ItemBuilder.skull()
+                    .owner(getServer().getOfflinePlayer(ownerUUID));
 
-                ArrayList<String> teamMembersList = team.getTeamMembers();
-                ArrayList<String> teamAlliesList = team.getTeamAllies();
-                ArrayList<String> teamEnemiesList = team.getTeamEnemies();
+            ArrayList<String> teamMembersList = team.getTeamMembers();
+            ArrayList<String> teamAlliesList = team.getTeamAllies();
+            ArrayList<String> teamEnemiesList = team.getTeamEnemies();
 
-                ArrayList<String> lore = new ArrayList<>();
-                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("header")));
-                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("prefix") + team.getTeamPrefix()));
-                if (teamOwnerPlayer.isOnline()) {
-                    lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("owner-online") + teamOwnerPlayer.getName()));
-                } else {
-                    lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("owner-offline") + teamOwnerPlayer.getName()));
-                }
-
-                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("members")));
-                for (String string : teamMembersList) {
-                    UUID memberUUID = UUID.fromString(string);
-                    OfflinePlayer member = Bukkit.getOfflinePlayer(memberUUID);
-                    String offlineMemberName = member.getName();
-                    lore.add(Utils.Color(" &7- &3" + offlineMemberName));
-                    if (teamMembersList.size() >= 10){
-                        int membersSize = teamMembersList.size() - 10;
-                        lore.add(Utils.Color("&3&o+ &r&6&l" + membersSize + "&r &3&omore!"));
-                        break;
-                    }
-                }
-
-                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("allies")));
-                for (String string : teamAlliesList) {
-                    UUID allyUUID = UUID.fromString(string);
-                    OfflinePlayer ally = Bukkit.getOfflinePlayer(allyUUID);
-                    String offlineAllyName = ally.getName();
-                    lore.add(Utils.Color(" &7- &3" + offlineAllyName));
-                    if (teamAlliesList.size() >= 10){
-                        int allySize = teamAlliesList.size() - 10;
-                        lore.add(Utils.Color("&3&o+ &r&6&l" + allySize + "&r &3&omore!"));
-                        break;
-                    }
-                }
-
-                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("enemies")));
-                for (String string : teamEnemiesList) {
-                    UUID enemyUUID = UUID.fromString(string);
-                    OfflinePlayer enemy = Bukkit.getOfflinePlayer(enemyUUID);
-                    String offlineEnemyName = enemy.getName();
-                    lore.add(Utils.Color(" &7- &3" + offlineEnemyName));
-                    if (teamEnemiesList.size() >= 10){
-                        int enemySize = teamEnemiesList.size() - 10;
-                        lore.add(Utils.Color("&3&o+ &r&6&l" + enemySize + "&r &3&omore!"));
-                        break;
-                    }
-                }
-
-                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("footer-1")));
-                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("action")));
-                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("footer-2")));
-
-                ownerHead.setLore(lore);
-                ownerHead.setNbt("uuid", team.getTeamOwner());
-                ownerHead.asGuiItem(event -> teams_gui.close(event.getWhoClicked()));
-
-                teams_gui.addItem(ownerHead.asGuiItem(this::handleMenu));
-
-                plugin.runSync(() -> teams_gui.open(player));
+            ArrayList<String> lore = new ArrayList<>();
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("header")));
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("prefix") + team.getTeamPrefix()));
+            if (teamOwnerPlayer.isOnline()) {
+                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("owner-online") + teamOwnerPlayer.getName()));
+            } else {
+                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("owner-offline") + teamOwnerPlayer.getName()));
             }
-        });
+
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("members")));
+            for (String string : teamMembersList) {
+                UUID memberUUID = UUID.fromString(string);
+                OfflinePlayer member = Bukkit.getOfflinePlayer(memberUUID);
+                String offlineMemberName = member.getName();
+                lore.add(Utils.Color(" &7- &3" + offlineMemberName));
+                if (teamMembersList.size() >= 10){
+                    int membersSize = teamMembersList.size() - 10;
+                    lore.add(Utils.Color("&3&o+ &r&6&l" + membersSize + "&r &3&omore!"));
+                    break;
+                }
+            }
+
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("allies")));
+            for (String string : teamAlliesList) {
+                UUID allyUUID = UUID.fromString(string);
+                OfflinePlayer ally = Bukkit.getOfflinePlayer(allyUUID);
+                String offlineAllyName = ally.getName();
+                lore.add(Utils.Color(" &7- &3" + offlineAllyName));
+                if (teamAlliesList.size() >= 10){
+                    int allySize = teamAlliesList.size() - 10;
+                    lore.add(Utils.Color("&3&o+ &r&6&l" + allySize + "&r &3&omore!"));
+                    break;
+                }
+            }
+
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("enemies")));
+            for (String string : teamEnemiesList) {
+                UUID enemyUUID = UUID.fromString(string);
+                OfflinePlayer enemy = Bukkit.getOfflinePlayer(enemyUUID);
+                String offlineEnemyName = enemy.getName();
+                lore.add(Utils.Color(" &7- &3" + offlineEnemyName));
+                if (teamEnemiesList.size() >= 10){
+                    int enemySize = teamEnemiesList.size() - 10;
+                    lore.add(Utils.Color("&3&o+ &r&6&l" + enemySize + "&r &3&omore!"));
+                    break;
+                }
+            }
+
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("footer-1")));
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("action")));
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("footer-2")));
+
+            ownerHead.setLore(lore);
+            ownerHead.setNbt("uuid", team.getTeamOwner());
+            ownerHead.asGuiItem(event -> teams_gui.close(event.getWhoClicked()));
+
+            teams_gui.addItem(ownerHead.asGuiItem(this::handleMenu));
+
+            teams_gui.open(player);
+        }
     }
 }
