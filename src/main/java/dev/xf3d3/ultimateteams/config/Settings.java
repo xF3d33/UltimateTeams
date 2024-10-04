@@ -83,6 +83,10 @@ public class Settings {
     @YamlKey("floodgate-hook")
     private boolean floodgateHook = false;
 
+    @YamlComment("When the placeholder would be blank, the text below will be shown instead (you can use color codes)")
+    @YamlKey("placeholder.not-in-a-team")
+    private String notInTeamPlaceholder = "Not in a team";
+
     // Team Tags
     @YamlComment("Set the minimum length of the team prefix and name. [Default value: 3]")
     @YamlKey("team-tags.min-character-limit")
@@ -304,6 +308,10 @@ public class Settings {
     @NotNull
     public String getTableName(@NotNull Database.Table table) {
         return Optional.ofNullable(getTableNames().get(table.name().toLowerCase())).orElse(table.getDefaultName());
+    }
+
+    public String getNotInTeamPlaceholder() {
+        return notInTeamPlaceholder;
     }
 
     public boolean HuskHomesHook() {

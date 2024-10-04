@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="efb41445-9941-437c-9287-f7e8e68db5d7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/menuSystem/TeamListGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/menuSystem/TeamListGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/config/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/config/Settings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/hooks/PapiExpansion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/hooks/PapiExpansion.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -170,6 +170,9 @@
       <workItem from="1725323357616" duration="37000" />
       <workItem from="1725470342690" duration="761000" />
       <workItem from="1725672338479" duration="1069000" />
+      <workItem from="1727118321607" duration="165000" />
+      <workItem from="1727210251041" duration="197000" />
+      <workItem from="1728060166978" duration="359000" />
     </task>
     <servers />
   </component>

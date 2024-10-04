@@ -46,7 +46,7 @@ public class PapiExpansion extends PlaceholderExpansion {
             } else if (teamMember != null){
                 return Utils.Color(teamMember.getTeamFinalName());
             } else {
-                return "";
+                return Utils.Color(plugin.getSettings().getNotInTeamPlaceholder());
             }
         }
 
@@ -54,7 +54,7 @@ public class PapiExpansion extends PlaceholderExpansion {
             String openBracket = plugin.getSettings().getPrefixBracketsOpening();
             String closeBracket = plugin.getSettings().getPrefixBracketsClosing();
 
-            if (teamOwner != null){
+            if (teamOwner != null) {
                 if (plugin.getSettings().addPrefixBrackets()) {
                     if (plugin.getSettings().addSpaceAfterPrefix()) {
                         return Utils.Color(openBracket + teamOwner.getTeamPrefix() + closeBracket);
@@ -83,7 +83,7 @@ public class PapiExpansion extends PlaceholderExpansion {
                     }
                 }
             } else {
-                return "";
+                return Utils.Color(plugin.getSettings().getNotInTeamPlaceholder());
             }
         }
 
@@ -93,7 +93,7 @@ public class PapiExpansion extends PlaceholderExpansion {
             }else if (teamMember != null) {
                 return String.valueOf(teamMember.isFriendlyFireAllowed());
             }else {
-                return "";
+                return Utils.Color(plugin.getSettings().getNotInTeamPlaceholder());
             }
         }
 
@@ -103,7 +103,7 @@ public class PapiExpansion extends PlaceholderExpansion {
             } else if (teamMember != null) {
                 return String.valueOf(plugin.getTeamStorageUtil().isHomeSet(teamMember));
             } else {
-                return "";
+                return Utils.Color(plugin.getSettings().getNotInTeamPlaceholder());
             }
         }
 
@@ -113,7 +113,7 @@ public class PapiExpansion extends PlaceholderExpansion {
             } else if (teamMember != null){
                 return String.valueOf(teamMember.getTeamMembers().size());
             } else {
-                return "";
+                return Utils.Color(plugin.getSettings().getNotInTeamPlaceholder());
             }
         }
 
@@ -124,7 +124,7 @@ public class PapiExpansion extends PlaceholderExpansion {
             } else if (teamMember != null) {
                 return String.valueOf(teamMember.getTeamAllies().size());
             } else {
-                return "";
+                return Utils.Color(plugin.getSettings().getNotInTeamPlaceholder());
             }
         }
 
@@ -134,7 +134,7 @@ public class PapiExpansion extends PlaceholderExpansion {
             } else if (teamMember != null) {
                 return String.valueOf(teamMember.getTeamEnemies().size());
             } else {
-                return "";
+                return Utils.Color(plugin.getSettings().getNotInTeamPlaceholder());
             }
         }
 
