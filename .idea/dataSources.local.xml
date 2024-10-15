@@ -36,5 +36,11 @@
         </introspection-scope>
       </schema-mapping>
     </data-source>
+    <data-source name="@136.243.33.118" uuid="f0b4566e-13c4-47a8-a733-cf6d1f394046">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MARIADB" exact-version="11.1.3" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>fede</user-name>
+      <schema-mapping />
+    </data-source>
   </component>
 </project>

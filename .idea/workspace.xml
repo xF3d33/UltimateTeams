@@ -5,9 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="efb41445-9941-437c-9287-f7e8e68db5d7" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/config/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/config/Settings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/hooks/PapiExpansion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/hooks/PapiExpansion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/TeamAllyChatCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamAllyChatCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +89,8 @@
   &quot;keyToStringList&quot;: {
     &quot;DatabaseDriversLRU&quot;: [
       &quot;h2&quot;,
-      &quot;postgresql&quot;
+      &quot;postgresql&quot;,
+      &quot;mariadb&quot;
     ],
     &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/Change SQL Dialect&quot;: [
       &quot;PostgreSQL&quot;
@@ -172,7 +176,11 @@
       <workItem from="1725672338479" duration="1069000" />
       <workItem from="1727118321607" duration="165000" />
       <workItem from="1727210251041" duration="197000" />
-      <workItem from="1728060166978" duration="359000" />
+      <workItem from="1728060166978" duration="1336000" />
+      <workItem from="1728073892720" duration="246000" />
+      <workItem from="1728312306191" duration="3455000" />
+      <workItem from="1729018084731" duration="660000" />
+      <workItem from="1729019254662" duration="667000" />
     </task>
     <servers />
   </component>

@@ -154,7 +154,7 @@ public class MySqlDatabase extends Database {
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
-            plugin.log(Level.SEVERE, "Failed to create team in table", e);
+            plugin.log(Level.SEVERE, "Failed to create player in table", e);
         }
     }
 
@@ -177,7 +177,7 @@ public class MySqlDatabase extends Database {
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
-            plugin.log(Level.SEVERE, "Failed to create team in table", e);
+            plugin.log(Level.SEVERE, "Failed to update player in table", e);
         }
     }
 

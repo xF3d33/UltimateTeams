@@ -1,4 +1,4 @@
-package dev.xf3d3.ultimateteams.commands;
+package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
