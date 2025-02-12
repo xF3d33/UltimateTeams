@@ -3,7 +3,7 @@ package dev.xf3d3.ultimateteams.commands.teamSubCommands;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamCreateEvent;
 import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.utils.TeamStorageUtil;
+import dev.xf3d3.ultimateteams.utils.TeamsStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -15,7 +15,7 @@ import java.util.*;
 
 public class TeamCreateSubCommand {
     private final FileConfiguration messagesConfig;
-    private final TeamStorageUtil storageUtil;
+    private final TeamsStorage storageUtil;
     private static final String TEAM_PLACEHOLDER = "%TEAM%";
 
     int MIN_CHAR_LIMIT;
