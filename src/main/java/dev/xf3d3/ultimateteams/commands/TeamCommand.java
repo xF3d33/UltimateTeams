@@ -38,6 +38,8 @@ public class TeamCommand extends BaseCommand {
     public void onTeamCommand(@NotNull CommandSender sender) {
         if (sender instanceof ConsoleCommandSender) {
             sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+
+            return;
         }
 
         if (sender instanceof final Player player) {
@@ -46,7 +48,7 @@ public class TeamCommand extends BaseCommand {
                 return;
             }
 
-            for (int i = 1; i <= 16; i++) {
+            for (int i = 1; i <= 15; i++) {
                 String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
 
                 sender.sendMessage(Utils.Color(message));
@@ -167,7 +169,7 @@ public class TeamCommand extends BaseCommand {
     // TEAM ENEMIES
     @Subcommand("enemy")
     public void onTeamEnemyCommand(@NotNull CommandSender sender) {
-        for (int i = 1; i <= 16; i++) {
+        for (int i = 1; i <= 15; i++) {
             String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
 
             sender.sendMessage(Utils.Color(message));
@@ -194,7 +196,7 @@ public class TeamCommand extends BaseCommand {
     // TEAM ALLIES
     @Subcommand("ally")
     public void onTeamAllyCommand(@NotNull CommandSender sender) {
-        for (int i = 1; i <= 16; i++) {
+        for (int i = 1; i <= 15; i++) {
             String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
 
             sender.sendMessage(Utils.Color(message));
