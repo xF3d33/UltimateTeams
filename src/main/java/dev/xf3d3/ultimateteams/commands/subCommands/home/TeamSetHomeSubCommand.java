@@ -1,4 +1,4 @@
-package dev.xf3d3.ultimateteams.commands.teamSubCommands;
+package dev.xf3d3.ultimateteams.commands.subCommands.home;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamHomeCreateEvent;

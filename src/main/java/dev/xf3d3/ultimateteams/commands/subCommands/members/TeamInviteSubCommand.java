@@ -1,4 +1,4 @@
-package dev.xf3d3.ultimateteams.commands.teamSubCommands;
+package dev.xf3d3.ultimateteams.commands.subCommands.members;
 
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import dev.xf3d3.ultimateteams.UltimateTeams;
