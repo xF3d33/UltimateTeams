@@ -59,7 +59,7 @@ public class SQLiteDatabase extends Database {
      */
     private void setConnection() {
         try {
-            plugin.log(Level.INFO, "Attempting to connect to database");
+            //plugin.log(Level.INFO, "Attempting to connect to database");
 
             // Ensure that the database file exists
             if (databaseFile.createNewFile()) {
@@ -74,12 +74,12 @@ public class SQLiteDatabase extends Database {
             config.enforceForeignKeys(true);
             config.setEncoding(SQLiteConfig.Encoding.UTF8);
             config.setJournalMode(SQLiteConfig.JournalMode.WAL);
-            config.setSynchronous(SQLiteConfig.SynchronousMode.NORMAL);
+            config.setSynchronous(SQLiteConfig.SynchronousMode.FULL);
 
             // Establish the connection
             connection = DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getAbsolutePath(), config.toProperties());
 
-            plugin.log(Level.INFO, "SQLite Database Connected!");
+            //plugin.log(Level.INFO, "SQLite Database Connected!");
         } catch (IOException e) {
             plugin.log(Level.SEVERE, "An exception occurred creating the database file", e);
 
