@@ -20,21 +20,38 @@ public class PlayerConnectEvent implements Listener {
 
 
     @EventHandler (priority = EventPriority.MONITOR)
-    public void onBedrockPlayerJoin(PlayerJoinEvent e) {
+    public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
 
-        if (!plugin.getSettings().FloodGateHook()) {
+        // check if floodgate hook is enabled and available
+        if (plugin.getSettings().FloodGateHook() && (plugin.getFloodgateApi() != null)) {
+
+            if (plugin.getFloodgateApi().isFloodgatePlayer(uuid)) {
+
+                plugin.getUsersStorageUtil().getBedrockPlayer(player);
+
+                if (plugin.getUsersStorageUtil().hasPlayerNameChanged(player)) {
+                    plugin.getUsersStorageUtil().updatePlayerName(player);
+                }
+
+                if (plugin.getUsersStorageUtil().hasBedrockPlayerJavaUUIDChanged(player)) {
+                    plugin.getUsersStorageUtil().updateBedrockPlayerJavaUUID(player);
+                }
+
+                plugin.getBedrockPlayers().put(plugin.getFloodgateApi().getPlayer(uuid).getJavaUniqueId().toString(), player);
+
+            } else {
+                handleJavaPlayer(player);
+            }
             return;
         }
 
-        if (plugin.getFloodgateApi() == null) {
-            return;
-        }
+        handleJavaPlayer(player);
+    }
 
-        if (plugin.getFloodgateApi().isFloodgatePlayer(uuid)) {
 
-            plugin.getBedrockPlayers().put(plugin.getFloodgateApi().getPlayer(uuid).getJavaUniqueId().toString(), player);
-        }
+    private void handleJavaPlayer(Player player) {
+        plugin.getUsersStorageUtil().getPlayer(player);
     }
 }
