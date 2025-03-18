@@ -4,7 +4,20 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.commands.teamSubCommands.*;
+import dev.xf3d3.ultimateteams.commands.subCommands.*;
+import dev.xf3d3.ultimateteams.commands.subCommands.allies.TeamAllySubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.disband.TeamDisbandConfirmSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.disband.TeamDisbandSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.home.TeamDelHomeSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.home.TeamHomeSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.home.TeamSetHomeSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.members.TeamInviteSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.members.TeamKickSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.members.TeamLeaveSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.members.TeamPvpSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamDelWarpSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamSetWarpSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamWarpSubCommand;
 import dev.xf3d3.ultimateteams.menuSystem.TeamListGUI;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.OfflinePlayer;
@@ -38,6 +51,8 @@ public class TeamCommand extends BaseCommand {
     public void onTeamCommand(@NotNull CommandSender sender) {
         if (sender instanceof ConsoleCommandSender) {
             sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+
+            return;
         }
 
         if (sender instanceof final Player player) {
@@ -46,7 +61,7 @@ public class TeamCommand extends BaseCommand {
                 return;
             }
 
-            for (int i = 1; i <= 16; i++) {
+            for (int i = 1; i <= 15; i++) {
                 String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
 
                 sender.sendMessage(Utils.Color(message));
@@ -54,6 +69,7 @@ public class TeamCommand extends BaseCommand {
         }
     }
 
+    // TEAM CREATE
     @Subcommand("create")
     @CommandCompletion("<name> @nothing")
     @Syntax("<name>")
@@ -62,6 +78,8 @@ public class TeamCommand extends BaseCommand {
         new TeamCreateSubCommand(plugin).createTeamSubCommand(sender, name, bannedTags);
     }
 
+
+    // WARPS
     @Subcommand("warp")
     @CommandCompletion("@warps @nothing")
     @Syntax("<name>")
@@ -86,6 +104,8 @@ public class TeamCommand extends BaseCommand {
         new TeamDelWarpSubCommand(plugin).delWarpCommand(sender, name);
     }
 
+
+    // TEAM DISBAND
     @Subcommand("disband")
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.team.disband")
@@ -100,6 +120,8 @@ public class TeamCommand extends BaseCommand {
         new TeamDisbandConfirmSubCommand(plugin).disbandTeamSubCommand(sender);
     }
 
+
+    // TEAM INVITES
     @Subcommand("invite send")
     @CommandCompletion("@players @nothing")
     @Syntax("<playername>")
@@ -122,6 +144,8 @@ public class TeamCommand extends BaseCommand {
         new TeamInviteSubCommand(plugin).teamInviteDenySubCommand(sender);
     }
 
+
+    // TEAM HOME
     @Subcommand("sethome")
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.team.sethome")
@@ -144,6 +168,7 @@ public class TeamCommand extends BaseCommand {
     }
 
 
+    // TEAM PVP
     @Subcommand("pvp")
     @CommandCompletion("@nothing")
     @Syntax("<true/false>")
@@ -152,6 +177,17 @@ public class TeamCommand extends BaseCommand {
         new TeamPvpSubCommand(plugin).teamPvpSubCommand(sender);
     }
 
+
+
+    // TEAM ENEMIES
+    @Subcommand("enemy")
+    public void onTeamEnemyCommand(@NotNull CommandSender sender) {
+        for (int i = 1; i <= 15; i++) {
+            String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
+
+            sender.sendMessage(Utils.Color(message));
+        }
+    }
 
     @Subcommand("enemy add")
     @CommandCompletion("@teams @nothing")
@@ -169,6 +205,17 @@ public class TeamCommand extends BaseCommand {
         new TeamEnemySubCommand(plugin).teamEnemySubRemoveCommand(sender, teamName);
     }
 
+
+    // TEAM ALLIES
+    @Subcommand("ally")
+    public void onTeamAllyCommand(@NotNull CommandSender sender) {
+        for (int i = 1; i <= 15; i++) {
+            String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
+
+            sender.sendMessage(Utils.Color(message));
+        }
+    }
+
     @Subcommand("ally add")
     @CommandCompletion("@teams @nothing")
     @Syntax("<teamName>")
@@ -184,6 +231,9 @@ public class TeamCommand extends BaseCommand {
     public void onTeamAllyRemoveCommand(@NotNull CommandSender sender, @Values("@teams") String teamName) {
         new TeamAllySubCommand(plugin).teamAllyRemoveSubCommand(sender, teamName);
     }
+
+
+    // TEAM LEAVE
     @Subcommand("leave")
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.team.leave")
@@ -191,6 +241,8 @@ public class TeamCommand extends BaseCommand {
         new TeamLeaveSubCommand(plugin).teamLeaveSubCommand(sender);
     }
 
+
+    // TEAM KICK
     @Subcommand("kick")
     @CommandCompletion("@teamPlayers @nothing")
     @Syntax("<player>")
@@ -199,6 +251,8 @@ public class TeamCommand extends BaseCommand {
         new TeamKickSubCommand(plugin).teamKickSubCommand(sender, offlinePlayer);
     }
 
+
+    // TEAM LIST
     @Subcommand("list")
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.team.list")
@@ -206,6 +260,8 @@ public class TeamCommand extends BaseCommand {
         new TeamListSubCommand(plugin).teamListSubCommand(sender);
     }
 
+
+    // TEAM TRANSFER
     @Subcommand("transfer")
     @CommandCompletion("@players @nothing")
     @Syntax("<player>")
@@ -214,6 +270,8 @@ public class TeamCommand extends BaseCommand {
         new TeamTransferOwnerSubCommand(plugin).transferTeamOwnerSubCommand(sender, onlinePlayer);
     }
 
+
+    // TEAM PREFIX
     @Subcommand("prefix")
     @CommandCompletion("<prefix> @nothing")
     @Syntax("<prefix>")
@@ -222,6 +280,8 @@ public class TeamCommand extends BaseCommand {
         new TeamPrefixSubCommand(plugin).teamPrefixSubCommand(sender, prefix, bannedTags);
     }
 
+
+    // TEAM INFO
     @Subcommand("info")
     @CommandCompletion("@teams")
     @CommandPermission("ultimateteams.team.info")

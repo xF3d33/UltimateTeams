@@ -18,8 +18,7 @@ public class PlayerDisconnectEvent implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event){
         final Player player = event.getPlayer();
 
-        plugin.getConnectedPlayers().remove(player);
-        plugin.getBedrockPlayers().remove(player);
+        plugin.getBedrockPlayers().remove(player.getUniqueId().toString());
     }
 
 }

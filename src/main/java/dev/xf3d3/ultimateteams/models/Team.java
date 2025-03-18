@@ -1,14 +1,18 @@
 package dev.xf3d3.ultimateteams.models;
 
 import com.google.gson.annotations.Expose;
+import dev.xf3d3.ultimateteams.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
@@ -59,6 +63,23 @@ public class Team {
         teamWarps = new ConcurrentHashMap<>();
         friendlyFire = false;
         teamHomeWorld = null;
+    }
+
+    public ArrayList<Player> getOnlineMembers() {
+        ArrayList<Player> onlineMembers = new ArrayList<>();
+
+        for (String teamMember : teamMembers) {
+
+            if (teamMember != null) {
+                UUID memberUUID = UUID.fromString(teamMember);
+                Player TeamPlayer = Bukkit.getPlayer(memberUUID);
+
+                if (TeamPlayer != null) {
+                    onlineMembers.add(TeamPlayer);
+                }
+            }
+        }
+        return onlineMembers;
     }
 
     public String getTeamOwner(){

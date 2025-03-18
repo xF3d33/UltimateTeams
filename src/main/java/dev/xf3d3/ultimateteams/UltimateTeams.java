@@ -58,8 +58,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     private ConcurrentHashMap<Integer, ScheduledTask> tasks;
     private MorePaperLib paperLib;
     private PaperCommandManager manager;
-    private TeamStorageUtil teamStorageUtil;
-    private UsersStorageUtil usersStorageUtil;
+    private TeamsStorage teamsStorage;
+    private UsersStorage usersStorage;
     private TeamInviteUtil teamInviteUtil;
     private HuskHomesAPIHook huskHomesHook;
     private UpdateCheck updateChecker;
@@ -67,8 +67,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     private TeamsGui teamsGui;
 
     // HashMaps
-    private final ConcurrentHashMap<Player, String> connectedPlayers = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<Player, String> bedrockPlayers = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Player> bedrockPlayers = new ConcurrentHashMap<>();
 
     @Override
     public void onLoad() {
@@ -92,8 +91,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         this.paperLib = new MorePaperLib(this);
         this.manager = new PaperCommandManager(this);
         this.msgFileManager = new MessagesFileManager(this);
-        this.teamStorageUtil = new TeamStorageUtil(this);
-        this.usersStorageUtil = new UsersStorageUtil(this);
+        this.teamsStorage = new TeamsStorage(this);
+        this.usersStorage = new UsersStorage(this);
         this.teamInviteUtil = new TeamInviteUtil(this);
         this.utils = new Utils(this);
         this.updateChecker = new UpdateCheck(this);
@@ -125,7 +124,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
         // Load the teams
         initialize("teams", (plugin) -> runAsync(() -> {
-            teamStorageUtil.loadTeams();
+            teamsStorage.loadTeams();
         }));
 
         // Initialize HuskHomes hook
@@ -135,13 +134,13 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
 
         // Register command completions
-        this.manager.getCommandCompletions().registerAsyncCompletion("teams", c -> teamStorageUtil.getTeamsListNames());
+        this.manager.getCommandCompletions().registerAsyncCompletion("teams", c -> teamsStorage.getTeamsListNames());
         this.manager.getCommandCompletions().registerAsyncCompletion("warps", c -> {
             Team team;
-            if (teamStorageUtil.findTeamByOwner(c.getPlayer()) != null) {
-                team = teamStorageUtil.findTeamByOwner(c.getPlayer());
+            if (teamsStorage.findTeamByOwner(c.getPlayer()) != null) {
+                team = teamsStorage.findTeamByOwner(c.getPlayer());
             } else {
-                team = teamStorageUtil.findTeamByPlayer(c.getPlayer());
+                team = teamsStorage.findTeamByPlayer(c.getPlayer());
             }
 
             if (team == null) {
@@ -157,10 +156,10 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         });
         this.manager.getCommandCompletions().registerAsyncCompletion("teamPlayers", c -> {
             Team team;
-            if (teamStorageUtil.findTeamByOwner(c.getPlayer()) != null) {
-                team = teamStorageUtil.findTeamByOwner(c.getPlayer());
+            if (teamsStorage.findTeamByOwner(c.getPlayer()) != null) {
+                team = teamsStorage.findTeamByOwner(c.getPlayer());
             } else {
-                team = teamStorageUtil.findTeamByPlayer(c.getPlayer());
+                team = teamsStorage.findTeamByPlayer(c.getPlayer());
             }
 
             if (team == null) {
@@ -243,9 +242,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         sendConsole("-------------------------------------------");
         sendConsole("&6UltimateTeams: &3Plugin by: &b&lxF3d3");
 
-        // Cancel plugin tasks
+        // Cancel plugin tasks and close the database connection
         getScheduler().cancelGlobalTasks();
-
         database.close();
 
         // Final plugin shutdown message
@@ -369,13 +367,13 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     }
 
     @NotNull
-    public TeamStorageUtil getTeamStorageUtil() {
-        return teamStorageUtil;
+    public TeamsStorage getTeamStorageUtil() {
+        return teamsStorage;
     }
 
     @NotNull
-    public UsersStorageUtil getUsersStorageUtil() {
-        return usersStorageUtil;
+    public UsersStorage getUsersStorageUtil() {
+        return usersStorage;
     }
 
     @NotNull
@@ -384,12 +382,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     }
 
     @NotNull
-    public ConcurrentHashMap<Player, String> getConnectedPlayers() {
-        return connectedPlayers;
-    }
-
-    @NotNull
-    public ConcurrentHashMap<Player, String> getBedrockPlayers() {
+    public ConcurrentHashMap<String, Player> getBedrockPlayers() {
         return bedrockPlayers;
     }
 

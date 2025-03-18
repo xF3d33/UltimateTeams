@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class UsersStorageUtil {
+public class UsersStorage {
 
     private final Logger logger = UltimateTeams.getPlugin().getLogger();
     private final Map<UUID, TeamPlayer> usermap = new ConcurrentHashMap<>();
@@ -26,7 +26,7 @@ public class UsersStorageUtil {
     private static final String PLAYER_PLACEHOLDER = "%PLAYER%";
     private final UltimateTeams plugin;
 
-    public UsersStorageUtil(@NotNull UltimateTeams plugin) {
+    public UsersStorage(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
     }
 
@@ -42,7 +42,9 @@ public class UsersStorageUtil {
 
         if (!usermap.containsKey(uuid)) {
             plugin.runAsync(() -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
+
                     teamPlayer -> usermap.put(UUID.fromString(teamPlayer.getJavaUUID()), teamPlayer),
+
                     () -> {
                         TeamPlayer teamPlayer = new TeamPlayer(javaUUID, lastPlayerName, false, null, null);
 
@@ -57,7 +59,9 @@ public class UsersStorageUtil {
         UUID uuid = player.getUniqueId();
 
         plugin.runAsync(() -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
+
             teamPlayer -> usermap.put(UUID.fromString(teamPlayer.getJavaUUID()), teamPlayer),
+
             () -> {
                 FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(uuid);
                 UUID bedrockPlayerUUID = floodgatePlayer.getJavaUniqueId();
@@ -72,24 +76,31 @@ public class UsersStorageUtil {
 
     }
 
-    public TeamPlayer getTeamPlayerByBukkitOfflinePlayer(OfflinePlayer offlinePlayer){
+    public TeamPlayer getTeamPlayerByBukkitOfflinePlayer(OfflinePlayer offlinePlayer) {
         UUID uuid = offlinePlayer.getUniqueId();
-        if (usermap.containsKey(uuid)){
+
+        if (usermap.containsKey(uuid)) {
             TeamPlayer teamPlayer = usermap.get(uuid);
             return teamPlayer;
-        }else {
+
+        } else {
             logger.warning(Utils.Color(messagesConfig.getString("team-player-not-found-1")
                     .replace(PLAYER_PLACEHOLDER, offlinePlayer.getName())));
             logger.warning(Utils.Color(messagesConfig.getString("team-player-not-found-2")
                     .replace(PLAYER_PLACEHOLDER, offlinePlayer.getName())));
+
         }
         return null;
     }
 
-    public Player getBukkitPlayerByName(String name){
-        for (TeamPlayer teamPlayer : usermap.values()){
-            if (teamPlayer.getLastPlayerName().equalsIgnoreCase(name)){
-                return Bukkit.getPlayer(teamPlayer.getLastPlayerName());
+    public Player getBukkitPlayerByName(String name) {
+
+        for (TeamPlayer teamPlayer : usermap.values()) {
+
+            if (teamPlayer.getLastPlayerName().equalsIgnoreCase(name)) {
+                return Bukkit
+                        .getPlayer(teamPlayer.getLastPlayerName());
+
             } else {
                 logger.warning(Utils.Color(messagesConfig.getString("team-player-not-found-1")
                         .replace(PLAYER_PLACEHOLDER, name)));
@@ -100,7 +111,7 @@ public class UsersStorageUtil {
         return null;
     }
 
-    public OfflinePlayer getBukkitOfflinePlayerByName(String name){
+    public OfflinePlayer getBukkitOfflinePlayerByName(String name) {
         for (TeamPlayer teamPlayer : usermap.values()){
             if (teamPlayer.getLastPlayerName().equalsIgnoreCase(name)){
                 return Bukkit.getOfflinePlayer(UUID.fromString(teamPlayer.getJavaUUID()));
@@ -167,7 +178,7 @@ public class UsersStorageUtil {
 
     }
 
-    public boolean toggleChatSpy(Player player){
+    public boolean toggleChatSpy(Player player ){
         UUID uuid = player.getUniqueId();
         TeamPlayer teamPlayer = usermap.get(uuid);
         if (!teamPlayer.isCanChatSpy()){

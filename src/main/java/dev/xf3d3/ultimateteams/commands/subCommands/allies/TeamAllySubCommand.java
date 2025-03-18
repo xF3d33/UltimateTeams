@@ -1,10 +1,10 @@
-package dev.xf3d3.ultimateteams.commands.teamSubCommands;
+package dev.xf3d3.ultimateteams.commands.subCommands.allies;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamAllyAddEvent;
 import dev.xf3d3.ultimateteams.api.TeamAllyRemoveEvent;
 import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.utils.TeamStorageUtil;
+import dev.xf3d3.ultimateteams.utils.TeamsStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -169,7 +169,7 @@ public class TeamAllySubCommand {
         }
     }
 
-    private void fireTeamAllyRemoveEvent(TeamStorageUtil storageUtil, Player player, Player allyTeamOwner, Team allyTeam) {
+    private void fireTeamAllyRemoveEvent(TeamsStorage storageUtil, Player player, Player allyTeamOwner, Team allyTeam) {
         TeamAllyRemoveEvent teamAllyRemoveEvent = new TeamAllyRemoveEvent(player, storageUtil.findTeamByOwner(player), allyTeam, allyTeamOwner);
         Bukkit.getPluginManager().callEvent(teamAllyRemoveEvent);
     }

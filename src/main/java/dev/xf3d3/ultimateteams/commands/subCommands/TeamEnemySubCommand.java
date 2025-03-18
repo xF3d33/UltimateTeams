@@ -1,10 +1,10 @@
-package dev.xf3d3.ultimateteams.commands.teamSubCommands;
+package dev.xf3d3.ultimateteams.commands.subCommands;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.TeamEnemyAddEvent;
 import dev.xf3d3.ultimateteams.api.TeamEnemyRemoveEvent;
 import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.utils.TeamStorageUtil;
+import dev.xf3d3.ultimateteams.utils.TeamsStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -34,7 +34,7 @@ public class TeamEnemySubCommand {
             return;
         }
 
-        final TeamStorageUtil storageUtil = plugin.getTeamStorageUtil();
+        final TeamsStorage storageUtil = plugin.getTeamStorageUtil();
 
         if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
@@ -117,7 +117,7 @@ public class TeamEnemySubCommand {
             sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
             return;
         }
-        final TeamStorageUtil storageUtil = plugin.getTeamStorageUtil();
+        final TeamsStorage storageUtil = plugin.getTeamStorageUtil();
 
         if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
@@ -180,7 +180,7 @@ public class TeamEnemySubCommand {
         }
     }
 
-    private void fireTeamEnemyRemoveEvent(TeamStorageUtil storageUtil, Player player, Player enemyTeamOwner, Team enemyTeam) {
+    private void fireTeamEnemyRemoveEvent(TeamsStorage storageUtil, Player player, Player enemyTeamOwner, Team enemyTeam) {
         TeamEnemyRemoveEvent teamEnemyRemoveEvent = new TeamEnemyRemoveEvent(player, storageUtil.findTeamByPlayer(player), enemyTeam, enemyTeamOwner);
         Bukkit.getPluginManager().callEvent(teamEnemyRemoveEvent);
     }

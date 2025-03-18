@@ -17,35 +17,41 @@ public class PlayerConnectEvent implements Listener {
         this.plugin = plugin;
     }
 
+
+
     @EventHandler (priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-
-        plugin.getConnectedPlayers().put(player, player.getName());
-        plugin.getUsersStorageUtil().getPlayer(player);
-    }
-
-    @EventHandler (priority = EventPriority.MONITOR)
-    public void onBedrockPlayerJoin(PlayerJoinEvent e) {
-        Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
 
-        if (plugin.getSettings().FloodGateHook()) {
-            if (plugin.getFloodgateApi() != null) {
-                if (plugin.getFloodgateApi().isFloodgatePlayer(uuid)) {
-                    plugin.getUsersStorageUtil().getBedrockPlayer(player);
+        // check if floodgate hook is enabled and available
+        if (plugin.getSettings().FloodGateHook() && (plugin.getFloodgateApi() != null)) {
 
-                    if (plugin.getUsersStorageUtil().hasPlayerNameChanged(player)) {
-                        plugin.getUsersStorageUtil().updatePlayerName(player);
-                    }
+            if (plugin.getFloodgateApi().isFloodgatePlayer(uuid)) {
 
-                    if (plugin.getUsersStorageUtil().hasBedrockPlayerJavaUUIDChanged(player)) {
-                        plugin.getUsersStorageUtil().updateBedrockPlayerJavaUUID(player);
-                    }
+                plugin.getUsersStorageUtil().getBedrockPlayer(player);
 
-                    plugin.getBedrockPlayers().put(player, plugin.getFloodgateApi().getPlayer(uuid).getJavaUniqueId().toString());
+                if (plugin.getUsersStorageUtil().hasPlayerNameChanged(player)) {
+                    plugin.getUsersStorageUtil().updatePlayerName(player);
                 }
+
+                if (plugin.getUsersStorageUtil().hasBedrockPlayerJavaUUIDChanged(player)) {
+                    plugin.getUsersStorageUtil().updateBedrockPlayerJavaUUID(player);
+                }
+
+                plugin.getBedrockPlayers().put(plugin.getFloodgateApi().getPlayer(uuid).getJavaUniqueId().toString(), player);
+
+            } else {
+                handleJavaPlayer(player);
             }
+            return;
         }
+
+        handleJavaPlayer(player);
+    }
+
+
+    private void handleJavaPlayer(Player player) {
+        plugin.getUsersStorageUtil().getPlayer(player);
     }
 }

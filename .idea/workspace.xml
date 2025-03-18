@@ -5,11 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="efb41445-9941-437c-9287-f7e8e68db5d7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/TeamAllyChatCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamAllyChatCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/TeamCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/TeamCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamAllyChatCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/allies/TeamAllyChatCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamAllySubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/allies/TeamAllySubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamCreateSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/TeamCreateSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamDelHomeSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/home/TeamDelHomeSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamDelWarpSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/warps/TeamDelWarpSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamDisbandConfirmSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/disband/TeamDisbandConfirmSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamDisbandSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/disband/TeamDisbandSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamEnemySubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/TeamEnemySubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamHomeSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/home/TeamHomeSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamInfoSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/TeamInfoSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamInviteSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/members/TeamInviteSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamKickSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/members/TeamKickSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamLeaveSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/members/TeamLeaveSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamListSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/TeamListSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamPrefixSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/TeamPrefixSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamPvpSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/members/TeamPvpSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamSetHomeSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/home/TeamSetHomeSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamSetWarpSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/warps/TeamSetWarpSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamTransferOwnerSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/TeamTransferOwnerSubCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/teamSubCommands/TeamWarpSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/xf3d3/ultimateteams/commands/subCommands/warps/TeamWarpSubCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -50,6 +67,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectColorInfo">{
@@ -60,43 +82,43 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
-    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.UltimateTeams [clean build].executor&quot;: &quot;Run&quot;,
-    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Federico Russo/Documents/GitHub/UltimateTeams/src/main/java/dev/xf3d3/ultimateteams/database&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15332031&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Downloaded.Files.Path.Enabled": "false",
+    "Gradle.Download Sources.executor": "Run",
+    "Gradle.UltimateTeams [clean build].executor": "Run",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "v3.0",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Federico Russo/Documents/GitHub/UltimateTeams/src/main/java/dev/xf3d3/ultimateteams/database",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15332031",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;h2&quot;,
-      &quot;postgresql&quot;,
-      &quot;mariadb&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "h2",
+      "postgresql",
+      "mariadb"
     ],
-    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/Change SQL Dialect&quot;: [
-      &quot;PostgreSQL&quot;
+    "com.intellij.ide.scratch.LRUPopupBuilder$1/Change SQL Dialect": [
+      "PostgreSQL"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Federico Russo\Documents\GitHub\UltimateTeams\src\main\java\dev\xf3d3\ultimateteams\database" />

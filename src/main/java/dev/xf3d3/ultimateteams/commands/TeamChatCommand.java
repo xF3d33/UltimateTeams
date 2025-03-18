@@ -61,6 +61,11 @@ public class TeamChatCommand extends BaseCommand {
             team = plugin.getTeamStorageUtil().findTeamByPlayer(player);
         }
 
+        if (team == null) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")));
+            return;
+        }
+
         String chatSpyPrefix = plugin.getSettings().getTeamChatSpyPrefix();
         StringBuilder messageString = new StringBuilder();
         messageString.append(plugin.getSettings().getTeamChatPrefix()).append(" ");
@@ -70,40 +75,32 @@ public class TeamChatCommand extends BaseCommand {
         }
 
 
-        if (team != null) {
-            ArrayList<String> playerTeamMembers = team.getTeamMembers();
+        ArrayList<String> playerTeamMembers = team.getTeamMembers();
 
-            fireTeamChatMessageSendEvent(
-                    player,
-                    team,
-                    plugin.getSettings().getTeamChatPrefix(),
-                    messageString.toString(),
-                    playerTeamMembers
-            );
+        fireTeamChatMessageSendEvent(
+                player,
+                team,
+                plugin.getSettings().getTeamChatPrefix(),
+                messageString.toString(),
+                playerTeamMembers
+        );
 
-            // Send message to team owner
-            final UUID ownerUUID = UUID.fromString(team.getTeamOwner());
-            final Player playerTeamOwner = Bukkit.getPlayer(ownerUUID);
-            if (playerTeamOwner != null) {
-                playerTeamOwner.sendMessage(Utils.Color(messageString.toString()));
-            }
+        // Send message to team owner
+        final UUID ownerUUID = UUID.fromString(team.getTeamOwner());
+        final Player playerTeamOwner = Bukkit.getPlayer(ownerUUID);
+        if (playerTeamOwner != null) {
+            playerTeamOwner.sendPlainMessage(Utils.Color(messageString.toString()));
+        }
 
-            // Send message to team members
-            for (String playerTeamMember : playerTeamMembers) {
-                if (playerTeamMember != null) {
-                    UUID memberUUID = UUID.fromString(playerTeamMember);
-                    Player TeamPlayer = Bukkit.getPlayer(memberUUID);
+        // Send message to team members
+        for (Player teamMember : team.getOnlineMembers()) {
 
-                    if (TeamPlayer != null) {
-                        TeamPlayer.sendMessage(Utils.Color(messageString.toString()));
-                    }
-                }
-            }
+            teamMember.sendPlainMessage(Utils.Color(messageString.toString()));
+        }
 
-            // Send spy message
-            if (plugin.getSettings().teamChatSpyEnabled()) {
-                Bukkit.broadcast(Utils.Color(chatSpyPrefix + " " + messageString), "ultimateteams.chat.spy");
-            }
+        // Send spy message
+        if (plugin.getSettings().teamChatSpyEnabled()) {
+            Bukkit.broadcast(Utils.Color(chatSpyPrefix + " " + messageString), "ultimateteams.chat.spy");
         }
     }
 
