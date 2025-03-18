@@ -65,6 +65,8 @@ public class PlayerDamageEvent implements Listener {
                         final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(AllyUUID));
                         final Team allyTeam = plugin.getTeamStorageUtil().findTeamByOfflineOwner(offlinePlayer);
 
+                        if (allyTeam == null) return;
+
                         if (allyTeam.getTeamMembers().contains(hurtUUID) || allyTeam.getTeamOwner().equals(hurtUUID)) {
                             if (plugin.getSettings().enablePvPBypassPermission()) {
                                 if (attackingPlayer.hasPermission("ultimateteams.bypass.pvp")) {
