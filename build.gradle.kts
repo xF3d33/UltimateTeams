@@ -59,6 +59,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("dev.dejvokep:boosted-yaml:1.3.1")
 
+    compileOnly("net.luckperms:api:5.4")
+
     // Database
     compileOnly("org.xerial:sqlite-jdbc:3.46.1.0")
     compileOnly("com.mysql:mysql-connector-j:9.0.0")

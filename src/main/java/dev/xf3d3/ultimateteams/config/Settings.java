@@ -75,6 +75,10 @@ public class Settings {
         Database.Table.USER_DATA.name().toLowerCase(), Database.Table.USER_DATA.getDefaultName()
     );
 
+    @YamlComment("Hook into luckperms to create contexts (e.g. is-in-team) [Default value: false]. Needs LuckPerms")
+    @YamlKey("luckperms-hook")
+    private boolean luckpermshook = false;
+
     @YamlComment("use HuskHomes to teleport players instead of built-in teleport handler [Default value: true]")
     @YamlKey("use-huskhomes")
     private boolean useHuskhomes = false;
@@ -312,6 +316,10 @@ public class Settings {
 
     public String getNotInTeamPlaceholder() {
         return notInTeamPlaceholder;
+    }
+
+    public boolean LuckPermsHook() {
+        return luckpermshook;
     }
 
     public boolean HuskHomesHook() {

@@ -9,6 +9,7 @@ import dev.xf3d3.ultimateteams.config.TeamsGui;
 import dev.xf3d3.ultimateteams.database.*;
 import dev.xf3d3.ultimateteams.hooks.FloodgateAPIHook;
 import dev.xf3d3.ultimateteams.hooks.HuskHomesAPIHook;
+import dev.xf3d3.ultimateteams.hooks.LuckPermsHook;
 import dev.xf3d3.ultimateteams.hooks.PapiExpansion;
 import dev.xf3d3.ultimateteams.listeners.PlayerConnectEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDamageEvent;
@@ -130,6 +131,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         // Initialize HuskHomes hook
         if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && getSettings().HuskHomesHook()) {
             initialize("huskhomes" , (plugin) -> this.huskHomesHook = new HuskHomesAPIHook(this));
+        }
+
+        // Initialize LuckPerms hook
+        if (Bukkit.getPluginManager().getPlugin("LuckPerms") != null && getSettings().LuckPermsHook()) {
+            initialize("luckperms" , (plugin) -> new LuckPermsHook(this));
         }
 
 
