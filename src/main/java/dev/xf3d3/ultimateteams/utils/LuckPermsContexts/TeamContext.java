@@ -1,17 +1,14 @@
 package dev.xf3d3.ultimateteams.utils.LuckPermsContexts;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import net.luckperms.api.context.ContextCalculator;
-import net.luckperms.api.context.ContextConsumer;
-import net.luckperms.api.context.ContextSet;
-import net.luckperms.api.context.ImmutableContextSet;
-
+import dev.xf3d3.ultimateteams.models.Team;
+import net.luckperms.api.context.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class TeamContext implements ContextCalculator<Player> {
     private final UltimateTeams plugin;
-    private static final String KEY = "is-in-team";
+    private static final String KEY = "team-name";
 
     public TeamContext(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
@@ -19,23 +16,30 @@ public class TeamContext implements ContextCalculator<Player> {
 
     @Override
     public void calculate(@NotNull Player target, @NotNull ContextConsumer consumer) {
-        boolean isInTeam = false;
+        String teamName = "Null";
 
-        if (plugin.getTeamStorageUtil().isTeamOwner(target)) {
-            isInTeam = true;
-        } else if (plugin.getTeamStorageUtil().findTeamByPlayer(target) != null) {
-            isInTeam = true;
+        Team team;
+        if (plugin.getTeamStorageUtil().findTeamByOwner(target) != null) {
+            team = plugin.getTeamStorageUtil().findTeamByOwner(target);
+        } else {
+            team = plugin.getTeamStorageUtil().findTeamByPlayer(target);
         }
 
-        consumer.accept(KEY, String.valueOf(isInTeam));
+        if (team != null) teamName = team.getTeamFinalName();
+
+        consumer.accept(KEY, String.valueOf(teamName));
     }
 
     @NotNull
     @Override
     public ContextSet estimatePotentialContexts() {
-        return ImmutableContextSet.builder()
-                .add(KEY, "true")
-                .add(KEY, "false")
-                .build();
+        ImmutableContextSet.Builder teams = ImmutableContextSet.builder();
+
+        for (String teamName : plugin.getTeamStorageUtil().getTeamsListNames()) {
+            teams.add(KEY, teamName);
+        }
+
+        
+        return teams.build();
     }
 }
