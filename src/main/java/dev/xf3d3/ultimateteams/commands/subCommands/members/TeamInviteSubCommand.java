@@ -69,7 +69,7 @@ public class TeamInviteSubCommand {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-failed").replaceAll("%INVITED%", invitedPlayer.getName())));
                 return;
             }
-            
+
 
             Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
             final TeamPlayer teamPlayer = plugin.getUsersStorageUtil().getPlayer(player.getUniqueId());

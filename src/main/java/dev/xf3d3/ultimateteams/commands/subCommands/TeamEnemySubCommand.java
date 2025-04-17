@@ -1,8 +1,8 @@
 package dev.xf3d3.ultimateteams.commands.subCommands;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.api.TeamEnemyAddEvent;
-import dev.xf3d3.ultimateteams.api.TeamEnemyRemoveEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamEnemyAddEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamEnemyRemoveEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.TeamsStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;

@@ -1,4 +1,4 @@
-package dev.xf3d3.ultimateteams.api;
+package dev.xf3d3.ultimateteams.api.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

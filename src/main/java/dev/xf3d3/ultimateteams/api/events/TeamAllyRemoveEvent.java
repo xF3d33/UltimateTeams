@@ -1,4 +1,4 @@
-package dev.xf3d3.ultimateteams.api;
+package dev.xf3d3.ultimateteams.api.events;
 
 import dev.xf3d3.ultimateteams.models.Team;
 import org.bukkit.entity.Player;
@@ -6,20 +6,20 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamAllyAddEvent extends Event {
+public class TeamAllyRemoveEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Player createdBy;
     private final Team team;
-    private final Player allyClanCreatedBy;
-    private final Team allyTeam;
+    private final Player exAllyClanCreatedBy;
+    private final Team exAllyTeam;
 
 
 
-    public TeamAllyAddEvent(Player createdBy, Team team, Team allyTeam, Player allyClanCreatedBy) {
+    public TeamAllyRemoveEvent(Player createdBy, Team team, Team exAllyTeam, Player exAllyClanCreatedBy) {
         this.createdBy = createdBy;
         this.team = team;
-        this.allyClanCreatedBy = allyClanCreatedBy;
-        this.allyTeam = allyTeam;
+        this.exAllyClanCreatedBy = exAllyClanCreatedBy;
+        this.exAllyTeam = exAllyTeam;
     }
 
     @Override
@@ -36,12 +36,12 @@ public class TeamAllyAddEvent extends Event {
         return team;
     }
 
-    public Player getAllyClanCreatedBy() {
-        return allyClanCreatedBy;
+    public Player getExAllyClanCreatedBy() {
+        return exAllyClanCreatedBy;
     }
 
-    public Team getAllyClan() {
-        return allyTeam;
+    public Team getExAllyClan() {
+        return exAllyTeam;
     }
 
     public static HandlerList getHandlerList() {

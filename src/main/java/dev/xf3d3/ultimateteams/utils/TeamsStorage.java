@@ -1,9 +1,9 @@
 package dev.xf3d3.ultimateteams.utils;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.api.TeamDisbandEvent;
-import dev.xf3d3.ultimateteams.api.TeamOfflineDisbandEvent;
-import dev.xf3d3.ultimateteams.api.TeamTransferOwnershipEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamDisbandEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamOfflineDisbandEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamTransferOwnershipEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamWarp;
 import org.bukkit.Bukkit;

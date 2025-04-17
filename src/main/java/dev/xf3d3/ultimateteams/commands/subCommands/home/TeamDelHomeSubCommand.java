@@ -1,7 +1,7 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.home;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.api.TeamHomeDeleteEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamHomeDeleteEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;

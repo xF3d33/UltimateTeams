@@ -1,25 +1,21 @@
-package dev.xf3d3.ultimateteams.api;
+package dev.xf3d3.ultimateteams.api.events;
 
 import dev.xf3d3.ultimateteams.models.Team;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamEnemyRemoveEvent extends Event {
+public class TeamHomePreTeleportEvent extends Event implements Cancellable {
+
     private static final HandlerList HANDLERS = new HandlerList();
     private final Player createdBy;
     private final Team team;
-    private final Player exEnemyClanCreatedBy;
-    private final Team exEnemyTeam;
 
-
-
-    public TeamEnemyRemoveEvent(Player createdBy, Team team, Team exEnemyTeam, Player exEnemyClanCreatedBy) {
+    public TeamHomePreTeleportEvent(Player createdBy, Team team) {
         this.createdBy = createdBy;
         this.team = team;
-        this.exEnemyClanCreatedBy = exEnemyClanCreatedBy;
-        this.exEnemyTeam = exEnemyTeam;
     }
 
     @Override
@@ -36,15 +32,13 @@ public class TeamEnemyRemoveEvent extends Event {
         return team;
     }
 
-    public Player getExEnemyClanCreatedBy() {
-        return exEnemyClanCreatedBy;
+    @Override
+    public boolean isCancelled() {
+        return false;
     }
 
-    public Team getExEnemyClan() {
-        return exEnemyTeam;
-    }
+    @Override
+    public void setCancelled(boolean b) {
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
     }
 }

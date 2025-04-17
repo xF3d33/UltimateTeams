@@ -1,23 +1,20 @@
-package dev.xf3d3.ultimateteams.api;
+package dev.xf3d3.ultimateteams.api.events;
 
 import dev.xf3d3.ultimateteams.models.Team;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamHomeCreateEvent extends Event {
+public class TeamHomeDeleteEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
     private final Player createdBy;
     private final Team team;
-    private final Location homeLocation;
 
-    public TeamHomeCreateEvent(Player createdBy, Team team, Location homeLocation) {
+    public TeamHomeDeleteEvent(Player createdBy, Team team) {
         this.createdBy = createdBy;
         this.team = team;
-        this.homeLocation = homeLocation;
     }
 
     @Override
@@ -30,11 +27,7 @@ public class TeamHomeCreateEvent extends Event {
         return createdBy;
     }
 
-    public Team getClan() {
+    public Team getTeam() {
         return team;
-    }
-
-    public Location getHomeLocation() {
-        return homeLocation;
     }
 }

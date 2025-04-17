@@ -1,4 +1,4 @@
-package dev.xf3d3.ultimateteams.api;
+package dev.xf3d3.ultimateteams.api.events;
 
 import dev.xf3d3.ultimateteams.models.Team;
 import org.bukkit.entity.Player;
@@ -6,20 +6,20 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamAllyRemoveEvent extends Event {
+public class TeamEnemyRemoveEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Player createdBy;
     private final Team team;
-    private final Player exAllyClanCreatedBy;
-    private final Team exAllyTeam;
+    private final Player exEnemyClanCreatedBy;
+    private final Team exEnemyTeam;
 
 
 
-    public TeamAllyRemoveEvent(Player createdBy, Team team, Team exAllyTeam, Player exAllyClanCreatedBy) {
+    public TeamEnemyRemoveEvent(Player createdBy, Team team, Team exEnemyTeam, Player exEnemyClanCreatedBy) {
         this.createdBy = createdBy;
         this.team = team;
-        this.exAllyClanCreatedBy = exAllyClanCreatedBy;
-        this.exAllyTeam = exAllyTeam;
+        this.exEnemyClanCreatedBy = exEnemyClanCreatedBy;
+        this.exEnemyTeam = exEnemyTeam;
     }
 
     @Override
@@ -36,12 +36,12 @@ public class TeamAllyRemoveEvent extends Event {
         return team;
     }
 
-    public Player getExAllyClanCreatedBy() {
-        return exAllyClanCreatedBy;
+    public Player getExEnemyClanCreatedBy() {
+        return exEnemyClanCreatedBy;
     }
 
-    public Team getExAllyClan() {
-        return exAllyTeam;
+    public Team getExEnemyClan() {
+        return exEnemyTeam;
     }
 
     public static HandlerList getHandlerList() {

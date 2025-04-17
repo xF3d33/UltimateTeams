@@ -1,7 +1,7 @@
 package dev.xf3d3.ultimateteams.utils;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.api.TeamChatSpyToggledEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamChatSpyToggledEvent;
 import dev.xf3d3.ultimateteams.models.TeamPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

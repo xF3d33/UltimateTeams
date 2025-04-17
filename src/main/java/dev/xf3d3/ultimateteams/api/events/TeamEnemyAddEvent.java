@@ -1,25 +1,25 @@
-package dev.xf3d3.ultimateteams.api;
+package dev.xf3d3.ultimateteams.api.events;
 
 import dev.xf3d3.ultimateteams.models.Team;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamHomeTeleportEvent extends Event {
-
+public class TeamEnemyAddEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Player createdBy;
     private final Team team;
-    private final Location homeLocation;
-    private final Location tpFromLocation;
+    private final Player enemyClanCreatedBy;
+    private final Team enemyTeam;
 
-    public TeamHomeTeleportEvent(Player createdBy, Team team, Location homeLocation, Location tpFromLocation) {
+
+
+    public TeamEnemyAddEvent(Player createdBy, Team team, Team enemyTeam, Player enemyClanCreatedBy) {
         this.createdBy = createdBy;
         this.team = team;
-        this.homeLocation = homeLocation;
-        this.tpFromLocation = tpFromLocation;
+        this.enemyClanCreatedBy = enemyClanCreatedBy;
+        this.enemyTeam = enemyTeam;
     }
 
     @Override
@@ -36,11 +36,17 @@ public class TeamHomeTeleportEvent extends Event {
         return team;
     }
 
-    public Location getHomeLocation() {
-        return homeLocation;
+    public Player getEnemyClanCreatedBy() {
+        return enemyClanCreatedBy;
     }
 
-    public Location getTpFromLocation() {
-        return tpFromLocation;
+    public Team getEnemyClan() {
+        return enemyTeam;
     }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
+
 }

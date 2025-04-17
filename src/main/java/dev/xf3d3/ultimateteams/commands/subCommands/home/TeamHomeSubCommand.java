@@ -1,8 +1,8 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.home;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.api.TeamHomePreTeleportEvent;
-import dev.xf3d3.ultimateteams.api.TeamHomeTeleportEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamHomePreTeleportEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamHomeTeleportEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;

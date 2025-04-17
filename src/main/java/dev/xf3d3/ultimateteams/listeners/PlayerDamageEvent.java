@@ -1,7 +1,7 @@
 package dev.xf3d3.ultimateteams.listeners;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.api.TeamFriendlyFireAttackEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamFriendlyFireAttackEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;

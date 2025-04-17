@@ -1,7 +1,7 @@
 package dev.xf3d3.ultimateteams.commands.subCommands;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.api.TeamCreateEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamCreateEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.TeamsStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;

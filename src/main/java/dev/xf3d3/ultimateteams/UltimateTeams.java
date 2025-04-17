@@ -2,6 +2,8 @@ package dev.xf3d3.ultimateteams;
 
 import co.aikar.commands.PaperCommandManager;
 import com.google.gson.Gson;
+import dev.xf3d3.ultimateteams.api.UltimateTeamsAPI;
+import dev.xf3d3.ultimateteams.api.UltimateTeamsAPIImpl;
 import dev.xf3d3.ultimateteams.commands.*;
 import dev.xf3d3.ultimateteams.config.MessagesFileManager;
 import dev.xf3d3.ultimateteams.config.Settings;
@@ -44,11 +46,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public final class UltimateTeams extends JavaPlugin implements TaskRunner {
-    private static final int METRICS_ID = 18842;
+    private static UltimateTeams instance;
+    private UltimateTeamsAPI api;
 
+    private static final int METRICS_ID = 18842;
     private final PluginDescriptionFile pluginInfo = getDescription();
     private final String pluginVersion = pluginInfo.getVersion();
-    private static UltimateTeams instance;
 
     public MessagesFileManager msgFileManager;
 
@@ -97,6 +100,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         this.teamInviteUtil = new TeamInviteUtil(this);
         this.utils = new Utils(this);
         this.updateChecker = new UpdateCheck(this);
+
+        this.api = new UltimateTeamsAPIImpl(this);
 
         // Load settings and locales
         initialize("plugin config & locale files", (plugin) -> {
@@ -353,6 +358,10 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             return;
         }
         getLogger().log(level, message);
+    }
+
+    public static UltimateTeamsAPI getAPI() {
+        return instance.api;
     }
 
     public void sendConsole(String text) {
