@@ -1,5 +1,56 @@
-# Ignore Gradle project-specific cache directory
-.gradle
+# Compiled class files
+*.class
 
-# Ignore Gradle build output directory
-build
+# Log files
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs
+hs_err_pid*
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+out/
+gen/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# VS Code
+.vscode/
+
+# Maven
+target/
+
+# Gradle
+.gradle/
+build/
+
+# Mac system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
