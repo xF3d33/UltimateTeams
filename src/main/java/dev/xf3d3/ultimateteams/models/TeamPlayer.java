@@ -53,4 +53,26 @@ public class TeamPlayer {
         }
     }
 
+    public final int getMaxMembers(final Player player, final int defaultMaxMembers, final boolean stackMembers) {
+        final List<Integer> membersPerm = plugin.getUtils().getNumberPermission(player, "ultimateteams.max_members.");
+
+        if (membersPerm.isEmpty()) {
+            if (plugin.getSettings().debugModeEnabled())
+                plugin.log(Level.INFO, "Max Members (default - permission empty)" + defaultMaxMembers);
+
+            return defaultMaxMembers;
+        }
+        if (stackMembers) {
+            if (plugin.getSettings().debugModeEnabled())
+                plugin.log(Level.INFO, "Max Members (stacked)" + defaultMaxMembers + membersPerm.stream().reduce(0, Integer::sum));
+
+            return defaultMaxMembers + membersPerm.stream().reduce(0, Integer::sum);
+        } else {
+            if (plugin.getSettings().debugModeEnabled())
+                plugin.log(Level.INFO, "Max Members (permission)" + membersPerm.get(0));
+
+            return membersPerm.get(0);
+        }
+    }
+
 }

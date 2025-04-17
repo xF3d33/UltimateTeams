@@ -124,10 +124,13 @@ public class Settings {
     private String bracketsClosing = "&f]";
 
     // Team Size
-    // todo: should add team tiered?
     @YamlComment("Set the default maximum amount of members that can join a players' team. [Default value: 8]")
     @YamlKey("team-size.default-max-team-size")
     private int maxTeamSize = 8;
+
+    @YamlComment("If true, the default members limit will be stacked with permission limit.\n If a player has ultimateteams.max_members.2 and the default limit is 8, he will be able to have 10 members. otherwise only 2.")
+    @YamlKey("team-size.stack-members")
+    private boolean stackTeamSizeWithPermission = false;
 
     // Team join
     @YamlComment("Do you want a message to be sent to team players when a player joins a team? [Default value: true]")
@@ -369,6 +372,10 @@ public class Settings {
 
     public int getTeamMaxSize() {
         return maxTeamSize;
+    }
+
+    public boolean getStackedTeamSize() {
+        return stackTeamSizeWithPermission;
     }
 
     public boolean teamJoinAnnounce() {

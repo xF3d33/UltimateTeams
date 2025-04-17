@@ -4,6 +4,7 @@ import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamInvite;
+import dev.xf3d3.ultimateteams.models.TeamPlayer;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -68,12 +69,14 @@ public class TeamInviteSubCommand {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-failed").replaceAll("%INVITED%", invitedPlayer.getName())));
                 return;
             }
+            
 
             Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
+            final TeamPlayer teamPlayer = plugin.getUsersStorageUtil().getPlayer(player.getUniqueId());
+            final int maxMembers = teamPlayer.getMaxMembers(player, plugin.getSettings().getTeamMaxSize(), plugin.getSettings().getStackedTeamSize());
 
-            if (team.getTeamMembers().size() >= plugin.getSettings().getTeamMaxSize()) {
-                int maxSize = plugin.getSettings().getTeamMaxSize();
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-max-size-reached")).replace("%LIMIT%", String.valueOf(maxSize)));
+            if (team.getTeamMembers().size() >= maxMembers) {
+                player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-max-size-reached")).replace("%LIMIT%", String.valueOf(maxMembers)));
                 return;
             }
 
