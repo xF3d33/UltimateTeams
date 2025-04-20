@@ -12,12 +12,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
 
-public class HuskHomesAPIHook {
+public class HuskHomesHook {
 
     private final HuskHomesAPI huskHomesAPI;
     private final UltimateTeams plugin;
 
-    public HuskHomesAPIHook(@NotNull UltimateTeams plugin) {
+    public HuskHomesHook(@NotNull UltimateTeams plugin) {
         this.huskHomesAPI = HuskHomesAPI.getInstance();
         this.plugin = plugin;
         sendMessages();

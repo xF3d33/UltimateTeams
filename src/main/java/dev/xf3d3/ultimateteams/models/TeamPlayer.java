@@ -3,13 +3,11 @@ package dev.xf3d3.ultimateteams.models;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 
 @SuppressWarnings("unused")

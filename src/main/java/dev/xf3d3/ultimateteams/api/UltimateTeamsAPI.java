@@ -7,5 +7,7 @@ import java.util.Collection;
 @SuppressWarnings("unused")
 public interface UltimateTeamsAPI {
 
+    boolean isLoaded();
+
     Collection<Team> getAllTeams();
 }

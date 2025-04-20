@@ -49,7 +49,7 @@ public class TeamAdmin extends BaseCommand {
     public void reloadSubcommand(CommandSender sender) {
         sender.sendMessage(Utils.Color(messagesConfig.getString("plugin-reload-begin")));
 
-        plugin.runSync(() -> {
+        plugin.runSync(task -> {
             plugin.loadConfigs();
             plugin.msgFileManager.reloadMessagesConfig();
 

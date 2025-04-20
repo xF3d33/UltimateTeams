@@ -41,7 +41,7 @@ public class UsersStorage {
         String lastPlayerName = player.getName();
 
         if (!usermap.containsKey(uuid)) {
-            plugin.runAsync(() -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
+            plugin.runAsync(task -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
 
                     teamPlayer -> usermap.put(UUID.fromString(teamPlayer.getJavaUUID()), teamPlayer),
 
@@ -58,7 +58,7 @@ public class UsersStorage {
     public void getBedrockPlayer(Player player){
         UUID uuid = player.getUniqueId();
 
-        plugin.runAsync(() -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
+        plugin.runAsync(task -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
 
             teamPlayer -> usermap.put(UUID.fromString(teamPlayer.getJavaUUID()), teamPlayer),
 
@@ -158,7 +158,7 @@ public class UsersStorage {
         TeamPlayer teamPlayer = usermap.get(uuid);
         teamPlayer.setLastPlayerName(newPlayerName);
 
-        plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
+        plugin.runAsync(task -> plugin.getDatabase().updatePlayer(teamPlayer));
         usermap.replace(uuid, teamPlayer);
     }
 
@@ -171,7 +171,7 @@ public class UsersStorage {
                 String newJavaUUID = floodgatePlayer.getJavaUniqueId().toString();
                 teamPlayer.setJavaUUID(newJavaUUID);
 
-                plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
+                plugin.runAsync(task -> plugin.getDatabase().updatePlayer(teamPlayer));
                 usermap.replace(uuid, teamPlayer);
             }
         }
@@ -183,7 +183,7 @@ public class UsersStorage {
         TeamPlayer teamPlayer = usermap.get(uuid);
         if (!teamPlayer.isCanChatSpy()){
             teamPlayer.setCanChatSpy(true);
-            plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
+            plugin.runAsync(task -> plugin.getDatabase().updatePlayer(teamPlayer));
 
             fireClanChatSpyToggledEvent(player, teamPlayer ,true);
             if (plugin.getSettings().debugModeEnabled()){
@@ -192,7 +192,7 @@ public class UsersStorage {
             return true;
         } else {
             teamPlayer.setCanChatSpy(false);
-            plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
+            plugin.runAsync(task -> plugin.getDatabase().updatePlayer(teamPlayer));
 
             fireClanChatSpyToggledEvent(player, teamPlayer ,false);
             if (plugin.getSettings().debugModeEnabled()){

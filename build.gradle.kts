@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.xf3d3"
-version = "3.2.1"
+version = "3.3"
 
 repositories {
     mavenLocal()
@@ -52,10 +52,10 @@ dependencies {
     
     // PaperLib
     implementation("io.papermc:paperlib:1.0.8")
-    implementation("space.arim.morepaperlib:morepaperlib:0.4.3")
+    implementation("com.github.technicallycoded:FoliaLib:main-SNAPSHOT")
 
     // Libs
-    implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
+    implementation("co.aikar:acf-bukkit:0.5.1-SNAPSHOT")
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("dev.dejvokep:boosted-yaml:1.3.1")
 
@@ -83,7 +83,7 @@ tasks {
         archiveClassifier.set("main")
 
         relocate("org.bstats", "dev.xf3d3.libraries.bstats")
-        relocate("space.arim.morepaperlib", "dev.xf3d3.libraries.morepaperlib")
+        relocate("com.tcoded.folialib", "dev.xf3d3.libraries.folialib")
         relocate("co.aikar", "dev.xf3d3.libraries.aikar")
         relocate("com.google.gson", "dev.xf3d3.libraries.gson")
         relocate("org.jetbrains", "dev.xf3d3.libraries.jetbrains")

@@ -1,16 +1,21 @@
 package dev.xf3d3.ultimateteams;
 
-import co.aikar.commands.PaperCommandManager;
+import co.aikar.commands.BukkitCommandManager;
 import com.google.gson.Gson;
+import com.tcoded.folialib.FoliaLib;
+import com.tcoded.folialib.impl.PlatformScheduler;
 import dev.xf3d3.ultimateteams.api.UltimateTeamsAPI;
 import dev.xf3d3.ultimateteams.api.UltimateTeamsAPIImpl;
-import dev.xf3d3.ultimateteams.commands.*;
+import dev.xf3d3.ultimateteams.commands.TeamAdmin;
+import dev.xf3d3.ultimateteams.commands.TeamChatCommand;
+import dev.xf3d3.ultimateteams.commands.TeamChatSpyCommand;
+import dev.xf3d3.ultimateteams.commands.TeamCommand;
 import dev.xf3d3.ultimateteams.config.MessagesFileManager;
 import dev.xf3d3.ultimateteams.config.Settings;
 import dev.xf3d3.ultimateteams.config.TeamsGui;
 import dev.xf3d3.ultimateteams.database.*;
-import dev.xf3d3.ultimateteams.hooks.FloodgateAPIHook;
-import dev.xf3d3.ultimateteams.hooks.HuskHomesAPIHook;
+import dev.xf3d3.ultimateteams.hooks.FloodgateHook;
+import dev.xf3d3.ultimateteams.hooks.HuskHomesHook;
 import dev.xf3d3.ultimateteams.hooks.LuckPermsHook;
 import dev.xf3d3.ultimateteams.hooks.PapiExpansion;
 import dev.xf3d3.ultimateteams.listeners.PlayerConnectEvent;
@@ -20,6 +25,7 @@ import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamWarp;
 import dev.xf3d3.ultimateteams.utils.*;
 import dev.xf3d3.ultimateteams.utils.gson.GsonUtils;
+import lombok.Getter;
 import net.william278.annotaml.Annotaml;
 import net.william278.desertwell.util.ThrowingConsumer;
 import org.bstats.bukkit.Metrics;
@@ -32,9 +38,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import space.arim.morepaperlib.MorePaperLib;
-import space.arim.morepaperlib.scheduling.GracefulScheduling;
-import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +51,7 @@ import java.util.logging.Level;
 public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     private static UltimateTeams instance;
     private UltimateTeamsAPI api;
+    @Getter private boolean loaded = false;
 
     private static final int METRICS_ID = 18842;
     private final PluginDescriptionFile pluginInfo = getDescription();
@@ -57,15 +61,14 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
     private Database database;
 
-    private FloodgateAPIHook floodgateAPIHook;
+    private FloodgateHook floodgateHook;
     private Utils utils;
-    private ConcurrentHashMap<Integer, ScheduledTask> tasks;
-    private MorePaperLib paperLib;
-    private PaperCommandManager manager;
+    private FoliaLib foliaLib;
+    private BukkitCommandManager manager;
     private TeamsStorage teamsStorage;
     private UsersStorage usersStorage;
     private TeamInviteUtil teamInviteUtil;
-    private HuskHomesAPIHook huskHomesHook;
+    private HuskHomesHook huskHomesHook;
     private UpdateCheck updateChecker;
     private Settings settings;
     private TeamsGui teamsGui;
@@ -91,9 +94,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
     @Override
     public void onEnable() {
-        this.tasks = new ConcurrentHashMap<>();
-        this.paperLib = new MorePaperLib(this);
-        this.manager = new PaperCommandManager(this);
+        this.foliaLib = new FoliaLib(this);
+        this.manager = new BukkitCommandManager(this);
         this.msgFileManager = new MessagesFileManager(this);
         this.teamsStorage = new TeamsStorage(this);
         this.usersStorage = new UsersStorage(this);
@@ -129,13 +131,13 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         initialize("events", (plugin) -> registerEvents());
 
         // Load the teams
-        initialize("teams", (plugin) -> runAsync(() -> {
+        initialize("teams", (plugin) -> runAsync(task -> {
             teamsStorage.loadTeams();
         }));
 
         // Initialize HuskHomes hook
         if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && getSettings().HuskHomesHook()) {
-            initialize("huskhomes" , (plugin) -> this.huskHomesHook = new HuskHomesAPIHook(this));
+            initialize("huskhomes" , (plugin) -> this.huskHomesHook = new HuskHomesHook(this));
         }
 
         // Initialize LuckPerms hook
@@ -213,7 +215,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             sendConsole("-------------------------------------------");
             sendConsole("&6UltimateTeams: &3FloodgateApi found!");
 
-            initialize("floodgate", (plugin) -> this.floodgateAPIHook = new FloodgateAPIHook());
+            initialize("floodgate", (plugin) -> this.floodgateHook = new FloodgateHook());
 
             sendConsole("&6UltimateTeams: &3Full Bedrock support enabled!");
             sendConsole("-------------------------------------------");
@@ -245,6 +247,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         if (getSettings().doCheckForUpdates()) {
             updateChecker.checkForUpdates();
         }
+
+        this.loaded = true;
     }
 
     @Override
@@ -254,7 +258,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         sendConsole("&6UltimateTeams: &3Plugin by: &b&lxF3d3");
 
         // Cancel plugin tasks and close the database connection
-        getScheduler().cancelGlobalTasks();
+        getScheduler().cancelAllTasks();
         database.close();
 
         // Final plugin shutdown message
@@ -378,7 +382,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     }
 
     public FloodgateApi getFloodgateApi() {
-        return floodgateAPIHook.getHook();
+        return floodgateHook.getHook();
     }
 
     @NotNull
@@ -407,7 +411,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     }
 
     @NotNull
-    public HuskHomesAPIHook getHuskHomesHook() {
+    public HuskHomesHook getHuskHomesHook() {
         return huskHomesHook;
     }
 
@@ -418,14 +422,10 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
     @Override
     @NotNull
-    public GracefulScheduling getScheduler() {
-        return paperLib.scheduling();
+    public PlatformScheduler getScheduler() {
+        return foliaLib.getScheduler();
     }
 
-    @Override
-    @NotNull
-    public ConcurrentHashMap<Integer, ScheduledTask> getTasks() {
-        return tasks;
-    }
+
 
 }

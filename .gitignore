@@ -54,3 +54,4 @@ build/
 
 # Windows system files
 Thumbs.db
+/.idea

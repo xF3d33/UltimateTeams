@@ -43,7 +43,7 @@ public class TeamsStorage {
         Team newTeam = new Team(ownerUUIDString, teamName);
 
         teamsList.put(ownerUUID, newTeam);
-        plugin.runAsync(() -> plugin.getDatabase().createTeam(newTeam, ownerUUID));
+        plugin.runAsync(task -> plugin.getDatabase().createTeam(newTeam, ownerUUID));
 
         return newTeam;
     }
@@ -63,7 +63,7 @@ public class TeamsStorage {
         UUID uuid = UUID.fromString(team.getTeamOwner());
 
         teamsList.replace(uuid, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(task -> plugin.getDatabase().updateTeam(team));
     }
 
     public boolean deleteTeam(Player player) {
@@ -84,13 +84,13 @@ public class TeamsStorage {
                             alliedTeam.removeTeamAlly(uuid.toString());
 
                             teamsList.replace(UUID.fromString(teamUUIDString), alliedTeam);
-                            plugin.runAsync(() -> plugin.getDatabase().updateTeam(alliedTeam));
+                            plugin.runAsync(task -> plugin.getDatabase().updateTeam(alliedTeam));
                         }
                     }
 
 
                     teamsList.remove(uuid);
-                    plugin.runAsync(() -> plugin.getDatabase().deleteTeam(uuid));
+                    plugin.runAsync(task -> plugin.getDatabase().deleteTeam(uuid));
 
                     return true;
                 } else {
@@ -110,7 +110,7 @@ public class TeamsStorage {
 
             //fireTeamDisbandEvent(player);
             teamsList.remove(uuid);
-            plugin.runAsync(() -> plugin.getDatabase().deleteTeam(uuid));
+            plugin.runAsync(task -> plugin.getDatabase().deleteTeam(uuid));
 
             return true;
         }
@@ -197,7 +197,7 @@ public class TeamsStorage {
         team.setTeamPrefix(prefix);
 
         teamsList.replace(uuid, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(task -> plugin.getDatabase().updateTeam(team));
     }
 
     public boolean addTeamMember(Team team, Player player) {
@@ -206,7 +206,7 @@ public class TeamsStorage {
         team.addTeamMember(memberUUID);
 
         teamsList.replace(uuid, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(task -> plugin.getDatabase().updateTeam(team));
 
         return true;
     }
@@ -230,11 +230,11 @@ public class TeamsStorage {
 
         // Update the team
         teamsList.replace(ownerUUID, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(task -> plugin.getDatabase().updateTeam(team));
 
         // Update the allied team
         teamsList.replace(enemyUUID, enemyTeam);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(enemyTeam));
+        plugin.runAsync(task -> plugin.getDatabase().updateTeam(enemyTeam));
     }
 
     public void removeTeamEnemy(Player teamOwner, Player enemyTeamOwner) {
@@ -256,11 +256,11 @@ public class TeamsStorage {
 
         // Update the team
         teamsList.replace(ownerUUID, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(task -> plugin.getDatabase().updateTeam(team));
 
         // Update the allied team
         teamsList.replace(enemyUUID, enemyTeam);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(enemyTeam));
+        plugin.runAsync(task -> plugin.getDatabase().updateTeam(enemyTeam));
     }
 
     public void addTeamAlly(Player teamOwner, Player allyTeamOwner) {
@@ -282,11 +282,11 @@ public class TeamsStorage {
 
         // Update the team
         teamsList.replace(ownerUUID, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(task -> plugin.getDatabase().updateTeam(team));
 
         // Update the allied team
         teamsList.replace(allyUUID, alliedTeam);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(alliedTeam));
+        plugin.runAsync(task -> plugin.getDatabase().updateTeam(alliedTeam));
     }
 
     public void removeTeamAlly(Player teamOwner, Player allyTeamOwner) {
@@ -309,11 +309,11 @@ public class TeamsStorage {
 
         // Update the team
         teamsList.replace(ownerUUID, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(task -> plugin.getDatabase().updateTeam(team));
 
         // Update the allied team
         teamsList.replace(allyUUID, alliedTeam);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(alliedTeam));
+        plugin.runAsync(task -> plugin.getDatabase().updateTeam(alliedTeam));
     }
 
     public boolean isHomeSet(Team team){
@@ -323,7 +323,7 @@ public class TeamsStorage {
     public void deleteHome(Team team) {
         team.setTeamHomeWorld(null);
 
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(task -> plugin.getDatabase().updateTeam(team));
     }
 
     public void kickPlayer(Team team, OfflinePlayer player) {
@@ -332,7 +332,7 @@ public class TeamsStorage {
         team.removeTeamMember(player.getUniqueId().toString());
         teamsList.replace(uuid, team);
 
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(task -> plugin.getDatabase().updateTeam(team));
     }
 
     public String stripTeamNameColorCodes(Team team) {
@@ -387,11 +387,11 @@ public class TeamsStorage {
 
                     // delete old team
                     teamsList.remove(originalOwnerUUID);
-                    plugin.runAsync(() -> plugin.getDatabase().deleteTeam(originalOwnerUUID));
+                    plugin.runAsync(task -> plugin.getDatabase().deleteTeam(originalOwnerUUID));
 
                     // create new team
                     teamsList.put(newOwnerUUID, newTeam);
-                    plugin.runAsync(() -> plugin.getDatabase().createTeam(newTeam, newOwnerUUID));
+                    plugin.runAsync(task -> plugin.getDatabase().createTeam(newTeam, newOwnerUUID));
 
                     return newTeam;
 

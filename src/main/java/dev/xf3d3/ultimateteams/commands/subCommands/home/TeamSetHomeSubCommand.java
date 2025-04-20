@@ -47,7 +47,7 @@ public class TeamSetHomeSubCommand {
                     team.setTeamHomeYaw(player.getLocation().getYaw());
                     team.setTeamHomePitch(player.getLocation().getPitch());
 
-                    plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+                    plugin.runAsync(task -> plugin.getDatabase().updateTeam(team));
 
                     player.sendMessage(Utils.Color(messagesConfig.getString("successfully-set-team-home")));
                 }

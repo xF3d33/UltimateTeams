@@ -2,7 +2,10 @@ package dev.xf3d3.ultimateteams.utils.LuckPermsContexts;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
-import net.luckperms.api.context.*;
+import net.luckperms.api.context.ContextCalculator;
+import net.luckperms.api.context.ContextConsumer;
+import net.luckperms.api.context.ContextSet;
+import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

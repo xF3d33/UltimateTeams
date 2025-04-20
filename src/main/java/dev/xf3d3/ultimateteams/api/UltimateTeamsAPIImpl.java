@@ -14,6 +14,11 @@ public class UltimateTeamsAPIImpl implements UltimateTeamsAPI {
     }
 
     @Override
+    public boolean isLoaded() {
+        return plugin.isLoaded();
+    }
+
+    @Override
     public Collection<Team> getAllTeams() {
         return plugin.getTeamStorageUtil().getTeamsList();
     }

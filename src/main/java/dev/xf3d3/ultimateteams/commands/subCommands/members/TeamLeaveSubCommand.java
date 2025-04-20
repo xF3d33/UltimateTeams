@@ -33,7 +33,7 @@ public class TeamLeaveSubCommand {
             Team targetTeam = plugin.getTeamStorageUtil().findTeamByPlayer(player);
             if (targetTeam != null) {
                 if (targetTeam.removeTeamMember(player.getUniqueId().toString())) {
-                    plugin.runAsync(() -> plugin.getDatabase().updateTeam(targetTeam));
+                    plugin.runAsync(task -> plugin.getDatabase().updateTeam(targetTeam));
 
                     String leaveMessage = Utils.Color(messagesConfig.getString("team-leave-successful")).replace(Team_PLACEHOLDER, targetTeam.getTeamFinalName());
                     player.sendMessage(leaveMessage);

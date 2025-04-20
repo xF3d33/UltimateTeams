@@ -1,7 +1,6 @@
 package dev.xf3d3.ultimateteams.utils;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -15,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -42,10 +40,7 @@ public class Utils {
 
             plugin.runLater(() -> {
                 // Run on the appropriate thread scheduler for this platform
-                plugin.getScheduler().entitySpecificScheduler(player).run(
-                        () -> PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN),
-                        () -> plugin.log(Level.WARNING, "User offline when teleporting: " + player.getName())
-                );
+                plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
                 player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
             }, plugin.getSettings().getTeamHomeTpDelay());
@@ -59,10 +54,7 @@ public class Utils {
 
             plugin.runLater(() -> {
                 // Run on the appropriate thread scheduler for this platform
-                plugin.getScheduler().entitySpecificScheduler(player).run(
-                        () -> PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN),
-                        () -> plugin.log(Level.WARNING, "User offline when teleporting: " + player.getName())
-                );
+                plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-teleported-successful").replaceAll("%WARP_NAME%", String.valueOf(warpName))));
 
             }, plugin.getSettings().getTeamWarpTpDelay());
@@ -71,10 +63,7 @@ public class Utils {
         }
 
         // Run on the appropriate thread scheduler for this platform
-        plugin.getScheduler().entitySpecificScheduler(player).run(
-                () -> PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN),
-                () -> plugin.log(Level.WARNING, "User offline when teleporting: " + player.getName())
-        );
+        plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
     public List<Integer> getNumberPermission(@NotNull Player player, @NotNull String permissionPrefix) {

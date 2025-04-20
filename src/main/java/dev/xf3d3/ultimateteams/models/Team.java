@@ -1,7 +1,6 @@
 package dev.xf3d3.ultimateteams.models;
 
 import com.google.gson.annotations.Expose;
-import dev.xf3d3.ultimateteams.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
