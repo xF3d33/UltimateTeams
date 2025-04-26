@@ -30,24 +30,24 @@ public class TeamDelHomeSubCommand {
             return;
         }
 
-        if (plugin.getSettings().teamHomeEnabled()) {
-            if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
-                Team teamByOwner = plugin.getTeamStorageUtil().findTeamByOwner(player);
-
-                if (plugin.getTeamStorageUtil().isHomeSet(teamByOwner)) {
-                    fireTeamHomeDeleteEvent(player, teamByOwner);
-
-                    plugin.getTeamStorageUtil().deleteHome(teamByOwner);
-                    player.sendMessage(Utils.Color(messagesConfig.getString("successfully-deleted-team-home")));
-                } else {
-                    player.sendMessage(Utils.Color(messagesConfig.getString("failed-no-home-set")));
-                }
-            } else {
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
-            }
-        } else {
+        if (!plugin.getSettings().teamHomeEnabled()) {
             player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            return;
         }
+
+        plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
+                team -> {
+                    if (plugin.getTeamStorageUtil().isHomeSet(team)) {
+                        fireTeamHomeDeleteEvent(player, team);
+
+                        plugin.getTeamStorageUtil().deleteHome(player, team);
+                        player.sendMessage(Utils.Color(messagesConfig.getString("successfully-deleted-team-home")));
+                    } else {
+                        player.sendMessage(Utils.Color(messagesConfig.getString("failed-no-home-set")));
+                    }
+                },
+                () -> player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")))
+        );
     }
 
     private void fireTeamHomeDeleteEvent(Player player, Team team) {

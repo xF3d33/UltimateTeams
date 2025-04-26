@@ -4,6 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamPlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.sqlite.SQLiteConfig;
 
@@ -139,10 +140,37 @@ public class SQLiteDatabase extends Database {
         return teams;
     }
 
+    public Optional<Team> getTeam(@NotNull Integer id) {
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(format("""
+                    SELECT *
+                    FROM `%team_table%`
+                    WHERE `id` = ?
+                    """))) {
+
+                statement.setInt(1, id);
+
+                final ResultSet resultSet = statement.executeQuery();
+                if (resultSet.next()) {
+                    final String data = new String(resultSet.getBytes("data"), StandardCharsets.UTF_8);
+                    final Team team = plugin.getGson().fromJson(data, Team.class);
+
+                    if (team != null) {
+                        team.setId(resultSet.getInt("id"));
+                        return Optional.of(team);
+                    }
+                }
+            }
+        } catch (SQLException | JsonSyntaxException e) {
+            plugin.log(Level.SEVERE, "Failed to update team in table", e);
+        }
+        return Optional.empty();
+    }
+
     public void createPlayer(@NotNull TeamPlayer teamplayer) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    INSERT INTO `%user_table%` (`uuid`, `username`, `isBedrock`, `bedrockUUID`, `canChatSpy`)
+                    INSERT INTO `%user_table%` (`uuid`, `username`, `isBedrock`, `bedrockUUID`, `preferences`)
                     VALUES (?, ?, ?, ?, ?)
                     """))) {
 
@@ -150,7 +178,7 @@ public class SQLiteDatabase extends Database {
                 statement.setString(2, teamplayer.getLastPlayerName());
                 statement.setBoolean(3, teamplayer.isBedrockPlayer());
                 statement.setString(4, teamplayer.getBedrockUUID());
-                statement.setBoolean(5, teamplayer.isCanChatSpy());
+                statement.setBytes(5, plugin.getGson().toJson(teamplayer.getPreferences()).getBytes(StandardCharsets.UTF_8));
 
                 statement.executeUpdate();
             }
@@ -163,16 +191,15 @@ public class SQLiteDatabase extends Database {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     UPDATE `%user_table%`
-                    SET `uuid` = ?, `username` = ?, `isBedrock` = ?, `bedrockUUID` = ?, `canChatSpy` = ?
+                    SET `username` = ?, `isBedrock` = ?, `bedrockUUID` = ?, `preferences` = ?
                     WHERE `uuid` = ?
                     """))) {
 
-                statement.setString(1, String.valueOf(teamplayer.getJavaUUID()));
-                statement.setString(2, teamplayer.getLastPlayerName());
-                statement.setBoolean(3, teamplayer.isBedrockPlayer());
-                statement.setString(4, teamplayer.getBedrockUUID());
-                statement.setBoolean(5, teamplayer.isCanChatSpy());
-                statement.setString(6, String.valueOf(teamplayer.getJavaUUID()));
+                statement.setString(1, teamplayer.getLastPlayerName());
+                statement.setBoolean(2, teamplayer.isBedrockPlayer());
+                statement.setString(3, teamplayer.getBedrockUUID());
+                statement.setBytes(4, plugin.getGson().toJson(teamplayer.getPreferences()).getBytes(StandardCharsets.UTF_8));
+                statement.setString(5, String.valueOf(teamplayer.getJavaUUID()));
 
                 statement.executeUpdate();
             }
@@ -194,11 +221,11 @@ public class SQLiteDatabase extends Database {
 
                 if (resultSet.next()) {
                     final TeamPlayer teamPlayer = new TeamPlayer(
-                            resultSet.getString("uuid"),
+                            UUID.fromString(resultSet.getString("uuid")),
                             resultSet.getString("username"),
                             resultSet.getBoolean("isBedrock"),
                             resultSet.getString("bedrockUUID"),
-                            resultSet.getBoolean("canChatSpy")
+                            plugin.getPreferencesFromJson(new String(resultSet.getBytes("preferences"), StandardCharsets.UTF_8))
                     );
 
                     return Optional.of(teamPlayer);
@@ -210,57 +237,29 @@ public class SQLiteDatabase extends Database {
         return Optional.empty();
     }
 
-    public Optional<TeamPlayer> getPlayer(@NotNull String name) {
+    public Team createTeam(@NotNull String name, @NotNull Player creator) {
+        final Team team = Team.create(name, creator);
+
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    SELECT *
-                    FROM `%user_table%`
-                    WHERE `username` = ?
-                    """))) {
-                statement.setString(1, name);
-
-                final ResultSet resultSet = statement.executeQuery();
-
-                if (resultSet.next()) {
-                    final TeamPlayer teamPlayer = new TeamPlayer(
-                            resultSet.getString("uuid"),
-                            resultSet.getString("username"),
-                            resultSet.getBoolean("isBedrock"),
-                            resultSet.getString("bedrockUUID"),
-                            resultSet.getBoolean("canChatSpy")
-                    );
-
-                    return Optional.of(teamPlayer);
-                }
-            }
-        } catch (SQLException e) {
-            plugin.log(Level.SEVERE, "Failed to get player from table", e);
-        }
-        return Optional.empty();
-    }
-
-    public void createTeam(@NotNull Team team, @NotNull UUID uuid) {
-        try (Connection connection = getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(format("""
-                    INSERT INTO `%team_table%` (`uuid`, `name`, `data`)
-                    VALUES (?, ?, ?)
+                    INSERT INTO `%team_table%` (`name`, `data`)
+                    VALUES (?, ?)
                     """), Statement.RETURN_GENERATED_KEYS)) {
 
-                statement.setString(1, String.valueOf(uuid));
-                statement.setString(2, team.getTeamFinalName());
-                statement.setBytes(3, plugin.getGson().toJson(team).getBytes(StandardCharsets.UTF_8));
+                statement.setString(1, team.getName());
+                statement.setBytes(2, plugin.getGson().toJson(team).getBytes(StandardCharsets.UTF_8));
 
                 statement.executeUpdate();
 
                 final ResultSet insertedRow = statement.getGeneratedKeys();
                 if (insertedRow.next()) {
                     team.setId(insertedRow.getInt(1));
-                    plugin.getTeamStorageUtil().updateTeamLocal(team);
                 }
             }
         } catch (SQLException | JsonSyntaxException e) {
             plugin.log(Level.SEVERE, "Failed to create team in table", e);
         }
+        return team;
     }
 
     public void updateTeam(@NotNull Team team) {
@@ -271,7 +270,7 @@ public class SQLiteDatabase extends Database {
                     WHERE `id` = ?
                     """))) {
 
-                statement.setString(1, team.getTeamFinalName());
+                statement.setString(1, team.getName());
                 statement.setBytes(2, plugin.getGson().toJson(team).getBytes(StandardCharsets.UTF_8));
                 statement.setInt(3, team.getId());
 
@@ -283,14 +282,14 @@ public class SQLiteDatabase extends Database {
         }
     }
 
-    public void deleteTeam(@NotNull UUID uuid) {
+    public void deleteTeam(@NotNull Integer id) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     DELETE FROM `%team_table%`
-                    WHERE `uuid` = ?
+                    WHERE `id` = ?
                     """))) {
 
-                statement.setString(1, String.valueOf(uuid));
+                statement.setInt(1, id);
 
                 statement.executeUpdate();
             }

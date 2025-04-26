@@ -23,12 +23,12 @@ public class HuskHomesHook {
         sendMessages();
     }
 
-    public void teleportPlayer(@NotNull Player player, @NotNull Location location) {
+    public void teleportPlayer(@NotNull Player player, @NotNull Location location, @NotNull String server) {
         OnlineUser onlineUser = huskHomesAPI.adaptUser(player);
 
         Position position = Position.at(
                 location.getX(), location.getY(), location.getZ(),
-                World.from(location.getWorld().getName(), location.getWorld().getUID()), "server"
+                World.from(location.getWorld().getName(), location.getWorld().getUID()), server
         );
 
         try {

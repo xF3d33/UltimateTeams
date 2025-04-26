@@ -1,6 +1,7 @@
 package dev.xf3d3.ultimateteams.utils;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.models.Position;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -27,10 +28,26 @@ public class Utils {
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
 
-    public void teleportPlayer(@NotNull Player player, @NotNull Location location, @NotNull TeleportType teleportType, @Nullable String warpName) {
+    public void teleportPlayer(@NotNull Player player, @NotNull Location location, @Nullable String server, @NotNull TeleportType teleportType, @Nullable String warpName) {
+        final String targetServer = server != null ? server : plugin.getSettings().getServerName();
+
         // Execute tp immediately if HuskHome is in use
         if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && plugin.getSettings().HuskHomesHook()) {
-            plugin.getHuskHomesHook().teleportPlayer(player, location);
+            plugin.getHuskHomesHook().teleportPlayer(player, location, targetServer);
+
+            return;
+        }
+
+        if (plugin.getSettings().isEnableCrossServer() && !targetServer.equals(plugin.getSettings().getServerName())) {
+            plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAccept(teamPlayer -> {
+                teamPlayer.getPreferences().setTeleportTarget(
+                        Position.at(location.getX(), location.getY(), location.getZ(), location.getWorld().getName(), location.getYaw(), location.getPitch())
+                );
+
+                plugin.getUsersStorageUtil().updatePlayer(teamPlayer);
+                plugin.getMessageBroker().ifPresent(broker -> broker.changeServer(player, targetServer));
+            });
+
             return;
         }
 
@@ -114,6 +131,7 @@ public class Utils {
 
     public enum TeleportType {
         WARP,
-        HOME
+        HOME,
+        SERVER
     }
 }

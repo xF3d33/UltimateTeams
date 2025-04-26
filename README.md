@@ -6,15 +6,17 @@
 
 UltimateTeams is a light-weight teams plugin for Minecraft servers running Spigot and most of its forks, developed with optimization in mind!
 
-UltimateTeams does not support any grief prevention tools such as land claiming or securing containers within your team.
+UltimateTeams does offer the ability to disable friendly fire within your team and allies!
 
-UltimateTeams DOES however offer the ability to disable friendly fire within your team!
+[bStats (400+ servers)](https://bstats.org/plugin/bukkit/UltimateTeams/18842)
 <br>&nbsp;<br>
+
+###  _**I'm currently adding support for cross-server. If you want to help me on this, write me a message on Discord (xF3d3) and i'll provide some test builds**_
 
 <img     src="https://cdn.modrinth.com/data/cached_images/be59361ea48c350f68566f613ed176c19c266504.png"  alt="Image Description" width="WIDTH">
 <br>&nbsp;<br>
 
-UltimateTeams does support both SQLite and MySQL, check the config for further information.
+UltimateTeams does support H2 (preferred over SQLite), SQLite, MySQL, MariaDB (preferred over MySQL) and PostgreSQL, check the config for further information.
 ### All database operations are executed asynchronously, to prevent any form of lag
 <br>&nbsp;<br>
 
@@ -51,8 +53,8 @@ Teams list can also be accessed in a paginated GUI
 <br>&nbsp;<br>
 
 ## /team command
-Aliases: `/team` 
-  
+Aliases: `/team`
+
 The `/team` command is the main command of the plugin, with `/team` you can do the following:
 * `/team create <name>` - Creates A new team if not already in one
 * `/team disband` - If you are the team owner, this will destroy your team
@@ -71,10 +73,9 @@ The `/team` command is the main command of the plugin, with `/team` you can do t
 ## /teamadmin command
 Aliases: `/ta`
 
-The `/teamadmin` command is purely for server admins only. 
+The `/teamadmin` command is purely for server admins only.
 
-4 arguments are implemented which are: 
-* `/teamadmin save` - which will save all current team info to the `teams.yml` data file.  
+4 arguments are implemented which are:
 * `/teamadmin reload` - This reloads the plugins `config.yml` & the `messages.yml` files from disk.
 * `/teamadmin disband <team-name>` - This allows admins to delete any unauthorised teams.
 * `/teamadmin about` - This give you an overview of the plugin's core information.

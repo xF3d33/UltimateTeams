@@ -1,7 +1,6 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.members;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,27 +27,24 @@ public class TeamPvpSubCommand {
             return;
         }
 
-        if (plugin.getTeamStorageUtil().isTeamOwner(player)) {
-            if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
-                final Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
-
-                if (team.isFriendlyFireAllowed()){
-
-                    team.setFriendlyFireAllowed(false);
-                    plugin.runAsync(task -> plugin.getDatabase().updateTeam(team));
-
-                    player.sendMessage(Utils.Color(messagesConfig.getString("disabled-friendly-fire")));
-                } else {
-                    team.setFriendlyFireAllowed(true);
-                    plugin.runAsync(task -> plugin.getDatabase().updateTeam(team));
-
-                    player.sendMessage(Utils.Color(messagesConfig.getString("enabled-friendly-fire")));
-                }
-            } else {
-                player.sendMessage(Utils.Color(messagesConfig.getString("failed-not-in-team")));
-            }
-        } else {
+        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
         }
+
+        plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
+                team -> {
+                    if (team.isFriendlyFireAllowed()){
+
+                        team.setFriendlyFire(false);
+                        player.sendMessage(Utils.Color(messagesConfig.getString("disabled-friendly-fire")));
+                    } else {
+                        team.setFriendlyFire(true);
+                        player.sendMessage(Utils.Color(messagesConfig.getString("enabled-friendly-fire")));
+                    }
+
+                    plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
+                },
+                () -> player.sendMessage(Utils.Color(messagesConfig.getString("failed-not-in-team")))
+        );
     }
 }

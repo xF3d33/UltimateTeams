@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import static org.bukkit.Bukkit.getServer;
-
 public class TeamListGUI {
     private final FileConfiguration messagesConfig;
     private final UltimateTeams plugin;
@@ -44,14 +42,9 @@ public class TeamListGUI {
     public void handleMenu(InventoryClickEvent event) {
         final Player player = (Player) event.getWhoClicked();
 
-        Team playerTeam;
-        if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
-            playerTeam = plugin.getTeamStorageUtil().findTeamByOwner(player);
-        } else {
-            playerTeam = plugin.getTeamStorageUtil().findTeamByPlayer(player);
-        }
 
-        if (playerTeam != null) {
+
+        if (plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).isPresent()) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-failed-already-in-team")));
             return;
         }
@@ -83,28 +76,28 @@ public class TeamListGUI {
         teams_gui.setItem(49, ItemBuilder.from(Material.BARRIER).setName(Utils.Color(plugin.getTeamsGui().getCloseGuiName())).asGuiItem(event -> teams_gui.close(event.getWhoClicked())));
 
         //Pagination loop template
-        for (Team team : plugin.getTeamStorageUtil().getTeamsList()) {
-            String teamOwnerUUIDString = team.getTeamOwner();
-            UUID ownerUUID = UUID.fromString(teamOwnerUUIDString);
-            OfflinePlayer teamOwnerPlayer = Bukkit.getOfflinePlayer(ownerUUID);
+        for (Team team : plugin.getTeamStorageUtil().getTeams()) {
+            OfflinePlayer teamOwnerPlayer = Bukkit.getOfflinePlayer(team.getOwner());
 
             SkullBuilder ownerHead = ItemBuilder.skull()
-                    .owner(getServer().getOfflinePlayer(ownerUUID));
+                    .name(Component.text(team.getName()))
+                    .owner(teamOwnerPlayer);
 
-            ArrayList<String> teamMembersList = team.getTeamMembers();
-            ArrayList<String> teamAlliesList = team.getTeamAllies();
-            ArrayList<String> teamEnemiesList = team.getTeamEnemies();
+            //ArrayList<String> teamMembersList = team.getTeamMembers();
+            //ArrayList<String> teamAlliesList = team.getTeamAllies();
+            //ArrayList<String> teamEnemiesList = team.getTeamEnemies();
 
             ArrayList<String> lore = new ArrayList<>();
             lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("header")));
-            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("prefix") + team.getTeamPrefix()));
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("prefix") + (team.getPrefix() != null ? team.getPrefix() : "")));
             if (teamOwnerPlayer.isOnline()) {
                 lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("owner-online") + teamOwnerPlayer.getName()));
             } else {
                 lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("owner-offline") + teamOwnerPlayer.getName()));
             }
 
-            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("members")));
+            // todo: complete this as in teamInfo command
+            /*lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("members")));
             for (String string : teamMembersList) {
                 UUID memberUUID = UUID.fromString(string);
                 OfflinePlayer member = Bukkit.getOfflinePlayer(memberUUID);
@@ -141,14 +134,14 @@ public class TeamListGUI {
                     lore.add(Utils.Color("&3&o+ &r&6&l" + enemySize + "&r &3&omore!"));
                     break;
                 }
-            }
+            }*/
 
             lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("footer-1")));
             lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("action")));
             lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("footer-2")));
 
             ownerHead.setLore(lore);
-            ownerHead.setNbt("uuid", team.getTeamOwner());
+            ownerHead.setNbt("uuid", String.valueOf(team.getOwner()));
             ownerHead.asGuiItem(event -> teams_gui.close(event.getWhoClicked()));
 
             teams_gui.addItem(ownerHead.asGuiItem(this::handleMenu));

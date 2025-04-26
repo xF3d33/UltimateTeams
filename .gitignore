@@ -1,57 +1,42 @@
-# Compiled class files
-*.class
-
-# Log files
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.ear
-
-# virtual machine crash logs
-hs_err_pid*
-
-# Eclipse
-.classpath
-.project
-.settings/
-bin/
-
-# IntelliJ IDEA
-.idea/
-*.iml
-*.iws
-out/
-gen/
-
-# NetBeans
-nbproject/private/
+### Build/run paths ###
 build/
-nbbuild/
-dist/
-nbdist/
-.nb-gradle/
-
-# VS Code
-.vscode/
-
-# Maven
+run/
 target/
 
-# Gradle
-.gradle/
-build/
+### Gradle ###
+.gradle
+!gradle/wrapper/gradle-wrapper.jar
 
-# Mac system files
+### IntelliJ IDEA ###
+.idea/
+out/
+*.iws
+*.iml
+*.ipr
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
 .DS_Store
-
-# Windows system files
-Thumbs.db
-/.idea

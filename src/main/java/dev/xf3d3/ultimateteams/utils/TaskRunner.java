@@ -7,13 +7,27 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public interface TaskRunner {
     UltimateTeams plugin = UltimateTeams.getPlugin();
 
     default void runAsync(@NotNull Consumer<WrappedTask> runnable) {
         getScheduler().runAsync(runnable);
+    }
+
+    default <T> CompletableFuture<T> supplyAsync(@NotNull Supplier<T> supplier) {
+        final CompletableFuture<T> future = new CompletableFuture<>();
+        runAsync(task -> {
+            try {
+                future.complete(supplier.get());
+            } catch (Throwable throwable) {
+                future.completeExceptionally(throwable);
+            }
+        });
+        return future;
     }
 
     /*default <T> CompletableFuture<T> supplyAsync(@NotNull Supplier<T> supplier) {
@@ -37,6 +51,10 @@ public interface TaskRunner {
 
     default void runSync(@NotNull Consumer<WrappedTask> runnable) {
         getScheduler().runNextTick(runnable);
+    }
+
+    default void runSyncDelayed(@NotNull Runnable runnable, long delay) {
+        getScheduler().runLater(runnable, delay);
     }
 
     default void runSyncRepeating(@NotNull Runnable runnable, long period) {

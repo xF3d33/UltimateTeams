@@ -1,6 +1,8 @@
 package dev.xf3d3.ultimateteams.config;
 
 import dev.xf3d3.ultimateteams.database.Database;
+import dev.xf3d3.ultimateteams.network.Broker;
+import lombok.Getter;
 import net.william278.annotaml.YamlComment;
 import net.william278.annotaml.YamlFile;
 import net.william278.annotaml.YamlKey;
@@ -37,19 +39,19 @@ public class Settings {
     @YamlKey("database.mysql.credentials.host")
     private String mySqlHost = "localhost";
 
-    @YamlKey("database.mysql.port")
+    @YamlKey("database.mysql.credentials.port")
     private int mySqlPort = 3306;
 
-    @YamlKey("database.mysql.database")
+    @YamlKey("database.mysql.credentials.database")
     private String mySqlDatabase = "ultimate_teams";
 
-    @YamlKey("database.mysql.username")
+    @YamlKey("database.mysql.credentials.username")
     private String mySqlUsername = "root";
 
-    @YamlKey("database.mysql.password")
+    @YamlKey("database.mysql.credentials.password")
     private String mySqlPassword = "pa55w0rd";
 
-    @YamlKey("database.mysql.parameters")
+    @YamlKey("database.mysql.credentials.parameters")
     private String mySqlConnectionParameters = "?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8";
 
     @YamlComment("MYSQL / MARIADB / POSTGRESQL database connection pool properties. Don't modify this unless you know what you're doing!")
@@ -74,6 +76,47 @@ public class Settings {
         Database.Table.TEAM_DATA.name().toLowerCase(), Database.Table.TEAM_DATA.getDefaultName(),
         Database.Table.USER_DATA.name().toLowerCase(), Database.Table.USER_DATA.getDefaultName()
     );
+
+
+    // cross-server settings
+    @YamlComment("Whether enable cross-server mode. You must use MYSQL/MARIADB/POSTGRESQL to use cross-server")
+    @YamlKey("cross-server.enable")
+    @Getter
+    private boolean enableCrossServer = false;
+
+    @YamlComment("The name of the server as it appears on Bungee/Velocity (case-sensitive)")
+    @YamlKey("cross-server.server-name")
+    @Getter
+    private String serverName = "Survival";
+
+    @YamlComment("The cluster ID, for if you're networking multiple separate groups of UltimateTeams-enabled servers. Do not change unless you know what you're doing")
+    @YamlKey("cross-server.cluster-id")
+    @Getter
+    private String clusterId = "main";
+
+    @YamlComment("Type of network message broker to ues for data synchronization (PLUGIN_MESSAGE or REDIS). REDIS is preferred over PLUGIN_MESSAGE.")
+    @YamlKey("cross-server.broker")
+    @Getter
+    private Broker.Type brokerType = Broker.Type.PLUGIN_MESSAGE;
+
+    @YamlComment("Settings for if you're using REDIS as your message broker")
+    @YamlKey("cross-server.redis.host")
+    @Getter
+    private String redisHost = "localhost";
+
+    @YamlKey("cross-server.redis.port")
+    @Getter
+    private int redisPort = 6379;
+
+    @YamlKey("cross-server.redis.password")
+    @Getter
+    private String redisPassword = "";
+
+    @YamlKey("cross-server.redis.use-ssl")
+    @Getter
+    private boolean redisUseSSL = false;
+
+
 
     @YamlComment("Hook into luckperms to create contexts (e.g. is-in-team) [Default value: false]. Needs LuckPerms")
     @YamlKey("luckperms-hook")
@@ -171,7 +214,7 @@ public class Settings {
     @YamlKey("team-chat.enabled")
     private boolean teamChatEnabled = true;
 
-    @YamlComment("Below is the prefix for the team chat messages. [Default value: &6[&3CC&6]&r]")
+    @YamlComment("Below is the prefix for the team chat messages. (Placeholders: %TEAM% %PLAYER%)")
     @YamlKey("team-chat.prefix")
     private String teamChatPrefix = "&6[&3TC&6]&r";
 
@@ -180,7 +223,7 @@ public class Settings {
     @YamlKey("ally-chat.enabled")
     private boolean teamAllyChatEnabled = true;
 
-    @YamlComment("Below is the prefix for the team ally chat messages. [Default value: &6[&3CC&6]&r]")
+    @YamlComment("Below is the prefix for the team ally chat messages. (Placeholders: %TEAM% %PLAYER%)")
     @YamlKey("ally-chat.prefix")
     private String teamAllyChatPrefix = "&6[&eAC&6]&r";
 

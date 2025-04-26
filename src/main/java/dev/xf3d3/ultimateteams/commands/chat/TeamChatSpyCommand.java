@@ -1,4 +1,4 @@
-package dev.xf3d3.ultimateteams.commands;
+package dev.xf3d3.ultimateteams.commands.chat;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
@@ -27,8 +27,8 @@ public class TeamChatSpyCommand extends BaseCommand {
     public void onCommand(CommandSender sender) {
         if (sender instanceof final Player player) {
             if (plugin.getSettings().teamChatSpyEnabled()){
-                if (player.hasPermission("ultimateteams.chat.spy")){
-                    if (plugin.getUsersStorageUtil().toggleChatSpy(player)){
+                if (player.hasPermission("ultimateteams.chat.spy")) {
+                    if (plugin.getUsersStorageUtil().toggleChatSpy(player)) {
                         player.sendMessage(Utils.Color(messagesConfig.getString("chatspy-toggle-on")));
                     } else {
                         player.sendMessage(Utils.Color(messagesConfig.getString("chatspy-toggle-off")));

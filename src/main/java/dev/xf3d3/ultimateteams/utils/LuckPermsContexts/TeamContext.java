@@ -9,6 +9,8 @@ import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 public class TeamContext implements ContextCalculator<Player> {
     private final UltimateTeams plugin;
     private static final String KEY = "team-name";
@@ -19,16 +21,13 @@ public class TeamContext implements ContextCalculator<Player> {
 
     @Override
     public void calculate(@NotNull Player target, @NotNull ContextConsumer consumer) {
-        String teamName = "Null";
+        String teamName = "null";
 
-        Team team;
-        if (plugin.getTeamStorageUtil().findTeamByOwner(target) != null) {
-            team = plugin.getTeamStorageUtil().findTeamByOwner(target);
-        } else {
-            team = plugin.getTeamStorageUtil().findTeamByPlayer(target);
+        Optional<Team> optionalTeam = plugin.getTeamStorageUtil().findTeamByMember(target.getUniqueId());
+
+        if (optionalTeam.isPresent()) {
+            teamName = optionalTeam.get().getName();
         }
-
-        if (team != null) teamName = team.getTeamFinalName();
 
         consumer.accept(KEY, String.valueOf(teamName));
     }
@@ -38,7 +37,7 @@ public class TeamContext implements ContextCalculator<Player> {
     public ContextSet estimatePotentialContexts() {
         ImmutableContextSet.Builder teams = ImmutableContextSet.builder();
 
-        for (String teamName : plugin.getTeamStorageUtil().getTeamsListNames()) {
+        for (String teamName : plugin.getTeamStorageUtil().getTeamsName()) {
             teams.add(KEY, teamName);
         }
 

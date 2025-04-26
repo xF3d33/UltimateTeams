@@ -18,15 +18,7 @@ public class IsInTeamContext implements ContextCalculator<Player> {
 
     @Override
     public void calculate(@NotNull Player target, @NotNull ContextConsumer consumer) {
-        boolean isInTeam = false;
-
-        if (plugin.getTeamStorageUtil().isTeamOwner(target)) {
-            isInTeam = true;
-        } else if (plugin.getTeamStorageUtil().findTeamByPlayer(target) != null) {
-            isInTeam = true;
-        }
-
-        consumer.accept(KEY, String.valueOf(isInTeam));
+        consumer.accept(KEY, String.valueOf(plugin.getTeamStorageUtil().isInTeam(target.getPlayer())));
     }
 
     @NotNull

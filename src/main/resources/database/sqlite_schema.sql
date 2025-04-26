@@ -1,17 +1,16 @@
-CREATE TABLE IF NOT EXISTS `%user_table%`
-(
-    `id`          integer     NOT NULL PRIMARY KEY,
-    `uuid`        char(36)    NOT NULL UNIQUE,
-    `username`    varchar(16) NOT NULL,
-    `isBedrock`   boolean     NOT NULL,
-    `bedrockUUID` varchar(36),
-    `canChatSpy`  boolean     NOT NULL
+-- Create users table
+CREATE TABLE IF NOT EXISTS users (
+    uuid         CHAR(36)     PRIMARY KEY,
+    username     VARCHAR(16)  NOT NULL,
+    last_login   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    isBedrock    BOOLEAN      NOT NULL,
+    bedrockUUID  VARCHAR(36),
+    preferences  BLOB         NOT NULL
     );
 
-CREATE TABLE IF NOT EXISTS `%team_table%`
-(
-    `id`   integer         NOT NULL PRIMARY KEY,
-    `uuid` varchar(36)     NOT NULL UNIQUE,
-    `name` varchar(16)     NOT NULL,
-    `data` longblob        NOT NULL
+-- Create teams table
+CREATE TABLE IF NOT EXISTS teams (
+    id    INTEGER      PRIMARY KEY AUTOINCREMENT,
+    name  VARCHAR(16)  NOT NULL,
+    data  BLOB         NOT NULL
     );

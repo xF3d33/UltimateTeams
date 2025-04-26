@@ -1,224 +1,174 @@
 package dev.xf3d3.ultimateteams.models;
 
+import com.google.common.collect.Maps;
 import com.google.gson.annotations.Expose;
-import lombok.Getter;
-import lombok.Setter;
+import dev.xf3d3.ultimateteams.UltimateTeams;
+import lombok.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
-@SuppressWarnings("unused")
+@Builder
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Team {
-    public @Getter @Setter int id;
+    @Getter @Setter
+    @Builder.Default
+    public int id = 0;
 
     @Expose
-    private String teamFinalOwner;
+    @Getter @Setter
+    private String name;
+
     @Expose
-    private String teamFinalName;
-    @Expose
-    private String teamPrefix;
-    @Expose
-    private ConcurrentHashMap<String, TeamWarp> teamWarps;
-    @Expose
-    private ArrayList<String> teamMembers;
-    @Expose
-    private ArrayList<String> teamAllies;
-    @Expose
-    private ArrayList<String> teamEnemies;
-    @Expose
-    private boolean friendlyFire;
-    @Expose
-    private String teamHomeWorld;
-    @Expose
+    @Builder.Default
     @Nullable
-    private Double teamHomeX;
+    @Getter @Setter
+    private String prefix = null;
+
+    @Getter
     @Expose
-    @Nullable
-    private Double teamHomeY;
+    @Builder.Default
+    private Map<String, TeamWarp> warps = Maps.newHashMap();
+
     @Expose
-    @Nullable
-    private Double teamHomeZ;
+    @Getter
+    @Builder.Default
+    private Map<UUID, Integer> members = Maps.newHashMap();
+
     @Expose
-    @Nullable
-    private Float teamHomeYaw;
+    @Builder.Default
+    private Map<Integer, Relation> relations = Maps.newHashMap();
+
     @Expose
+    @Builder.Default
+    @Getter @Setter
+    private boolean friendlyFire = false;
+
     @Nullable
-    private Float teamHomePitch;
+    @Expose
+    @Builder.Default
+    @Getter @Setter
+    private TeamHome home = null;
 
-    public Team(@NotNull String teamOwner, @NotNull String teamName) {
-        teamFinalOwner = teamOwner;
-        teamFinalName = teamName;
-        teamPrefix = teamFinalName;
-        teamMembers = new ArrayList<>();
-        teamAllies = new ArrayList<>();
-        teamEnemies = new ArrayList<>();
-        teamWarps = new ConcurrentHashMap<>();
-        friendlyFire = false;
-        teamHomeWorld = null;
+    @NotNull
+    @ApiStatus.Internal
+    public static Team create(@NotNull String name, @NotNull Player owner) {
+        return Team.builder()
+                .name(name)
+                .members(Maps.newHashMap(Map.of(owner.getUniqueId(), 3)))
+                .build();
     }
 
-    public ArrayList<Player> getOnlineMembers() {
-        ArrayList<Player> onlineMembers = new ArrayList<>();
-
-        for (String teamMember : teamMembers) {
-
-            if (teamMember != null) {
-                UUID memberUUID = UUID.fromString(teamMember);
-                Player TeamPlayer = Bukkit.getPlayer(memberUUID);
-
-                if (TeamPlayer != null) {
-                    onlineMembers.add(TeamPlayer);
-                }
-            }
-        }
-        return onlineMembers;
+    public List<Player> getOnlineMembers() {
+        return Bukkit.getOnlinePlayers().stream()
+                .filter(player -> getMembers().containsKey(player.getUniqueId())).collect(Collectors.toUnmodifiableList());
     }
 
-    public String getTeamOwner(){
-        return teamFinalOwner;
+    public void sendTeamMessage(@NotNull String message) {
+        Bukkit.getOnlinePlayers().stream()
+                .filter(player -> getMembers().containsKey(player.getUniqueId()))
+                .forEach(player -> player.sendPlainMessage(message));
     }
 
-    public String getTeamFinalName(){
-        return teamFinalName;
-    }
-
-    public void setTeamFinalName(String newTeamFinalName){
-        teamFinalName = newTeamFinalName;
-    }
-
-    public String getTeamPrefix(){
-        return teamPrefix;
-    }
-
-    public void setTeamPrefix(String newTeamPrefix){
-        teamPrefix = newTeamPrefix;
-    }
-
-    public Collection<TeamWarp> getTeamWarps() {
-        return teamWarps.values();
-    }
-
-    public TeamWarp getTeamWarp(@NotNull String name){
-        return teamWarps.get(name);
+    public Optional<TeamWarp> getTeamWarp(@NotNull String name){
+        return Optional.ofNullable(warps.get(name));
     }
 
     public void addTeamWarp(@NotNull TeamWarp warp){
-        teamWarps.put(warp.getName(), warp);
+        warps.put(warp.getName(), warp);
     }
 
     public void removeTeamWarp(@NotNull String name) {
-        teamWarps.remove(name);
+        warps.remove(name);
     }
 
-    public ArrayList<String> getTeamMembers(){
-        return teamMembers;
+    @NotNull
+    public UUID getOwner() {
+        return members.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElseThrow(() -> new IllegalStateException("Team \"" + getName() + "\" has no owner"));
     }
 
-    public void setTeamMembers(@Nullable ArrayList<String> teamMembersList){
-        teamMembers = teamMembersList;
+    public void addMember(@NotNull UUID uuid, @Nullable Integer weight) {
+        this.members.put(uuid, Objects.requireNonNullElse(weight, 1));
     }
 
-    public void addTeamMember(String teamMember){
-        teamMembers.add(teamMember);
+    public void removeMember(@NotNull UUID uuid) throws IllegalArgumentException {
+        if (getOwner().equals(uuid)) {
+            throw new IllegalArgumentException("Cannot remove the mayor of the team \"" + getName() + "\"");
+        }
+
+        this.members.remove(uuid);
     }
 
-    public Boolean removeTeamMember(String teamMember){
-        return teamMembers.remove(teamMember);
+    @NotNull
+    public Map<Integer, Relation> getRelations() {
+        return relations == null ? relations = new HashMap<>() : relations;
     }
 
-    public ArrayList<String> getTeamAllies(){
-        return teamAllies;
+    @NotNull
+    public Map<Team, Relation> getRelations(@NotNull UltimateTeams plugin) {
+        return getRelations().entrySet().stream()
+                .filter(e -> plugin.getTeamStorageUtil().findTeam(e.getKey()).isPresent())
+                .collect(Collectors.toMap(
+                        e -> plugin.getTeamStorageUtil().findTeam(e.getKey()).orElse(null),
+                        Map.Entry::getValue
+                ));
     }
 
-    public void addTeamAlly(String ally){
-        teamAllies.add(ally);
+    @NotNull
+    public Relation getRelationWith(@NotNull Team otherTeam) {
+        return relations.getOrDefault(otherTeam.getId(), Relation.NEUTRAL);
     }
 
-    public void removeTeamAlly(String allyUUID){
-        teamAllies.remove(allyUUID);
+    public void setRelationWith(@NotNull Team otherTeam, @NotNull Relation relation) {
+        relations.remove(otherTeam.getId());
+        relations.put(otherTeam.getId(), relation);
     }
 
-    public void setTeamAllies(@Nullable ArrayList<String> teamAlliesList){
-        teamAllies = teamAlliesList;
-    }
-
-    public void addTeamEnemy(String enemy){
-        teamEnemies.add(enemy);
-    }
-
-    public void removeTeamEnemy(String enemyUUID){
-        teamEnemies.remove(enemyUUID);
-    }
-
-    public void setTeamEnemies(@Nullable ArrayList<String> teamEnemiesList){
-        teamEnemies = teamEnemiesList;
-    }
-
-    public ArrayList<String> getTeamEnemies(){
-        return teamEnemies;
+    public void removeRelationWith(@NotNull Team otherTeam) {
+        relations.remove(otherTeam.getId());
     }
 
     public boolean isFriendlyFireAllowed(){
         return friendlyFire;
     }
 
-    public void setFriendlyFireAllowed(boolean friendlyFire){
-        this.friendlyFire = friendlyFire;
+    public boolean areRelationsBilateral(@NotNull Team otherTeam, @NotNull Relation relation) {
+        if (otherTeam.equals(this)) {
+            return true;
+        }
+        return getRelationWith(otherTeam) == relation && otherTeam.getRelationWith(this) == relation;
     }
 
-    @Nullable
-    public String getTeamHomeWorld(){
-        return teamHomeWorld;
-    }
 
-    public void setTeamHomeWorld(@Nullable String teamHomeWorld){
-        this.teamHomeWorld = teamHomeWorld;
-    }
 
-    public double getTeamHomeX() {
-        return Objects.requireNonNullElseGet(teamHomeX, null);
-    }
+    public enum Relation {
+        ALLY,
 
-    public void setTeamHomeX(double teamHomeX){
-        this.teamHomeX = teamHomeX;
-    }
+        NEUTRAL,
 
-    public double getTeamHomeY(){
-        return Objects.requireNonNullElseGet(teamHomeY, null);
-    }
+        ENEMY;
 
-    public void setTeamHomeY(double teamHomeY){
-        this.teamHomeY = teamHomeY;
-    }
-
-    public double getTeamHomeZ(){
-        return Objects.requireNonNullElseGet(teamHomeZ, null);
-    }
-
-    public void setTeamHomeZ(double teamHomeZ){
-        this.teamHomeZ = teamHomeZ;
-    }
-
-    public float getTeamHomeYaw(){
-        return Objects.requireNonNullElseGet(teamHomeYaw, null);
-    }
-
-    public void setTeamHomeYaw(float teamHomeYaw){
-        this.teamHomeYaw = teamHomeYaw;
-    }
-
-    public float getTeamHomePitch(){
-        return Objects.requireNonNullElseGet(teamHomePitch, null);
-    }
-
-    public void setTeamHomePitch(float teamHomePitch){
-        this.teamHomePitch = teamHomePitch;
+        /**
+         * Parse a {@link Relation} from a string name
+         *
+         * @param string the string to parse
+         * @return the parsed {@link Relation} wrapped in an {@link Optional}, if any was found
+         */
+        public static Optional<Relation> parse(@NotNull String string) {
+            return Arrays.stream(values())
+                    .filter(operation -> operation.name().equalsIgnoreCase(string))
+                    .findFirst();
+        }
     }
 }
+
+

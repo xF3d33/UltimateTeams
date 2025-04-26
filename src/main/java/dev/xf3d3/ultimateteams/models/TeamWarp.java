@@ -1,91 +1,69 @@
 package dev.xf3d3.ultimateteams.models;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unused")
 public class TeamWarp {
     @Expose
+    @Getter @Setter
     private String name;
+
     @Expose
+    @Nullable
+    @Getter @Setter
+    private String server;
+
+    @Expose
+    @SerializedName("world")
+    @Getter @Setter
     private String WarpWorld;
-    @Expose
-    private Double WarpX;
-    @Expose
-    private Double WarpY;
-    @Expose
-    private Double WarpZ;
-    @Expose
-    private Float WarpYaw;
-    @Expose
-    private Float WarpPitch;
 
-    public TeamWarp(@NotNull String name, @NotNull String world, @NotNull Double x, @NotNull Double y, @NotNull Double z, @NotNull Float yaw, @NotNull Float pitch) {
+    @Expose
+    @SerializedName("x")
+    @Getter @Setter
+    private double WarpX;
+
+    @Expose
+    @SerializedName("y")
+    @Getter @Setter
+    private double WarpY;
+
+    @Expose
+    @SerializedName("z")
+    @Getter @Setter
+    private double WarpZ;
+
+    @Expose
+    @SerializedName("yaw")
+    @Getter @Setter
+    private float WarpYaw;
+
+    @Expose
+    @SerializedName("pitch")
+    @Getter @Setter
+    private float WarpPitch;
+
+    private TeamWarp(@NotNull String name, @NotNull Location location, @Nullable String server) {
         this.name = name;
-        this.WarpWorld = world;
-        this.WarpX = x;
-        this.WarpY = y;
-        this.WarpZ = z;
-        this.WarpYaw = yaw;
-        this.WarpPitch = pitch;
+        this.server = server;
+
+        this.WarpWorld = location.getWorld().getName();
+        this.WarpX = location.getX();
+        this.WarpY = location.getY();
+        this.WarpZ = location.getZ();
+        this.WarpYaw = location.getYaw();
+        this.WarpPitch = location.getPitch();
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getWarpWorld(){
-        return WarpWorld;
-    }
-
-    public void setWarpWorld(String warpWorld){
-        this.WarpWorld = warpWorld;
-    }
-
-    public double getWarpX() {
-        return WarpX;
-    }
-
-    public void setWarpX(double warpX){
-        this.WarpX = warpX;
-    }
-
-    public double getWarpY(){
-        return WarpY;
-    }
-
-    public void setWarpY(double warpY){
-        this.WarpY = warpY;
-    }
-
-    public double getWarpZ(){
-        return WarpZ;
-    }
-
-    public void setWarpZ(double warpZ){
-        this.WarpZ = warpZ;
-    }
-
-    public float getWarpYaw(){
-        return WarpYaw;
-    }
-
-    public void setWarpYaw(float warpYaw){
-        this.WarpYaw = warpYaw;
-    }
-
-    public float getWarpPitch(){
-        return WarpPitch;
-    }
-
-    public void setWarpPitch(float warpPitch){
-        this.WarpPitch = warpPitch;
+    public static TeamWarp of(@NotNull String name, @NotNull Location location, @Nullable String server) {
+        return new TeamWarp(name, location, server);
     }
 
     public Location getLocation() {

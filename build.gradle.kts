@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.xf3d3"
-version = "3.3"
+version = "4.0-BETA"
 
 repositories {
     mavenLocal()
@@ -48,7 +48,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("org.geysermc.floodgate:api:2.2.0-SNAPSHOT")
     implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("dev.triumphteam:triumph-gui:3.1.10")
+    implementation("dev.triumphteam:triumph-gui:3.1.11")
     
     // PaperLib
     implementation("io.papermc:paperlib:1.0.8")
@@ -63,10 +63,12 @@ dependencies {
 
     // Database
     compileOnly("org.xerial:sqlite-jdbc:3.46.1.0")
-    compileOnly("com.mysql:mysql-connector-j:9.0.0")
-    compileOnly("com.zaxxer:HikariCP:5.1.0")
+    compileOnly("com.mysql:mysql-connector-j:9.2.0")
+    compileOnly("com.zaxxer:HikariCP:6.2.1")
     compileOnly("com.h2database:h2:2.3.232")
     compileOnly("org.postgresql:postgresql:42.7.3")
+
+    compileOnly("redis.clients:jedis:5.2.0")
 
     implementation("net.william278:annotaml:2.0.2")
     implementation("net.william278:DesertWell:2.0.4")
@@ -82,18 +84,18 @@ tasks {
         archiveFileName.set("${rootProject.name}-${rootProject.version}.jar")
         archiveClassifier.set("main")
 
-        relocate("org.bstats", "dev.xf3d3.libraries.bstats")
-        relocate("com.tcoded.folialib", "dev.xf3d3.libraries.folialib")
-        relocate("co.aikar", "dev.xf3d3.libraries.aikar")
-        relocate("com.google.gson", "dev.xf3d3.libraries.gson")
-        relocate("org.jetbrains", "dev.xf3d3.libraries.jetbrains")
-        relocate("org.intellij", "dev.xf3d3.libraries.intellij")
-        relocate("org.json", "dev.xf3d3.libraries.json")
-        relocate("dev.triumphteam", "dev.xf3d3.libraries.triumphteam")
-        relocate("dev.dejvokep", "dev.xf3d3.libraries.boostedyaml")
-        relocate("io.papermc", "dev.xf3d3.libraries.papermc")
-        relocate("net.kyori", "dev.xf3d3.libraries.kyori")
-        relocate("net.william278.desertwell", "dev.xf3d3.libraries.william278.desertwell")
-        relocate("net.william278.annotaml", "dev.xf3d3.libraries.william278.annotaml")
+        relocate("org.bstats", "dev.xf3d3.ultimateteams.libraries.bstats")
+        relocate("com.tcoded.folialib", "dev.xf3d3.ultimateteams.libraries.folialib")
+        relocate("co.aikar", "dev.xf3d3.ultimateteams.libraries.aikar")
+        relocate("com.google.gson", "dev.xf3d3.ultimateteams.libraries.gson")
+        relocate("org.jetbrains", "dev.xf3d3.ultimateteams.libraries.jetbrains")
+        relocate("org.intellij", "dev.xf3d3.ultimateteams.libraries.intellij")
+        relocate("org.json", "dev.xf3d3.ultimateteams.libraries.json")
+        relocate("dev.triumphteam", "dev.xf3d3.ultimateteams.libraries.triumphteam")
+        relocate("dev.dejvokep", "dev.xf3d3.ultimateteams.libraries.boostedyaml")
+        relocate("io.papermc", "dev.xf3d3.ultimateteams.libraries.papermc")
+        relocate("net.kyori", "dev.xf3d3.ultimateteams.libraries.kyori")
+        relocate("net.william278.desertwell", "dev.xf3d3.libraries.ultimateteams.william278.desertwell")
+        relocate("net.william278.annotaml", "dev.xf3d3.libraries.ultimateteams.william278.annotaml")
     }
 }

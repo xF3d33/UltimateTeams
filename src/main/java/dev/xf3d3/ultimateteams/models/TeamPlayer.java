@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 
 @SuppressWarnings("unused")
@@ -15,18 +16,18 @@ public class TeamPlayer {
 
     private final UltimateTeams plugin = UltimateTeams.getPlugin();
 
-    @Getter @Setter private String javaUUID;
+    @Getter @Setter private UUID javaUUID;
     @Getter @Setter private String lastPlayerName;
     @Getter @Setter private boolean isBedrockPlayer;
     @Getter @Setter private String bedrockUUID;
-    @Getter @Setter private boolean canChatSpy;
+    @Getter @Setter private Preferences preferences;
 
-    public TeamPlayer(@NotNull String UUID, @NotNull String playerName, @Nullable Boolean isBedrock, @Nullable String bedrockUuid, @Nullable Boolean canSpy) {
-        javaUUID = UUID;
-        lastPlayerName = playerName;
-        isBedrockPlayer = isBedrock != null ? isBedrock : false;
-        bedrockUUID = bedrockUuid;
-        canChatSpy = canSpy != null ? canSpy : false;
+    public TeamPlayer(@NotNull UUID UUID, @NotNull String playerName, @Nullable Boolean isBedrock, @Nullable String bedrockUuid, @Nullable Preferences preferences) {
+        this.javaUUID = UUID;
+        this.lastPlayerName = playerName;
+        this.isBedrockPlayer = isBedrock != null ? isBedrock : false;
+        this.bedrockUUID = bedrockUuid;
+        this.preferences = preferences != null ? preferences : Preferences.getDefaults();
     }
 
     public final int getMaxWarps(final Player player, final int defaultMaxWarps, final boolean stackWarps) {

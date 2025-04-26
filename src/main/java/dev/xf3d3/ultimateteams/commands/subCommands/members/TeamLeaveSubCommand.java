@@ -1,15 +1,11 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.members;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 public class TeamLeaveSubCommand {
 
@@ -25,36 +21,28 @@ public class TeamLeaveSubCommand {
     public void teamLeaveSubCommand(CommandSender sender) {
         if (sender instanceof final Player player) {
 
-            if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
+            if (plugin.getTeamStorageUtil().isTeamOwner(player)) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("failed-team-owner")));
                 return;
             }
 
-            Team targetTeam = plugin.getTeamStorageUtil().findTeamByPlayer(player);
-            if (targetTeam != null) {
-                if (targetTeam.removeTeamMember(player.getUniqueId().toString())) {
-                    plugin.runAsync(task -> plugin.getDatabase().updateTeam(targetTeam));
+            plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
+                    team -> {
+                        team.removeMember(player.getUniqueId());
+                        plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                    String leaveMessage = Utils.Color(messagesConfig.getString("team-leave-successful")).replace(Team_PLACEHOLDER, targetTeam.getTeamFinalName());
-                    player.sendMessage(leaveMessage);
+                        String leaveMessage = Utils.Color(messagesConfig.getString("team-leave-successful")).replace(Team_PLACEHOLDER, team.getName());
+                        player.sendMessage(leaveMessage);
 
-                    // Send message to team players
-                    if (plugin.getSettings().teamLeftAnnounce()) {
-                        for (String playerUUID : targetTeam.getTeamMembers()) {
-                            final Player teamPlayer = Bukkit.getPlayer(UUID.fromString(playerUUID));
-
-                            if (teamPlayer != null) {
-                                teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-left-broadcast-chat")
-                                        .replace("%PLAYER%", player.getName())
-                                        .replace("%TEAM%", Utils.Color(targetTeam.getTeamFinalName()))));
-                            }
+                        // Send message to team players
+                        if (plugin.getSettings().teamLeftAnnounce()) {
+                            team.sendTeamMessage(Utils.Color(messagesConfig.getString("team-left-broadcast-chat")
+                                    .replace("%PLAYER%", player.getName())
+                                    .replace("%TEAM%", Utils.Color(team.getName()))));
                         }
-                    }
-                } else {
-                    player.sendMessage(Utils.Color(messagesConfig.getString("team-leave-failed")));
-                }
-            }
-
+                    },
+                    () -> player.sendMessage(Utils.Color(messagesConfig.getString("team-leave-failed")))
+            );
         }
     }
 }
