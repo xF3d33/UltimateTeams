@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.xf3d3"
-version = "4.0-BETA"
+version = "4.0.2-BETA"
 
 repositories {
     mavenLocal()
@@ -47,7 +47,7 @@ dependencies {
     compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("org.geysermc.floodgate:api:2.2.0-SNAPSHOT")
-    implementation("org.bstats:bstats-bukkit:3.0.2")
+    implementation("org.bstats:bstats-bukkit:3.1.0")
     implementation("dev.triumphteam:triumph-gui:3.1.11")
     
     // PaperLib

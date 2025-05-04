@@ -42,8 +42,7 @@ public abstract class Broker implements MessageHandler {
 
             default -> plugin.log(Level.SEVERE, "Received unknown message type: " + message.getType());
         }
-        //todo: remove
-        plugin.log(Level.INFO, "Received message from broker: " + message.getType());
+        //plugin.log(Level.INFO, "Received message from broker: " + message.getType());
     }
 
     /**

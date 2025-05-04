@@ -55,8 +55,7 @@ public class TeamAllyChatCommand extends BaseCommand {
             ));
             return;
         }
-
-        // todo: team placeholder in format
+        
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
                     final Map<Team, Team.Relation> relations = team.getRelations(plugin);
