@@ -1,21 +1,27 @@
 package dev.xf3d3.ultimateteams.utils;
 
+import com.google.common.collect.Maps;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamChatSpyToggledEvent;
+import dev.xf3d3.ultimateteams.models.Preferences;
 import dev.xf3d3.ultimateteams.models.TeamPlayer;
+import dev.xf3d3.ultimateteams.models.User;
+import dev.xf3d3.ultimateteams.network.Broker;
+import dev.xf3d3.ultimateteams.network.Message;
+import dev.xf3d3.ultimateteams.network.Payload;
+import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.geysermc.floodgate.api.player.FloodgatePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
+import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class UsersStorage {
 
@@ -26,105 +32,106 @@ public class UsersStorage {
     private static final String PLAYER_PLACEHOLDER = "%PLAYER%";
     private final UltimateTeams plugin;
 
+    @Getter
+    private final Map<String, List<User>> globalUserList = Maps.newConcurrentMap();
+    @Getter
+    private final ConcurrentMap<UUID, Player> onlineUserMap = Maps.newConcurrentMap();
+
     public UsersStorage(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
     }
 
-
-    public TeamPlayer getPlayer(UUID uuid) {
-        return usermap.get(uuid);
+    public List<User> getUserList() {
+        return Stream.concat(
+                globalUserList.values().stream().flatMap(Collection::stream),
+                onlineUserMap.values().stream().map(player -> User.of(player.getUniqueId(), player.getName()))
+        ).distinct().sorted().toList();
     }
 
-    public void getPlayer(Player player) {
-        UUID uuid = player.getUniqueId();
-        String javaUUID = uuid.toString();
-        String lastPlayerName = player.getName();
+    public Collection<Player> getOnlineUsers() {
+        return getOnlineUserMap().values();
+    }
 
-        if (!usermap.containsKey(uuid)) {
-            plugin.runAsync(() -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
+    public Optional<Player> findOnlinePlayer(@NotNull String username) {
+        return onlineUserMap.values().stream()
+                .filter(online -> online.getName().equalsIgnoreCase(username))
+                .findFirst();
+    }
 
-                    teamPlayer -> usermap.put(UUID.fromString(teamPlayer.getJavaUUID()), teamPlayer),
+    public void setUserList(@NotNull String server, @NotNull List<User> players) {
+        globalUserList.values().forEach(list -> {
+            list.removeAll(players);
+            list.removeAll(onlineUserMap.values().stream().map(player -> User.of(player.getUniqueId(), player.getName())).toList());
+        });
+        globalUserList.put(server, players);
+    }
 
-                    () -> {
-                        TeamPlayer teamPlayer = new TeamPlayer(javaUUID, lastPlayerName, false, null, null);
+    // Synchronize the global player list
+    public void syncGlobalUserList(@NotNull Player user, @NotNull List<User> onlineUsers) {
+        final Optional<Broker> optionalBroker = plugin.getMessageBroker();
+        if (optionalBroker.isEmpty()) {
+            return;
+        }
+        final Broker broker = optionalBroker.get();
 
-                        plugin.getDatabase().createPlayer(teamPlayer);
-                        usermap.put(uuid, teamPlayer);
-                    }
-            ));
+        // Send this server's player list to all servers
+        Message.builder()
+                .type(Message.Type.UPDATE_USER_LIST)
+                .target(Message.TARGET_ALL, Message.TargetType.SERVER)
+                .payload(Payload.userList(onlineUsers))
+                .build().send(broker, user);
+
+        // Clear cached global player lists and request updated lists from all servers
+        if (this.onlineUserMap.size() == 1) {
+            this.globalUserList.clear();
+            Message.builder()
+                    .type(Message.Type.REQUEST_USER_LIST)
+                    .target(Message.TARGET_ALL, Message.TargetType.SERVER)
+                    .build().send(broker, user);
         }
     }
 
+    public void removePlayer(UUID uuid) {
+        usermap.remove(uuid);
+    }
+
+    public CompletableFuture<TeamPlayer> getPlayer(UUID uuid) {
+        if (usermap.containsKey(uuid)) {
+            return CompletableFuture.completedFuture(usermap.get(uuid));
+        }
+
+        return plugin.supplyAsync(() -> plugin.getDatabase().getPlayer(uuid).map(teamPlayer -> {
+            usermap.put(teamPlayer.getJavaUUID(), teamPlayer);
+
+            return teamPlayer;
+        }).orElseGet(() -> {
+            final String name = Bukkit.getOfflinePlayer(uuid).getName();
+            if (name == null) {
+                throw new IllegalArgumentException("Player " + uuid + " not found");
+            }
+
+            TeamPlayer teamPlayer = new TeamPlayer(uuid, name, false, null, Preferences.getDefaults());
+            plugin.getDatabase().createPlayer(teamPlayer);
+            usermap.put(uuid, teamPlayer);
+
+            return teamPlayer;
+        }));
+    }
+
     public void getBedrockPlayer(Player player){
-        UUID uuid = player.getUniqueId();
-
-        plugin.runAsync(() -> plugin.getDatabase().getPlayer(uuid).ifPresentOrElse(
-
-            teamPlayer -> usermap.put(UUID.fromString(teamPlayer.getJavaUUID()), teamPlayer),
-
+        plugin.runAsync(task -> plugin.getDatabase().getPlayer(player.getUniqueId()).ifPresentOrElse(
+            teamPlayer -> usermap.put(teamPlayer.getJavaUUID(), teamPlayer),
             () -> {
-                FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(uuid);
+                FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(player.getUniqueId());
                 UUID bedrockPlayerUUID = floodgatePlayer.getJavaUniqueId();
-                String javaUUID = floodgatePlayer.getJavaUniqueId().toString();
                 String lastPlayerName = floodgatePlayer.getUsername();
-                TeamPlayer teamPlayer = new TeamPlayer(javaUUID, lastPlayerName, true, floodgatePlayer.getCorrectUniqueId().toString(), null);
+                TeamPlayer teamPlayer = new TeamPlayer(floodgatePlayer.getJavaUniqueId(), lastPlayerName, true, floodgatePlayer.getCorrectUniqueId().toString(), null);
 
                 plugin.getDatabase().createPlayer(teamPlayer);
                 usermap.put(bedrockPlayerUUID, teamPlayer);
             }
         ));
 
-    }
-
-    public TeamPlayer getTeamPlayerByBukkitOfflinePlayer(OfflinePlayer offlinePlayer) {
-        UUID uuid = offlinePlayer.getUniqueId();
-
-        if (usermap.containsKey(uuid)) {
-            TeamPlayer teamPlayer = usermap.get(uuid);
-            return teamPlayer;
-
-        } else {
-            logger.warning(Utils.Color(messagesConfig.getString("team-player-not-found-1")
-                    .replace(PLAYER_PLACEHOLDER, offlinePlayer.getName())));
-            logger.warning(Utils.Color(messagesConfig.getString("team-player-not-found-2")
-                    .replace(PLAYER_PLACEHOLDER, offlinePlayer.getName())));
-
-        }
-        return null;
-    }
-
-    public Player getBukkitPlayerByName(String name) {
-
-        for (TeamPlayer teamPlayer : usermap.values()) {
-
-            if (teamPlayer.getLastPlayerName().equalsIgnoreCase(name)) {
-                return Bukkit
-                        .getPlayer(teamPlayer.getLastPlayerName());
-
-            } else {
-                logger.warning(Utils.Color(messagesConfig.getString("team-player-not-found-1")
-                        .replace(PLAYER_PLACEHOLDER, name)));
-                logger.warning(Utils.Color(messagesConfig.getString("team-player-not-found-2")
-                        .replace(PLAYER_PLACEHOLDER, name)));
-            }
-        }
-        return null;
-    }
-
-    public OfflinePlayer getBukkitOfflinePlayerByName(String name) {
-        for (TeamPlayer teamPlayer : usermap.values()){
-            if (teamPlayer.getLastPlayerName().equalsIgnoreCase(name)){
-                return Bukkit.getOfflinePlayer(UUID.fromString(teamPlayer.getJavaUUID()));
-            } else {
-                plugin.getDatabase().getPlayer(name).isPresent();
-
-                logger.warning(Utils.Color(messagesConfig.getString("team-player-not-found-1")
-                        .replace(PLAYER_PLACEHOLDER, name)));
-                logger.warning(Utils.Color(messagesConfig.getString("team-player-not-found-2")
-                        .replace(PLAYER_PLACEHOLDER, name)));
-            }
-        }
-        return null;
     }
 
     public boolean hasPlayerNameChanged(Player player){
@@ -152,14 +159,19 @@ public class UsersStorage {
         return false;
     }
 
-    public void updatePlayerName(Player player){
+    public void updatePlayerName(Player player) {
         UUID uuid = player.getUniqueId();
         String newPlayerName = player.getName();
         TeamPlayer teamPlayer = usermap.get(uuid);
         teamPlayer.setLastPlayerName(newPlayerName);
 
-        plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
+        plugin.runAsync(task -> plugin.getDatabase().updatePlayer(teamPlayer));
         usermap.replace(uuid, teamPlayer);
+    }
+
+    public void updatePlayer(TeamPlayer teamPlayer) {
+        plugin.runAsync(task -> plugin.getDatabase().updatePlayer(teamPlayer));
+        usermap.replace(teamPlayer.getJavaUUID(), teamPlayer);
     }
 
     public void updateBedrockPlayerJavaUUID(Player player){
@@ -168,37 +180,33 @@ public class UsersStorage {
         if (plugin.getSettings().FloodGateHook()) {
             if (plugin.getFloodgateApi() != null) {
                 FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(uuid);
-                String newJavaUUID = floodgatePlayer.getJavaUniqueId().toString();
-                teamPlayer.setJavaUUID(newJavaUUID);
+                teamPlayer.setJavaUUID(floodgatePlayer.getJavaUniqueId());
 
-                plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
+                plugin.runAsync(task -> plugin.getDatabase().updatePlayer(teamPlayer));
                 usermap.replace(uuid, teamPlayer);
             }
         }
 
     }
 
-    public boolean toggleChatSpy(Player player ){
+    public boolean toggleChatSpy(Player player) {
         UUID uuid = player.getUniqueId();
         TeamPlayer teamPlayer = usermap.get(uuid);
-        if (!teamPlayer.isCanChatSpy()){
-            teamPlayer.setCanChatSpy(true);
-            plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
 
-            fireClanChatSpyToggledEvent(player, teamPlayer ,true);
-            if (plugin.getSettings().debugModeEnabled()){
-                plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFired ClanChatSpyToggledEvent"));
-            }
-            return true;
-        } else {
-            teamPlayer.setCanChatSpy(false);
-            plugin.runAsync(() -> plugin.getDatabase().updatePlayer(teamPlayer));
+        if (teamPlayer.getPreferences().isTeamChatSpying()) {
+            teamPlayer.getPreferences().setTeamChatSpying(false);
 
-            fireClanChatSpyToggledEvent(player, teamPlayer ,false);
-            if (plugin.getSettings().debugModeEnabled()){
-                plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFired ClanChatSpyToggledEvent"));
-            }
+            usermap.replace(uuid, teamPlayer);
+            plugin.runAsync(task -> plugin.getDatabase().updatePlayer(teamPlayer));
+
             return false;
+        } else {
+            teamPlayer.getPreferences().setTeamChatSpying(true);
+
+            usermap.replace(uuid, teamPlayer);
+            plugin.runAsync(task -> plugin.getDatabase().updatePlayer(teamPlayer));
+
+            return true;
         }
     }
 

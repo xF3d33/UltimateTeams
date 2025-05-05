@@ -1,7 +1,6 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.members;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -37,32 +36,26 @@ public class TeamKickSubCommand {
             return;
         }
 
-        final Team targetTeam = plugin.getTeamStorageUtil().findTeamByOwner(player);
+        plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
+                team -> {
+                    if (player.getName().equalsIgnoreCase(offlinePlayer.getName())) {
+                        player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-kick-yourself")));
 
-        if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
+                        return;
+                    }
 
-            if (!player.getName().equalsIgnoreCase(offlinePlayer.getName())) {
-                Team playerTeam = plugin.getTeamStorageUtil().findTeamByOwner(player);
+                    if (!team.getMembers().containsKey(offlinePlayer.getUniqueId())) {
+                        String differentTeamMessage = Utils.Color(messagesConfig.getString("targeted-player-is-not-in-your-team")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
 
-                if (targetTeam.equals(playerTeam)) {
+                        player.sendMessage(differentTeamMessage);
+                    }
 
-                    plugin.getTeamStorageUtil().kickPlayer(targetTeam, offlinePlayer);
+                    plugin.getTeamStorageUtil().kickPlayer(player, team, offlinePlayer);
 
                     String playerKickedMessage = Utils.Color(messagesConfig.getString("team-member-kick-successful")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
                     player.sendMessage(playerKickedMessage);
-                    if (offlinePlayer.isOnline()) {
-                        String kickMessage = Utils.Color(messagesConfig.getString("team-kicked-player-message")).replace(TEAM_PLACEHOLDER, targetTeam.getTeamFinalName());
-                        offlinePlayer.getPlayer().sendMessage(kickMessage);
-                    }
-                } else {
-                    String differentTeamMessage = Utils.Color(messagesConfig.getString("targeted-player-is-not-in-your-team")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
-                    player.sendMessage(differentTeamMessage);
-                }
-            } else {
-                player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-kick-yourself")));
-            }
-        }else {
-            player.sendMessage(Utils.Color(messagesConfig.getString("must-be-owner-to-kick")));
-        }
+                },
+                () -> player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
+        );
     }
 }

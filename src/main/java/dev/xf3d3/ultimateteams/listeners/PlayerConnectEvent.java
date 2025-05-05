@@ -1,6 +1,10 @@
 package dev.xf3d3.ultimateteams.listeners;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.models.User;
+import dev.xf3d3.ultimateteams.utils.Utils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,10 +23,19 @@ public class PlayerConnectEvent implements Listener {
 
 
 
-    @EventHandler (priority = EventPriority.MONITOR)
+    @EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
+
+        plugin.getUsersStorageUtil().getOnlineUserMap().remove(uuid);
+        plugin.getUsersStorageUtil().getOnlineUserMap().put(player.getUniqueId(), player);
+
+        // Synchronize the global player list
+        plugin.runSyncDelayed(() -> plugin.getUsersStorageUtil().syncGlobalUserList(
+                player, plugin.getUsersStorageUtil().getOnlineUserMap().values().stream().map(online -> User.of(online.getUniqueId(), online.getName())).toList()), 40L
+        );
+
 
         // check if floodgate hook is enabled and available
         if (plugin.getSettings().FloodGateHook() && (plugin.getFloodgateApi() != null)) {
@@ -52,6 +65,21 @@ public class PlayerConnectEvent implements Listener {
 
 
     private void handleJavaPlayer(Player player) {
-        plugin.getUsersStorageUtil().getPlayer(player);
+        plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAccept(teamPlayer ->
+                teamPlayer.getPreferences().getTeleportTarget().ifPresent(position -> {
+
+                    System.out.println("teleport ");
+
+                    Location location = new Location(
+                            Bukkit.getWorld(position.getWorld()),
+                            position.getX(), position.getY(), position.getZ(),
+                            position.getYaw(), position.getPitch()
+                    );
+
+                    plugin.getUtils().teleportPlayer(player, location, plugin.getSettings().getServerName(), Utils.TeleportType.SERVER, null);
+                    teamPlayer.getPreferences().clearTeleportTarget();
+                    plugin.getUsersStorageUtil().updatePlayer(teamPlayer);
+                }
+        ));
     }
 }

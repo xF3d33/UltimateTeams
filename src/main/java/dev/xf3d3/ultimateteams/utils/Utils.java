@@ -1,7 +1,7 @@
 package dev.xf3d3.ultimateteams.utils;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import io.papermc.lib.PaperLib;
+import dev.xf3d3.ultimateteams.models.Position;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -29,10 +28,26 @@ public class Utils {
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
 
-    public void teleportPlayer(@NotNull Player player, @NotNull Location location, @NotNull TeleportType teleportType, @Nullable String warpName) {
+    public void teleportPlayer(@NotNull Player player, @NotNull Location location, @Nullable String server, @NotNull TeleportType teleportType, @Nullable String warpName) {
+        final String targetServer = server != null ? server : plugin.getSettings().getServerName();
+
         // Execute tp immediately if HuskHome is in use
         if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && plugin.getSettings().HuskHomesHook()) {
-            plugin.getHuskHomesHook().teleportPlayer(player, location);
+            plugin.getHuskHomesHook().teleportPlayer(player, location, targetServer);
+
+            return;
+        }
+
+        if (plugin.getSettings().isEnableCrossServer() && !targetServer.equals(plugin.getSettings().getServerName())) {
+            plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAccept(teamPlayer -> {
+                teamPlayer.getPreferences().setTeleportTarget(
+                        Position.at(location.getX(), location.getY(), location.getZ(), location.getWorld().getName(), location.getYaw(), location.getPitch())
+                );
+
+                plugin.getUsersStorageUtil().updatePlayer(teamPlayer);
+                plugin.getMessageBroker().ifPresent(broker -> broker.changeServer(player, targetServer));
+            });
+
             return;
         }
 
@@ -42,10 +57,7 @@ public class Utils {
 
             plugin.runLater(() -> {
                 // Run on the appropriate thread scheduler for this platform
-                plugin.getScheduler().entitySpecificScheduler(player).run(
-                        () -> PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN),
-                        () -> plugin.log(Level.WARNING, "User offline when teleporting: " + player.getName())
-                );
+                plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
                 player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
             }, plugin.getSettings().getTeamHomeTpDelay());
@@ -59,10 +71,7 @@ public class Utils {
 
             plugin.runLater(() -> {
                 // Run on the appropriate thread scheduler for this platform
-                plugin.getScheduler().entitySpecificScheduler(player).run(
-                        () -> PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN),
-                        () -> plugin.log(Level.WARNING, "User offline when teleporting: " + player.getName())
-                );
+                plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-teleported-successful").replaceAll("%WARP_NAME%", String.valueOf(warpName))));
 
             }, plugin.getSettings().getTeamWarpTpDelay());
@@ -71,10 +80,7 @@ public class Utils {
         }
 
         // Run on the appropriate thread scheduler for this platform
-        plugin.getScheduler().entitySpecificScheduler(player).run(
-                () -> PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN),
-                () -> plugin.log(Level.WARNING, "User offline when teleporting: " + player.getName())
-        );
+        plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
     public List<Integer> getNumberPermission(@NotNull Player player, @NotNull String permissionPrefix) {
@@ -125,6 +131,7 @@ public class Utils {
 
     public enum TeleportType {
         WARP,
-        HOME
+        HOME,
+        SERVER
     }
 }

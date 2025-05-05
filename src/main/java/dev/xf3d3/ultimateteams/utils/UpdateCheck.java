@@ -15,7 +15,7 @@ public class UpdateCheck {
     }
 
     private Version getVersion() {
-        return Version.fromString(plugin.getDescription().getVersion(), "-");
+        return Version.fromString(plugin.getDescription().getVersion());
     }
 
     @NotNull

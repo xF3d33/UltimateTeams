@@ -1,25 +1,25 @@
 package dev.xf3d3.ultimateteams.utils;
 
+import com.google.common.collect.Sets;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.api.events.TeamDisbandEvent;
-import dev.xf3d3.ultimateteams.api.events.TeamOfflineDisbandEvent;
-import dev.xf3d3.ultimateteams.api.events.TeamTransferOwnershipEvent;
 import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.models.TeamWarp;
-import org.bukkit.Bukkit;
+import dev.xf3d3.ultimateteams.network.Message;
+import dev.xf3d3.ultimateteams.network.Payload;
+import lombok.Getter;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 public class TeamsStorage {
     private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + '&' + "[0-9A-FK-OR]");
-    private static final Map<UUID, Team> teamsList = new ConcurrentHashMap<>();
+
+    @Getter
+    private final Set<Team> teams = Sets.newConcurrentHashSet();
 
     private final FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
     private final UltimateTeams plugin;
@@ -29,417 +29,180 @@ public class TeamsStorage {
     }
 
     public void loadTeams() {
-        final List<Team> teams = plugin.getDatabase().getAllTeams();
-
-        teams.forEach(team -> teamsList.put(UUID.fromString(team.getTeamOwner()), team)
-        );
-
+        teams.addAll(plugin.getDatabase().getAllTeams());
         plugin.sendConsole(Utils.Color("&eLoaded " + teams.size() + " teams!"));
     }
 
-    public Team createTeam(Player player, String teamName) {
-        UUID ownerUUID = player.getUniqueId();
-        String ownerUUIDString = player.getUniqueId().toString();
-        Team newTeam = new Team(ownerUUIDString, teamName);
-
-        teamsList.put(ownerUUID, newTeam);
-        plugin.runAsync(() -> plugin.getDatabase().createTeam(newTeam, ownerUUID));
-
-        return newTeam;
+    public Collection<String> getTeamsName() {
+        return teams.stream().map(Team::getName).sorted().toList();
     }
 
-    public boolean isTeamExisting(Player player) {
-        UUID uuid = player.getUniqueId();
-        return teamsList.containsKey(uuid);
+    public void removeTeam(@NotNull Team team) {
+        teams.removeIf(t -> t.getId() == team.getId());
     }
 
-    public void updateTeamLocal(Team team) {
-        UUID uuid = UUID.fromString(team.getTeamOwner());
-
-        teamsList.replace(uuid, team);
+    public void updateTeamLocal(@NotNull Team team) {
+        removeTeam(team);
+        teams.add(team);
     }
 
-    public void updateTeam(Team team) {
-        UUID uuid = UUID.fromString(team.getTeamOwner());
-
-        teamsList.replace(uuid, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+    public void updateTeamLocal(Team team, Integer id) {
+        teams.removeIf(team1 -> team1.getId() == id);
+        teams.add(team);
     }
 
-    public boolean deleteTeam(Player player) {
-        UUID uuid = player.getUniqueId();
+    public void createTeam(Player player, String teamName) {
+        plugin.runAsync(task -> {
+            final Team team = plugin.getDatabase().createTeam(teamName, player);
 
-        if (findTeamByOwner(player) != null) {
-            if (isTeamOwner(player)) {
-                if (teamsList.containsKey(uuid)) {
-                    fireTeamDisbandEvent(player);
+            teams.add(team);
+            plugin.getMessageBroker().ifPresent(broker -> Message.builder()
+                    .type(Message.Type.TEAM_UPDATE)
+                    .payload(Payload.integer(team.getId()))
+                    .target(Message.TARGET_ALL, Message.TargetType.SERVER)
+                    .build()
+                    .send(broker, player));
+        });
+    }
 
-                    // remove from allies team the deleted team
-                    final Team disbandedTeam = findTeamByOwner(player);
-                    for (String teamUUIDString : disbandedTeam.getTeamAllies()) {
-                        OfflinePlayer alliedTeamOwner = Bukkit.getOfflinePlayer(UUID.fromString(teamUUIDString));
-                        Team alliedTeam = findTeamByOfflinePlayer(alliedTeamOwner);
+    public void updateTeamData(@NotNull Player actor, @NotNull Team team) {
+        // update team in the cache
+        updateTeamLocal(team);
 
-                        if (alliedTeam != null) {
-                            alliedTeam.removeTeamAlly(uuid.toString());
+        // Update in the database
+        plugin.getDatabase().updateTeam(team);
 
-                            teamsList.replace(UUID.fromString(teamUUIDString), alliedTeam);
-                            plugin.runAsync(() -> plugin.getDatabase().updateTeam(alliedTeam));
-                        }
-                    }
+        // Propagate to other servers
+        plugin.getMessageBroker().ifPresent(broker -> Message.builder()
+                .type(Message.Type.TEAM_UPDATE)
+                .payload(Payload.integer(team.getId()))
+                .target(Message.TARGET_ALL, Message.TargetType.SERVER)
+                .build()
+                .send(broker, actor));
+    }
 
+    public void deleteTeamData(@Nullable Player player, @NotNull Team team) {
+        plugin.getDatabase().deleteTeam(team.getId());
+        removeTeam(team);
 
-                    teamsList.remove(uuid);
-                    plugin.runAsync(() -> plugin.getDatabase().deleteTeam(uuid));
-
-                    return true;
-                } else {
-                    player.sendMessage(Utils.Color(messagesConfig.getString("teams-update-error-1")));
-                    return false;
-                }
-            }
+        // Propagate the town deletion to all servers
+        if (player != null) {
+            plugin.getMessageBroker().ifPresent(broker -> Message.builder()
+                    .type(Message.Type.TEAM_DELETE)
+                    .payload(Payload.integer(team.getId()))
+                    .target(Message.TARGET_ALL, Message.TargetType.SERVER)
+                    .build()
+                    .send(broker, player));
         }
-        return false;
     }
 
-    public boolean deleteTeam(String name) {
-
-        if (findTeamByName(name) != null) {
-            final Team team = findTeamByName(name);
-            final UUID uuid = UUID.fromString(team.getTeamOwner());
-
-            //fireTeamDisbandEvent(player);
-            teamsList.remove(uuid);
-            plugin.runAsync(() -> plugin.getDatabase().deleteTeam(uuid));
-
-            return true;
-        }
-
-        return false;
+    public boolean isInTeam(Player player) {
+        return teams.stream().anyMatch(team -> team.getMembers().containsKey(player.getUniqueId()));
     }
 
     public boolean isTeamOwner(Player player) {
-        UUID uuid = player.getUniqueId();
-        String ownerUUID = uuid.toString();
-        Team team = teamsList.get(uuid);
-
-        if (team != null) {
-            if (team.getTeamOwner() == null) {
-                return false;
-            } else {
-                return team.getTeamOwner().equals(ownerUUID);
-            }
-        }
-        return false;
+        return teams.stream().anyMatch(team -> team.getOwner().equals(player.getUniqueId()));
     }
 
-    public Team findTeamByName(String name) {
-        Map<String, Team> teamsMap = new HashMap<>();
-
-        for (Team team : teamsList.values())
-            teamsMap.put(team.getTeamFinalName(), team);
-
-        return teamsMap.get(name);
+    public Optional<Team> findTeam(int id) {
+        return teams.stream().filter(team -> team.getId() == id).findFirst();
     }
 
-    public Team findTeamByOwner(Player player) {
-        UUID uuid = player.getUniqueId();
-        return teamsList.get(uuid);
+    public Optional<Team> findTeamByName(String name) {
+        return teams.stream().filter(team -> team.getName().equalsIgnoreCase(name)).findFirst();
     }
 
-    public Team findTeamByOfflineOwner(OfflinePlayer offlinePlayer) {
-        UUID uuid = offlinePlayer.getUniqueId();
-        return teamsList.get(uuid);
+    public Optional<Team> findTeamByOwner(UUID ownerUUID) {
+        return teams.stream().filter(team -> team.getOwner().equals(ownerUUID)).findFirst();
     }
 
-    public Team findTeamByPlayer(Player player) {
-        for (Team team : teamsList.values()) {
-            if (findTeamByOwner(player) != null) {
-                return team;
-            }
-
-            if (team.getTeamMembers() != null) {
-                for (String member : team.getTeamMembers()) {
-                    if (member.equals(player.getUniqueId().toString())) {
-                        return team;
-                    }
-                }
-            }
-        }
-        return null;
+    public Optional<Team> findTeamByMember(UUID memberUUID) {
+        return teams.stream().filter(team -> team.getMembers().containsKey(memberUUID)).findFirst();
     }
 
-    public Team findTeamByOfflinePlayer(OfflinePlayer player) {
-        for (Team team : teamsList.values()) {
-            if (findTeamByOfflineOwner(player) != null) {
-                return team;
-            }
-
-            if (team.getTeamMembers() != null) {
-                for (String member : team.getTeamMembers()) {
-                    if (member.equals(player.getUniqueId().toString())) {
-                        return team;
-                    }
-                }
-            }
-        }
-        return null;
+    public void addTeamMember(Team team, Player player) {
+        team.addMember(player.getUniqueId(), null);
+        plugin.runAsync(task -> updateTeamData(player, team));
     }
 
-    public void updatePrefix(Player player, String prefix) {
-        UUID uuid = player.getUniqueId();
-        if (!isTeamOwner(player)) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
-            return;
-        }
-
-        Team team = teamsList.get(uuid);
-        team.setTeamPrefix(prefix);
-
-        teamsList.replace(uuid, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
-    }
-
-    public boolean addTeamMember(Team team, Player player) {
-        UUID uuid = player.getUniqueId();
-        String memberUUID = uuid.toString();
-        team.addTeamMember(memberUUID);
-
-        teamsList.replace(uuid, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
-
-        return true;
-    }
-
-    public void addTeamEnemy(Player teamOwner, Player enemyTeamOwner) {
+    public void addTeamEnemy(Team team, Team otherTeam, Player player) {
         // team uuid
-        UUID ownerUUID = teamOwner.getUniqueId();
-
-        // allied team uuid
-        UUID enemyUUID = enemyTeamOwner.getUniqueId();
-
-        String enemyUUIDString = enemyUUID.toString();
-
-        // team update
-        Team team = teamsList.get(ownerUUID);
-        team.addTeamEnemy(enemyUUIDString);
-
-        // allied team update
-        Team enemyTeam = teamsList.get(enemyUUID);
-        enemyTeam.addTeamEnemy(String.valueOf(ownerUUID));
+        team.setRelationWith(otherTeam, Team.Relation.ENEMY);
 
         // Update the team
-        teamsList.replace(ownerUUID, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
-
-        // Update the allied team
-        teamsList.replace(enemyUUID, enemyTeam);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(enemyTeam));
+        plugin.runAsync(task -> updateTeamData(player, team));
     }
 
-    public void removeTeamEnemy(Player teamOwner, Player enemyTeamOwner) {
+    public void removeTeamEnemy(Team team, Team otherTeam, Player player) {
         // team uuid
-        UUID ownerUUID = teamOwner.getUniqueId();
-
-        // enemy team uuid
-        UUID enemyUUID = enemyTeamOwner.getUniqueId();
-
-        String enemyUUIDString = enemyUUID.toString();
-
-        // team update
-        Team team = teamsList.get(ownerUUID);
-        team.removeTeamEnemy(enemyUUIDString);
-
-        // allied team update
-        Team enemyTeam = teamsList.get(enemyUUID);
-        enemyTeam.removeTeamEnemy(String.valueOf(ownerUUID));
+        team.removeRelationWith(otherTeam);
 
         // Update the team
-        teamsList.replace(ownerUUID, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
-
-        // Update the allied team
-        teamsList.replace(enemyUUID, enemyTeam);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(enemyTeam));
+        plugin.runAsync(task -> updateTeamData(player, team));
     }
 
-    public void addTeamAlly(Player teamOwner, Player allyTeamOwner) {
+    public void addTeamAlly(Team team, Team otherTeam, Player player) {
         // team uuid
-        UUID ownerUUID = teamOwner.getUniqueId();
-
-        // allied team uuid
-        UUID allyUUID = allyTeamOwner.getUniqueId();
-
-        String allyUUIDString = allyUUID.toString();
-
-        // team update
-        Team team = teamsList.get(ownerUUID);
-        team.addTeamAlly(allyUUIDString);
-
-        // allied team update
-        Team alliedTeam = teamsList.get(allyUUID);
-        alliedTeam.addTeamAlly(String.valueOf(ownerUUID));
+        team.setRelationWith(otherTeam, Team.Relation.ALLY);
 
         // Update the team
-        teamsList.replace(ownerUUID, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
-
-        // Update the allied team
-        teamsList.replace(allyUUID, alliedTeam);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(alliedTeam));
+        plugin.runAsync(task -> updateTeamData(player, team));
     }
 
-    public void removeTeamAlly(Player teamOwner, Player allyTeamOwner) {
+    public void removeTeamAlly(Team team, Team otherTeam, Player player) {
         // team uuid
-        UUID ownerUUID = teamOwner.getUniqueId();
-
-        // allied team uuid
-        UUID uuid = allyTeamOwner.getUniqueId();
-
-        String allyUUIDString = uuid.toString();
-        UUID allyUUID = UUID.fromString(allyUUIDString);
-
-        // team update
-        Team team = teamsList.get(ownerUUID);
-        team.removeTeamAlly(allyUUIDString);
-
-        // allied team update
-        Team alliedTeam = teamsList.get(allyUUID);
-        alliedTeam.removeTeamAlly(String.valueOf(ownerUUID));
+        team.removeRelationWith(otherTeam);
 
         // Update the team
-        teamsList.replace(ownerUUID, team);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
-
-        // Update the allied team
-        teamsList.replace(allyUUID, alliedTeam);
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(alliedTeam));
+        plugin.runAsync(task -> updateTeamData(player, team));
     }
 
-    public boolean isHomeSet(Team team){
-        return team.getTeamHomeWorld() != null;
+    public boolean isHomeSet(Team team) {
+        return team.getHome() != null;
     }
 
-    public void deleteHome(Team team) {
-        team.setTeamHomeWorld(null);
+    public void deleteHome(Player player, Team team) {
+        team.setHome(null);
 
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+        plugin.runAsync(task -> updateTeamData(player, team));
     }
 
-    public void kickPlayer(Team team, OfflinePlayer player) {
-        UUID uuid = UUID.fromString(team.getTeamOwner());
+    public void kickPlayer(Player teamOwner, Team team, OfflinePlayer player) {
+        final String name = Objects.requireNonNullElse(player.getName(), "");
+        team.removeMember(player.getUniqueId());
 
-        team.removeTeamMember(player.getUniqueId().toString());
-        teamsList.replace(uuid, team);
+        plugin.getUsersStorageUtil().getOnlineUsers().stream()
+                .filter(online -> online.getUniqueId().equals(player.getUniqueId()))
+                .findFirst()
+                .ifPresentOrElse(onlineUser -> {
+                            onlineUser.sendMessage(Utils.Color(messagesConfig.getString("team-kicked-player-message")).replace("%TEAM%", team.getName()));
 
-        plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
+                            plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAccept(teamPlayer -> {
+                                teamPlayer.getPreferences().setTeamChatTalking(false);
+                                plugin.getUsersStorageUtil().updatePlayer(teamPlayer);
+                            });
+                        },
+                        () -> plugin.getMessageBroker().ifPresent(broker -> Message.builder()
+                                .type(Message.Type.TEAM_EVICTED)
+                                .target(name, Message.TargetType.PLAYER)
+                                .build()
+                                .send(broker, teamOwner)));
+
+        plugin.runAsync(task -> updateTeamData(teamOwner, team));
     }
 
-    public String stripTeamNameColorCodes(Team team) {
-        String teamFinalName = team.getTeamFinalName();
+    public void transferTeamOwner(Team team, Player originalTeamOwner, UUID newOwnerUUID) {
+        team.getMembers().put(originalTeamOwner.getUniqueId(), 1);
+        team.getMembers().put(newOwnerUUID, 3);
 
-        return teamFinalName == null ? null : STRIP_COLOR_PATTERN.matcher(teamFinalName).replaceAll("");
-    }
-
-    public Team transferTeamOwner(Team originalTeam, Player originalTeamOwner, Player newTeamOwner) throws IOException {
-        if (findTeamByOwner(originalTeamOwner) != null) {
-            if (isTeamOwner(originalTeamOwner)) {
-                if (!isTeamOwner(newTeamOwner) && findTeamByPlayer(newTeamOwner) == null){
-                    String originalOwnerKey = originalTeamOwner.getUniqueId().toString();
-                    UUID originalOwnerUUID = originalTeamOwner.getUniqueId();
-                    UUID newOwnerUUID = newTeamOwner.getUniqueId();
-
-                    Team newTeam = new Team(newOwnerUUID.toString(), originalTeam.getTeamFinalName());
-
-                    if (originalTeam.getTeamHomeWorld() != null) {
-                        newTeam.setTeamHomeWorld(originalTeam.getTeamHomeWorld());
-                    }
-
-                    try {
-                        newTeam.setTeamHomeX(originalTeam.getTeamHomeX());
-                        newTeam.setTeamHomeY(originalTeam.getTeamHomeY());
-                        newTeam.setTeamHomeZ(originalTeam.getTeamHomeZ());
-                        newTeam.setTeamHomeYaw(originalTeam.getTeamHomeYaw());
-                        newTeam.setTeamHomePitch(originalTeam.getTeamHomePitch());
-                    } catch (NullPointerException ignored) {}
-
-                    if (originalTeam.getTeamMembers() != null) {
-                        newTeam.setTeamMembers(originalTeam.getTeamMembers());
-                    }
-
-                    if (originalTeam.getTeamAllies() != null) {
-                        newTeam.setTeamAllies(originalTeam.getTeamAllies());
-                    }
-
-                    if (originalTeam.getTeamEnemies() != null) {
-                        newTeam.setTeamEnemies(originalTeam.getTeamEnemies());
-                    }
-
-                    if (originalTeam.getTeamWarps() != null) {
-                        for (TeamWarp warp : originalTeam.getTeamWarps()) {
-                            newTeam.addTeamWarp(warp);
-                        }
-                    }
-
-                    newTeam.setTeamPrefix(originalTeam.getTeamPrefix());
-                    newTeam.setFriendlyFireAllowed(originalTeam.isFriendlyFireAllowed());
-
-
-                    // delete old team
-                    teamsList.remove(originalOwnerUUID);
-                    plugin.runAsync(() -> plugin.getDatabase().deleteTeam(originalOwnerUUID));
-
-                    // create new team
-                    teamsList.put(newOwnerUUID, newTeam);
-                    plugin.runAsync(() -> plugin.getDatabase().createTeam(newTeam, newOwnerUUID));
-
-                    return newTeam;
-
-                } else {
-                    originalTeamOwner.sendMessage(Utils.Color(messagesConfig.getString("team-ownership-transfer-failed-target-in-team")));
-                }
-            } else {
-                originalTeamOwner.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
-            }
-        }
-        return null;
-    }
-
-    public Set<Map.Entry<UUID, Team>> getTeams(){
-        return teamsList.entrySet();
-    }
-
-    public Set<UUID> getRawTeamsList(){
-        return teamsList.keySet();
-    }
-
-    public Collection<Team> getTeamsList(){
-        return teamsList.values();
-    }
-
-    public Collection<String> getTeamsListNames(){
-        List<String> teams = new ArrayList<>();
-
-        for (Team team : teamsList.values())
-            teams.add(team.getTeamFinalName());
-
-        return teams;
-    }
-
-    private void fireTeamDisbandEvent(Player player) {
-        Team teamByOwner = findTeamByOwner(player);
-        TeamDisbandEvent teamDisbandEvent = new TeamDisbandEvent(player, teamByOwner.getTeamFinalName());
-        Bukkit.getPluginManager().callEvent(teamDisbandEvent);
-    }
-
-    private void fireOfflineTeamDisbandEvent(OfflinePlayer offlinePlayer){
-        Team teamByOfflineOwner = findTeamByOfflineOwner(offlinePlayer);
-        TeamOfflineDisbandEvent teamOfflineDisbandEvent = new TeamOfflineDisbandEvent(offlinePlayer, teamByOfflineOwner.getTeamFinalName());
-        Bukkit.getPluginManager().callEvent(teamOfflineDisbandEvent);
-    }
-
-    private void fireTeamTransferOwnershipEvent(Player originalTeamOwner, Player newTeamOwner, Team newTeam){
-        TeamTransferOwnershipEvent teamTransferOwnershipEvent = new TeamTransferOwnershipEvent(originalTeamOwner, originalTeamOwner, newTeamOwner, newTeam);
-        Bukkit.getPluginManager().callEvent(teamTransferOwnershipEvent);
+        plugin.runAsync(task -> {
+            updateTeamData(originalTeamOwner, team);
+            plugin.getMessageBroker().ifPresent(broker -> Message.builder()
+                    .type(Message.Type.TEAM_TRANSFERRED)
+                    .payload(Payload.integer(team.getId()))
+                    .target(Message.TARGET_ALL, Message.TargetType.SERVER)
+                    .build()
+                    .send(broker, originalTeamOwner));
+        });
     }
 }

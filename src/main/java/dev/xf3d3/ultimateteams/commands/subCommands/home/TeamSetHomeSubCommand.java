@@ -3,6 +3,7 @@ package dev.xf3d3.ultimateteams.commands.subCommands.home;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamHomeCreateEvent;
 import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.models.TeamHome;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,7 +12,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 import java.util.logging.Level;
 
 public class TeamSetHomeSubCommand {
@@ -29,10 +29,17 @@ public class TeamSetHomeSubCommand {
             return;
         }
 
-        if (plugin.getSettings().teamHomeEnabled()) {
-            if (plugin.getTeamStorageUtil().isTeamOwner(player)) {
-                if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
-                    Team team = plugin.getTeamStorageUtil().findTeamByOwner(player);
+        if (!plugin.getSettings().teamHomeEnabled()) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            return;
+        }
+
+        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
+        }
+
+        plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
+                team -> {
                     Location location = player.getLocation();
                     fireTeamHomeSetEvent(player, team, location);
 
@@ -40,23 +47,14 @@ public class TeamSetHomeSubCommand {
                         plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFired TeamHomeSetEvent"));
                     }
 
-                    team.setTeamHomeWorld(Objects.requireNonNull(player.getLocation().getWorld()).getName());
-                    team.setTeamHomeX(player.getLocation().getX());
-                    team.setTeamHomeY(player.getLocation().getY());
-                    team.setTeamHomeZ(player.getLocation().getZ());
-                    team.setTeamHomeYaw(player.getLocation().getYaw());
-                    team.setTeamHomePitch(player.getLocation().getPitch());
+                    final TeamHome home = TeamHome.of(location, plugin.getSettings().getServerName());
+                    team.setHome(home);
 
-                    plugin.runAsync(() -> plugin.getDatabase().updateTeam(team));
-
+                    plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
                     player.sendMessage(Utils.Color(messagesConfig.getString("successfully-set-team-home")));
-                }
-            } else {
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
-            }
-        } else {
-            player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
-        }
+                },
+                () -> player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
+        );
     }
 
     private void fireTeamHomeSetEvent(Player player, Team team, Location homeLocation) {

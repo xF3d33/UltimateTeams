@@ -7,6 +7,9 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+import java.util.Optional;
+
 public class PapiExpansion extends PlaceholderExpansion {
 
     private final UltimateTeams plugin;
@@ -22,12 +25,12 @@ public class PapiExpansion extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getAuthor() {
-        return UltimateTeams.getPlugin().getDescription().getAuthors().get(0);
+        return "xF3d3";
     }
 
     @Override
     public @NotNull String getVersion() {
-        return UltimateTeams.getPlugin().getDescription().getVersion();
+        return plugin.getPluginVersion().toStringWithoutMetadata();
     }
 
     @Override
@@ -37,113 +40,58 @@ public class PapiExpansion extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {;
-        Team teamOwner = plugin.getTeamStorageUtil().findTeamByOfflineOwner(player);
-        Team teamMember = plugin.getTeamStorageUtil().findTeamByOfflinePlayer(player);
+        Optional<Team> optionalTeam = plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId());
 
         if (params.equalsIgnoreCase("teamName")) {
-            if (teamOwner != null) {
-                return Utils.Color(teamOwner.getTeamFinalName());
-            } else if (teamMember != null){
-                return Utils.Color(teamMember.getTeamFinalName());
-            } else {
-                return Utils.Color(plugin.getSettings().getNotInTeamPlaceholder());
-            }
+            return Utils.Color(optionalTeam.map(Team::getName).orElse(plugin.getSettings().getNotInTeamPlaceholder()));
         }
 
         if (params.equalsIgnoreCase("teamPrefix")) {
             String openBracket = plugin.getSettings().getPrefixBracketsOpening();
             String closeBracket = plugin.getSettings().getPrefixBracketsClosing();
 
-            if (teamOwner != null) {
-                if (plugin.getSettings().addPrefixBrackets()) {
-                    if (plugin.getSettings().addSpaceAfterPrefix()) {
-                        return Utils.Color(openBracket + teamOwner.getTeamPrefix() + closeBracket);
-                    } else {
-                        return Utils.Color(openBracket + teamOwner.getTeamPrefix() + closeBracket);
-                    }
-                } else {
-                    if (plugin.getSettings().addSpaceAfterPrefix()){
-                        return Utils.Color(teamOwner.getTeamPrefix() + "&r ");
-                    } else {
-                        return Utils.Color(teamOwner.getTeamPrefix() + "&r");
-                    }
-                }
-            } else if (teamMember != null) {
-                if (plugin.getSettings().addPrefixBrackets()) {
-                    if (plugin.getSettings().addSpaceAfterPrefix()) {
-                        return Utils.Color(openBracket + teamMember.getTeamPrefix() + closeBracket);
-                    } else {
-                        return Utils.Color(openBracket + teamMember.getTeamPrefix() + closeBracket);
-                    }
-                } else {
-                    if (plugin.getSettings().addSpaceAfterPrefix()){
-                        return Utils.Color(teamMember.getTeamPrefix() + "&r ");
-                    } else {
-                        return Utils.Color(teamMember.getTeamPrefix() + "&r");
-                    }
-                }
-            } else {
-                return Utils.Color(plugin.getSettings().getNotInTeamPlaceholder());
-            }
+            return Utils.Color(optionalTeam
+                    .map(Team::getPrefix)
+                    .map(prefix -> plugin.getSettings().addPrefixBrackets()
+                            ? openBracket + prefix + closeBracket
+                            : prefix + "&r" + (plugin.getSettings().addSpaceAfterPrefix() ? " " : ""))
+                    .orElse(plugin.getSettings().getNotInTeamPlaceholder()));
         }
 
         if (params.equalsIgnoreCase("friendlyFire")) {
-            if (teamOwner != null) {
-                return String.valueOf(teamOwner.isFriendlyFireAllowed());
-            }else if (teamMember != null) {
-                return String.valueOf(teamMember.isFriendlyFireAllowed());
-            }else {
-                return Utils.Color(plugin.getSettings().getNotInTeamPlaceholder());
-            }
+            return Utils.Color(optionalTeam.map(Team::isFriendlyFire).map(String::valueOf).orElse(plugin.getSettings().getNotInTeamPlaceholder()));
         }
 
         if (params.equalsIgnoreCase("teamHomeSet")) {
-            if (teamOwner != null) {
-                return String.valueOf(plugin.getTeamStorageUtil().isHomeSet(teamOwner));
-            } else if (teamMember != null) {
-                return String.valueOf(plugin.getTeamStorageUtil().isHomeSet(teamMember));
-            } else {
-                return Utils.Color(plugin.getSettings().getNotInTeamPlaceholder());
-            }
+            return Utils.Color(optionalTeam.map(plugin.getTeamStorageUtil()::isHomeSet).map(String::valueOf).orElse(plugin.getSettings().getNotInTeamPlaceholder()));
         }
 
         if (params.equalsIgnoreCase("teamMembersSize")) {
-            if (teamOwner != null){
-                return String.valueOf(teamOwner.getTeamMembers().size());
-            } else if (teamMember != null){
-                return String.valueOf(teamMember.getTeamMembers().size());
-            } else {
-                return Utils.Color(plugin.getSettings().getNotInTeamPlaceholder());
-            }
+            return Utils.Color(optionalTeam.map(Team::getMembers).map(Map::size).map(String::valueOf).orElse(plugin.getSettings().getNotInTeamPlaceholder()));
         }
 
         if (params.equalsIgnoreCase("teamAllySize")) {
-
-            if (teamOwner != null) {
-                return String.valueOf(teamOwner.getTeamAllies().size());
-            } else if (teamMember != null) {
-                return String.valueOf(teamMember.getTeamAllies().size());
-            } else {
-                return Utils.Color(plugin.getSettings().getNotInTeamPlaceholder());
-            }
+            return Utils.Color(
+                    optionalTeam
+                            .map(team -> team.getRelations(plugin).values().stream())
+                            .map(relationStream -> relationStream.filter(relation -> relation == Team.Relation.ALLY).count())
+                            .map(String::valueOf)
+                            .orElse(plugin.getSettings().getNotInTeamPlaceholder())
+            );
         }
 
         if (params.equalsIgnoreCase("teamEnemySize")) {
-            if (teamOwner != null) {
-                return String.valueOf(teamOwner.getTeamEnemies().size());
-            } else if (teamMember != null) {
-                return String.valueOf(teamMember.getTeamEnemies().size());
-            } else {
-                return Utils.Color(plugin.getSettings().getNotInTeamPlaceholder());
-            }
+            return Utils.Color(
+                    optionalTeam
+                            .map(team -> team.getRelations(plugin).values().stream())
+                            .map(relationStream -> relationStream.filter(relation -> relation == Team.Relation.ENEMY).count())
+                            .map(String::valueOf)
+                            .orElse(plugin.getSettings().getNotInTeamPlaceholder())
+            );
         }
 
         if (params.equalsIgnoreCase("isInTeam")) {
-            if (teamOwner != null || teamMember != null) {
-                return String.valueOf(true);
-            } else {
-                return String.valueOf(false);
-            }
+            return String.valueOf(optionalTeam.isPresent());
         }
 
         return null;

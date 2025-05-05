@@ -1,10 +1,12 @@
-package dev.xf3d3.ultimateteams.commands;
+package dev.xf3d3.ultimateteams.commands.chat;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamChatMessageSendEvent;
 import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.network.Message;
+import dev.xf3d3.ultimateteams.network.Payload;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -12,7 +14,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -40,7 +42,7 @@ public class TeamChatCommand extends BaseCommand {
         }
 
         // Check if enabled
-        if (!plugin.getSettings().teamChatEnabled()){
+        if (!plugin.getSettings().teamChatEnabled()) {
             player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
             return;
         }
@@ -54,28 +56,41 @@ public class TeamChatCommand extends BaseCommand {
             return;
         }
 
-        Team team;
-        if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
-            team = plugin.getTeamStorageUtil().findTeamByOwner(player);
-        } else {
-            team = plugin.getTeamStorageUtil().findTeamByPlayer(player);
-        }
+        plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
+                team -> {
+                    String chatSpyPrefix = plugin.getSettings().getTeamChatSpyPrefix();
+                    StringBuilder messageString = new StringBuilder();
+                    messageString.append(plugin.getSettings().getTeamChatPrefix()).append(" ");
+                    messageString.append("&d").append(player.getName()).append(":&r").append(" ");
+                    for (String arg : args) {
+                        messageString.append(arg).append(" ");
+                    }
 
-        if (team == null) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")));
-            return;
-        }
+                    final String msg = messageString.toString()
+                            .replace("%TEAM%", team.getName())
+                            .replace("%PLAYER%", player.getName());
 
-        String chatSpyPrefix = plugin.getSettings().getTeamChatSpyPrefix();
-        StringBuilder messageString = new StringBuilder();
-        messageString.append(plugin.getSettings().getTeamChatPrefix()).append(" ");
-        messageString.append("&d").append(player.getName()).append(":&r").append(" ");
-        for (String arg : args) {
-            messageString.append(arg).append(" ");
-        }
+                    // Send message to team members
+                    team.sendTeamMessage(Utils.Color(msg));
+
+                    // Send spy message
+                    if (plugin.getSettings().teamChatSpyEnabled()) {
+                        Bukkit.broadcast(Utils.Color(chatSpyPrefix + " " + msg), "ultimateteams.chat.spy");
+                    }
+
+                    // Send globally via a message
+                    plugin.getMessageBroker().ifPresent(broker -> Message.builder()
+                            .type(Message.Type.TEAM_CHAT_MESSAGE)
+                            .payload(Payload.string(msg))
+                            .target(Message.TARGET_ALL, Message.TargetType.SERVER)
+                            .build()
+                            .send(broker, player));
+                },
+                () -> player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
+        );
 
 
-        ArrayList<String> playerTeamMembers = team.getTeamMembers();
+        /*List<UUID> playerTeamMembers = team.getMembers().keySet().stream().toList();
 
         fireTeamChatMessageSendEvent(
                 player,
@@ -83,28 +98,10 @@ public class TeamChatCommand extends BaseCommand {
                 plugin.getSettings().getTeamChatPrefix(),
                 messageString.toString(),
                 playerTeamMembers
-        );
-
-        // Send message to team owner
-        final UUID ownerUUID = UUID.fromString(team.getTeamOwner());
-        final Player playerTeamOwner = Bukkit.getPlayer(ownerUUID);
-        if (playerTeamOwner != null) {
-            playerTeamOwner.sendPlainMessage(Utils.Color(messageString.toString()));
-        }
-
-        // Send message to team members
-        for (Player teamMember : team.getOnlineMembers()) {
-
-            teamMember.sendPlainMessage(Utils.Color(messageString.toString()));
-        }
-
-        // Send spy message
-        if (plugin.getSettings().teamChatSpyEnabled()) {
-            Bukkit.broadcast(Utils.Color(chatSpyPrefix + " " + messageString), "ultimateteams.chat.spy");
-        }
+        );*/
     }
 
-    private void fireTeamChatMessageSendEvent(Player player, Team team, String prefix, String message, ArrayList<String> recipients) {
+    private void fireTeamChatMessageSendEvent(Player player, Team team, String prefix, String message, List<UUID> recipients) {
         TeamChatMessageSendEvent teamChatMessageSendEvent = new TeamChatMessageSendEvent(player, team, prefix, message, recipients);
         Bukkit.getPluginManager().callEvent(teamChatMessageSendEvent);
     }

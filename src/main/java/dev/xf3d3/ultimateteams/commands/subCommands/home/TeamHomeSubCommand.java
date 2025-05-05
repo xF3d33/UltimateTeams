@@ -4,10 +4,10 @@ import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamHomePreTeleportEvent;
 import dev.xf3d3.ultimateteams.api.events.TeamHomeTeleportEvent;
 import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.models.TeamHome;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -41,68 +41,55 @@ public class TeamHomeSubCommand {
             return;
         }
 
-        UUID uuid = player.getUniqueId();
+        plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
+                team -> {
+                    final TeamHome home = team.getHome();
 
-        // check if team exists
-        if (!(plugin.getTeamStorageUtil().findTeamByOwner(player) != null || plugin.getTeamStorageUtil().findTeamByPlayer(player) != null)) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("failed-tp-not-in-team")));
-            return;
-        }
-
-        Team team;
-        if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
-            team = plugin.getTeamStorageUtil().findTeamByOwner(player);
-        } else {
-            team = plugin.getTeamStorageUtil().findTeamByPlayer(player);
-        }
-
-        // check if home exists
-        if (team.getTeamHomeWorld() == null) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("failed-no-home-set")));
-            return;
-        }
-
-        fireTeamHomePreTPEvent(player, team);
-        if (homePreTeleportEvent.isCancelled()){
-            if (plugin.getSettings().debugModeEnabled()){
-                plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aTeamHomePreTPEvent cancelled by external source"));
-            }
-            return;
-        }
-
-        World world = Bukkit.getWorld(team.getTeamHomeWorld());
-        double x = team.getTeamHomeX();
-        double y = team.getTeamHomeY(); //+ 0.2;
-        double z = team.getTeamHomeZ();
-        float yaw = team.getTeamHomeYaw();
-        float pitch = team.getTeamHomePitch();
-        Location location = new Location(world, x, y, z, yaw, pitch);
-
-        if (plugin.getSettings().teamHomeCooldownEnabled()) {
-                if (!player.hasPermission("ultimateteams.bypass.homecooldown") && homeCoolDownTimer.containsKey(uuid)) {
-                    if (homeCoolDownTimer.get(uuid) > System.currentTimeMillis()) {
-                        long timeLeft = (homeCoolDownTimer.get(uuid) - System.currentTimeMillis()) / 1000;
-
-                        player.sendMessage(Utils.Color(messagesConfig.getString("home-cool-down-timer-wait")
-                                .replaceAll(TIME_LEFT, Long.toString(timeLeft))));
-                    } else {
-                        homeCoolDownTimer.put(uuid, System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
-                        fireTeamHomeTeleportEvent(player, team, location, player.getLocation());
-                        tpHome(player, location);
+                    // check if home exists
+                    if (home == null) {
+                        player.sendMessage(Utils.Color(messagesConfig.getString("failed-no-home-set")));
+                        return;
                     }
-                } else {
-                    fireTeamHomeTeleportEvent(player, team, location, player.getLocation());
-                    tpHome(player, location);
-                    homeCoolDownTimer.put(uuid, System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
-                }
-        } else {
-            fireTeamHomeTeleportEvent(player, team, location, player.getLocation());
-            tpHome(player, location);
-        }
+
+                    fireTeamHomePreTPEvent(player, team);
+                    if (homePreTeleportEvent.isCancelled()){
+                        if (plugin.getSettings().debugModeEnabled()){
+                            plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aTeamHomePreTPEvent cancelled by external source"));
+                        }
+                        return;
+                    }
+
+                    if (plugin.getSettings().teamHomeCooldownEnabled()) {
+                        if (!player.hasPermission("ultimateteams.bypass.homecooldown") && homeCoolDownTimer.containsKey(player.getUniqueId())) {
+                            if (homeCoolDownTimer.get(player.getUniqueId()) > System.currentTimeMillis()) {
+                                long timeLeft = (homeCoolDownTimer.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000;
+
+                                player.sendMessage(Utils.Color(messagesConfig.getString("home-cool-down-timer-wait")
+                                        .replaceAll(TIME_LEFT, Long.toString(timeLeft))));
+                            } else {
+                                homeCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
+                                fireTeamHomeTeleportEvent(player, team, home.getLocation(), player.getLocation());
+                                tpHome(player, home);
+                            }
+                        } else {
+                            fireTeamHomeTeleportEvent(player, team, home.getLocation(), player.getLocation());
+                            tpHome(player, home);
+                            homeCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
+                        }
+                        return;
+                    }
+
+                    fireTeamHomeTeleportEvent(player, team, home.getLocation(), player.getLocation());
+                    tpHome(player, home);
+                },
+                () -> player.sendMessage(Utils.Color(messagesConfig.getString("failed-tp-not-in-team")))
+        );
+
+
     }
 
-    private void tpHome(@NotNull Player player, @NotNull Location location) {
-        plugin.getUtils().teleportPlayer(player, location, Utils.TeleportType.HOME, null);
+    private void tpHome(@NotNull Player player, @NotNull TeamHome home) {
+        plugin.getUtils().teleportPlayer(player, home.getLocation(), home.getServer(), Utils.TeleportType.HOME, null);
         //player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
     }
 

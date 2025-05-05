@@ -1,53 +1,61 @@
 package dev.xf3d3.ultimateteams;
 
-import co.aikar.commands.PaperCommandManager;
-import com.google.gson.Gson;
+import co.aikar.commands.BukkitCommandManager;
+import com.tcoded.folialib.FoliaLib;
+import com.tcoded.folialib.impl.PlatformScheduler;
 import dev.xf3d3.ultimateteams.api.UltimateTeamsAPI;
 import dev.xf3d3.ultimateteams.api.UltimateTeamsAPIImpl;
-import dev.xf3d3.ultimateteams.commands.*;
+import dev.xf3d3.ultimateteams.commands.TeamAdmin;
+import dev.xf3d3.ultimateteams.commands.TeamCommand;
+import dev.xf3d3.ultimateteams.commands.chat.TeamAllyChatCommand;
+import dev.xf3d3.ultimateteams.commands.chat.TeamChatCommand;
+import dev.xf3d3.ultimateteams.commands.chat.TeamChatSpyCommand;
 import dev.xf3d3.ultimateteams.config.MessagesFileManager;
 import dev.xf3d3.ultimateteams.config.Settings;
 import dev.xf3d3.ultimateteams.config.TeamsGui;
 import dev.xf3d3.ultimateteams.database.*;
-import dev.xf3d3.ultimateteams.hooks.FloodgateAPIHook;
-import dev.xf3d3.ultimateteams.hooks.HuskHomesAPIHook;
+import dev.xf3d3.ultimateteams.hooks.FloodgateHook;
+import dev.xf3d3.ultimateteams.hooks.HuskHomesHook;
 import dev.xf3d3.ultimateteams.hooks.LuckPermsHook;
 import dev.xf3d3.ultimateteams.hooks.PapiExpansion;
 import dev.xf3d3.ultimateteams.listeners.PlayerConnectEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDamageEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDisconnectEvent;
 import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.models.TeamWarp;
+import dev.xf3d3.ultimateteams.models.User;
+import dev.xf3d3.ultimateteams.network.Broker;
+import dev.xf3d3.ultimateteams.network.PluginMessageBroker;
+import dev.xf3d3.ultimateteams.network.RedisBroker;
 import dev.xf3d3.ultimateteams.utils.*;
 import dev.xf3d3.ultimateteams.utils.gson.GsonUtils;
+import lombok.Getter;
 import net.william278.annotaml.Annotaml;
 import net.william278.desertwell.util.ThrowingConsumer;
+import net.william278.desertwell.util.Version;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import space.arim.morepaperlib.MorePaperLib;
-import space.arim.morepaperlib.scheduling.GracefulScheduling;
-import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
-public final class UltimateTeams extends JavaPlugin implements TaskRunner {
+public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonUtils, PluginMessageListener {
     private static UltimateTeams instance;
     private UltimateTeamsAPI api;
+    @Getter private boolean loaded = false;
 
     private static final int METRICS_ID = 18842;
     private final PluginDescriptionFile pluginInfo = getDescription();
@@ -55,20 +63,21 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
     public MessagesFileManager msgFileManager;
 
-    private Database database;
+    @Getter private Database database;
+    @Nullable private Broker broker;
 
-    private FloodgateAPIHook floodgateAPIHook;
+    private FloodgateHook floodgateHook;
     private Utils utils;
-    private ConcurrentHashMap<Integer, ScheduledTask> tasks;
-    private MorePaperLib paperLib;
-    private PaperCommandManager manager;
+    private FoliaLib foliaLib;
+    private BukkitCommandManager manager;
     private TeamsStorage teamsStorage;
     private UsersStorage usersStorage;
     private TeamInviteUtil teamInviteUtil;
-    private HuskHomesAPIHook huskHomesHook;
+    private HuskHomesHook huskHomesHook;
     private UpdateCheck updateChecker;
-    private Settings settings;
-    private TeamsGui teamsGui;
+
+    @Getter private Settings settings;
+    @Getter private TeamsGui teamsGui;
 
     // HashMaps
     private final ConcurrentHashMap<String, Player> bedrockPlayers = new ConcurrentHashMap<>();
@@ -91,9 +100,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
 
     @Override
     public void onEnable() {
-        this.tasks = new ConcurrentHashMap<>();
-        this.paperLib = new MorePaperLib(this);
-        this.manager = new PaperCommandManager(this);
+        this.foliaLib = new FoliaLib(this);
+        this.manager = new BukkitCommandManager(this);
         this.msgFileManager = new MessagesFileManager(this);
         this.teamsStorage = new TeamsStorage(this);
         this.usersStorage = new UsersStorage(this);
@@ -122,6 +130,20 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             database.initialize();
         });
 
+        // Initialize message broker
+        if (getSettings().isEnableCrossServer()) {
+            initialize(getSettings().getBrokerType() + " broker", (plugin) -> {
+                final Broker.Type brokerType = getSettings().getBrokerType();
+
+                this.broker = switch (brokerType) {
+                    case PLUGIN_MESSAGE -> new PluginMessageBroker(this);
+                    case REDIS -> new RedisBroker(this);
+                };
+
+                broker.initialize();
+            });
+        }
+
         // Register commands
         initialize("commands", (plugin) -> registerCommands());
 
@@ -129,13 +151,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         initialize("events", (plugin) -> registerEvents());
 
         // Load the teams
-        initialize("teams", (plugin) -> runAsync(() -> {
-            teamsStorage.loadTeams();
-        }));
+        initialize("teams", (plugin) -> runAsync(task -> teamsStorage.loadTeams()));
 
         // Initialize HuskHomes hook
         if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && getSettings().HuskHomesHook()) {
-            initialize("huskhomes" , (plugin) -> this.huskHomesHook = new HuskHomesAPIHook(this));
+            initialize("huskhomes" , (plugin) -> this.huskHomesHook = new HuskHomesHook(this));
         }
 
         // Initialize LuckPerms hook
@@ -143,49 +163,35 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             initialize("luckperms" , (plugin) -> new LuckPermsHook(this));
         }
 
-
         // Register command completions
-        this.manager.getCommandCompletions().registerAsyncCompletion("teams", c -> teamsStorage.getTeamsListNames());
-        this.manager.getCommandCompletions().registerAsyncCompletion("warps", c -> {
-            Team team;
-            if (teamsStorage.findTeamByOwner(c.getPlayer()) != null) {
-                team = teamsStorage.findTeamByOwner(c.getPlayer());
-            } else {
-                team = teamsStorage.findTeamByPlayer(c.getPlayer());
-            }
-
-            if (team == null) {
-                return new ArrayList<>();
-            }
-
-            final Collection<TeamWarp> warps = team.getTeamWarps();
-            final Collection<String> names = new ArrayList<>();
-
-            warps.forEach(warp -> names.add(warp.getName()));
-
-            return names;
-        });
-        this.manager.getCommandCompletions().registerAsyncCompletion("teamPlayers", c -> {
-            Team team;
-            if (teamsStorage.findTeamByOwner(c.getPlayer()) != null) {
-                team = teamsStorage.findTeamByOwner(c.getPlayer());
-            } else {
-                team = teamsStorage.findTeamByPlayer(c.getPlayer());
-            }
-
-            if (team == null) {
-                return new ArrayList<>();
-            } else {
-                ArrayList<String> members = new ArrayList<>();
-                team.getTeamMembers().forEach(memberUUIDString -> {
-                    final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(memberUUIDString));
-
-                    members.add(offlinePlayer.getName());
-                });
-
-                return members;
-            }
-        });
+        this.manager.getCommandCompletions().registerAsyncCompletion("onlineUsers", c -> getUsersStorageUtil().getUserList().stream().map(User::getUsername).collect(Collectors.toList()));
+        this.manager.getCommandCompletions().registerAsyncCompletion("teams", c -> teamsStorage.getTeamsName());
+        this.manager.getCommandCompletions().registerAsyncCompletion("warps", c -> getTeamStorageUtil().findTeamByMember(c.getPlayer().getUniqueId())
+                .map(team -> team.getWarps().keySet())
+                .orElse(Collections.emptySet())
+        );
+        this.manager.getCommandCompletions().registerAsyncCompletion("teamPlayers", c -> getTeamStorageUtil().findTeamByMember(c.getPlayer().getUniqueId())
+                .map(team -> team.getMembers().keySet().stream()
+                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                        .collect(Collectors.toSet()))
+                .orElse(Collections.emptySet())
+        );
+        this.manager.getCommandCompletions().registerAsyncCompletion("allies", c -> getTeamStorageUtil().findTeamByMember(c.getPlayer().getUniqueId())
+                .map(team -> team.getRelations(this).entrySet().stream()
+                        .filter(teamRelationEntry -> teamRelationEntry.getValue() == Team.Relation.ALLY)
+                        .map(entry -> entry.getKey().getName())
+                        .collect(Collectors.toSet())
+                )
+                .orElse(Collections.emptySet())
+        );
+        this.manager.getCommandCompletions().registerAsyncCompletion("enemies", c -> getTeamStorageUtil().findTeamByMember(c.getPlayer().getUniqueId())
+                .map(team -> team.getRelations(this).entrySet().stream()
+                        .filter(teamRelationEntry -> teamRelationEntry.getValue() == Team.Relation.ENEMY)
+                        .map(entry -> entry.getKey().getName())
+                        .collect(Collectors.toSet())
+                )
+                .orElse(Collections.emptySet())
+        );
 
         // Update banned tags list
         TeamCommand.updateBannedTagsList();
@@ -213,7 +219,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             sendConsole("-------------------------------------------");
             sendConsole("&6UltimateTeams: &3FloodgateApi found!");
 
-            initialize("floodgate", (plugin) -> this.floodgateAPIHook = new FloodgateAPIHook());
+            initialize("floodgate", (plugin) -> this.floodgateHook = new FloodgateHook());
 
             sendConsole("&6UltimateTeams: &3Full Bedrock support enabled!");
             sendConsole("-------------------------------------------");
@@ -227,13 +233,9 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         // Start auto invite clear task
         if (getSettings().enableAutoInviteWipe()) {
             runSyncRepeating(() -> {
-                try {
-                    teamInviteUtil.emptyInviteList();
-                    if (getSettings().enableAutoInviteWipeLog()){
-                        sendConsole(msgFileManager.getMessagesConfig().getString("auto-invite-wipe-complete"));
-                    }
-                } catch (UnsupportedOperationException e) {
-                    log(Level.WARNING, Utils.Color(msgFileManager.getMessagesConfig().getString("invite-wipe-failed")));
+                teamInviteUtil.emptyInviteList();
+                if (getSettings().enableAutoInviteWipeLog()){
+                    sendConsole(msgFileManager.getMessagesConfig().getString("auto-invite-wipe-complete"));
                 }
             }, 12000);
         }
@@ -245,6 +247,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         if (getSettings().doCheckForUpdates()) {
             updateChecker.checkForUpdates();
         }
+
+        this.loaded = true;
     }
 
     @Override
@@ -254,7 +258,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         sendConsole("&6UltimateTeams: &3Plugin by: &b&lxF3d3");
 
         // Cancel plugin tasks and close the database connection
-        getScheduler().cancelGlobalTasks();
+        getScheduler().cancelAllTasks();
         database.close();
 
         // Final plugin shutdown message
@@ -293,23 +297,13 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         return false;
     }
 
-    @NotNull
-    public Settings getSettings() {
-        return settings;
-    }
-
-    @NotNull
-    public TeamsGui getTeamsGui() {
-        return teamsGui;
-    }
-
 
     private void registerCommands() {
         // Register the plugin commands
         this.manager.registerCommand(new TeamCommand(this));
         this.manager.registerCommand(new TeamChatSpyCommand(this));
         this.manager.registerCommand(new TeamChatCommand(this));
-        //this.manager.registerCommand(new TeamAllyChatCommand(this));
+        this.manager.registerCommand(new TeamAllyChatCommand(this));
         this.manager.registerCommand(new TeamAdmin(this));
     }
 
@@ -347,8 +341,26 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             metrics.addCustomChart(new SimplePie("huskhomes_hook", () -> Boolean.toString(getSettings().HuskHomesHook())));
             metrics.addCustomChart(new SimplePie("floodgate_hook", () -> Boolean.toString(getSettings().FloodGateHook())));
 
-        } catch (Throwable e) {
-            log(Level.WARNING, "Failed to register bStats metrics (" + e.getMessage() + ")");
+            metrics.addCustomChart(new SimplePie("cross_server", () -> Boolean.toString(getSettings().isEnableCrossServer())));
+            if (getSettings().isEnableCrossServer()) {
+                metrics.addCustomChart(new SimplePie("broker_type", () -> getSettings().getBrokerType().name().toLowerCase()));
+            }
+
+        } catch (Exception e) {
+            log(Level.WARNING, "Failed to register bStats metrics", e);
+        }
+    }
+
+    public void initializePluginChannels() {
+        getServer().getMessenger().registerIncomingPluginChannel(this, PluginMessageBroker.BUNGEE_CHANNEL_ID, this);
+        getServer().getMessenger().registerOutgoingPluginChannel(this, PluginMessageBroker.BUNGEE_CHANNEL_ID);
+    }
+
+    @Override
+    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte[] message) {
+        if (broker != null && broker instanceof PluginMessageBroker pluginMessenger
+                && getSettings().getBrokerType() == Broker.Type.PLUGIN_MESSAGE) {
+            pluginMessenger.onReceive(channel, player, message);
         }
     }
 
@@ -358,6 +370,16 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
             return;
         }
         getLogger().log(level, message);
+    }
+
+    @NotNull
+    public Optional<Broker> getMessageBroker() {
+        return Optional.ofNullable(broker);
+    }
+
+    @NotNull
+    public Version getPluginVersion() {
+        return Version.fromString(getDescription().getVersion());
     }
 
     public static UltimateTeamsAPI getAPI() {
@@ -372,13 +394,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
         return instance;
     }
 
-    @NotNull
-    public Database getDatabase() {
-        return database;
-    }
-
     public FloodgateApi getFloodgateApi() {
-        return floodgateAPIHook.getHook();
+        return floodgateHook.getHook();
     }
 
     @NotNull
@@ -407,25 +424,13 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner {
     }
 
     @NotNull
-    public HuskHomesAPIHook getHuskHomesHook() {
+    public HuskHomesHook getHuskHomesHook() {
         return huskHomesHook;
     }
 
-    @NotNull
-    public Gson getGson() {
-        return GsonUtils.getGson();
-    }
-
     @Override
     @NotNull
-    public GracefulScheduling getScheduler() {
-        return paperLib.scheduling();
+    public PlatformScheduler getScheduler() {
+        return foliaLib.getScheduler();
     }
-
-    @Override
-    @NotNull
-    public ConcurrentHashMap<Integer, ScheduledTask> getTasks() {
-        return tasks;
-    }
-
 }

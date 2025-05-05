@@ -2,11 +2,11 @@ package dev.xf3d3.ultimateteams.hooks;
 
 import org.geysermc.floodgate.api.FloodgateApi;
 
-public class FloodgateAPIHook {
+public class FloodgateHook {
 
     private final FloodgateApi floodgateApi;
 
-    public FloodgateAPIHook() {
+    public FloodgateHook() {
         this.floodgateApi = FloodgateApi.getInstance();
     }
 

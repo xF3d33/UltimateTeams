@@ -3,7 +3,6 @@ package dev.xf3d3.ultimateteams.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -11,8 +10,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
+import java.util.logging.Level;
 
+@SuppressWarnings("unused")
 @CommandAlias("teamadmin|ta")
 public class TeamAdmin extends BaseCommand {
 
@@ -36,6 +36,7 @@ public class TeamAdmin extends BaseCommand {
         sender.sendMessage(Utils.Color("&3~~~~~~~~~~ &6&nUltimateTeams&r &3~~~~~~~~~~"));
         sender.sendMessage(Utils.Color("&3Version: &6" + plugin.getDescription().getVersion()));
         sender.sendMessage(Utils.Color("&3Database Type: &6" + plugin.getSettings().getDatabaseType().getDisplayName()));
+        plugin.getMessageBroker().ifPresent(broker -> sender.sendMessage(Utils.Color("&3Broker Type: &6" + plugin.getSettings().getBrokerType().getDisplayName())));
         sender.sendMessage(Utils.Color("&3Author: &6" + plugin.getDescription().getAuthors()));
         sender.sendMessage(Utils.Color("&3Description: &6" + plugin.getDescription().getDescription()));
         sender.sendMessage(Utils.Color("&3Website: "));
@@ -49,7 +50,7 @@ public class TeamAdmin extends BaseCommand {
     public void reloadSubcommand(CommandSender sender) {
         sender.sendMessage(Utils.Color(messagesConfig.getString("plugin-reload-begin")));
 
-        plugin.runSync(() -> {
+        plugin.runSync(task -> {
             plugin.loadConfigs();
             plugin.msgFileManager.reloadMessagesConfig();
 
@@ -65,69 +66,56 @@ public class TeamAdmin extends BaseCommand {
     @Syntax("<teamName>")
     public void disbandSubcommand(CommandSender sender, @Values("@teams") String teamName) {
 
-        if (plugin.getTeamStorageUtil().deleteTeam(teamName)) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
-        } else {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("team-admin-disband-failure")));
-        }
+        plugin.getTeamStorageUtil().findTeamByName(teamName).ifPresentOrElse(
+                team -> {
+                    if (!plugin.getSettings().isEnableCrossServer()) {
+                        plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(null, team));
+                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
+
+                        return;
+                    }
+
+
+                    Bukkit.getOnlinePlayers().stream().findAny().ifPresentOrElse(
+                            randomPlayer -> {
+                                plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(randomPlayer, team));
+                                sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
+                            },
+                            () -> plugin.log(Level.WARNING, "No players online to send message to other servers")
+                    );
+                },
+                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-admin-disband-failure")))
+        );
     }
 
     @Subcommand("team join")
     @CommandCompletion("@players @teams @nothing")
     @CommandPermission("ultimateteams.admin.team.join")
     @Syntax("<Player> <teamName>")
-    public void teamInviteAcceptSubCommand(CommandSender sender, @Values("@players") Player player, @Values("@teams") String teamName) {
-        //final Player player = OnlinePlayer.getPlayer();
+    public void teamJoinSubCommand(CommandSender sender, @Values("@players") Player player, @Values("@teams") String teamName) {
 
-        Team playerTeam;
-        if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
-            playerTeam = plugin.getTeamStorageUtil().findTeamByOwner(player);
-        } else {
-            playerTeam = plugin.getTeamStorageUtil().findTeamByPlayer(player);
-        }
-
-        if (playerTeam != null) {
+        if (plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).isPresent()) {
             String joinMessage = Utils.Color(messagesConfig.getString("team-invite-invited-already-in-team"));
             sender.sendMessage(joinMessage);
 
             return;
         }
 
-        Team team = plugin.getTeamStorageUtil().findTeamByName(teamName);
-        if (team != null) {
-            if (plugin.getTeamStorageUtil().addTeamMember(team, player)) {
+        plugin.getTeamStorageUtil().findTeamByName(teamName).ifPresentOrElse(
+                team -> {
+                    plugin.getTeamStorageUtil().addTeamMember(team, player);
 
-                String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace("%TEAM%", team.getTeamFinalName());
-                sender.sendMessage(joinMessage);
+                    String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace("%TEAM%", team.getName());
+                    sender.sendMessage(joinMessage);
 
-                // Send message to team owner
-                Player owner = Bukkit.getPlayer(UUID.fromString(team.getTeamOwner()));
 
-                if (owner != null) {
-                    player.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
+                    // Send message to team players
+                    team.sendTeamMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
                             .replace("%PLAYER%", player.getName())
-                            .replace("%TEAM%", Utils.Color(team.getTeamFinalName()))));
-                }
-
-                // Send message to team players
-                if (plugin.getSettings().teamJoinAnnounce()) {
-                    for (String playerUUID : team.getTeamMembers()) {
-                        final Player teamPlayer = Bukkit.getPlayer(UUID.fromString(playerUUID));
-
-                        if (teamPlayer != null) {
-                            teamPlayer.sendMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
-                                    .replace("%PLAYER%", player.getName())
-                                    .replace("%TEAM%", Utils.Color(team.getTeamFinalName()))));
-                        }
-                    }
-                }
-            } else {
-                String failureMessage = Utils.Color(messagesConfig.getString("team-join-failed")).replace("%TEAM%", team.getTeamFinalName());
-                sender.sendMessage(failureMessage);
-            }
-        } else {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("team-join-failed-no-valid-team")));
-        }
+                            .replace("%TEAM%", Utils.Color(team.getName()))));
+                },
+                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-join-failed")).replace("%TEAM%", teamName))
+        );
     }
 
 }

@@ -12,23 +12,23 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
 
-public class HuskHomesAPIHook {
+public class HuskHomesHook {
 
     private final HuskHomesAPI huskHomesAPI;
     private final UltimateTeams plugin;
 
-    public HuskHomesAPIHook(@NotNull UltimateTeams plugin) {
+    public HuskHomesHook(@NotNull UltimateTeams plugin) {
         this.huskHomesAPI = HuskHomesAPI.getInstance();
         this.plugin = plugin;
         sendMessages();
     }
 
-    public void teleportPlayer(@NotNull Player player, @NotNull Location location) {
+    public void teleportPlayer(@NotNull Player player, @NotNull Location location, @NotNull String server) {
         OnlineUser onlineUser = huskHomesAPI.adaptUser(player);
 
         Position position = Position.at(
                 location.getX(), location.getY(), location.getZ(),
-                World.from(location.getWorld().getName(), location.getWorld().getUID()), "server"
+                World.from(location.getWorld().getName(), location.getWorld().getUID()), server
         );
 
         try {

@@ -28,10 +28,12 @@ public class TeamDisbandConfirmSubCommand {
             return;
         }
 
-        if (plugin.getTeamStorageUtil().deleteTeam(player)) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
-        } else {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("team-disband-failure")));
-        }
+        plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
+                team -> {
+                    plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(player, team));
+                    player.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
+                },
+                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-disband-failure")))
+        );
     }
 }

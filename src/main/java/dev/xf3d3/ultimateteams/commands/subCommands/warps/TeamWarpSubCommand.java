@@ -2,7 +2,6 @@ package dev.xf3d3.ultimateteams.commands.subCommands.warps;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.models.TeamWarp;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -34,52 +33,42 @@ public class TeamWarpSubCommand {
             return;
         }
 
-        Team team;
-        if (plugin.getTeamStorageUtil().findTeamByOwner(player) != null) {
-            team = plugin.getTeamStorageUtil().findTeamByOwner(player);
-        } else {
-            team = plugin.getTeamStorageUtil().findTeamByPlayer(player);
-        }
+        plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
+                team -> {
+                    if (plugin.getSettings().teamWarpCooldownEnabled()) {
+                        if (!player.hasPermission("ultimateteams.bypass.warpcooldown") && warpCoolDownTimer.containsKey(player.getUniqueId())) {
+                            if (warpCoolDownTimer.get(player.getUniqueId()) > System.currentTimeMillis()) {
+                                long timeLeft = (warpCoolDownTimer.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000;
 
-        if (team == null) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("failed-not-in-team")));
-            return;
-        }
+                                player.sendMessage(Utils.Color(messagesConfig.getString("home-cool-down-timer-wait")
+                                        .replaceAll(TIME_LEFT, Long.toString(timeLeft))));
+                            } else {
+                                warpCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
+                                tpWarp(player, team, name);
+                            }
+                        } else {
+                            tpWarp(player, team, name);
+                            warpCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
+                        }
 
-        UUID uuid = player.getUniqueId();
+                        return;
+                    }
 
-        if (plugin.getSettings().teamWarpCooldownEnabled()) {
-            if (!player.hasPermission("ultimateteams.bypass.warpcooldown") && warpCoolDownTimer.containsKey(uuid)) {
-                if (warpCoolDownTimer.get(uuid) > System.currentTimeMillis()) {
-                    long timeLeft = (warpCoolDownTimer.get(uuid) - System.currentTimeMillis()) / 1000;
-
-                    player.sendMessage(Utils.Color(messagesConfig.getString("home-cool-down-timer-wait")
-                            .replaceAll(TIME_LEFT, Long.toString(timeLeft))));
-                } else {
-                    warpCoolDownTimer.put(uuid, System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
                     tpWarp(player, team, name);
-                }
-            } else {
-                tpWarp(player, team, name);
-                warpCoolDownTimer.put(uuid, System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
-            }
-        } else {
-            tpWarp(player, team, name);
-
-            player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
-        }
-
+                    player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
+                },
+                () -> player.sendMessage(Utils.Color(messagesConfig.getString("failed-not-in-team")))
+        );
     }
 
     private void tpWarp(Player player, Team team, String name) {
-        final TeamWarp warp = team.getTeamWarp(name);
 
-        if (warp == null) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-not-found")));
-            return;
-        }
-
-        plugin.getUtils().teleportPlayer(player, warp.getLocation(), Utils.TeleportType.WARP, name);
-        player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-teleported-successful").replaceAll("%WARP_NAME%", warp.getName())));
+        team.getTeamWarp(name).ifPresentOrElse(
+                warp -> {
+                    plugin.getUtils().teleportPlayer(player, warp.getLocation(), warp.getServer(), Utils.TeleportType.WARP, name);
+                    player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-teleported-successful").replaceAll("%WARP_NAME%", warp.getName())));
+                },
+                () -> player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-not-found")))
+        );
     }
 }

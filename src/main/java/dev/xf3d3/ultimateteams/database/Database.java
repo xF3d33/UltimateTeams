@@ -5,6 +5,8 @@ import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.entity.Player;
+import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -34,8 +36,7 @@ public abstract class Database {
 
 
 	@NotNull
-	protected final String format(@NotNull String statement) {
-
+	protected final String format(@NotNull @Language("SQL") String statement) {
 		return statement
 				.replaceAll("%team_table%", plugin.getSettings().getTableName(Table.TEAM_DATA))
 				.replaceAll("%user_table%", plugin.getSettings().getTableName(Table.USER_DATA));
@@ -51,13 +52,13 @@ public abstract class Database {
 
 	public abstract Optional<TeamPlayer> getPlayer(@NotNull UUID uuid);
 
-	public abstract Optional<TeamPlayer> getPlayer(@NotNull String name);
+	public abstract Team createTeam(@NotNull String name, @NotNull Player crerator);
 
-	public abstract void createTeam(@NotNull Team team, @NotNull UUID uuid);
+	public abstract Optional<Team> getTeam(@NotNull Integer id);
 
 	public abstract void updateTeam(@NotNull Team team);
 
-	public abstract void deleteTeam(@NotNull UUID uuid);
+	public abstract void deleteTeam(@NotNull Integer id);
 
 	public abstract void close();
 

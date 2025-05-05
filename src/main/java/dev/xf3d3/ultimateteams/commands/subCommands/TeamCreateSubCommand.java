@@ -11,9 +11,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
 
 public class TeamCreateSubCommand {
+    private final UltimateTeams plugin;
+
     private final FileConfiguration messagesConfig;
     private final TeamsStorage storageUtil;
     private static final String TEAM_PLACEHOLDER = "%TEAM%";
@@ -21,13 +23,10 @@ public class TeamCreateSubCommand {
     int MIN_CHAR_LIMIT;
     int MAX_CHAR_LIMIT;
 
-    private final Set<Map.Entry<UUID, Team>> teams;
-    ArrayList<String> teamNamesList = new ArrayList<>();
-
     public TeamCreateSubCommand(@NotNull UltimateTeams plugin) {
+        this.plugin = plugin;
 
         this.storageUtil = plugin.getTeamStorageUtil();
-        this.teams = plugin.getTeamStorageUtil().getTeams();
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
 
         this.MIN_CHAR_LIMIT = plugin.getSettings().getTeamTagsMinCharLimit();
@@ -41,8 +40,6 @@ public class TeamCreateSubCommand {
             return;
         }
 
-        teams.forEach((teams) -> teamNamesList.add(teams.getValue().getTeamFinalName()));
-
 
         if (name.contains(" ")) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-name-contains-space").replace(TEAM_PLACEHOLDER, name)));
@@ -54,12 +51,12 @@ public class TeamCreateSubCommand {
             return;
         }
 
-        if (teamNamesList.contains(name)) {
+        if (plugin.getTeamStorageUtil().getTeamsName().contains(name)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-name-already-taken").replace(TEAM_PLACEHOLDER, name)));
             return;
         }
 
-        for (String names : teamNamesList) {
+        for (String names : plugin.getTeamStorageUtil().getTeamsName()) {
             if (names.toLowerCase().contains(name.toLowerCase())) {
                 player.sendMessage(Utils.Color(messagesConfig.getString("team-name-already-taken").replace(TEAM_PLACEHOLDER, name)));
                 return;
@@ -71,35 +68,29 @@ public class TeamCreateSubCommand {
             return;
         }
 
-        if (storageUtil.isTeamOwner(player)) {
+        if (storageUtil.isInTeam(player)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-creation-failed").replace(TEAM_PLACEHOLDER, Utils.Color(name))));
             return;
         }
 
-        if (storageUtil.findTeamByPlayer(player) != null) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-creation-failed").replace(TEAM_PLACEHOLDER, Utils.Color(name))));
-            return;
-        }
 
         if (name.length() < MIN_CHAR_LIMIT) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-short").replace("%CHARMIN%", Integer.toString(MIN_CHAR_LIMIT))));
+
+            return;
         } else if (name.length() > MAX_CHAR_LIMIT) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-long").replace("%CHARMAX%", Integer.toString(MAX_CHAR_LIMIT))));
-        } else {
-            if (!storageUtil.isTeamExisting(player)) {
-                Team team = storageUtil.createTeam(player, name);
-                String teamCreated = Utils.Color(messagesConfig.getString("team-created-successfully")).replace(TEAM_PLACEHOLDER, Utils.Color(name));
 
-                player.sendMessage(teamCreated);
-
-                fireTeamCreateEvent(player, team);
-
-            } else {
-                String teamNotCreated = Utils.Color(messagesConfig.getString("team-creation-failed")).replace(TEAM_PLACEHOLDER, Utils.Color(name));
-                player.sendMessage(teamNotCreated);
-            }
-            teamNamesList.clear();
+            return;
         }
+
+
+        storageUtil.createTeam(player, name);
+        String teamCreated = Utils.Color(messagesConfig.getString("team-created-successfully")).replace(TEAM_PLACEHOLDER, Utils.Color(name));
+
+        player.sendMessage(teamCreated);
+
+        //fireTeamCreateEvent(player, team);
     }
 
     private void fireTeamCreateEvent(Player player, Team team) {

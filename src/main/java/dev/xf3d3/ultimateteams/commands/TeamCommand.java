@@ -2,19 +2,19 @@ package dev.xf3d3.ultimateteams.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.commands.subCommands.*;
-import dev.xf3d3.ultimateteams.commands.subCommands.allies.TeamAllySubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.TeamCreateSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.TeamInfoSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.TeamListSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.TeamPrefixSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.disband.TeamDisbandConfirmSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.disband.TeamDisbandSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.home.TeamDelHomeSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.home.TeamHomeSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.home.TeamSetHomeSubCommand;
-import dev.xf3d3.ultimateteams.commands.subCommands.members.TeamInviteSubCommand;
-import dev.xf3d3.ultimateteams.commands.subCommands.members.TeamKickSubCommand;
-import dev.xf3d3.ultimateteams.commands.subCommands.members.TeamLeaveSubCommand;
-import dev.xf3d3.ultimateteams.commands.subCommands.members.TeamPvpSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.members.*;
+import dev.xf3d3.ultimateteams.commands.subCommands.relations.TeamAllySubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.relations.TeamEnemySubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamDelWarpSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamSetWarpSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamWarpSubCommand;
@@ -123,11 +123,11 @@ public class TeamCommand extends BaseCommand {
 
     // TEAM INVITES
     @Subcommand("invite send")
-    @CommandCompletion("@players @nothing")
+    @CommandCompletion("@onlineUsers @nothing")
     @Syntax("<playername>")
     @CommandPermission("ultimateteams.team.invite.send")
-    public void onTeamInviteSendCommand(@NotNull CommandSender sender, @Values("@players") OnlinePlayer onlinePlayer) {
-        new TeamInviteSubCommand(plugin).teamInviteSendSubCommand(sender, onlinePlayer);
+    public void onTeamInviteSendCommand(@NotNull CommandSender sender, @Values("@onlineUsers") String invitee) {
+        new TeamInviteSubCommand(plugin).teamInviteSendSubCommand(sender, invitee);
     }
 
     @Subcommand("invite accept")
@@ -198,10 +198,10 @@ public class TeamCommand extends BaseCommand {
     }
 
     @Subcommand("enemy remove")
-    @CommandCompletion("@teams @nothing")
+    @CommandCompletion("@enemies @nothing")
     @Syntax("<teamName>")
     @CommandPermission("ultimateteams.team.enemy.remove")
-    public void onTeamEnemyRemoveCommand(@NotNull CommandSender sender, @Values("@teams") String teamName) {
+    public void onTeamEnemyRemoveCommand(@NotNull CommandSender sender, @Values("@enemies") String teamName) {
         new TeamEnemySubCommand(plugin).teamEnemySubRemoveCommand(sender, teamName);
     }
 
@@ -225,10 +225,10 @@ public class TeamCommand extends BaseCommand {
     }
 
     @Subcommand("ally remove")
-    @CommandCompletion("@teams @nothing")
+    @CommandCompletion("@allies  @nothing")
     @Syntax("<teamName>")
     @CommandPermission("ultimateteams.team.ally.remove")
-    public void onTeamAllyRemoveCommand(@NotNull CommandSender sender, @Values("@teams") String teamName) {
+    public void onTeamAllyRemoveCommand(@NotNull CommandSender sender, @Values("@allies") String teamName) {
         new TeamAllySubCommand(plugin).teamAllyRemoveSubCommand(sender, teamName);
     }
 
@@ -263,11 +263,11 @@ public class TeamCommand extends BaseCommand {
 
     // TEAM TRANSFER
     @Subcommand("transfer")
-    @CommandCompletion("@players @nothing")
+    @CommandCompletion("@teamPlayers @nothing")
     @Syntax("<player>")
     @CommandPermission("ultimateteams.team.transfer")
-    public void onTeamTransferCommand(@NotNull CommandSender sender, @Values("@players") OnlinePlayer onlinePlayer) {
-        new TeamTransferOwnerSubCommand(plugin).transferTeamOwnerSubCommand(sender, onlinePlayer);
+    public void onTeamTransferCommand(@NotNull CommandSender sender, @Values("@teamPlayers") String user) {
+        new TeamTransferOwnerSubCommand(plugin).transferTeamOwnerSubCommand(sender, user);
     }
 
 

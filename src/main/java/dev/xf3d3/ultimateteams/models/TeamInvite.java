@@ -1,30 +1,43 @@
 package dev.xf3d3.ultimateteams.models;
 
-import org.jetbrains.annotations.NotNull;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Date;
+import java.util.UUID;
 
+@AllArgsConstructor
 public class TeamInvite {
 
-    private final String inviter;
-    private final String invitee;
-    final Date inviteTime;
+    @Expose
+    @SerializedName("team_id")
+    @Getter
+    private int teamId;
 
-    public TeamInvite(@NotNull String inviter, @NotNull String invitee) {
-        this.inviter = inviter;
-        this.invitee = invitee;
-        this.inviteTime = new Date();
+    @Getter
+    @Expose
+    private UUID inviter;
+
+    @Getter
+    @Expose
+    private UUID invitee;
+
+    @Getter
+    @Expose
+    private long invitedAt;
+
+    @Getter @Setter
+    @Nullable
+    @Expose
+    private Boolean accepted;
+
+
+    @SuppressWarnings("unused")
+    private TeamInvite() {
     }
 
-    public String getInviter() {
-        return inviter;
-    }
 
-    public String getInvitee() {
-        return invitee;
-    }
-
-    public Date getInviteTime() {
-        return inviteTime;
-    }
 }
