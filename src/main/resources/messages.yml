@@ -186,6 +186,9 @@ chat-cool-down-timer-wait: "&3Sorry, you can't use that again for another &6%TIM
 chatspy-toggle-on: "&3Toggled Team Chat spy &a&lON&3."
 chatspy-toggle-off: "&3Toggled Team Chat spy &c&lOFF&3."
 
+#Economy
+not-enough-money: "&3You don't have enough money for this action. Required balance is: &6%MONEY%"
+
 #General Plugin Messages
 player-not-found: "&3The player doesn't exist."
 team-must-be-owner: "&3You must be the team owner to do this."

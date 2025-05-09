@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 
 public class TeamCreateSubCommand {
     private final UltimateTeams plugin;
@@ -81,6 +82,11 @@ public class TeamCreateSubCommand {
         } else if (name.length() > MAX_CHAR_LIMIT) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-long").replace("%CHARMAX%", Integer.toString(MAX_CHAR_LIMIT))));
 
+            return;
+        }
+
+        if (plugin.getEconomyHook() != null && !plugin.getEconomyHook().takeMoney(player, plugin.getSettings().getTeamCreateCost())) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("not-enough-money").replace("%MONEY%", String.valueOf(plugin.getSettings().getTeamCreateCost()))));
             return;
         }
 

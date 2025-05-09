@@ -278,6 +278,18 @@ public class Settings {
     @YamlKey("plugin-update-notifications.enabled")
     private boolean checkForUpdates = true;
 
+    // Economy
+    @YamlComment("Whether to enable economy (Vault is required)")
+    @YamlKey("economy.enable")
+    @Getter
+    private boolean economyEnabled = false;
+
+    @YamlComment("The cost to create a team")
+    @YamlKey("economy.team-create")
+    @Getter
+    private double teamCreateCost = 100.0;
+
+
     // General Settings
     @YamlComment("Do you want to enable the plugins ability to auto-wipe the invites list? [Default value: true]")
     @YamlKey("general.run-auto-invite-wipe-task")

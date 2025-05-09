@@ -31,6 +31,8 @@ public class TeamsStorage {
     public void loadTeams() {
         teams.addAll(plugin.getDatabase().getAllTeams());
         plugin.sendConsole(Utils.Color("&eLoaded " + teams.size() + " teams!"));
+
+        plugin.setLoaded(true);
     }
 
     public Collection<String> getTeamsName() {

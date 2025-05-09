@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.xf3d3"
-version = "4.0.2-BETA"
+version = "4.0.3-BETA"
 
 repositories {
     mavenLocal()
@@ -60,6 +60,7 @@ dependencies {
     implementation("dev.dejvokep:boosted-yaml:1.3.1")
 
     compileOnly("net.luckperms:api:5.4")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
     // Database
     compileOnly("org.xerial:sqlite-jdbc:3.46.1.0")

@@ -1,5 +1,5 @@
 name: UltimateTeams
-version: "4.0.2-BETA"
+version: "4.0.3-BETA"
 main: dev.xf3d3.ultimateteams.UltimateTeams
 api-version: 1.16
 prefix: UltimateTeams
@@ -8,9 +8,10 @@ authors: [ xF3d3 ]
 description: A simple and lightweight Teams plugin for Minecraft.
 folia-supported: true
 softdepend:
-  - PlaceholderAPI
-  - floodgate
-  - HuskHomes
+  - 'PlaceholderAPI'
+  - 'floodgate'
+  - 'HuskHomes'
+  - 'Vault'
 libraries:
   - 'com.mysql:mysql-connector-j:9.2.0'
   - 'org.mariadb.jdbc:mariadb-java-client:3.4.1'

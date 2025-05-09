@@ -14,10 +14,7 @@ import dev.xf3d3.ultimateteams.config.MessagesFileManager;
 import dev.xf3d3.ultimateteams.config.Settings;
 import dev.xf3d3.ultimateteams.config.TeamsGui;
 import dev.xf3d3.ultimateteams.database.*;
-import dev.xf3d3.ultimateteams.hooks.FloodgateHook;
-import dev.xf3d3.ultimateteams.hooks.HuskHomesHook;
-import dev.xf3d3.ultimateteams.hooks.LuckPermsHook;
-import dev.xf3d3.ultimateteams.hooks.PapiExpansion;
+import dev.xf3d3.ultimateteams.hooks.*;
 import dev.xf3d3.ultimateteams.listeners.PlayerConnectEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDamageEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDisconnectEvent;
@@ -29,6 +26,7 @@ import dev.xf3d3.ultimateteams.network.RedisBroker;
 import dev.xf3d3.ultimateteams.utils.*;
 import dev.xf3d3.ultimateteams.utils.gson.GsonUtils;
 import lombok.Getter;
+import lombok.Setter;
 import net.william278.annotaml.Annotaml;
 import net.william278.desertwell.util.ThrowingConsumer;
 import net.william278.desertwell.util.Version;
@@ -52,10 +50,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unused")
 public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonUtils, PluginMessageListener {
     private static UltimateTeams instance;
     private UltimateTeamsAPI api;
-    @Getter private boolean loaded = false;
+
+    @Getter @Setter
+    public boolean loaded = false;
 
     private static final int METRICS_ID = 18842;
     private final PluginDescriptionFile pluginInfo = getDescription();
@@ -66,25 +67,25 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     @Getter private Database database;
     @Nullable private Broker broker;
 
-    private FloodgateHook floodgateHook;
-    private Utils utils;
     private FoliaLib foliaLib;
     private BukkitCommandManager manager;
     private TeamsStorage teamsStorage;
     private UsersStorage usersStorage;
     private TeamInviteUtil teamInviteUtil;
-    private HuskHomesHook huskHomesHook;
+    private FloodgateHook floodgateHook;
     private UpdateCheck updateChecker;
 
+    @Getter private HuskHomesHook huskHomesHook;
+    @Getter private Utils utils;
     @Getter private Settings settings;
     @Getter private TeamsGui teamsGui;
+    @Getter @Nullable private VaultHook economyHook;
 
     // HashMaps
     private final ConcurrentHashMap<String, Player> bedrockPlayers = new ConcurrentHashMap<>();
 
     @Override
     public void onLoad() {
-        // Set the instance
         instance = this;
     }
 
@@ -145,10 +146,20 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         }
 
         // Register commands
-        initialize("commands", (plugin) -> registerCommands());
+        initialize("commands", (plugin) -> {
+            this.manager.registerCommand(new TeamCommand(this));
+            this.manager.registerCommand(new TeamChatSpyCommand(this));
+            this.manager.registerCommand(new TeamChatCommand(this));
+            this.manager.registerCommand(new TeamAllyChatCommand(this));
+            this.manager.registerCommand(new TeamAdmin(this));
+        });
 
         // Register events
-        initialize("events", (plugin) -> registerEvents());
+        initialize("events", (plugin) -> {
+            this.getServer().getPluginManager().registerEvents(new PlayerConnectEvent(this), this);
+            this.getServer().getPluginManager().registerEvents(new PlayerDisconnectEvent(this), this);
+            this.getServer().getPluginManager().registerEvents(new PlayerDamageEvent(this), this);
+        });
 
         // Load the teams
         initialize("teams", (plugin) -> runAsync(task -> teamsStorage.loadTeams()));
@@ -230,6 +241,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
             sendConsole("-------------------------------------------");
         }
 
+        // Enable economy features
+        if (getServer().getPluginManager().isPluginEnabled("Vault") && getSettings().isEconomyEnabled()) {
+            initialize("economy", (plugin) -> this.economyHook = new VaultHook(this));
+        }
+
         // Start auto invite clear task
         if (getSettings().enableAutoInviteWipe()) {
             runSyncRepeating(() -> {
@@ -247,8 +263,6 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         if (getSettings().doCheckForUpdates()) {
             updateChecker.checkForUpdates();
         }
-
-        this.loaded = true;
     }
 
     @Override
@@ -295,23 +309,6 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
             log(Level.SEVERE, "Failed to reload UltimateTeams config or messages file", e);
         }
         return false;
-    }
-
-
-    private void registerCommands() {
-        // Register the plugin commands
-        this.manager.registerCommand(new TeamCommand(this));
-        this.manager.registerCommand(new TeamChatSpyCommand(this));
-        this.manager.registerCommand(new TeamChatCommand(this));
-        this.manager.registerCommand(new TeamAllyChatCommand(this));
-        this.manager.registerCommand(new TeamAdmin(this));
-    }
-
-    public void registerEvents() {
-        // Register the plugin events
-        this.getServer().getPluginManager().registerEvents(new PlayerConnectEvent(this), this);
-        this.getServer().getPluginManager().registerEvents(new PlayerDisconnectEvent(this), this);
-        this.getServer().getPluginManager().registerEvents(new PlayerDamageEvent(this), this);
     }
 
     private boolean isPlaceholderAPIEnabled() {
@@ -394,10 +391,6 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         return instance;
     }
 
-    public FloodgateApi getFloodgateApi() {
-        return floodgateHook.getHook();
-    }
-
     @NotNull
     public TeamsStorage getTeamStorageUtil() {
         return teamsStorage;
@@ -413,19 +406,13 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         return teamInviteUtil;
     }
 
+    public FloodgateApi getFloodgateApi() {
+        return floodgateHook.getHook();
+    }
+
     @NotNull
     public ConcurrentHashMap<String, Player> getBedrockPlayers() {
         return bedrockPlayers;
-    }
-
-    @NotNull
-    public Utils getUtils() {
-        return utils;
-    }
-
-    @NotNull
-    public HuskHomesHook getHuskHomesHook() {
-        return huskHomesHook;
     }
 
     @Override
