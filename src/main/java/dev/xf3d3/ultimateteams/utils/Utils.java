@@ -110,24 +110,30 @@ public class Utils {
     }
 
     /**
-     * @param text The string of text to apply color/effects to
+     * @param message The string of text to apply color/effects to
      * @return Returns a string of text with color/effects applied
      */
-    public static String Color(String text) {
+    public static String Color(String message) {
+        Pattern HEX_PATTERN = Pattern.compile("#([A-Fa-f0-9]{6})");
+        Matcher matcher = HEX_PATTERN.matcher(message);
+        StringBuffer buffer = new StringBuffer();
 
-        Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
-        Matcher match = pattern.matcher(text);
+        while (matcher.find()) {
+            String hex = matcher.group(1); // Now safe — group(1) is defined
 
-        while(match.find()) {
-            String color = text.substring(match.start(),match.end());
-            text = text.replace(color, net.md_5.bungee.api.ChatColor.of(color)+"");
+            // Build §x§R§R§G§G§B§B color code
+            StringBuilder colorCode = new StringBuilder("§x");
+            for (char c : hex.toCharArray()) {
+                colorCode.append('§').append(c);
+            }
 
-            match = pattern.matcher(text);
+            matcher.appendReplacement(buffer, colorCode.toString());
         }
+        matcher.appendTail(buffer);
 
-        text = ChatColor.translateAlternateColorCodes('&', text);
-        return text;
+        return ChatColor.translateAlternateColorCodes('&', buffer.toString());
     }
+
 
     public enum TeleportType {
         WARP,
