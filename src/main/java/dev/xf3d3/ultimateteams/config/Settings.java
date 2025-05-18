@@ -134,149 +134,161 @@ public class Settings {
     @YamlKey("placeholder.not-in-a-team")
     private String notInTeamPlaceholder = "Not in a team";
 
-    // Team Tags
-    @YamlComment("Set the minimum length of the team prefix and name. [Default value: 3]")
-    @YamlKey("team-tags.min-character-limit")
-    private int minCharacterLimit = 3;
 
-    @YamlComment("Set the minimum length of the team prefix and name. [Default value: 8]")
-    @YamlKey("team-tags.max-character-limit")
-    private int maxCharacterLimit = 8;
+    @YamlComment("Whether to allow color codes (& and #) in the teams name")
+    @YamlKey("team.create.allow-color-codes")
+    @Getter
+    private boolean teamCreateAllowColorCodes = false;
 
-    @YamlComment("Should the plugin ignore color codes while checking the prefix length? [Default value: false]")
-    @YamlKey("team-tags.ignore-color-codes")
-    private boolean ignoreColorCodes = false;
-
-    @YamlComment("Set below names that are not allowed to be used in prefixes or names. [They ARE case & syntax sensitive]")
-    @YamlKey("team-tags.disallowed-tags")
-    private List<String> disallowedTags = List.of("Gamers", "Rise", "Up");
-
-    @YamlComment("Add a space after the team prefix in chat. [Default value: false].")
-    @YamlKey("team-tags.prefix-add-space-after")
-    private boolean addPrefixChatAfter = false;
-
-    @YamlComment("Add `[]` characters before and after the team prefix in the chat. [Default value: false]")
-    @YamlKey("team-tags.prefix-add-brackets")
-    private boolean addPrefixBrackets = false;
-
-    @YamlComment("Below is how the above brackets should appear.")
-    @YamlKey("team-tags.brackets-opening")
-    private String bracketsOpening = "&f[";
-
-    @YamlKey("team-tags.brackets-closing")
-    private String bracketsClosing = "&f]";
-
-    // Team Size
-    @YamlComment("Set the default maximum amount of members that can join a players' team. [Default value: 8]")
-    @YamlKey("team-size.default-max-team-size")
-    private int maxTeamSize = 8;
-
-    @YamlComment("If true, the default members limit will be stacked with permission limit.\n If a player has ultimateteams.max_members.2 and the default limit is 8, he will be able to have 10 members. otherwise only 2.")
-    @YamlKey("team-size.stack-members")
-    private boolean stackTeamSizeWithPermission = false;
 
     // Team join
     @YamlComment("Do you want a message to be sent to team players when a player joins a team? [Default value: true]")
-    @YamlKey("team-join.announce")
+    @YamlKey("team.join.announce")
     private boolean teamJoinAnnounce = true;
 
     @YamlComment("Do you want a message to be sent to team players when a player leaves a team? [Default value: true]")
-    @YamlKey("team-leave.announce")
+    @YamlKey("team.leave.announce")
     private boolean teamLeftAnnounce = true;
+
+
+    // Team Size
+    @YamlComment("Set the default maximum amount of members that can join a players' team. [Default value: 8]")
+    @YamlKey("team.size.default-max-team-size")
+    private int maxTeamSize = 8;
+
+    @YamlComment("If true, the default members limit will be stacked with permission limit.\n If a player has ultimateteams.max_members.2 and the default limit is 8, he will be able to have 10 members. otherwise only 2.")
+    @YamlKey("team.size.stack-members")
+    private boolean stackTeamSizeWithPermission = false;
+
+
+    // Team Home
+    @YamlComment("Enable the '/team [sethome|home]' system. [Default value: true]")
+    @YamlKey("team.home.enabled")
+    private boolean teamHomeEnabled = true;
+
+    @YamlComment("Define the delay (cooldown) in seconds before the tp starts.\nThis value has no effect if using HuskHomes as teleport handler")
+    @YamlKey("team.home.tp-delay")
+    private int teamHomeTpDelay = 3;
+
+    @YamlComment("Enable the cool down on the '/team warp <name>' command to prevent tp spamming (RECOMMENDED). [Default value: true]")
+    @YamlKey("team.home.cool-down.enabled")
+    private boolean teamHomeCooldownEnabled = true;
+
+    @YamlComment("Cool-down time in seconds. [Default value: 120 = 2 minutes]")
+    @YamlKey("team.home.cool-down.time")
+    private int teamHomeCooldownValue = 120;
+
+
+    // Team PvP
+    @YamlComment("Globally enable the team friendly fire system (the friendly fire is disabled by default in new teams). [Default value: true]")
+    @YamlKey("team.pvp.enabled")
+    private boolean pvpCommandEnabled = true;
+
+    @YamlComment("Enable the ability for a player to bypass the pvp protection using 'ultimateteams.bypass.pvp'. [Default value: true]")
+    @YamlKey("team.pvp.bypass-permission")
+    private boolean pvpCommandBypassPerm = true;
+
 
     // Team Warp
     @YamlComment("Enable the '/team [setwarp|warp]' system. [Default value: true]")
-    @YamlKey("team-warp.enable")
+    @YamlKey("team.warp.enable")
     private boolean teamWarpEnable = true;
 
     @YamlComment("Define the delay (cooldown) in seconds before the tp starts.\nThis value has no effect if using HuskHomes as teleport handler")
-    @YamlKey("team-warp.tp-delay")
+    @YamlKey("team.warp.tp-delay")
     private int teamWarpTpDelay = 3;
 
     @YamlComment("Decide how many warps a team owner can set.\n Can be overwritten by ultimateteams.max_warps.<number>")
-    @YamlKey("team-warp.limit")
+    @YamlKey("team.warp.limit")
     private int teamWarpLimit = 2;
 
     @YamlComment("If true, the default warp limit will be stacked with permission limit.\n If a player has ultimateteams.max_warps.3 and the default limit is 2, he will be able to set 5 warps.")
-    @YamlKey("team-warp.stack-warps")
+    @YamlKey("team.warp.stack-warps")
     private boolean stackWarpLimitWithPermission = false;
 
     @YamlComment("Enable the cool down on the '/team warp <name>' command to prevent tp spamming (RECOMMENDED). [Default value: true]")
-    @YamlKey("team-warp.cool-down.enabled")
+    @YamlKey("team.warp.cool-down.enabled")
     private boolean teamWarpCooldownEnabled = true;
 
     @YamlComment("Cool-down time in seconds. [Default value: 120 = 2 minutes]")
-    @YamlKey("team-warp.cool-down.time")
+    @YamlKey("team.warp.cool-down.time")
     private int teamWarpCooldownValue = 120;
+
 
     // Team Chat
     @YamlComment("Enable the team chat system. [Default value: true]")
-    @YamlKey("team-chat.enabled")
+    @YamlKey("team.chat.enabled")
     private boolean teamChatEnabled = true;
 
     @YamlComment("Below is the prefix for the team chat messages. (Placeholders: %TEAM% %PLAYER%)")
-    @YamlKey("team-chat.prefix")
+    @YamlKey("team.chat.prefix")
     private String teamChatPrefix = "&6[&3TC&6]&r";
+
+
+    // Team Allies
+    @YamlComment("Set the maximum amount of allied teams that can a team can have. [Default value: 4]")
+    @YamlKey("team.allies.max-allies")
+    private int maxAllies = 4;
 
     // Ally Chat
     @YamlComment("Enable the team ally chat system. [Default value: true]")
-    @YamlKey("ally-chat.enabled")
+    @YamlKey("team.allies.chat.enabled")
     private boolean teamAllyChatEnabled = true;
 
     @YamlComment("Below is the prefix for the team ally chat messages. (Placeholders: %TEAM% %PLAYER%)")
-    @YamlKey("ally-chat.prefix")
+    @YamlKey("team.allies.chat.prefix")
     private String teamAllyChatPrefix = "&6[&eAC&6]&r";
+
+
+    // Team Enemies
+    @YamlComment("Set the maximum amount of enemies teams that can a team can have. [Default value: 2")
+    @YamlKey("team.enemies.max-enemies")
+    private int maxEnemies = 2;
+
+
+    // Team Tags
+    @YamlComment("Set the minimum length of the team prefix and name. [Default value: 3]")
+    @YamlKey("team.tags.min-character-limit")
+    private int minCharacterLimit = 3;
+
+    @YamlComment("Set the minimum length of the team prefix and name. [Default value: 8]")
+    @YamlKey("team.tags.max-character-limit")
+    private int maxCharacterLimit = 8;
+
+    @YamlComment("Should the plugin ignore color codes while checking the prefix length? [Default value: false]")
+    @YamlKey("team.tags.ignore-color-codes")
+    private boolean ignoreColorCodes = false;
+
+    @YamlComment("Set below names that are not allowed to be used in prefixes or names. [They ARE case & syntax sensitive]")
+    @YamlKey("team.tags.disallowed-tags")
+    private List<String> disallowedTags = List.of("Gamers", "Rise", "Up");
+
+    @YamlComment("Add a space after the team prefix in chat. [Default value: false].")
+    @YamlKey("team.tags.prefix-add-space-after")
+    private boolean addPrefixChatAfter = false;
+
+    @YamlComment("Add `[]` characters before and after the team prefix in the chat. [Default value: false]")
+    @YamlKey("team.tags.prefix-add-brackets")
+    private boolean addPrefixBrackets = false;
+
+    @YamlComment("Below is how the above brackets should appear.")
+    @YamlKey("team.tags.brackets-opening")
+    private String bracketsOpening = "&f[";
+
+    @YamlKey("team.tags.brackets-closing")
+    private String bracketsClosing = "&f]";
+
 
     // Chat Spy
     @YamlComment("Do you want players with the perm 'ultimateteams.chat.spy' be able to spy on all team chat messages? [Default value: true]")
-    @YamlKey("chat-spy.enabled")
+    @YamlKey("chat.chat-spy.enabled")
     private boolean teamChatSpyEnabled = true;
 
 
     @YamlComment("Below is the prefix for th chat spy messages. [Default value: &6[&cSPY&6]&r]")
-    @YamlKey("chat-spy.prefix")
+    @YamlKey("chat.chat-spy.prefix")
     private String teamChatSpyPrefix = "&6[&cSPY&6]&r";
 
-    // Team Allies
-    @YamlComment("Set the maximum amount of allied teams that can a team can have. [Default value: 4]")
-    @YamlKey("max-team-allies")
-    private int maxAllies = 4;
-
-    // Team Enemies
-    @YamlComment("Set the maximum amount of enemies teams that can a team can have. [Default value: 2")
-    @YamlKey("max-team-enemies")
-    private int maxEnemies = 2;
-
-    // Team PvP
-    @YamlComment("Globally enable the team friendly fire system (the friendly fire is disabled by default in new teams). [Default value: true]")
-    @YamlKey("pvp.pvp-command")
-    private boolean pvpCommandEnabled = true;
-
-    @YamlComment("Enable the ability for a player to bypass the pvp protection using 'ultimateteams.bypass.pvp'. [Default value: true]")
-    @YamlKey("pvp.pvp-command-bypass-permission")
-    private boolean pvpCommandBypassPerm = true;
-
-    // Team Home
-    @YamlComment("Enable the '/team [sethome|home]' system. [Default value: true]")
-    @YamlKey("team-home.enabled")
-    private boolean teamHomeEnabled = true;
-
-    @YamlComment("Define the delay (cooldown) in seconds before the tp starts.\nThis value has no effect if using HuskHomes as teleport handler")
-    @YamlKey("team-home.tp-delay")
-    private int teamHomeTpDelay = 3;
-
-    @YamlComment("Enable the cool down on the '/team warp <name>' command to prevent tp spamming (RECOMMENDED). [Default value: true]")
-    @YamlKey("team-home.cool-down.enabled")
-    private boolean teamHomeCooldownEnabled = true;
-
-    @YamlComment("Cool-down time in seconds. [Default value: 120 = 2 minutes]")
-    @YamlKey("team-home.cool-down.time")
-    private int teamHomeCooldownValue = 120;
-
-    // Update Checker
-    @YamlComment("Do you want to enable in game plugin update notifications? (Permission:'ultimateteams.update'). [Default value: true]")
-    @YamlKey("plugin-update-notifications.enabled")
-    private boolean checkForUpdates = true;
 
     // Economy
     @YamlComment("Whether to enable economy (Vault is required)")
@@ -288,6 +300,11 @@ public class Settings {
     @YamlKey("economy.team-create")
     @Getter
     private double teamCreateCost = 100.0;
+
+    // Update Checker
+    @YamlComment("Do you want to enable in game plugin update notifications? (Permission:'ultimateteams.update'). [Default value: true]")
+    @YamlKey("plugin-update-notifications.enabled")
+    private boolean checkForUpdates = true;
 
 
     // General Settings

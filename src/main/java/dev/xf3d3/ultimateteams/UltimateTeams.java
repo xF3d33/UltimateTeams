@@ -337,6 +337,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
             metrics.addCustomChart(new SimplePie("database_type", () -> getSettings().getDatabaseType().getDisplayName()));
             metrics.addCustomChart(new SimplePie("huskhomes_hook", () -> Boolean.toString(getSettings().HuskHomesHook())));
             metrics.addCustomChart(new SimplePie("floodgate_hook", () -> Boolean.toString(getSettings().FloodGateHook())));
+            metrics.addCustomChart(new SimplePie("economy", () -> Boolean.toString(getSettings().isEconomyEnabled())));
 
             metrics.addCustomChart(new SimplePie("cross_server", () -> Boolean.toString(getSettings().isEnableCrossServer())));
             if (getSettings().isEnableCrossServer()) {

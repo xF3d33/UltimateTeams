@@ -64,7 +64,7 @@ public class TeamCreateSubCommand {
             }
         }
 
-        if (name.contains("&") || name.contains("#")) {
+        if (!plugin.getSettings().isTeamCreateAllowColorCodes() && (name.contains("&") || name.contains("#"))) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-name-cannot-contain-colours")));
             return;
         }
