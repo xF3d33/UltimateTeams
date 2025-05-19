@@ -140,6 +140,11 @@ public class Settings {
     @Getter
     private boolean teamCreateAllowColorCodes = false;
 
+    @YamlComment("If enabled, players need the ultimateteams.team.create.usecolors permission to use color codes")
+    @YamlKey("team.create.require-perm-for-color-codes")
+    @Getter
+    private boolean teamCreateRequirePermColorCodes = false;
+
 
     // Team join
     @YamlComment("Do you want a message to be sent to team players when a player joins a team? [Default value: true]")

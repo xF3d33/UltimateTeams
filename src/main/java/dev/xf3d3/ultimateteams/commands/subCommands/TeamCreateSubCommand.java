@@ -65,7 +65,14 @@ public class TeamCreateSubCommand {
         }
 
         if (!plugin.getSettings().isTeamCreateAllowColorCodes() && (name.contains("&") || name.contains("#"))) {
+
             player.sendMessage(Utils.Color(messagesConfig.getString("team-name-cannot-contain-colours")));
+            return;
+        }
+
+        if (plugin.getSettings().isTeamCreateRequirePermColorCodes() && !player.hasPermission("ultimateteams.team.create.usecolors")) {
+
+            player.sendMessage(Utils.Color(messagesConfig.getString("use-colours-missing-permission")));
             return;
         }
 

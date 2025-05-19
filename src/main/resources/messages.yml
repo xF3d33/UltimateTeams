@@ -6,7 +6,7 @@
 #                                  ----[Plugin Messages File]----                                   #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#UltimateTeams messages config for ${version}
+# You can also use Hex colors anywhere in the messages (#ffffffWHITE)
 
 #Team Creation Messages
 team-create-incorrect-usage: "&3use /team create <name>."
@@ -190,6 +190,7 @@ chatspy-toggle-off: "&3Toggled Team Chat spy &c&lOFF&3."
 not-enough-money: "&3You don't have enough money for this action. Required balance is: &6%MONEY%"
 
 #General Plugin Messages
+use-colours-missing-permission: "&3You don't have the required permission to use color codes"
 player-not-found: "&3The player doesn't exist."
 team-must-be-owner: "&3You must be the team owner to do this."
 team-not-found: "&3The team doesn't exist."
