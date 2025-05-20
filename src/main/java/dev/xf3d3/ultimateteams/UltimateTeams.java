@@ -176,7 +176,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
 
         // Register command completions
         this.manager.getCommandCompletions().registerAsyncCompletion("onlineUsers", c -> getUsersStorageUtil().getUserList().stream().map(User::getUsername).collect(Collectors.toList()));
-        this.manager.getCommandCompletions().registerAsyncCompletion("teams", c -> teamsStorage.getTeamsName());
+        this.manager.getCommandCompletions().registerAsyncCompletion("teams", c -> teamsStorage.getTeamsName().stream().map(Utils::removeColors).collect(Collectors.toList()));
         this.manager.getCommandCompletions().registerAsyncCompletion("warps", c -> getTeamStorageUtil().findTeamByMember(c.getPlayer().getUniqueId())
                 .map(team -> team.getWarps().keySet())
                 .orElse(Collections.emptySet())
@@ -191,6 +191,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
                 .map(team -> team.getRelations(this).entrySet().stream()
                         .filter(teamRelationEntry -> teamRelationEntry.getValue() == Team.Relation.ALLY)
                         .map(entry -> entry.getKey().getName())
+                        .map(Utils::removeColors)
                         .collect(Collectors.toSet())
                 )
                 .orElse(Collections.emptySet())
@@ -199,6 +200,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
                 .map(team -> team.getRelations(this).entrySet().stream()
                         .filter(teamRelationEntry -> teamRelationEntry.getValue() == Team.Relation.ENEMY)
                         .map(entry -> entry.getKey().getName())
+                        .map(Utils::removeColors)
                         .collect(Collectors.toSet())
                 )
                 .orElse(Collections.emptySet())

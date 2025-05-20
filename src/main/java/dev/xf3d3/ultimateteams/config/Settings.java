@@ -136,14 +136,24 @@ public class Settings {
 
 
     @YamlComment("Whether to allow color codes (& and #) in the teams name")
-    @YamlKey("team.create.allow-color-codes")
+    @YamlKey("team.name.allow-color-codes")
     @Getter
     private boolean teamCreateAllowColorCodes = false;
 
     @YamlComment("If enabled, players need the ultimateteams.team.create.usecolors permission to use color codes")
-    @YamlKey("team.create.require-perm-for-color-codes")
+    @YamlKey("team.name.require-perm-for-color-codes")
     @Getter
     private boolean teamCreateRequirePermColorCodes = false;
+
+
+    // Team name
+    @YamlKey("team.name.min-length")
+    @Getter
+    private int teamNameMinLength = 4;
+
+    @YamlKey("team.name.max-length")
+    @Getter
+    private int teamNameMaxLength = 10;
 
 
     // Team join
@@ -252,35 +262,41 @@ public class Settings {
 
 
     // Team Tags
-    @YamlComment("Set the minimum length of the team prefix and name. [Default value: 3]")
-    @YamlKey("team.tags.min-character-limit")
+    @YamlComment("Whether to allow color codes (& and #) in the teams tag")
+    @YamlKey("team.tag.allow-color-codes")
+    @Getter
+    private boolean teamTagAllowColorCodes = false;
+
+    @YamlComment("If enabled, players need the ultimateteams.team.tag.usecolors permission to use color codes")
+    @YamlKey("team.tag.require-perm-for-color-codes")
+    @Getter
+    private boolean teamTagRequirePermColorCodes = false;
+
+    @YamlComment("Set the minimum length of the team prefix. [Default value: 3]")
+    @YamlKey("team.tag.min-length")
     private int minCharacterLimit = 3;
 
-    @YamlComment("Set the minimum length of the team prefix and name. [Default value: 8]")
-    @YamlKey("team.tags.max-character-limit")
+    @YamlComment("Set the minimum length of the team prefix. [Default value: 8]")
+    @YamlKey("team.tag.max-length")
     private int maxCharacterLimit = 8;
 
-    @YamlComment("Should the plugin ignore color codes while checking the prefix length? [Default value: false]")
-    @YamlKey("team.tags.ignore-color-codes")
-    private boolean ignoreColorCodes = false;
-
-    @YamlComment("Set below names that are not allowed to be used in prefixes or names. [They ARE case & syntax sensitive]")
-    @YamlKey("team.tags.disallowed-tags")
+    @YamlComment("Set below names that are not allowed to be used in prefixes or names. [They are NOT casesensitive]")
+    @YamlKey("team.tag.disallowed-tags")
     private List<String> disallowedTags = List.of("Gamers", "Rise", "Up");
 
     @YamlComment("Add a space after the team prefix in chat. [Default value: false].")
-    @YamlKey("team.tags.prefix-add-space-after")
+    @YamlKey("team.tag.prefix-add-space-after")
     private boolean addPrefixChatAfter = false;
 
     @YamlComment("Add `[]` characters before and after the team prefix in the chat. [Default value: false]")
-    @YamlKey("team.tags.prefix-add-brackets")
+    @YamlKey("team.tag.prefix-add-brackets")
     private boolean addPrefixBrackets = false;
 
     @YamlComment("Below is how the above brackets should appear.")
-    @YamlKey("team.tags.brackets-opening")
+    @YamlKey("team.tag.brackets-opening")
     private String bracketsOpening = "&f[";
 
-    @YamlKey("team.tags.brackets-closing")
+    @YamlKey("team.tag.brackets-closing")
     private String bracketsClosing = "&f]";
 
 
@@ -416,10 +432,6 @@ public class Settings {
 
     public int getTeamTagsMaxCharLimit() {
         return maxCharacterLimit;
-    }
-
-    public boolean isIgnoreColorCodes() {
-        return ignoreColorCodes;
     }
 
     public boolean isTagsBanned(@NotNull String tag) {

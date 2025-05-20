@@ -33,7 +33,7 @@ public class TeamPrefixSubCommand {
 
 
 
-        if (bannedTags.contains(prefix)) {
+        if (bannedTags.stream().map(String::toLowerCase).toList().contains(prefix.toLowerCase())) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-is-banned").replace("%TEAMPREFIX%", prefix)));
             return;
         }
@@ -49,25 +49,32 @@ public class TeamPrefixSubCommand {
             return;
         }
 
-        if (plugin.getSettings().isIgnoreColorCodes()) {
-            final String prefixWithoutColorCodes = prefix.replaceAll("&[0-9a-fA-Fk-oK-OrR]", "");
-            prefix = prefixWithoutColorCodes;
-            }
+        if (!plugin.getSettings().isTeamTagAllowColorCodes() && (prefix.contains("&") || prefix.contains("#"))) {
 
-        if (prefix.length() >= MIN_CHAR_LIMIT && prefix.length() <= MAX_CHAR_LIMIT) {
-            String finalPrefix = prefix;
+            player.sendMessage(Utils.Color(messagesConfig.getString("team-tag-cannot-contain-colours")));
+            return;
+        }
+
+        if (plugin.getSettings().isTeamTagRequirePermColorCodes() && !player.hasPermission("ultimateteams.team.tag.usecolors") && (prefix.contains("&") || prefix.contains("#"))) {
+
+            player.sendMessage(Utils.Color(messagesConfig.getString("use-colours-missing-permission")));
+            return;
+        }
+
+        final int prefixLength = Utils.removeColors(prefix).length();
+        if (prefixLength >= MIN_CHAR_LIMIT && prefixLength <= MAX_CHAR_LIMIT) {
 
             plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
                     team -> {
-                        team.setPrefix(finalPrefix);
+                        team.setPrefix(prefix);
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-change-successful")).replace("%TEAMPREFIX%", finalPrefix));
+                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-change-successful")).replace("%TEAMPREFIX%", prefix));
                     },
                     () -> sender.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
             );
 
-        } else if (prefix.length() > MAX_CHAR_LIMIT) {
+        } else if (prefixLength > MAX_CHAR_LIMIT) {
             sender.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-too-long").replace("%CHARMAX%", String.valueOf(MAX_CHAR_LIMIT))));
         } else {
             sender.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-too-short").replace("%CHARMIN%", String.valueOf(MIN_CHAR_LIMIT))));

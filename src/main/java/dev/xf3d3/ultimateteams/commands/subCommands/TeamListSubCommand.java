@@ -24,7 +24,7 @@ public class TeamListSubCommand {
             } else {
                 teamsString.append(Utils.Color(messagesConfig.getString("teams-list-header") + "\n"));
 
-                plugin.getTeamStorageUtil().getTeams().forEach(team -> teamsString.append(Utils.Color(team.getName() + "\n")));
+                plugin.getTeamStorageUtil().getTeams().forEach(team -> teamsString.append(Utils.Color(team.getName() + "&r\n")));
 
                 teamsString.append(" ");
                 teamsString.append(Utils.Color(messagesConfig.getString("teams-list-footer")));

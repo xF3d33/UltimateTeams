@@ -30,8 +30,8 @@ public class TeamCreateSubCommand {
         this.storageUtil = plugin.getTeamStorageUtil();
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
 
-        this.MIN_CHAR_LIMIT = plugin.getSettings().getTeamTagsMinCharLimit();
-        this.MAX_CHAR_LIMIT = plugin.getSettings().getTeamTagsMaxCharLimit();
+        this.MIN_CHAR_LIMIT = plugin.getSettings().getTeamNameMinLength();
+        this.MAX_CHAR_LIMIT = plugin.getSettings().getTeamNameMaxLength();
     }
 
     public void createTeamSubCommand(CommandSender sender, String name, List<String> bannedTags) {
@@ -47,21 +47,14 @@ public class TeamCreateSubCommand {
             return;
         }
 
-        if (bannedTags.contains(name)) {
+        if (bannedTags.stream().map(String::toLowerCase).toList().contains(name.toLowerCase())) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-name-is-banned").replace(TEAM_PLACEHOLDER, name)));
             return;
         }
 
-        if (plugin.getTeamStorageUtil().getTeamsName().contains(name)) {
+        if (plugin.getTeamStorageUtil().getTeamsName().stream().map(String::toLowerCase).toList().contains(name.toLowerCase())) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-name-already-taken").replace(TEAM_PLACEHOLDER, name)));
             return;
-        }
-
-        for (String names : plugin.getTeamStorageUtil().getTeamsName()) {
-            if (names.toLowerCase().contains(name.toLowerCase())) {
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-name-already-taken").replace(TEAM_PLACEHOLDER, name)));
-                return;
-            }
         }
 
         if (!plugin.getSettings().isTeamCreateAllowColorCodes() && (name.contains("&") || name.contains("#"))) {
@@ -70,23 +63,24 @@ public class TeamCreateSubCommand {
             return;
         }
 
-        if (plugin.getSettings().isTeamCreateRequirePermColorCodes() && !player.hasPermission("ultimateteams.team.create.usecolors")) {
+        if (plugin.getSettings().isTeamCreateRequirePermColorCodes() && !player.hasPermission("ultimateteams.team.create.usecolors") && (name.contains("&") || name.contains("#"))) {
 
             player.sendMessage(Utils.Color(messagesConfig.getString("use-colours-missing-permission")));
             return;
         }
 
         if (storageUtil.isInTeam(player)) {
+
             player.sendMessage(Utils.Color(messagesConfig.getString("team-creation-failed").replace(TEAM_PLACEHOLDER, Utils.Color(name))));
             return;
         }
 
-
-        if (name.length() < MIN_CHAR_LIMIT) {
+        final int nameLength = Utils.removeColors(name).length();
+        if (nameLength < MIN_CHAR_LIMIT) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-short").replace("%CHARMIN%", Integer.toString(MIN_CHAR_LIMIT))));
 
             return;
-        } else if (name.length() > MAX_CHAR_LIMIT) {
+        } else if (nameLength > MAX_CHAR_LIMIT) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-long").replace("%CHARMAX%", Integer.toString(MAX_CHAR_LIMIT))));
 
             return;

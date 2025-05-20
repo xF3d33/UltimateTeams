@@ -134,6 +134,29 @@ public class Utils {
         return ChatColor.translateAlternateColorCodes('&', buffer.toString());
     }
 
+    /**
+     * @param message The string of text that may contain color/effects
+     * @return Returns a string of text with all color/effects removed
+     */
+    public static String removeColors(String message) {
+        if (message == null) return null;
+
+        // Remove Minecraft-style color codes using § (e.g., §a, §l, §x§R§R§G§G§B§B)
+        message = message.replaceAll("§[0-9A-FK-ORa-fk-or]", "");
+
+        // Remove full hex color sequences like §x§R§R§G§G§B§B (14 characters)
+        message = message.replaceAll("§x(§[0-9A-Fa-f]){6}", "");
+
+        // Remove alternate color codes (e.g., &a, &l)
+        message = message.replaceAll("&[0-9A-FK-ORa-fk-or]", "");
+
+        // Optionally remove literal hex strings like #A1B2C3
+        message = message.replaceAll("#[A-Fa-f0-9]{6}", "");
+
+        return message;
+    }
+
+
 
     public enum TeleportType {
         WARP,

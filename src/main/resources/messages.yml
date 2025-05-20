@@ -22,6 +22,9 @@ team-created-broadcast-chat: "&6%TEAMOWNER%&3 Created a new team!\n&3The new tea
 team-created-broadcast-title-1: "&6%TEAMOWNER%&3 Created a new team!"
 team-created-broadcast-title-2: "&3The new team is called &6%TEAM%&3!"
 
+#Team Rename
+team-name-change-successful: "&3Successfully changed team name to &6%TEAM%&3!"
+
 #Team Disbanded Messages
 team-disband-warning: "&3If you're sure you want to delete your team type: &6/team disband confirm&3. &cThis action cannot be undone!"
 team-successfully-disbanded: "&3Team was disbanded!"
@@ -97,6 +100,7 @@ team-invalid-prefix: "&3Please provide a new prefix. Use &b/team prefix <prefix>
 team-prefix-already-taken: "&3Sorry but &6%TEAMPREFIX% &3is already taken.\n&3Please choose another!"
 team-prefix-is-banned: "&3Sorry but &6%TEAMPREFIX% &3is a &cBANNED &3name!\n&3Please choose another!"
 must-be-owner-to-change-prefix: "&3You are not an owner of a team!"
+team-tag-cannot-contain-colours: "&3Sorry, the team prefix cannot contain '&' or '#' characters."
 
 #Team List Messages
 no-teams-to-list: "&3No teams found!\n&3Create one using &b/team create <name>&3!"

@@ -111,7 +111,8 @@ public class TeamsStorage {
     }
 
     public Optional<Team> findTeamByName(String name) {
-        return teams.stream().filter(team -> team.getName().equalsIgnoreCase(name)).findFirst();
+        return teams.stream().filter(team -> Utils.removeColors(team.getName()).equalsIgnoreCase(Utils.removeColors(name))).findFirst();
+
     }
 
     public Optional<Team> findTeamByOwner(UUID ownerUUID) {

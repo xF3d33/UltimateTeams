@@ -68,8 +68,6 @@ public class PlayerConnectEvent implements Listener {
         plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAccept(teamPlayer ->
                 teamPlayer.getPreferences().getTeleportTarget().ifPresent(position -> {
 
-                    System.out.println("teleport ");
-
                     Location location = new Location(
                             Bukkit.getWorld(position.getWorld()),
                             position.getX(), position.getY(), position.getZ(),

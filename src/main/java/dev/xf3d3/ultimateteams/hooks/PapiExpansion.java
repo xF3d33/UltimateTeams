@@ -51,11 +51,18 @@ public class PapiExpansion extends PlaceholderExpansion {
             String closeBracket = plugin.getSettings().getPrefixBracketsClosing();
 
             return Utils.Color(optionalTeam
-                    .map(Team::getPrefix)
-                    .map(prefix -> plugin.getSettings().addPrefixBrackets()
-                            ? openBracket + prefix + closeBracket
-                            : prefix + "&r" + (plugin.getSettings().addSpaceAfterPrefix() ? " " : ""))
-                    .orElse(plugin.getSettings().getNotInTeamPlaceholder()));
+                    .map(team -> {
+                        String prefix = team.getPrefix();
+                        if (prefix == null || prefix.isEmpty()) {
+                            return "";
+                        }
+                        return plugin.getSettings().addPrefixBrackets()
+                                ? openBracket + prefix + closeBracket
+                                : prefix + "&r" + (plugin.getSettings().addSpaceAfterPrefix() ? " " : "");
+                    })
+                    .orElse("") // Empty string if no team
+                    + (optionalTeam.isPresent() ? "" : plugin.getSettings().getNotInTeamPlaceholder())
+            );
         }
 
         if (params.equalsIgnoreCase("friendlyFire")) {

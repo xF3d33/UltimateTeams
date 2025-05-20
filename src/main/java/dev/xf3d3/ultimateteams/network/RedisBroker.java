@@ -59,6 +59,9 @@ public class RedisBroker extends PluginMessageBroker {
                         }
 
                         final Message message = plugin.getMessageFromJson(encodedMessage);
+
+                        //plugin.log(Level.INFO, "received message with redis: " + message.getType());
+
                         if (message.getTargetType() == Message.TargetType.PLAYER) {
 
                             Bukkit.getOnlinePlayers().stream()
@@ -67,7 +70,7 @@ public class RedisBroker extends PluginMessageBroker {
                                 .ifPresent(receiver -> handle(receiver, message));
                             return;
                         }
-                        handle(null, message);
+                        handle(plugin.getUsersStorageUtil().getOnlineUsers().stream().findAny().orElse(null), message);
                     }
                 }, getSubChannelId());
             }
@@ -82,7 +85,7 @@ public class RedisBroker extends PluginMessageBroker {
             }
         });
 
-        plugin.log(Level.INFO, "sent message with redis: " + message.getType());
+        //plugin.log(Level.INFO, "sent message with redis: " + message.getType());
     }
 
     @Override

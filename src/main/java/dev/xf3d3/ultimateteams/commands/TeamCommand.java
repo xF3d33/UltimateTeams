@@ -3,10 +3,7 @@ package dev.xf3d3.ultimateteams.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.commands.subCommands.TeamCreateSubCommand;
-import dev.xf3d3.ultimateteams.commands.subCommands.TeamInfoSubCommand;
-import dev.xf3d3.ultimateteams.commands.subCommands.TeamListSubCommand;
-import dev.xf3d3.ultimateteams.commands.subCommands.TeamPrefixSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.*;
 import dev.xf3d3.ultimateteams.commands.subCommands.disband.TeamDisbandConfirmSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.disband.TeamDisbandSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.home.TeamDelHomeSubCommand;
@@ -76,6 +73,16 @@ public class TeamCommand extends BaseCommand {
     @CommandPermission("ultimateteams.team.create")
     public void onTeamCreateCommand(@NotNull CommandSender sender, String name) {
         new TeamCreateSubCommand(plugin).createTeamSubCommand(sender, name, bannedTags);
+    }
+
+
+    // TEAM RENAME
+    @Subcommand("rename")
+    @CommandCompletion("<newname> @nothing")
+    @Syntax("<newname>")
+    @CommandPermission("ultimateteams.team.rename")
+    public void onTeamRenameCommand(@NotNull CommandSender sender, String name) {
+        new TeamRenameSubCommand(plugin).renameTeamSubCommand(sender, name, bannedTags);
     }
 
 

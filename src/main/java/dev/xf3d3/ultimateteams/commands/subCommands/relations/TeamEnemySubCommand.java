@@ -69,7 +69,7 @@ public class TeamEnemySubCommand {
                     team.sendTeamMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replaceAll(ENEMY_Team, team.getName())));
 
                     // send message to ally team members
-                    otherTeam.sendTeamMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replaceAll(ENEMY_Team, team.getName())));
+                    otherTeam.sendTeamMessage(Utils.Color(messagesConfig.getString("team-added-to-other-enemies").replaceAll("%TEAMOWNER%", team.getName())));
                 },
                 () -> player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
         );
@@ -102,7 +102,7 @@ public class TeamEnemySubCommand {
 
                         team.sendTeamMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_Team, team.getName())));
 
-                        otherTeam.sendTeamMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_Team, team.getName())));
+                        otherTeam.sendTeamMessage(Utils.Color(messagesConfig.getString("team-removed-from-other-enemies").replace("%TEAMOWNER%", team.getName())));
                     } else {
                         player.sendMessage(Utils.Color(messagesConfig.getString("failed-to-remove-team-from-enemies").replace("%ENEMYTEAM%", teamName)));
                     }

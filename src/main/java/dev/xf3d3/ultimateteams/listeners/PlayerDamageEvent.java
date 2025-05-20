@@ -6,7 +6,9 @@ import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -24,9 +26,23 @@ public class PlayerDamageEvent implements Listener {
 
     @EventHandler (priority = EventPriority.NORMAL)
     public void onPlayerHit(EntityDamageByEntityEvent e){
-        if (!(e.getEntity() instanceof final Player victim) || !(e.getDamager() instanceof final Player attackingPlayer)) {
-            return;
+        if (!(e.getEntity() instanceof Player victim)) return;
+
+        Player attackingPlayer = null;
+
+        if (e.getDamager() instanceof Player) {
+            attackingPlayer = (Player) e.getDamager();
+        } else if (e.getDamager() instanceof Arrow arrow) {
+            if (arrow.getShooter() instanceof Player shooter) {
+                attackingPlayer = shooter;
+            }
+        } else if (e.getDamager() instanceof Trident trident) {
+            if (trident.getShooter() instanceof Player shooter) {
+                attackingPlayer = shooter;
+            }
         }
+
+        if (attackingPlayer == null) return;
 
         final Team attackerTeam = plugin.getTeamStorageUtil().findTeamByMember(attackingPlayer.getUniqueId()).orElse(null);
         final Team victimTeam = plugin.getTeamStorageUtil().findTeamByMember(victim.getUniqueId()).orElse(null);
