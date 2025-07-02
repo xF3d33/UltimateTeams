@@ -237,6 +237,18 @@ public class MySqlDatabase extends Database {
         return Optional.empty();
     }
 
+    @Override
+    public void deleteAllUsers() {
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(format("""
+                DELETE FROM `%user_table%`"""))) {
+                statement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            plugin.log(Level.SEVERE, "Failed to delete all users from table", e);
+        }
+    }
+
     public Team createTeam(@NotNull String name, @NotNull Player creator) {
         final Team team = Team.create(name, creator);
 
@@ -258,6 +270,29 @@ public class MySqlDatabase extends Database {
             }
         } catch (SQLException | JsonSyntaxException e) {
             plugin.log(Level.SEVERE, "Failed to create team in table", e);
+        }
+        return team;
+    }
+
+    public Team createTeam(@NotNull Team team) {
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(format("""
+                    INSERT INTO `%team_table%` (`name`, `data`)
+                    VALUES (?, ?)
+                    """), Statement.RETURN_GENERATED_KEYS)) {
+
+                statement.setString(1, team.getName());
+                statement.setBytes(2, plugin.getGson().toJson(team).getBytes(StandardCharsets.UTF_8));
+
+                statement.executeUpdate();
+
+                final ResultSet insertedRow = statement.getGeneratedKeys();
+                if (insertedRow.next()) {
+                    team.setId(insertedRow.getInt(1));
+                }
+            }
+        } catch (SQLException | JsonSyntaxException e) {
+            plugin.log(Level.SEVERE, "Failed to create migrated team in table", e);
         }
         return team;
     }
@@ -294,6 +329,18 @@ public class MySqlDatabase extends Database {
             }
         } catch (SQLException e) {
             plugin.log(Level.SEVERE, "Failed to delete team in table", e);
+        }
+    }
+
+    @Override
+    public void deleteAllTeams() {
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(format("""
+                DELETE FROM `%team_table%`"""))) {
+                statement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            plugin.log(Level.SEVERE, "Failed to delete all teams from table", e);
         }
     }
 

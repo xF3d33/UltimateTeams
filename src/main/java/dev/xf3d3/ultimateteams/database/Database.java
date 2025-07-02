@@ -52,13 +52,18 @@ public abstract class Database {
 
 	public abstract Optional<TeamPlayer> getPlayer(@NotNull UUID uuid);
 
-	public abstract Team createTeam(@NotNull String name, @NotNull Player crerator);
+	public abstract Team createTeam(@NotNull String name, @NotNull Player creator);
+	public abstract Team createTeam(@NotNull Team team);
 
 	public abstract Optional<Team> getTeam(@NotNull Integer id);
 
 	public abstract void updateTeam(@NotNull Team team);
 
 	public abstract void deleteTeam(@NotNull Integer id);
+
+	public abstract void deleteAllTeams();
+
+	public abstract void deleteAllUsers();
 
 	public abstract void close();
 

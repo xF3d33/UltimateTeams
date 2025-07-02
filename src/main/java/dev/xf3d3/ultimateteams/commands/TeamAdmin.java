@@ -3,6 +3,7 @@ package dev.xf3d3.ultimateteams.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.migrator.Migrator;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -21,6 +22,7 @@ public class TeamAdmin extends BaseCommand {
     private static final String PLAYER_TO_KICK = "%KICKEDPLAYER%";
 
     private final UltimateTeams plugin;
+    private Migrator migrator;
 
     public TeamAdmin(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
@@ -58,6 +60,35 @@ public class TeamAdmin extends BaseCommand {
 
             sender.sendMessage(Utils.Color(messagesConfig.getString("plugin-reload-successful")));
         });
+    }
+
+    @Subcommand("migrate")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.admin.migrate")
+    public void migrateSubcommand(CommandSender sender) {
+        sender.sendMessage(Utils.Color("test help migrate"));
+    }
+
+    @Subcommand("migrate set")
+    @CommandCompletion("<parameter> <value>")
+    @CommandPermission("ultimateteams.admin.migrate")
+    public void migrateSetSubcommand(CommandSender sender, String parameter, String value) {
+        migrator = new Migrator(plugin);
+        migrator.setParameter(parameter, value);
+
+        sender.sendMessage(Utils.Color(String.format("Parameter %s set to %s", parameter, value)));
+    }
+
+    @Subcommand("migrate start")
+    @CommandCompletion("<parameter> <value>")
+    @CommandPermission("ultimateteams.admin.migrate")
+    public void migrateStartSubcommand(CommandSender sender) {
+        if (migrator == null) {
+            sender.sendMessage(Utils.Color("&3Set migrator parameters first!"));
+            return;
+        }
+
+        migrator.startMigration();
     }
 
     @Subcommand("team disband")
