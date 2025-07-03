@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.xf3d3"
-version = "4.2"
+version = "4.2.1"
 
 repositories {
     mavenLocal()
@@ -20,6 +20,7 @@ repositories {
     maven("https://mvn-repo.arim.space/lesser-gpl3/")
     maven("https://repo.aikar.co/content/groups/aikar/")
     maven ("https://repo.tcoded.com/releases")
+    maven ("https://repo.minebench.de/")
 }
 
 tasks {
@@ -49,7 +50,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("org.geysermc.floodgate:api:2.2.0-SNAPSHOT")
     implementation("org.bstats:bstats-bukkit:3.1.0")
-    implementation("dev.triumphteam:triumph-gui:3.1.11")
+    implementation("de.themoep:inventorygui:1.6.5-SNAPSHOT")
     
     // PaperLib
     implementation("io.papermc:paperlib:1.0.8")

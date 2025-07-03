@@ -4,7 +4,11 @@ import com.google.common.collect.Maps;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.commands.TeamCommand;
 import dev.xf3d3.ultimateteams.database.Database;
-import dev.xf3d3.ultimateteams.models.*;
+import dev.xf3d3.ultimateteams.migrator.legacyModels.LegacyTeam;
+import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.models.TeamHome;
+import dev.xf3d3.ultimateteams.models.TeamPlayer;
+import dev.xf3d3.ultimateteams.models.TeamWarp;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
@@ -92,7 +96,7 @@ public class Migrator {
 
                         // Team Warps
                         Map<String, TeamWarp> warps = Maps.newHashMap();
-                        team.getTeamWarps().forEach(warp -> warps.put(warp.getName(), warp));
+                        team.getTeamWarps().forEach(legacyWarp -> warps.put(legacyWarp.getName(), TeamWarp.of(legacyWarp.getName(), legacyWarp.getLocation(), plugin.getSettings().isEnableCrossServer() ? plugin.getSettings().getServerName() : null)));
 
                         // Team Home
                         TeamHome teamHome = null;

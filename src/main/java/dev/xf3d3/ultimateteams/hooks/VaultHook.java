@@ -2,19 +2,9 @@ package dev.xf3d3.ultimateteams.hooks;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import net.milkbowl.vault.economy.Economy;
-import net.william278.huskhomes.api.HuskHomesAPI;
-import net.william278.huskhomes.position.Position;
-import net.william278.huskhomes.position.World;
-import net.william278.huskhomes.teleport.TeleportationException;
-import net.william278.huskhomes.user.OnlineUser;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.math.BigDecimal;
-import java.util.logging.Level;
 
 public class VaultHook {
 

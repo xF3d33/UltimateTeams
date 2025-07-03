@@ -15,7 +15,7 @@ import dev.xf3d3.ultimateteams.commands.subCommands.relations.TeamEnemySubComman
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamDelWarpSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamSetWarpSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamWarpSubCommand;
-import dev.xf3d3.ultimateteams.menuSystem.TeamListGUI;
+import dev.xf3d3.ultimateteams.menuSystem.TeamList;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -54,7 +54,7 @@ public class TeamCommand extends BaseCommand {
 
         if (sender instanceof final Player player) {
             if (plugin.getSettings().useGlobalGui()) {
-                new TeamListGUI(plugin).open(player);
+                new TeamList(plugin, player);
                 return;
             }
 

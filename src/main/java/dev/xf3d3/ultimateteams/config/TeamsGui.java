@@ -47,18 +47,21 @@ public class TeamsGui {
 
     @YamlComment("This allows you to customise the lore text for the player head icons in the TeamList GUI")
     @YamlKey("team-list.icons.lore")
-    private Map<String, String> loreMap = Map.of(
-            "header", "&7----------",
-    "prefix", "&3Team Prefix: ",
-    "owner-online", "&3Team Owner: &d",
-    "owner-offline", "&3Team Owner &7&o(Offline)&3: &d",
-    "members", "&3Team Members:",
-    "allies", "&3Team Allies:",
-    "enemies", "&3Team Enemies:",
-    "footer-1", "&7----------",
-    "action", "&fClick to send an invite request to this team owner if online",
-    "footer-2", "&7----------"
+    private Map<String, String> loreMap = Map.ofEntries(
+            Map.entry("header", "&7----------"),
+            Map.entry("owner-online", "&3Team Owner: &d"),
+            Map.entry("owner-offline", "&3Team Owner &7&o(Offline)&3: &d"),
+            Map.entry("members", "&3Team Members: &d"),
+            Map.entry("allies", "&3Team Allies: &r"),
+            Map.entry("enemies", "&3Team Enemies: &r"),
+            Map.entry("prefix", "&3Team Prefix: &r"),
+            Map.entry("home", "&3Team Home: &r"),
+            Map.entry("pvp", "&3Team PvP: &r"),
+            Map.entry("footer-1", "&f"),
+            Map.entry("action", "&f"),
+            Map.entry("footer-2", "&7----------")
     );
+
 
 
     @YamlComment("What name would you like the gui to have?")

@@ -2,6 +2,7 @@ package dev.xf3d3.ultimateteams.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.migrator.Migrator;
 import dev.xf3d3.ultimateteams.utils.Utils;
@@ -123,7 +124,8 @@ public class TeamAdmin extends BaseCommand {
     @CommandCompletion("@players @teams @nothing")
     @CommandPermission("ultimateteams.admin.team.join")
     @Syntax("<Player> <teamName>")
-    public void teamJoinSubCommand(CommandSender sender, @Values("@players") Player player, @Values("@teams") String teamName) {
+    public void teamJoinSubCommand(CommandSender sender, OnlinePlayer user, @Values("@teams") String teamName) {
+        final Player player = user.getPlayer();
 
         if (plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).isPresent()) {
             String joinMessage = Utils.Color(messagesConfig.getString("team-invite-invited-already-in-team"));

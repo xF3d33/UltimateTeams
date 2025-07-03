@@ -1,19 +1,14 @@
-package dev.xf3d3.ultimateteams.migrator;
+package dev.xf3d3.ultimateteams.migrator.legacyModels;
 
 import com.google.gson.annotations.Expose;
-import dev.xf3d3.ultimateteams.models.TeamWarp;
-import dev.xf3d3.ultimateteams.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
@@ -27,7 +22,7 @@ public class LegacyTeam {
     @Expose
     private String teamPrefix;
     @Expose
-    private ConcurrentHashMap<String, TeamWarp> teamWarps;
+    private ConcurrentHashMap<String, LegacyTeamWarp> teamWarps;
     @Expose
     private ArrayList<String> teamMembers;
     @Expose
@@ -66,11 +61,11 @@ public class LegacyTeam {
         return teamPrefix;
     }
 
-    public Collection<TeamWarp> getTeamWarps() {
+    public Collection<LegacyTeamWarp> getTeamWarps() {
         return teamWarps.values();
     }
 
-    public TeamWarp getTeamWarp(@NotNull String name){
+    public LegacyTeamWarp getTeamWarp(@NotNull String name){
         return teamWarps.get(name);
     }
 
