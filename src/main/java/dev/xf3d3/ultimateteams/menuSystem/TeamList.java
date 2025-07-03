@@ -147,5 +147,4 @@ public class TeamList {
 
         return skull;
     }
-
 }

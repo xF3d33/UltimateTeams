@@ -63,7 +63,6 @@ public class TeamsGui {
     );
 
 
-
     @YamlComment("What name would you like the gui to have?")
     @YamlKey("team-join.name")
     private String teamJoinGuiName = "&3Ask to join Team?";
