@@ -183,7 +183,7 @@ public class SQLiteDatabase extends Database {
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
-            plugin.log(Level.SEVERE, "Failed to create team in table", e);
+            plugin.log(Level.SEVERE, "Failed to create player in table", e);
         }
     }
 
@@ -204,7 +204,7 @@ public class SQLiteDatabase extends Database {
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
-            plugin.log(Level.SEVERE, "Failed to create team in table", e);
+            plugin.log(Level.SEVERE, "Failed to update player in table", e);
         }
     }
 
@@ -296,6 +296,7 @@ public class SQLiteDatabase extends Database {
         }
         return team;
     }
+
     public void updateTeam(@NotNull Team team) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""

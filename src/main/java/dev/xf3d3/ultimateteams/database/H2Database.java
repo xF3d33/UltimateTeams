@@ -135,7 +135,7 @@ public class H2Database extends Database {
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
-            plugin.log(Level.SEVERE, "Failed to create team in table", e);
+            plugin.log(Level.SEVERE, "Failed to create player in table", e);
         }
     }
 

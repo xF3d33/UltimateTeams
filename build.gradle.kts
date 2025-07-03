@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.xf3d3"
-version = "4.1.0"
+version = "4.2"
 
 repositories {
     mavenLocal()
@@ -19,6 +19,7 @@ repositories {
     maven("https://repo.opencollab.dev/main/")
     maven("https://mvn-repo.arim.space/lesser-gpl3/")
     maven("https://repo.aikar.co/content/groups/aikar/")
+    maven ("https://repo.tcoded.com/releases")
 }
 
 tasks {
@@ -52,7 +53,7 @@ dependencies {
     
     // PaperLib
     implementation("io.papermc:paperlib:1.0.8")
-    implementation("com.github.technicallycoded:FoliaLib:main-SNAPSHOT")
+    implementation("com.tcoded:FoliaLib:0.5.1")
 
     // Libs
     implementation("co.aikar:acf-bukkit:0.5.1-SNAPSHOT")

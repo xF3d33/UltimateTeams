@@ -27,42 +27,50 @@ public class Migrator {
     public void startMigration() {
         plugin.setLoaded(false);
 
-        try {
-            // Migrate teams
-            plugin.log(Level.INFO, "Migrating teams...");
-            plugin.runAsync(task -> {
-                plugin.getTeamStorageUtil().getTeams().clear();
-                plugin.getDatabase().deleteAllTeams();
+        plugin.runAsync(task -> {
+            try {
+                // Migrate teams
+                plugin.log(Level.INFO, "Migration started...");
 
-                getConvertedTeams().forEach(team -> {
-                    try {
-                        team.setId(plugin.getDatabase().createTeam(team).getId());
-                        plugin.getTeamStorageUtil().getTeams().add(team);
-                    } catch (Exception e) {
-                        plugin.getLogger().log(Level.SEVERE, "Failed to migrate team " + team.getName(), e.getMessage());
-                    }
-                });
+                    plugin.getTeamStorageUtil().getTeams().clear();
+                    plugin.getDatabase().deleteAllTeams();
 
-            });
+                    plugin.log(Level.INFO, "Migrating teams...");
+                    getConvertedTeams().forEach(team -> {
+                        try {
+                            team.setId(plugin.getDatabase().createTeam(team).getId());
+                            plugin.getTeamStorageUtil().getTeams().add(team);
+                        } catch (IllegalStateException e) {
+                            plugin.getLogger().log(Level.SEVERE, "Failed to migrate team " + team.getName(), e.getMessage());
+                        }
+                    });
 
-            // Migrate users
-            plugin.log(Level.INFO, "Migrating users (this may take some time)...");
-            plugin.runAsync(task -> {
-                plugin.getDatabase().deleteAllUsers();
-                getConvertedUsers().forEach(teamPlayer -> plugin.getDatabase().createPlayer(teamPlayer));
-            });
-        } catch (Exception e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to migrate", e.getMessage());
-        } finally {
-            plugin.log(Level.INFO, "Migrated ended successfully.");
+                    // Migrate users
+                    plugin.log(Level.INFO, "Migrating users (this may take some time)...");
+                    plugin.getDatabase().deleteAllUsers();
+                    getConvertedUsers().forEach(teamPlayer -> {
+                        try {
+                            plugin.getDatabase().createPlayer(teamPlayer);
+                        } catch (IllegalStateException e) {
+                            plugin.log(Level.SEVERE,"Failed to migrate user " + teamPlayer.getLastPlayerName(), e.getCause());
+                        }
+                    });
 
-            plugin.loadConfigs();
-            plugin.msgFileManager.reloadMessagesConfig();
-            TeamCommand.updateBannedTagsList();
-            plugin.getTeamStorageUtil().loadTeams();
 
-            plugin.setLoaded(true);
-        }
+            } catch (Exception e) {
+                plugin.getLogger().log(Level.SEVERE, "Failed to migrate", e.getMessage());
+
+            } finally {
+                plugin.log(Level.INFO, "Migration ended successfully.");
+
+                plugin.loadConfigs();
+                plugin.msgFileManager.reloadMessagesConfig();
+                TeamCommand.updateBannedTagsList();
+                plugin.getTeamStorageUtil().loadTeams();
+
+                plugin.runSync(t -> plugin.setLoaded(true));
+            }
+        });
     }
 
     @NotNull
@@ -176,7 +184,7 @@ public class Migrator {
     @NotNull
     private String formatStatement(@NotNull String statement) {
         return statement
-                .replaceAll("%players%", getParameter(Parameters.PLAYERS_TABLE.name()).orElse("ultimateteams_players"))
+                .replaceAll("%players%", getParameter(Parameters.PLAYERS_TABLE.name()).orElse("ultimateteams_users"))
                 .replaceAll("%teams%", getParameter(Parameters.TEAMS_TABLE.name()).orElse("ultimateteams_teams"));
     }
 
