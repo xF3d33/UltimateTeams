@@ -66,7 +66,7 @@ public class TeamAdmin extends BaseCommand {
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.admin.migrate")
     public void migrateSubcommand(CommandSender sender) {
-        sender.sendMessage(Utils.Color("test help migrate"));
+        sender.sendMessage("Visit: https://github.com/xF3d33/UltimateTeams/blob/main/HowToMigrate.md for a guida on how to migrate");
     }
 
     @Subcommand("migrate set")
@@ -84,7 +84,7 @@ public class TeamAdmin extends BaseCommand {
     @CommandPermission("ultimateteams.admin.migrate")
     public void migrateStartSubcommand(CommandSender sender) {
         if (migrator == null) {
-            sender.sendMessage(Utils.Color("&3Set migrator parameters first!"));
+            sender.sendMessage(Utils.Color("&3Set migrator's parameters first!"));
             return;
         }
 
