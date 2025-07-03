@@ -27,6 +27,3 @@ if you are using a remote database be sure to use either another database or oth
 
 - now just use "/teamadmin migrate start" and wait till it finished. 
 - restart the server and enjoy
-
-
-warps and team homes might not be fully migrated depeding to your setup
