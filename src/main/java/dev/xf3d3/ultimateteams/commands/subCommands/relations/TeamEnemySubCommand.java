@@ -66,7 +66,7 @@ public class TeamEnemySubCommand {
                     //fireTeamAllyAddEvent(player, team, allyTeamOwner, team);
 
                     // send message to team members
-                    team.sendTeamMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replaceAll(ENEMY_Team, team.getName())));
+                    team.sendTeamMessage(Utils.Color(messagesConfig.getString("added-team-to-your-enemies").replaceAll(ENEMY_Team, otherTeam.getName())));
 
                     // send message to ally team members
                     otherTeam.sendTeamMessage(Utils.Color(messagesConfig.getString("team-added-to-other-enemies").replaceAll("%TEAMOWNER%", team.getName())));
@@ -100,7 +100,7 @@ public class TeamEnemySubCommand {
                         plugin.getTeamStorageUtil().removeTeamEnemy(team, otherTeam, player);
 
 
-                        team.sendTeamMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_Team, team.getName())));
+                        team.sendTeamMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace(ENEMY_Team, otherTeam.getName())));
 
                         otherTeam.sendTeamMessage(Utils.Color(messagesConfig.getString("team-removed-from-other-enemies").replace("%TEAMOWNER%", team.getName())));
                     } else {

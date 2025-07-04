@@ -15,7 +15,8 @@ import dev.xf3d3.ultimateteams.commands.subCommands.relations.TeamEnemySubComman
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamDelWarpSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamSetWarpSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamWarpSubCommand;
-import dev.xf3d3.ultimateteams.menuSystem.TeamList;
+import dev.xf3d3.ultimateteams.gui.TeamList;
+import dev.xf3d3.ultimateteams.gui.TeamManager;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -63,6 +64,24 @@ public class TeamCommand extends BaseCommand {
 
                 sender.sendMessage(Utils.Color(message));
             }
+        }
+    }
+
+    // TEAM GUI
+    @Subcommand("gui")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.team.gui")
+    public void onTeamGUICommand(@NotNull CommandSender sender) {
+        if (!(sender instanceof final Player player)) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+
+            return;
+        }
+
+        if (plugin.getTeamStorageUtil().isInTeam(player)) {
+            new TeamManager(plugin, player);
+        } else {
+            player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")));
         }
     }
 

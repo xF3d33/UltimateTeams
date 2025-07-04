@@ -151,7 +151,7 @@ failed-to-add-team-to-enemies: "&3Unable to add &6%ENEMYOWNER%&3! Make sure the 
 failed-team-already-your-enemy: "&3This team is already your enemy!"
 failed-enemy-player-not-team-owner: "&6%ENEMYOWNER%&3 is not a team owner!"
 removed-team-from-your-enemies: "&3You Successfully removed &6%ENEMYTEAM% &3from your enemies!"
-team-removed-from-other-enemies: "&3The team owner &6%TEAMOWNER% &3has removed your team from their enemies!"
+team-removed-from-other-enemies: "&3The team &6%TEAMOWNER% &3has removed your team from their enemies!"
 failed-to-remove-team-from-enemies: "&3Unable to remove &6%ENEMYTEAM%&3! Make sure they're your enemy!"
 enemy-team-add-owner-offline: "&3Unable to add &6%ENEMYTEAM%&3! Make sure the owner is online!"
 enemy-team-remove-owner-offline: "&3Unable to remove &6%ENEMYTEAM%&3! Make sure the owner is online!"

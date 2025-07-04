@@ -70,9 +70,9 @@ public class TeamAllySubCommand {
                     //fireTeamAllyAddEvent(player, team, allyTeamOwner, team);
 
                     // send message to team members
-                    team.sendTeamMessage(Utils.Color(messagesConfig.getString("added-team-to-your-allies").replaceAll(ALLY_TEAM, team.getName())));
+                    team.sendTeamMessage(Utils.Color(messagesConfig.getString("added-team-to-your-allies").replaceAll(ALLY_TEAM, otherTeam.getName())));
 
-                    // send message to ally team members
+                    // send message to allie team members
                     otherTeam.sendTeamMessage(Utils.Color(messagesConfig.getString("team-added-to-other-allies").replaceAll("%TEAMOWNER%", team.getName())));
                 },
                 () -> player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
@@ -104,7 +104,7 @@ public class TeamAllySubCommand {
                         plugin.getTeamStorageUtil().removeTeamAlly(team, otherTeam, player);
 
 
-                        team.sendTeamMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-allies").replace(ALLY_TEAM, team.getName())));
+                        team.sendTeamMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-allies").replace(ALLY_TEAM, otherTeam.getName())));
 
                         otherTeam.sendTeamMessage(Utils.Color(messagesConfig.getString("team-removed-from-other-allies").replace(ALLY_TEAM, team.getName())));
                     } else {
