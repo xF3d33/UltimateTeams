@@ -1,6 +1,7 @@
 package dev.xf3d3.ultimateteams.config;
 
 import dev.xf3d3.ultimateteams.database.Database;
+import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.network.Broker;
 import lombok.Getter;
 import net.william278.annotaml.YamlComment;

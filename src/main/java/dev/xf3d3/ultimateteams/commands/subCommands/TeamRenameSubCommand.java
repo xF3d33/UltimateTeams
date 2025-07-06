@@ -1,6 +1,7 @@
 package dev.xf3d3.ultimateteams.commands.subCommands;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -69,8 +70,14 @@ public class TeamRenameSubCommand {
             return;
         }
 
-        plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
+        plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
+                    // Check permission
+                    if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.RENAME)))) {
+                        sender.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                        return;
+                    }
+
                     team.setName(newname);
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 

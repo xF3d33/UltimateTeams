@@ -190,6 +190,10 @@ chat-cool-down-timer-wait: "&3Sorry, you can't use that again for another &6%TIM
 chatspy-toggle-on: "&3Toggled Team Chat spy &a&lON&3."
 chatspy-toggle-off: "&3Toggled Team Chat spy &c&lOFF&3."
 
+#Team Promote
+team-promote-self-error: "&3You can't promote yourself!"
+team-promote-successful: "&3Player &6%PLAYER%&3 has been successfully promoted to team manager."
+
 #Economy
 not-enough-money: "&3You don't have enough money for this action. Required balance is: &6%MONEY%"
 
@@ -199,7 +203,7 @@ player-not-found: "&3The player doesn't exist."
 team-must-be-owner: "&3You must be the team owner to do this."
 team-not-found: "&3The team doesn't exist."
 function-disabled: "&3Sorry, that has been disabled. :("
-no-permission: "&6UltimateTeams: &cSorry, you don't have permission to do that. :("
+no-permission: "&cYou don't have permission to do that."
 plugin-reload-begin: "&6UltimateTeams: &aBeginning plugin reload..."
 plugin-reload-successful: "&6UltimateTeams: &aThe plugin has been successfully reloaded!"
 incorrect-command-usage: "&3Unrecognised argument please use &6/team&3."

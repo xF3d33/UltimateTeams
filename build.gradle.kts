@@ -94,7 +94,7 @@ tasks {
         relocate("org.jetbrains", "dev.xf3d3.ultimateteams.libraries.jetbrains")
         relocate("org.intellij", "dev.xf3d3.ultimateteams.libraries.intellij")
         relocate("org.json", "dev.xf3d3.ultimateteams.libraries.json")
-        relocate("dev.triumphteam", "dev.xf3d3.ultimateteams.libraries.triumphteam")
+        relocate("de.themoep", "dev.xf3d3.ultimateteams.libraries.inventorygui")
         relocate("dev.dejvokep", "dev.xf3d3.ultimateteams.libraries.boostedyaml")
         relocate("io.papermc", "dev.xf3d3.ultimateteams.libraries.papermc")
         relocate("net.kyori", "dev.xf3d3.ultimateteams.libraries.kyori")

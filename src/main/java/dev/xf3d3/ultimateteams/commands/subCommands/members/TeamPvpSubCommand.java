@@ -1,6 +1,7 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.members;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -27,12 +28,14 @@ public class TeamPvpSubCommand {
             return;
         }
 
-        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
-        }
-
-        plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
+        plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
+                    // Check permission
+                    if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.PVP)))) {
+                        sender.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                        return;
+                    }
+
                     if (team.isFriendlyFireAllowed()){
 
                         team.setFriendlyFire(false);

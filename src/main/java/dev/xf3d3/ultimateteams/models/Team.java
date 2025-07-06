@@ -56,6 +56,11 @@ public class Team {
     @Getter @Setter
     private TeamHome home = null;
 
+    @Expose
+    @Builder.Default
+    @Getter @Setter
+    private EnumSet<Permission> permissions = EnumSet.noneOf(Permission.class);
+
     @NotNull
     @ApiStatus.Internal
     public static Team create(@NotNull String name, @NotNull Player owner) {
@@ -137,6 +142,23 @@ public class Team {
         relations.remove(otherTeam.getId());
     }
 
+    @NotNull
+    public Set<Permission> getPermissions() {
+        return permissions == null ? permissions = EnumSet.noneOf(Permission.class) : EnumSet.copyOf(permissions);
+    }
+
+    public void addPermission(Permission perm) {
+        permissions.add(perm);
+    }
+
+    public void removePermission(Permission perm) {
+        permissions.remove(perm);
+    }
+
+    public boolean hasPermission(Permission perm) {
+        return permissions.contains(perm);
+    }
+
     public boolean isFriendlyFireAllowed(){
         return friendlyFire;
     }
@@ -164,6 +186,30 @@ public class Team {
          * @return the parsed {@link Relation} wrapped in an {@link Optional}, if any was found
          */
         public static Optional<Relation> parse(@NotNull String string) {
+            return Arrays.stream(values())
+                    .filter(operation -> operation.name().equalsIgnoreCase(string))
+                    .findFirst();
+        }
+    }
+
+    public enum Permission {
+        INVITE,
+        KICK,
+        PVP,
+        RELATIONS,
+        WARPS,
+        RENAME,
+        PREFIX,
+        HOME,
+        PROMOTE;
+
+        /**
+         * Parse a {@link Permission} from a string name
+         *
+         * @param string the string to parse
+         * @return the parsed {@link Permission} wrapped in an {@link Optional}, if any was found
+         */
+        public static Optional<Permission> parse(@NotNull String string) {
             return Arrays.stream(values())
                     .filter(operation -> operation.name().equalsIgnoreCase(string))
                     .findFirst();

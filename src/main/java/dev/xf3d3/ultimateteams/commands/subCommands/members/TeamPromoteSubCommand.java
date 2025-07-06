@@ -9,7 +9,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamKickSubCommand {
+public class TeamPromoteSubCommand {
 
     FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
     private static final String TEAM_PLACEHOLDER = "%TEAM%";
@@ -17,17 +17,17 @@ public class TeamKickSubCommand {
 
     private final UltimateTeams plugin;
 
-    public TeamKickSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamPromoteSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
     }
 
-    public void teamKickSubCommand(CommandSender sender, OfflinePlayer offlinePlayer) {
+    public void teamPromoteSubCommand(CommandSender sender, OfflinePlayer offlinePlayer) {
         if (!(sender instanceof final Player player)) {
             sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
             return;
         }
 
-        if (!offlinePlayer.hasPlayedBefore()) {
+        if (!offlinePlayer.hasPlayedBefore() || offlinePlayer.getName() == null) {
             player.sendMessage(Utils.Color(messagesConfig.getString("could-not-find-specified-player").replace(PLAYER_TO_KICK, offlinePlayer.toString())));
             return;
         }
@@ -35,14 +35,14 @@ public class TeamKickSubCommand {
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
                     // Check permission
-                    if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.KICK)))) {
+                    if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.PROMOTE)))) {
                         sender.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
                         return;
                     }
 
 
                     if (player.getName().equalsIgnoreCase(offlinePlayer.getName())) {
-                        player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-kick-yourself")));
+                        player.sendMessage(Utils.Color(messagesConfig.getString("team-promote-self-error")));
 
                         return;
                     }
@@ -53,9 +53,10 @@ public class TeamKickSubCommand {
                         player.sendMessage(differentTeamMessage);
                     }
 
-                    plugin.getTeamStorageUtil().kickPlayer(player, team, offlinePlayer);
+                    team.getMembers().put(offlinePlayer.getUniqueId(), 2);
+                    plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                    String playerKickedMessage = Utils.Color(messagesConfig.getString("team-member-kick-successful")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
+                    String playerKickedMessage = Utils.Color(messagesConfig.getString("team-promote-successful")).replace("%PLAYER%", offlinePlayer.getName());
                     player.sendMessage(playerKickedMessage);
                 },
                 () -> player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))

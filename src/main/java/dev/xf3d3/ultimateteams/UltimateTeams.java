@@ -205,6 +205,13 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
                 )
                 .orElse(Collections.emptySet())
         );
+        this.manager.getCommandCompletions().registerAsyncCompletion("permissions", c -> getTeamStorageUtil().findTeamByMember(c.getPlayer().getUniqueId())
+                .map(team -> team.getPermissions().stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.toSet())
+                )
+                .orElse(Collections.emptySet())
+        );
 
         // Update banned tags list
         TeamCommand.updateBannedTagsList();

@@ -36,13 +36,14 @@ public class TeamAllySubCommand {
             return;
         }
 
-        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
-            return;
-        }
-
-        plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
+        plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
+                    // Check permission
+                    if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.RELATIONS)))) {
+                        sender.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                        return;
+                    }
+
                     if (team.getRelations(plugin).size() >= plugin.getSettings().getMaxTeamAllies()) {
                         player.sendMessage(Utils.Color(messagesConfig.getString("team-ally-max-amount-reached")).replaceAll("%LIMIT%", String.valueOf(plugin.getSettings().getMaxTeamAllies())));
                         return;
@@ -85,13 +86,16 @@ public class TeamAllySubCommand {
             return;
         }
 
-        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
-            return;
-        }
 
-        plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
+        plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
+                    // Check permission
+                    if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.RELATIONS)))) {
+                        sender.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                        return;
+                    }
+
+
                     final Optional<Team> optionalOtherTeam = plugin.getTeamStorageUtil().findTeamByName(teamName);
                     if (optionalOtherTeam.isEmpty() || optionalOtherTeam.get().equals(team)) {
                         player.sendMessage(Utils.Color(messagesConfig.getString("team-not-found")));

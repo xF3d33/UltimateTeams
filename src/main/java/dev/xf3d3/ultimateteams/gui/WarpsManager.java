@@ -81,7 +81,7 @@ public class WarpsManager {
 
                                 // RIGHT CLICK, DELETE WARP
                                 if (click.getType().isRightClick()) {
-                                    if (plugin.getTeamStorageUtil().isTeamOwner(player)) {
+                                    if (plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.WARPS))) {
                                         team.removeTeamWarp(warp.getName());
                                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
@@ -90,7 +90,7 @@ public class WarpsManager {
                                         click.getGui().close();
                                         new WarpsManager(plugin, player);
                                     } else {
-                                        player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
+                                        player.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
                                     }
                                 }
 

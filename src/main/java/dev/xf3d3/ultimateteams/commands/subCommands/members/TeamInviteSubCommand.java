@@ -1,6 +1,7 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.members;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -37,8 +38,14 @@ public class TeamInviteSubCommand {
         }
         final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(inviteeName);
 
-        plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
+        plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
+
+                    // Check permission
+                    if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.INVITE)))) {
+                        sender.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                        return;
+                    }
 
                     if (offlinePlayer.getUniqueId().toString().equals(player.getUniqueId().toString())) {
                         sender.sendMessage(Utils.Color(messagesConfig.getString("team-invite-self-error")));
@@ -83,7 +90,7 @@ public class TeamInviteSubCommand {
 
                     });
                 },
-                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-invite-not-team-owner")))
+                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
         );
 
 

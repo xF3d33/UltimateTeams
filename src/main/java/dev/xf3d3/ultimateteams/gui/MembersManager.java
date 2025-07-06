@@ -82,7 +82,7 @@ public class MembersManager {
                             click -> {
                                 // RIGHT CLICK, KICK MEMBER
                                 if (click.getType().isRightClick()) {
-                                    if (plugin.getTeamStorageUtil().isTeamOwner(player)) {
+                                    if (plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.KICK))) {
                                         plugin.getTeamStorageUtil().kickPlayer(player, team, offlineMember);
 
                                         String playerKickedMessage = Utils.Color(messagesConfig.getString("team-member-kick-successful")).replace("%KICKEDPLAYER%", Objects.requireNonNullElse(offlineMember.getName(), "Player Not Found"));
@@ -91,7 +91,7 @@ public class MembersManager {
                                         click.getGui().close();
                                         new MembersManager(plugin, player);
                                     } else {
-                                        player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
+                                        player.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
                                     }
                                 }
 

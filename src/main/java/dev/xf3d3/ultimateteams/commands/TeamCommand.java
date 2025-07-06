@@ -314,4 +314,39 @@ public class TeamCommand extends BaseCommand {
     public void onTeamInfoCommand(@NotNull CommandSender sender, @Optional @Values("@teams") String teamName) {
         new TeamInfoSubCommand(plugin).teamInfoSubCommand(sender, teamName);
     }
+
+    // TEAM PROMOTE
+    @Subcommand("promote")
+    @CommandCompletion("@teamPlayers")
+    @CommandPermission("ultimateteams.team.promote")
+    public void onTeamInfoCommand(@NotNull Player sender, @Values("@teamPlayers") OfflinePlayer offlinePlayer) {
+        new TeamPromoteSubCommand(plugin).teamPromoteSubCommand(sender, offlinePlayer);
+    }
+
+
+    // TEAM PERMISSIONS
+    @Subcommand("permissions")
+    public void onTeamPermissionsCommand(@NotNull CommandSender sender) {
+        for (int i = 1; i <= 15; i++) {
+            String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
+
+            sender.sendMessage(Utils.Color(message));
+        }
+    }
+
+    @Subcommand("permissions add")
+    @CommandCompletion("@permissions @nothing")
+    @Syntax("<permission>")
+    @CommandPermission("ultimateteams.team.permissions.add")
+    public void onTeamPermissionsAddCommand(@NotNull CommandSender sender, @Values("@permissions") String permission) {
+        new TeamAllySubCommand(plugin).teamAllyAddSubCommand(sender, permission);
+    }
+
+    @Subcommand("permissions remove")
+    @CommandCompletion("@allies @nothing")
+    @Syntax("<permission>")
+    @CommandPermission("ultimateteams.team.permissions.remove")
+    public void onTeamPermissionsRemoveCommand(@NotNull CommandSender sender, @Values("@teamPermissions") String permission) {
+        new TeamAllySubCommand(plugin).teamAllyRemoveSubCommand(sender, permission);
+    }
 }

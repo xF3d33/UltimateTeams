@@ -84,7 +84,7 @@ public class EnemiesManager {
                             click -> {
                                 // RIGHT CLICK, REMOVE ALLIE
                                 if (click.getType().isRightClick()) {
-                                    if (plugin.getTeamStorageUtil().isTeamOwner(player)) {
+                                    if (plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.RELATIONS))) {
                                         plugin.getTeamStorageUtil().removeTeamEnemy(team, enemy, player);
 
                                         team.sendTeamMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace("%ENEMYTEAM%", enemy.getName())));
@@ -93,7 +93,7 @@ public class EnemiesManager {
                                         click.getGui().close();
                                         new EnemiesManager(plugin, player);
                                     } else {
-                                        player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
+                                        player.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
                                     }
                                 }
 

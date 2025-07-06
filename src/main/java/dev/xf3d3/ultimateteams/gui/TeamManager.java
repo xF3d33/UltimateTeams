@@ -83,13 +83,13 @@ public class TeamManager {
 
                     // RIGHT CLICK, DELETE HOME
                     if (click.getType().isRightClick()) {
-                        if (plugin.getTeamStorageUtil().isTeamOwner(player)) {
+                        if (plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.HOME))) {
 
                             plugin.getTeamStorageUtil().deleteHome(player, team);
                             player.sendMessage(Utils.Color(messagesConfig.getString("successfully-deleted-team-home")));
 
                             click.getGui().draw();
-                        } else player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
+                        } else player.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
                     }
 
                     return true;
@@ -147,7 +147,7 @@ public class TeamManager {
                 1, // Display a number as the item count
                 click -> {
                     if (click.getType().isLeftClick()) {
-                        if (plugin.getTeamStorageUtil().isTeamOwner(player)) {
+                        if (plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.PVP))) {
 
                             if (team.isFriendlyFireAllowed()){
                                 team.setFriendlyFire(false);
@@ -161,7 +161,7 @@ public class TeamManager {
                             plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
                             click.getGui().draw();
 
-                        } else player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
+                        } else player.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
                     }
 
                     return true;

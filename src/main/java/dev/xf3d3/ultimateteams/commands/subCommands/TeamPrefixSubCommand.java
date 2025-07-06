@@ -31,8 +31,6 @@ public class TeamPrefixSubCommand {
             return;
         }
 
-
-
         if (bannedTags.stream().map(String::toLowerCase).toList().contains(prefix.toLowerCase())) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-is-banned").replace("%TEAMPREFIX%", prefix)));
             return;
@@ -40,12 +38,6 @@ public class TeamPrefixSubCommand {
 
         if (plugin.getTeamStorageUtil().getTeams().stream().map(Team::getPrefix).toList().contains(prefix)) {
             player.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-already-taken").replace("%TEAMPREFIX%", prefix)));
-            return;
-        }
-
-        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("must-be-owner-to-change-prefix")));
-
             return;
         }
 
@@ -64,8 +56,14 @@ public class TeamPrefixSubCommand {
         final int prefixLength = Utils.removeColors(prefix).length();
         if (prefixLength >= MIN_CHAR_LIMIT && prefixLength <= MAX_CHAR_LIMIT) {
 
-            plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
+            plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                     team -> {
+                        // Check permission
+                        if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.PREFIX)))) {
+                            sender.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                            return;
+                        }
+
                         team.setPrefix(prefix);
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 

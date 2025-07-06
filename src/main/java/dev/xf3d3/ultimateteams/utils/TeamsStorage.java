@@ -106,6 +106,10 @@ public class TeamsStorage {
         return teams.stream().anyMatch(team -> team.getOwner().equals(player.getUniqueId()));
     }
 
+    public boolean isTeamManager(Player player) {
+        return teams.stream().anyMatch(team -> team.getMembers().getOrDefault(player.getUniqueId(), 0) == 2);
+    }
+
     public Optional<Team> findTeam(int id) {
         return teams.stream().filter(team -> team.getId() == id).findFirst();
     }
