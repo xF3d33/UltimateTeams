@@ -44,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -205,12 +206,14 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
                 )
                 .orElse(Collections.emptySet())
         );
-        this.manager.getCommandCompletions().registerAsyncCompletion("permissions", c -> getTeamStorageUtil().findTeamByMember(c.getPlayer().getUniqueId())
+        this.manager.getCommandCompletions().registerAsyncCompletion("teamPermissions", c -> getTeamStorageUtil().findTeamByMember(c.getPlayer().getUniqueId())
                 .map(team -> team.getPermissions().stream()
                         .map(String::valueOf)
                         .collect(Collectors.toSet())
                 )
                 .orElse(Collections.emptySet())
+        );
+        this.manager.getCommandCompletions().registerAsyncCompletion("permissions", c -> Arrays.stream(Team.Permission.values()).map(String::valueOf).collect(Collectors.toSet())
         );
 
         // Update banned tags list

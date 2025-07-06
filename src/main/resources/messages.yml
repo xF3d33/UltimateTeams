@@ -190,9 +190,16 @@ chat-cool-down-timer-wait: "&3Sorry, you can't use that again for another &6%TIM
 chatspy-toggle-on: "&3Toggled Team Chat spy &a&lON&3."
 chatspy-toggle-off: "&3Toggled Team Chat spy &c&lOFF&3."
 
-#Team Promote
+#Team Managers
 team-promote-self-error: "&3You can't promote yourself!"
 team-promote-successful: "&3Player &6%PLAYER%&3 has been successfully promoted to team manager."
+team-demote-self-error: "&3You can't demote yourself!"
+team-demote-successful: "&3Player &6%PLAYER%&3 has been successfully demoted."
+
+#Team permissions
+permission-not-found: "&3The permission %PERM% doesn't exist."
+team-permission-added-successful: "&3The permission &6&l%PERM% &3has been successfully added."
+team-permission-removed-successful: "&3The permission &6&l%PERM% &3has been successfully removed."
 
 #Economy
 not-enough-money: "&3You don't have enough money for this action. Required balance is: &6%MONEY%"
@@ -228,7 +235,11 @@ team-command-incorrect-usage:
   line-12: "/team enemy [add|remove] <team-owner>"
   line-13: "/team pvp"
   line-14: "/team [sethome|delhome|home]"
-  line-15: ""
+  line-15: "/team promote <player>"
+  line-16: "/team demote <player>"
+  line-17: "/team permissions add <permission>"
+  line-18: "/team permissions remove <permission>"
+  line-19: ""
 
 #/teamadmin Command Responses
 teamadmin-command-incorrect-usage:

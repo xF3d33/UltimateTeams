@@ -9,7 +9,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamPromoteSubCommand {
+public class TeamManagersSubCommand {
 
     FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
     private static final String TEAM_PLACEHOLDER = "%TEAM%";
@@ -17,7 +17,7 @@ public class TeamPromoteSubCommand {
 
     private final UltimateTeams plugin;
 
-    public TeamPromoteSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamManagersSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
     }
 
@@ -57,6 +57,47 @@ public class TeamPromoteSubCommand {
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
                     String playerKickedMessage = Utils.Color(messagesConfig.getString("team-promote-successful")).replace("%PLAYER%", offlinePlayer.getName());
+                    player.sendMessage(playerKickedMessage);
+                },
+                () -> player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
+        );
+    }
+
+    public void teamDemoteSubCommand(CommandSender sender, OfflinePlayer offlinePlayer) {
+        if (!(sender instanceof final Player player)) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            return;
+        }
+
+        if (!offlinePlayer.hasPlayedBefore() || offlinePlayer.getName() == null) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("could-not-find-specified-player").replace(PLAYER_TO_KICK, offlinePlayer.toString())));
+            return;
+        }
+
+        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
+            return;
+        }
+
+        plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
+                team -> {
+
+                    if (player.getName().equalsIgnoreCase(offlinePlayer.getName())) {
+                        player.sendMessage(Utils.Color(messagesConfig.getString("team-demote-self-error")));
+
+                        return;
+                    }
+
+                    if (!team.getMembers().containsKey(offlinePlayer.getUniqueId())) {
+                        String differentTeamMessage = Utils.Color(messagesConfig.getString("targeted-player-is-not-in-your-team")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
+
+                        player.sendMessage(differentTeamMessage);
+                    }
+
+                    team.getMembers().put(offlinePlayer.getUniqueId(), 1);
+                    plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
+
+                    String playerKickedMessage = Utils.Color(messagesConfig.getString("team-demote-successful")).replace("%PLAYER%", offlinePlayer.getName());
                     player.sendMessage(playerKickedMessage);
                 },
                 () -> player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))

@@ -59,7 +59,7 @@ public class TeamCommand extends BaseCommand {
                 return;
             }
 
-            for (int i = 1; i <= 15; i++) {
+            for (int i = 1; i <= 19; i++) {
                 String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
 
                 sender.sendMessage(Utils.Color(message));
@@ -208,7 +208,7 @@ public class TeamCommand extends BaseCommand {
     // TEAM ENEMIES
     @Subcommand("enemy")
     public void onTeamEnemyCommand(@NotNull CommandSender sender) {
-        for (int i = 1; i <= 15; i++) {
+        for (int i = 1; i <= 19; i++) {
             String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
 
             sender.sendMessage(Utils.Color(message));
@@ -235,7 +235,7 @@ public class TeamCommand extends BaseCommand {
     // TEAM ALLIES
     @Subcommand("ally")
     public void onTeamAllyCommand(@NotNull CommandSender sender) {
-        for (int i = 1; i <= 15; i++) {
+        for (int i = 1; i <= 19; i++) {
             String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
 
             sender.sendMessage(Utils.Color(message));
@@ -315,19 +315,26 @@ public class TeamCommand extends BaseCommand {
         new TeamInfoSubCommand(plugin).teamInfoSubCommand(sender, teamName);
     }
 
-    // TEAM PROMOTE
+    // TEAM MANAGERS
     @Subcommand("promote")
     @CommandCompletion("@teamPlayers")
     @CommandPermission("ultimateteams.team.promote")
-    public void onTeamInfoCommand(@NotNull Player sender, @Values("@teamPlayers") OfflinePlayer offlinePlayer) {
-        new TeamPromoteSubCommand(plugin).teamPromoteSubCommand(sender, offlinePlayer);
+    public void onTeamPromoteCommand(@NotNull Player sender, @Values("@teamPlayers") OfflinePlayer offlinePlayer) {
+        new TeamManagersSubCommand(plugin).teamPromoteSubCommand(sender, offlinePlayer);
+    }
+
+    @Subcommand("demote")
+    @CommandCompletion("@teamPlayers")
+    @CommandPermission("ultimateteams.team.demote")
+    public void onTeamDemoteCommand(@NotNull Player sender, @Values("@teamPlayers") OfflinePlayer offlinePlayer) {
+        new TeamManagersSubCommand(plugin).teamDemoteSubCommand(sender, offlinePlayer);
     }
 
 
     // TEAM PERMISSIONS
     @Subcommand("permissions")
     public void onTeamPermissionsCommand(@NotNull CommandSender sender) {
-        for (int i = 1; i <= 15; i++) {
+        for (int i = 1; i <= 19; i++) {
             String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
 
             sender.sendMessage(Utils.Color(message));
@@ -339,14 +346,14 @@ public class TeamCommand extends BaseCommand {
     @Syntax("<permission>")
     @CommandPermission("ultimateteams.team.permissions.add")
     public void onTeamPermissionsAddCommand(@NotNull CommandSender sender, @Values("@permissions") String permission) {
-        new TeamAllySubCommand(plugin).teamAllyAddSubCommand(sender, permission);
+        new TeamPermissionsSubCommand(plugin).teamPermissionsAddSubCommand(sender, permission);
     }
 
     @Subcommand("permissions remove")
-    @CommandCompletion("@allies @nothing")
+    @CommandCompletion("@teamPermissions @nothing")
     @Syntax("<permission>")
     @CommandPermission("ultimateteams.team.permissions.remove")
     public void onTeamPermissionsRemoveCommand(@NotNull CommandSender sender, @Values("@teamPermissions") String permission) {
-        new TeamAllySubCommand(plugin).teamAllyRemoveSubCommand(sender, permission);
+        new TeamPermissionsSubCommand(plugin).teamPermissionsRemoveSubCommand(sender, permission);
     }
 }

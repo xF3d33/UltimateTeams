@@ -83,6 +83,12 @@ public class MembersManager {
                                 // RIGHT CLICK, KICK MEMBER
                                 if (click.getType().isRightClick()) {
                                     if (plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.KICK))) {
+                                        if (player.getName().equalsIgnoreCase(offlineMember.getName())) {
+                                            player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-kick-yourself")));
+
+                                            return true;
+                                        }
+
                                         plugin.getTeamStorageUtil().kickPlayer(player, team, offlineMember);
 
                                         String playerKickedMessage = Utils.Color(messagesConfig.getString("team-member-kick-successful")).replace("%KICKEDPLAYER%", Objects.requireNonNullElse(offlineMember.getName(), "Player Not Found"));
