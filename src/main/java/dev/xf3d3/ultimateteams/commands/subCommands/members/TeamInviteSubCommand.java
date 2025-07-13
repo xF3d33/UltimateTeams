@@ -160,7 +160,7 @@ public class TeamInviteSubCommand {
         }
 
         plugin.getTeamInviteUtil().getInvite(player.getUniqueId()).ifPresentOrElse(
-                invite -> plugin.getTeamStorageUtil().findTeamByOwner(invite.getInviter()).ifPresentOrElse(
+                invite -> plugin.getTeamStorageUtil().findTeamByMember(invite.getInviter()).ifPresentOrElse(
                         team -> {
                             plugin.getTeamStorageUtil().addTeamMember(team, player);
                             plugin.getTeamInviteUtil().acceptInvite(invite, player);
