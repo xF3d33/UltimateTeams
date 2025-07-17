@@ -32,10 +32,6 @@ public class TeamInviteSubCommand {
             return;
         }
 
-        if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-must-be-owner")));
-            return;
-        }
         final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(inviteeName);
 
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
