@@ -118,6 +118,10 @@ Player permissions
 * `ultimateteams.team.transfer`
 * `ultimateteams.team.prefix`
 * `ultimateteams.team.info`
+* `ultimateteams.team.promote`
+* `ultimateteams.team.demote`
+* `ultimateteams.team.permissions.add`
+* `ultimateteams.team.permissions.remove`
 
 Admin permissions:
 * `ultimateteams.admin.about`
