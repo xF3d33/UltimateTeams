@@ -69,6 +69,8 @@ The `/team` command is the main command of the plugin, with `/team` you can do t
 * `/team enemy [add|remove] <team-name>` - Will either add or remove an enemy team to yours
 * `/team pvp` - Will toggle the friendly fire status for your team
 * `/team [sethome|home]` - Will set a team home location or teleport you or you team members to this location.
+* `/team [promote|demote] <player>` - Will promote/demote a team member to/from team manager.
+* `/team permission [add|remove] <permission>` - Will add/remove a permission to make team managers use specific team commands.
 
 ## /teamadmin command
 Aliases: `/ta`
@@ -118,6 +120,10 @@ Player permissions
 * `ultimateteams.team.transfer`
 * `ultimateteams.team.prefix`
 * `ultimateteams.team.info`
+* `ultimateteams.team.promote`
+* `ultimateteams.team.demote`
+* `ultimateteams.team.permissions.add`
+* `ultimateteams.team.permissions.remove`
 
 Admin permissions:
 * `ultimateteams.admin.about`
