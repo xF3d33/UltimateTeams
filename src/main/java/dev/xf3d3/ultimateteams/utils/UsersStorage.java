@@ -118,19 +118,19 @@ public class UsersStorage {
         }));
     }
 
-    public void getBedrockPlayer(Player player){
-        plugin.runAsync(task -> plugin.getDatabase().getPlayer(player.getUniqueId()).ifPresentOrElse(
-            teamPlayer -> usermap.put(teamPlayer.getJavaUUID(), teamPlayer),
-            () -> {
+    public CompletableFuture<TeamPlayer> getBedrockPlayer(Player player){
+        return plugin.supplyAsync(() -> plugin.getDatabase().getPlayer(player.getUniqueId()).map(
+            teamPlayer -> usermap.put(teamPlayer.getJavaUUID(), teamPlayer))
+
+            .orElseGet(() -> {
                 FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(player.getUniqueId());
                 UUID bedrockPlayerUUID = floodgatePlayer.getJavaUniqueId();
                 String lastPlayerName = floodgatePlayer.getUsername();
                 TeamPlayer teamPlayer = new TeamPlayer(floodgatePlayer.getJavaUniqueId(), lastPlayerName, true, floodgatePlayer.getCorrectUniqueId().toString(), null);
 
                 plugin.getDatabase().createPlayer(teamPlayer);
-                usermap.put(bedrockPlayerUUID, teamPlayer);
-            }
-        ));
+                return usermap.put(bedrockPlayerUUID, teamPlayer);
+        }));
 
     }
 

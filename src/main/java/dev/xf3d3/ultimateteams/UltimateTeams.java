@@ -423,11 +423,6 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         return floodgateHook.getHook();
     }
 
-    @NotNull
-    public ConcurrentHashMap<String, Player> getBedrockPlayers() {
-        return bedrockPlayers;
-    }
-
     @Override
     @NotNull
     public PlatformScheduler getScheduler() {

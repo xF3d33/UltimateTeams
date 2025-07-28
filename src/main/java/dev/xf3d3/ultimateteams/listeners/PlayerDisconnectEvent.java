@@ -22,6 +22,9 @@ public class PlayerDisconnectEvent implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
 
+        plugin.getUsersStorageUtil().removePlayer(player.getUniqueId());
+        plugin.getUsersStorageUtil().getOnlineUserMap().remove(player.getUniqueId());
+
         if (plugin.getSettings().isEnableCrossServer()) {
             final List<User> localPlayerList = plugin.getUsersStorageUtil().getOnlineUserMap().values().stream()
                     .filter(u -> !u.equals(player)).map(u -> User.of(u.getUniqueId(), u.getName())).toList();
@@ -36,10 +39,5 @@ public class PlayerDisconnectEvent implements Listener {
                         .ifPresent(user -> plugin.getUsersStorageUtil().syncGlobalUserList(user, localPlayerList));
             }
         }
-
-        plugin.getUsersStorageUtil().removePlayer(player.getUniqueId());
-        plugin.getUsersStorageUtil().getOnlineUserMap().remove(player.getUniqueId());
-        plugin.getBedrockPlayers().remove(player.getUniqueId().toString());
     }
-
 }

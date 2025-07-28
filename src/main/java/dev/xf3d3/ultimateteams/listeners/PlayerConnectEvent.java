@@ -42,17 +42,15 @@ public class PlayerConnectEvent implements Listener {
 
             if (plugin.getFloodgateApi().isFloodgatePlayer(uuid)) {
 
-                plugin.getUsersStorageUtil().getBedrockPlayer(player);
+                plugin.getUsersStorageUtil().getBedrockPlayer(player).thenAccept(p -> {
+                    if (plugin.getUsersStorageUtil().hasPlayerNameChanged(player)) {
+                        plugin.getUsersStorageUtil().updatePlayerName(player);
+                    }
 
-                if (plugin.getUsersStorageUtil().hasPlayerNameChanged(player)) {
-                    plugin.getUsersStorageUtil().updatePlayerName(player);
-                }
-
-                if (plugin.getUsersStorageUtil().hasBedrockPlayerJavaUUIDChanged(player)) {
-                    plugin.getUsersStorageUtil().updateBedrockPlayerJavaUUID(player);
-                }
-
-                plugin.getBedrockPlayers().put(plugin.getFloodgateApi().getPlayer(uuid).getJavaUniqueId().toString(), player);
+                    if (plugin.getUsersStorageUtil().hasBedrockPlayerJavaUUIDChanged(player)) {
+                        plugin.getUsersStorageUtil().updateBedrockPlayerJavaUUID(player);
+                    }
+                });
 
             } else {
                 handleJavaPlayer(player);
