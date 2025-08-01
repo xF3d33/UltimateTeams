@@ -119,11 +119,12 @@ public class UsersStorage {
     }
 
     public CompletableFuture<TeamPlayer> getBedrockPlayer(Player player){
-        return plugin.supplyAsync(() -> plugin.getDatabase().getPlayer(player.getUniqueId()).map(
+        FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(player.getUniqueId());
+
+        return plugin.supplyAsync(() -> plugin.getDatabase().getPlayer(floodgatePlayer.getJavaUniqueId()).map(
             teamPlayer -> usermap.put(teamPlayer.getJavaUUID(), teamPlayer))
 
             .orElseGet(() -> {
-                FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(player.getUniqueId());
                 UUID bedrockPlayerUUID = floodgatePlayer.getJavaUniqueId();
                 String lastPlayerName = floodgatePlayer.getUsername();
                 TeamPlayer teamPlayer = new TeamPlayer(floodgatePlayer.getJavaUniqueId(), lastPlayerName, true, floodgatePlayer.getCorrectUniqueId().toString(), null);
