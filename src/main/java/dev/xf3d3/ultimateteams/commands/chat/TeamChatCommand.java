@@ -49,10 +49,24 @@ public class TeamChatCommand extends BaseCommand {
 
         // Check args
         if (args.length < 1) {
-            player.sendMessage(Utils.Color(
-                    "&6UltimateTeams team chat usage:&3" +
-                            "\n/tc <message>"
-            ));
+            if (plugin.getUsersStorageUtil().getChatPlayers().containsKey(player.getUniqueId())) {
+                plugin.getUsersStorageUtil().getChatPlayers().remove(player.getUniqueId());
+                player.sendMessage(Utils.Color(messagesConfig.getString("chat-toggle-off")));
+
+                plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
+                    teamPlayer.getPreferences().setTeamChatTalking(false);
+                    plugin.getDatabase().updatePlayer(teamPlayer);
+                });
+            } else {
+                plugin.getUsersStorageUtil().getChatPlayers().put(player.getUniqueId(), true);
+                player.sendMessage(Utils.Color(messagesConfig.getString("chat-toggle-on")));
+
+                plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
+                    teamPlayer.getPreferences().setTeamChatTalking(true);
+                    plugin.getDatabase().updatePlayer(teamPlayer);
+                });
+            }
+
             return;
         }
 

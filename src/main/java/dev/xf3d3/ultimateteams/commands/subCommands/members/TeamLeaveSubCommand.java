@@ -29,6 +29,13 @@ public class TeamLeaveSubCommand {
             plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                     team -> {
                         team.removeMember(player.getUniqueId());
+                        plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
+                           if (teamPlayer.getPreferences().isTeamChatTalking()) {
+                               teamPlayer.getPreferences().setTeamChatTalking(false);
+                               plugin.getDatabase().updatePlayer(teamPlayer);
+                           }
+                        });
+
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
                         String leaveMessage = Utils.Color(messagesConfig.getString("team-leave-successful")).replace(Team_PLACEHOLDER, Utils.Color(team.getName()));

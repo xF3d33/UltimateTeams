@@ -65,6 +65,18 @@ public class TeamsGui {
     @Getter
     private Material closeButtonMaterial = Material.BARRIER;
 
+    @YamlComment("Modify this to change the slot of the items.\neach character is an item, and the 'g' are the slots for the teams.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
+    @YamlKey("team-list.layout")
+    @Getter
+    private List<String> teamsListguiSetup = List.of(
+            "         ",
+            "  ggggg  ",
+            "  ggggg  ",
+            "  ggggg  ",
+            "         ",
+            "f   c   n"
+    );
+
 
     // GUI NAME
     @YamlComment("What name would you like the gui to have?")
@@ -86,6 +98,18 @@ public class TeamsGui {
             Map.entry("footer-1", "&f"),
             Map.entry("action", "&f"),
             Map.entry("footer-2", "&7----------")
+    );
+
+    @YamlComment("Modify this to change the slot of the items. each character is an item.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
+    @YamlKey("team-manager.layout")
+    @Getter
+    private List<String> teamsManagerguiSetup = List.of(
+            "         ",
+            "    x    ",
+            "  abcde  ",
+            "    h    ",
+            "         ",
+            "    y    "
     );
 
 
@@ -121,6 +145,18 @@ public class TeamsGui {
     );
 
     // WARPS
+    @YamlComment("Modify this to change the slot of the items.\neach character is an item, and the 'g' are the slots for the teams.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
+    @YamlKey("team-manager.warps.layout")
+    @Getter
+    private List<String> teamsManagerWarpsguiSetup = List.of(
+            "         ",
+            "  ggggg  ",
+            "  ggggg  ",
+            "  ggggg  ",
+            "         ",
+            "f   b   n"
+    );
+
     @YamlComment("Warps item material (according to the server's version)")
     @YamlKey("team-manager.warps.material")
     @Getter
@@ -151,6 +187,18 @@ public class TeamsGui {
     );
 
     // MEMBERS
+    @YamlComment("Modify this to change the slot of the items.\neach character is an item, and the 'g' are the slots for the teams.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
+    @YamlKey("team-manager.members.layout")
+    @Getter
+    private List<String> teamsManagerMembersguiSetup = List.of(
+            "         ",
+            "  ggggg  ",
+            "  ggggg  ",
+            "  ggggg  ",
+            "         ",
+            "f   b   n"
+    );
+
     @YamlComment("Members item material (according to the server's version)")
     @YamlKey("team-manager.members.material")
     @Getter
@@ -197,6 +245,18 @@ public class TeamsGui {
     );
 
     // ALLIES
+    @YamlComment("Modify this to change the slot of the items.\neach character is an item, and the 'g' are the slots for the teams.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
+    @YamlKey("team-manager.allies.layout")
+    @Getter
+    private List<String> teamsManagerAlliesguiSetup = List.of(
+            "         ",
+            "  ggggg  ",
+            "  ggggg  ",
+            "  ggggg  ",
+            "         ",
+            "f   b   n"
+    );
+
     @YamlComment("Allies item material (according to the server's version)")
     @YamlKey("team-manager.allies.material")
     @Getter
@@ -226,6 +286,18 @@ public class TeamsGui {
     );
 
     // ENEMIES
+    @YamlComment("Modify this to change the slot of the items.\neach character is an item, and the 'g' are the slots for the teams.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
+    @YamlKey("team-manager.enemies.layout")
+    @Getter
+    private List<String> teamsManagerEnemiesguiSetup = List.of(
+            "         ",
+            "  ggggg  ",
+            "  ggggg  ",
+            "  ggggg  ",
+            "         ",
+            "f   b   n"
+    );
+
     @YamlComment("Enemies item material (according to the server's version)")
     @YamlKey("team-manager.enemies.material")
     @Getter

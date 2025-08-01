@@ -28,15 +28,7 @@ public class AlliesManager {
     }
 
     private void open() {
-        String[] guiSetup = {
-                "         ",
-                "  ggggg  ",
-                "  ggggg  ",
-                "  ggggg  ",
-                "         ",
-                "f   b   n"
-        };
-        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.getTeamsGui().getAlliesManagerGuiName()), guiSetup);
+        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.getTeamsGui().getAlliesManagerGuiName()), plugin.getTeamsGui().getTeamsManagerAlliesguiSetup().toArray(new String[0]));
 
         // Previous page
         gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.getTeamsGui().getPreviousPage()));

@@ -187,6 +187,8 @@ failed-tp-not-in-team: "&3You need to be in a team first! Use &6/team &3for deta
 #Team Chat
 failed-must-be-in-team: "&3You need to be in a team first! Use &6/team &3for details how."
 chat-cool-down-timer-wait: "&3Sorry, you can't use that again for another &6%TIMELEFT%&r &3seconds."
+chat-toggle-on: "&3Toggled Team Chat &a&lON&3."
+chat-toggle-off: "&3Toggled Team Chat &c&lOFF&3."
 chatspy-toggle-on: "&3Toggled Team Chat spy &a&lON&3."
 chatspy-toggle-off: "&3Toggled Team Chat spy &c&lOFF&3."
 

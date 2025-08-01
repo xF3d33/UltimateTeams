@@ -15,6 +15,7 @@ import dev.xf3d3.ultimateteams.config.Settings;
 import dev.xf3d3.ultimateteams.config.TeamsGui;
 import dev.xf3d3.ultimateteams.database.*;
 import dev.xf3d3.ultimateteams.hooks.*;
+import dev.xf3d3.ultimateteams.listeners.PlayerChatEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerConnectEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDamageEvent;
 import dev.xf3d3.ultimateteams.listeners.PlayerDisconnectEvent;
@@ -160,6 +161,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
             this.getServer().getPluginManager().registerEvents(new PlayerConnectEvent(this), this);
             this.getServer().getPluginManager().registerEvents(new PlayerDisconnectEvent(this), this);
             this.getServer().getPluginManager().registerEvents(new PlayerDamageEvent(this), this);
+            this.getServer().getPluginManager().registerEvents(new PlayerChatEvent(this), this);
         });
 
         // Load the teams

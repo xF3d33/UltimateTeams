@@ -30,15 +30,7 @@ public class TeamList {
     }
 
     private void open() {
-        String[] guiSetup = {
-                "         ",
-                "  ggggg  ",
-                "  ggggg  ",
-                "  ggggg  ",
-                "         ",
-                "f   c   n"
-        };
-        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.getTeamsGui().getTeamsListGuiName()), guiSetup);
+        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.getTeamsGui().getTeamsListGuiName()), plugin.getTeamsGui().getTeamsListguiSetup().toArray(new String[0]));
 
 
         // Previous page

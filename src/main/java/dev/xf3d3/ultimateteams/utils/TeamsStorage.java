@@ -184,9 +184,11 @@ public class TeamsStorage {
                 .ifPresentOrElse(onlineUser -> {
                             onlineUser.sendMessage(Utils.Color(messagesConfig.getString("team-kicked-player-message")).replace("%TEAM%", team.getName()));
 
-                            plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAccept(teamPlayer -> {
-                                teamPlayer.getPreferences().setTeamChatTalking(false);
-                                plugin.getUsersStorageUtil().updatePlayer(teamPlayer);
+                            plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
+                                if (teamPlayer.getPreferences().isTeamChatTalking()) {
+                                    teamPlayer.getPreferences().setTeamChatTalking(false);
+                                    plugin.getDatabase().updatePlayer(teamPlayer);
+                                }
                             });
                         },
                         () -> plugin.getMessageBroker().ifPresent(broker -> Message.builder()

@@ -26,15 +26,7 @@ public class WarpsManager {
     }
 
     private void open() {
-        String[] guiSetup = {
-                "         ",
-                "  ggggg  ",
-                "  ggggg  ",
-                "  ggggg  ",
-                "         ",
-                "f   b   n"
-        };
-        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.getTeamsGui().getWarpsManagerGuiName()), guiSetup);
+        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.getTeamsGui().getWarpsManagerGuiName()), plugin.getTeamsGui().getTeamsManagerWarpsguiSetup().toArray(new String[0]));
 
         // Previous page
         gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.getTeamsGui().getPreviousPage()));

@@ -25,17 +25,16 @@ import java.util.stream.Stream;
 
 public class UsersStorage {
 
-    private final Logger logger = UltimateTeams.getPlugin().getLogger();
     private final Map<UUID, TeamPlayer> usermap = new ConcurrentHashMap<>();
-    private final FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
-
-    private static final String PLAYER_PLACEHOLDER = "%PLAYER%";
     private final UltimateTeams plugin;
 
     @Getter
     private final Map<String, List<User>> globalUserList = Maps.newConcurrentMap();
     @Getter
     private final ConcurrentMap<UUID, Player> onlineUserMap = Maps.newConcurrentMap();
+    @Getter
+    private final ConcurrentMap<UUID, Boolean> chatPlayers = Maps.newConcurrentMap();
+
 
     public UsersStorage(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;

@@ -27,15 +27,7 @@ public class TeamManager {
     }
 
     private void open() {
-        String[] guiSetup = {
-                "         ",
-                "    x    ",
-                "  abcde  ",
-                "  fghil  ",
-                "         ",
-                "    y    "
-        };
-        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.getTeamsGui().getTeamsManagerGuiName()), guiSetup);
+        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.getTeamsGui().getTeamsManagerGuiName()), plugin.getTeamsGui().getTeamsManagerguiSetup().toArray(new String[0]));
 
         Optional<Team> OptionalTeam = plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId());
 
