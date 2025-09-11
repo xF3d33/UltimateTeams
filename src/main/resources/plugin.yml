@@ -1,11 +1,11 @@
 name: UltimateTeams
-version: "4.5.3"
+version: "4.6.1"
 main: dev.xf3d3.ultimateteams.UltimateTeams
 api-version: 1.16
 prefix: UltimateTeams
 website: "https://modrinth.com/plugin/ultimate-teams"
 authors: [ xF3d3 ]
-description: A simple and lightweight Teams plugin for Minecraft.
+description: A simple and lightweight Teams plugin for Minecraft, with cross-server support, developed with optimization in mind!
 folia-supported: true
 softdepend:
   - 'PlaceholderAPI'
@@ -24,62 +24,49 @@ libraries:
 permissions:
   ultimateteams.player:
     default: true
-  ultimateteams.maxteamsize.group1:
-    default: true
-  ultimateteams.*:
+    children:
+      ultimateteams.maxteamsize.group1: true
+      ultimateteams.team.gui: true
+      ultimateteams.team.create: true
+      ultimateteams.team.rename: true
+      ultimateteams.team.warp: true
+      ultimateteams.team.setwarp: true
+      ultimateteams.team.delwarp: true
+      ultimateteams.team.disband: true
+      ultimateteams.team.invite.send: true
+      ultimateteams.team.invite.accept: true
+      ultimateteams.team.invite.deny: true
+      ultimateteams.team.sethome: true
+      ultimateteams.team.delhome: true
+      ultimateteams.team.home: true
+      ultimateteams.team.pvp: true
+      ultimateteams.team.enemy.add: true
+      ultimateteams.team.enemy.remove: true
+      ultimateteams.team.ally.add: true
+      ultimateteams.team.ally.remove: true
+      ultimateteams.team.leave: true
+      ultimateteams.team.kick: true
+      ultimateteams.team.list: true
+      ultimateteams.team.transfer: true
+      ultimateteams.team.prefix: true
+      ultimateteams.team.info: true
+      ultimateteams.team.promote: true
+      ultimateteams.team.demote: true
+      ultimateteams.team.permissions.add: true
+      ultimateteams.team.permissions.remove: true
+      ultimateteams.allychat: true
+      ultimateteams.teamchat: true
+
+  ultimateteams.defaultsop:
     default: op
     children:
-      ultimateteams.teamadmin:
-        children:
-          ultimateteams.chat.spy:
-            default: true
-          ultimateteams.bypass:
-            default: op
-          ultimateteams.maxteamsize.*:
-            default: true
-          ultimateteams.team.create:
-            default: true
-          ultimateteams.team.warp:
-            default: true
-          ultimateteams.team.setwarp:
-            default: true
-          ultimateteams.team.delwarp:
-            default: true
-          ultimateteams.team.disband:
-            default: true
-          ultimateteams.team.invite.accept:
-            default: true
-          ultimateteams.team.invite.send:
-            default: true
-          ultimateteams.team.invite.deny:
-            default: true
-          ultimateteams.team.sethome:
-            default: true
-          ultimateteams.team.home:
-            default: true
-          ultimateteams.team.delhome:
-            default: true
-          ultimateteams.team.pvp:
-            default: true
-          ultimateteams.team.enemy.add:
-            default: true
-          ultimateteams.team.enemy.remove:
-            default: true
-          ultimateteams.team.ally.add:
-            default: true
-          ultimateteams.team.ally.remove:
-            default: true
-          ultimateteams.team.leave:
-            default: true
-          ultimateteams.team.kick:
-            default: true
-          ultimateteams.team.join:
-            default: true
-          ultimateteams.team.list:
-            default: true
-          ultimateteams.team.transfer:
-            default: true
-          ultimateteams.team.prefix:
-            default: true
-          ultimateteams.team.info:
-            default: true
+      ultimateteams.admin.about: true
+      ultimateteams.admin.reload: true
+      ultimateteams.admin.migrate: true
+      ultimateteams.admin.team.disband: true
+      ultimateteams.admin.team.join: true
+      ultimateteams.bypass.pvp: true
+      ultimateteams.bypass.homecooldown: true
+      ultimateteams.bypass.chatcooldown: true
+      ultimateteams.bypass.warpcooldown: true
+      ultimateteams.chat.spy: true

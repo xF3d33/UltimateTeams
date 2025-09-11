@@ -90,6 +90,7 @@ public class TeamsGui {
             Map.entry("owner-online", "&3Team Owner: &d"),
             Map.entry("owner-offline", "&3Team Owner &7&o(Offline)&3: &d"),
             Map.entry("members", "&3Team Members: &d"),
+            Map.entry("managers", "&3Team Managers: &d"),
             Map.entry("allies", "&3Team Allies: &r"),
             Map.entry("enemies", "&3Team Enemies: &r"),
             Map.entry("prefix", "&3Team Prefix: &r"),

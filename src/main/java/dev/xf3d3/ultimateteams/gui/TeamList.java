@@ -79,6 +79,16 @@ public class TeamList {
                 .filter(entry -> entry.getValue() == Team.Relation.ENEMY)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+        final Set<UUID> teamMembers = team.getMembers().entrySet().stream()
+                .filter(entry -> entry.getValue() == 1)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+
+        final Set<UUID> teamManagers = team.getMembers().entrySet().stream()
+                .filter(entry -> entry.getValue() == 2)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+
         ArrayList<String> lore = new ArrayList<>();
 
         lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("header")));
@@ -92,12 +102,18 @@ public class TeamList {
 
         // Members
         if (!team.getMembers().isEmpty()) {
-            Set<UUID> members = team.getMembers().keySet().stream().filter(member -> !member.equals(team.getOwner())).collect(Collectors.toSet());
 
-            for (UUID teamMember : members) {
+            for (UUID teamMember : teamMembers) {
                 String offlinePlayer = Bukkit.getOfflinePlayer(teamMember).getName();
 
                 lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("members")));
+                lore.add(offlinePlayer != null ? ("&r" +  offlinePlayer) : "&rplayer not found");
+            }
+
+            for (UUID teamMember : teamManagers) {
+                String offlinePlayer = Bukkit.getOfflinePlayer(teamMember).getName();
+
+                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("managers")));
                 lore.add(offlinePlayer != null ? ("&r" +  offlinePlayer) : "&rplayer not found");
             }
         }

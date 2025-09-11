@@ -65,6 +65,16 @@ public class TeamInfoSubCommand {
                 .filter(entry -> entry.getValue() == Team.Relation.ENEMY)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+        final Set<UUID> teamMembers = team.getMembers().entrySet().stream()
+                .filter(entry -> entry.getValue() == 1)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+
+        final Set<UUID> teamManagers = team.getMembers().entrySet().stream()
+                .filter(entry -> entry.getValue() == 2)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+
         StringBuilder teamInfo = new StringBuilder(Utils.Color(messagesConfig.getString("team-info-header"))
                 .replace(TEAM_PLACEHOLDER, Utils.Color(team.getName()))
                 .replace("%TEAMPREFIX%", Utils.Color(team.getPrefix() != null ? team.getPrefix() : "")));
@@ -80,13 +90,28 @@ public class TeamInfoSubCommand {
             teamInfo.append(Utils.Color(messagesConfig.getString("team-info-owner-offline")).replace(OWNER, offlineOwner));
         }
 
-        if (!team.getMembers().isEmpty()) {
-            Set<UUID> members = team.getMembers().keySet().stream().filter(member -> !member.equals(team.getOwner())).collect(Collectors.toSet());
+        if (!teamMembers.isEmpty()) {
 
             teamInfo.append(Utils.Color(messagesConfig.getString("team-info-members-header")
-                    .replace("%NUMBER%", Utils.Color(String.valueOf(members.size())))));
+                    .replace("%NUMBER%", Utils.Color(String.valueOf(teamMembers.size())))));
 
-            for (UUID teamMember : members) {
+            for (UUID teamMember : teamMembers) {
+                Player teamPlayer = Bukkit.getPlayer(teamMember);
+                if (teamPlayer != null) {
+                    teamInfo.append(Utils.Color(messagesConfig.getString("team-info-members-online") + "\n").replace(TEAM_MEMBER, teamPlayer.getName()));
+
+                } else {
+                    String offlinePlayer = Bukkit.getOfflinePlayer(teamMember).getName();
+                    teamInfo.append(Utils.Color(messagesConfig.getString("team-info-members-offline") + "\n").replace(TEAM_MEMBER, offlinePlayer != null ? offlinePlayer : "player not found"));
+                }
+            }
+        }
+
+        if (!teamManagers.isEmpty()) {
+            teamInfo.append(Utils.Color(messagesConfig.getString("team-info-managers-header")
+                    .replace("%NUMBER%", Utils.Color(String.valueOf(teamManagers.size())))));
+
+            for (UUID teamMember : teamManagers) {
                 Player teamPlayer = Bukkit.getPlayer(teamMember);
                 if (teamPlayer != null) {
                     teamInfo.append(Utils.Color(messagesConfig.getString("team-info-members-online") + "\n").replace(TEAM_MEMBER, teamPlayer.getName()));

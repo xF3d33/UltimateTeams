@@ -78,7 +78,7 @@ public class Team {
     public void sendTeamMessage(@NotNull String message) {
         Bukkit.getOnlinePlayers().stream()
                 .filter(player -> getMembers().containsKey(player.getUniqueId()))
-                .forEach(player -> player.sendPlainMessage(message));
+                .forEach(player -> player.sendMessage(message));
     }
 
     public Optional<TeamWarp> getTeamWarp(@NotNull String name){

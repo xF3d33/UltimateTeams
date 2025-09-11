@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.xf3d3"
-version = "4.5.3"
+version = "4.6.1"
 
 repositories {
     mavenLocal()
@@ -37,18 +37,19 @@ tasks {
 
 dependencies {
     // Kotlin
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.2.20")
 
-    compileOnly("org.projectlombok:lombok:1.18.34")
-    annotationProcessor("org.projectlombok:lombok:1.18.34")
+    compileOnly("org.projectlombok:lombok:1.18.40")
+    annotationProcessor("org.projectlombok:lombok:1.18.40")
 
-    testCompileOnly("org.projectlombok:lombok:1.18.34")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.34")
+    testCompileOnly("org.projectlombok:lombok:1.18.40")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.40")
 
     // Folia and Spigot
+    compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
     compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
-    compileOnly("org.geysermc.floodgate:api:2.2.0-SNAPSHOT")
+    compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
     implementation("org.bstats:bstats-bukkit:3.1.0")
     implementation("de.themoep:inventorygui:1.6.5-SNAPSHOT")
     
@@ -58,7 +59,7 @@ dependencies {
 
     // Libs
     implementation("co.aikar:acf-bukkit:0.5.1-SNAPSHOT")
-    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.google.code.gson:gson:2.13.2")
     implementation("dev.dejvokep:boosted-yaml:1.3.1")
 
     compileOnly("net.luckperms:api:5.4")
@@ -67,13 +68,13 @@ dependencies {
     // Database
     compileOnly("org.xerial:sqlite-jdbc:3.46.1.0")
     compileOnly("com.mysql:mysql-connector-j:9.2.0")
-    compileOnly("com.zaxxer:HikariCP:6.2.1")
+    compileOnly("com.zaxxer:HikariCP:7.0.2")
     compileOnly("com.h2database:h2:2.3.232")
     compileOnly("org.postgresql:postgresql:42.7.3")
 
     compileOnly("redis.clients:jedis:5.2.0")
 
-    implementation("net.william278:annotaml:2.0.2")
+    implementation("net.william278:annotaml:2.0.7")
     implementation("net.william278:DesertWell:2.0.4")
     compileOnly("net.william278.huskhomes:huskhomes-bukkit:4.7")
 }

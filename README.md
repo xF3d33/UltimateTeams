@@ -97,16 +97,19 @@ The `/tc` command is for the sole purpose of utilising the per team chat. The fo
 
 
 Player permissions
-* `ultimateteams.chat.spy`
+* `ultimateteams.player`
+* `ultimateteams.team.gui`
 * `ultimateteams.team.create`
+* `ultimateteams.team.rename`
 * `ultimateteams.team.warp`
 * `ultimateteams.team.setwarp`
 * `ultimateteams.team.delwarp`
 * `ultimateteams.team.disband`
-* `ultimateteams.team.invite.accept`
 * `ultimateteams.team.invite.send`
+* `ultimateteams.team.invite.accept`
 * `ultimateteams.team.invite.deny`
 * `ultimateteams.team.sethome`
+* `ultimateteams.team.delhome`
 * `ultimateteams.team.home`
 * `ultimateteams.team.pvp`
 * `ultimateteams.team.enemy.add`
@@ -115,7 +118,6 @@ Player permissions
 * `ultimateteams.team.ally.remove`
 * `ultimateteams.team.leave`
 * `ultimateteams.team.kick`
-* `ultimateteams.team.join`
 * `ultimateteams.team.list`
 * `ultimateteams.team.transfer`
 * `ultimateteams.team.prefix`
@@ -124,16 +126,20 @@ Player permissions
 * `ultimateteams.team.demote`
 * `ultimateteams.team.permissions.add`
 * `ultimateteams.team.permissions.remove`
+* `ultimateteams.allychat`
+* `ultimateteams.teamchat`
 
 Admin permissions:
 * `ultimateteams.admin.about`
 * `ultimateteams.admin.reload`
-* `ultimateteams.admin.about`
+* `ultimateteams.admin.migrate`
+* `ultimateteams.admin.team.disband`
+* `ultimateteams.admin.team.join`
 * `ultimateteams.bypass.pvp`
 * `ultimateteams.bypass.homecooldown`
 * `ultimateteams.bypass.chatcooldown`
 * `ultimateteams.bypass.warpcooldown`
-
+* `ultimateteams.chat.spy`
 
 <br>&nbsp;<br>
 

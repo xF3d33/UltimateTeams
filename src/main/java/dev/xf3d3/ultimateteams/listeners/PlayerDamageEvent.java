@@ -6,9 +6,7 @@ import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Trident;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -30,14 +28,28 @@ public class PlayerDamageEvent implements Listener {
 
         Player attackingPlayer = null;
 
+        // Melee attack
         if (e.getDamager() instanceof Player) {
             attackingPlayer = (Player) e.getDamager();
-        } else if (e.getDamager() instanceof Arrow arrow) {
-            if (arrow.getShooter() instanceof Player shooter) {
+        }
+
+        // Projectiles (Arrows, SpectralArrows, Tridents, Snowballs, Eggs, Potions, etc.)
+        else if (e.getDamager() instanceof Projectile projectile) {
+            if (projectile.getShooter() instanceof Player shooter) {
                 attackingPlayer = shooter;
             }
-        } else if (e.getDamager() instanceof Trident trident) {
-            if (trident.getShooter() instanceof Player shooter) {
+        }
+
+        // Fireworks shot from a crossbow
+        else if (e.getDamager() instanceof Firework firework) {
+            if (firework.getShooter() instanceof Player shooter) {
+                attackingPlayer = shooter;
+            }
+        }
+
+        // Primed TNT from another player
+        else if (e.getDamager() instanceof TNTPrimed tntPrimed) {
+            if (tntPrimed.getSource() instanceof Player shooter) {
                 attackingPlayer = shooter;
             }
         }

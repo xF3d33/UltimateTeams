@@ -112,6 +112,7 @@ team-info-header: "&7----- &6TeamInfo &7-----&r\n&3Name: %TEAM%&r\n&3Prefix: &7(
 team-info-owner-online: "\n\n&3Owner: &a%OWNER%"
 team-info-owner-offline: "\n\n&3Owner: &c%OWNER%&7&o(offline)"
 team-info-members-header: "\n\n&3Members: &3&o(%NUMBER%)"
+team-info-managers-header: "\n\n&3Managers: &3&o(%NUMBER%)"
 team-info-members-online: "\n&a%MEMBER%\n"
 team-info-members-offline: "\n&c%MEMBER% &7&o(offline)\n"
 team-info-allies-header: "\n\n&3Allied Teams:"
