@@ -63,9 +63,10 @@ public class Team {
 
     @NotNull
     @ApiStatus.Internal
-    public static Team create(@NotNull String name, @NotNull Player owner) {
+    public static Team create(@NotNull String name, @NotNull Player owner, @NotNull Boolean friendlyFire) {
         return Team.builder()
                 .name(name)
+                .friendlyFire(friendlyFire)
                 .members(Maps.newHashMap(Map.of(owner.getUniqueId(), 3)))
                 .build();
     }

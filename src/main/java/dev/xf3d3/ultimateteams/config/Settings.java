@@ -204,6 +204,11 @@ public class Settings {
     @YamlKey("team.pvp.bypass-permission")
     private boolean pvpCommandBypassPerm = true;
 
+    @YamlComment("If this is enabled, new teams will have PvP (friendly fire) enabled by default. [Default value: false]")
+    @YamlKey("team.pvp.default-allow-pvp")
+    @Getter
+    private boolean pvpDefaultAllow = false;
+
 
     // Team Warp
     @YamlComment("Enable the '/team [setwarp|warp]' system. [Default value: true]")

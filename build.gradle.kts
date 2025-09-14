@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.xf3d3"
-version = "4.6.1"
+version = "4.6.2"
 
 repositories {
     mavenLocal()
@@ -47,7 +47,6 @@ dependencies {
 
     // Folia and Spigot
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
-    compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
     implementation("org.bstats:bstats-bukkit:3.1.0")
@@ -88,6 +87,8 @@ tasks {
         archiveFileName.set("${rootProject.name}-${rootProject.version}.jar")
         archiveClassifier.set("main")
 
+        exclude("com/google/errorprone/annotations/**")
+
         relocate("org.bstats", "dev.xf3d3.ultimateteams.libraries.bstats")
         relocate("com.tcoded.folialib", "dev.xf3d3.ultimateteams.libraries.folialib")
         relocate("co.aikar", "dev.xf3d3.ultimateteams.libraries.aikar")
@@ -97,9 +98,8 @@ tasks {
         relocate("org.json", "dev.xf3d3.ultimateteams.libraries.json")
         relocate("de.themoep", "dev.xf3d3.ultimateteams.libraries.inventorygui")
         relocate("dev.dejvokep", "dev.xf3d3.ultimateteams.libraries.boostedyaml")
-        relocate("io.papermc", "dev.xf3d3.ultimateteams.libraries.papermc")
         relocate("net.kyori", "dev.xf3d3.ultimateteams.libraries.kyori")
-        relocate("net.william278.desertwell", "dev.xf3d3.libraries.ultimateteams.william278.desertwell")
-        relocate("net.william278.annotaml", "dev.xf3d3.libraries.ultimateteams.william278.annotaml")
+        relocate("net.william278.desertwell", "dev.xf3d3.ultimateteams.libraries.william278.desertwell")
+        relocate("net.william278.annotaml", "dev.xf3d3.ultimateteams.libraries.william278.annotaml")
     }
 }

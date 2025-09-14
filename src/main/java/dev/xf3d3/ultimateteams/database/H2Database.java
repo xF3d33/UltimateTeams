@@ -203,7 +203,7 @@ public class H2Database extends Database {
     }
 
     public Team createTeam(@NotNull String name, @NotNull Player creator) {
-        final Team team = Team.create(name, creator);
+        final Team team = Team.create(name, creator, plugin.getSettings().isPvpDefaultAllow());
 
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
