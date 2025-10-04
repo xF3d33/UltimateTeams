@@ -87,6 +87,7 @@ public class TeamsGui {
     @YamlKey("team-list.icons.lore")
     private Map<String, String> loreMap = Map.ofEntries(
             Map.entry("header", "&7----------"),
+            Map.entry("team-name", "&3Team Name: &r"),
             Map.entry("owner-online", "&3Team Owner: &d"),
             Map.entry("owner-offline", "&3Team Owner &7&o(Offline)&3: &d"),
             Map.entry("members", "&3Team Members: &d"),

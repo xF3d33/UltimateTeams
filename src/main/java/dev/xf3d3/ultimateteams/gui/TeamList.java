@@ -93,6 +93,9 @@ public class TeamList {
 
         lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("header")));
 
+        // Team name
+        lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("team-name") + Utils.Color(team.getName())));
+
         // Owner
         if (teamOwnerPlayer.isOnline()) {
             lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("owner-online") + teamOwnerPlayer.getName()));
