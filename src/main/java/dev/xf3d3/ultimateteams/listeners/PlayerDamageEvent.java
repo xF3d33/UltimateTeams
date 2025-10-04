@@ -56,6 +56,9 @@ public class PlayerDamageEvent implements Listener {
 
         if (attackingPlayer == null) return;
 
+        // ignore if attacker and victim are the same player
+        if (attackingPlayer.getUniqueId() == victim.getUniqueId()) return;
+
         final Team attackerTeam = plugin.getTeamStorageUtil().findTeamByMember(attackingPlayer.getUniqueId()).orElse(null);
         final Team victimTeam = plugin.getTeamStorageUtil().findTeamByMember(victim.getUniqueId()).orElse(null);
 
