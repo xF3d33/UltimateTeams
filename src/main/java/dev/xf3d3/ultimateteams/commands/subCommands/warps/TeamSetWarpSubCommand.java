@@ -30,6 +30,12 @@ public class TeamSetWarpSubCommand {
             return;
         }
 
+        if (name.contains(" ")) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("incorrect-command-usage")));
+
+            return;
+        }
+
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
                     // Check permission

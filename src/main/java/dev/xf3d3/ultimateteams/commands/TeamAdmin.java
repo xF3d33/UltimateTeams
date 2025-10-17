@@ -7,6 +7,7 @@ import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.migrator.Migrator;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -125,7 +126,7 @@ public class TeamAdmin extends BaseCommand {
     @CommandPermission("ultimateteams.admin.team.join")
     @Syntax("<Player> <teamName>")
     public void teamJoinSubCommand(CommandSender sender, OnlinePlayer user, @Values("@teams") String teamName) {
-        final Player player = user.getPlayer();
+        Player player = user.getPlayer();
 
         if (plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).isPresent()) {
             String joinMessage = Utils.Color(messagesConfig.getString("team-invite-invited-already-in-team"));
@@ -149,6 +150,41 @@ public class TeamAdmin extends BaseCommand {
                 },
                 () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-join-failed")).replace("%TEAM%", teamName))
         );
+    }
+
+    @Subcommand("team transfer")
+    @CommandCompletion("@teams @onlineUsers @nothing")
+    @CommandPermission("ultimateteams.admin.team.transfer")
+    @Syntax("<team> <player>")
+    public void teamTransferSubCommand(CommandSender sender, @Values("@teams") String teamName, @Values("@onlineUsers") OfflinePlayer user) {
+
+        if (!user.hasPlayedBefore() || user.getName() == null) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("player-not-found")));
+            return;
+        }
+
+        plugin.getTeamStorageUtil().findTeamByName(teamName).ifPresentOrElse(
+                team -> {
+                    if (!team.getMembers().containsKey(user.getUniqueId())) {
+                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-ownership-transfer-failure-not-same-team")));
+                        return;
+                    }
+
+                    plugin.getTeamStorageUtil().transferTeamOwner(team, user.getUniqueId());
+
+
+                    sender.sendMessage(Utils.Color(messagesConfig.getString("team-ownership-transfer-successful")
+                            .replace("%PLAYER%", user.getName())));
+
+                    if (user.isOnline() && user.getPlayer() != null) {
+                        user.getPlayer().sendMessage(Utils.Color(messagesConfig.getString("team-ownership-transfer-new-owner")
+                                .replace("%TEAM%", team.getName())));
+                    }
+
+                },
+                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-not-found")))
+        );
+
     }
 
 }

@@ -58,7 +58,7 @@ public class Team {
 
     @Expose
     @Builder.Default
-    @Getter @Setter
+    @Setter
     private EnumSet<Permission> permissions = EnumSet.noneOf(Permission.class);
 
     @NotNull

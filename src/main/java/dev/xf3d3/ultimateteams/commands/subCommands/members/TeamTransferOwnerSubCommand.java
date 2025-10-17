@@ -52,7 +52,7 @@ public class TeamTransferOwnerSubCommand {
                         return;
                     }
 
-                    plugin.getTeamStorageUtil().transferTeamOwner(team, player, newTeamOwner.getUniqueId());
+                    plugin.getTeamStorageUtil().transferTeamOwner(team, newTeamOwner.getUniqueId());
 
                     String OLD_OWNER_PLACEHOLDER = "%OLDOWNER%";
                     String NEW_Team_NAME = "%Team%";

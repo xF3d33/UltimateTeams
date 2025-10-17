@@ -6,6 +6,7 @@ import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.network.Message;
 import dev.xf3d3.ultimateteams.network.Payload;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -200,18 +201,21 @@ public class TeamsStorage {
         plugin.runAsync(task -> updateTeamData(teamOwner, team));
     }
 
-    public void transferTeamOwner(Team team, Player originalTeamOwner, UUID newOwnerUUID) {
-        team.getMembers().put(originalTeamOwner.getUniqueId(), 1);
+    public void transferTeamOwner(Team team, UUID newOwnerUUID) {
+        team.getMembers().put(team.getOwner(), 1);
         team.getMembers().put(newOwnerUUID, 3);
 
+        Player randomPlayer = Bukkit.getOnlinePlayers().stream().findFirst().orElse(null);
+        if (randomPlayer == null) return;
+
         plugin.runAsync(task -> {
-            updateTeamData(originalTeamOwner, team);
+            updateTeamData(randomPlayer, team);
             plugin.getMessageBroker().ifPresent(broker -> Message.builder()
                     .type(Message.Type.TEAM_TRANSFERRED)
                     .payload(Payload.integer(team.getId()))
                     .target(Message.TARGET_ALL, Message.TargetType.SERVER)
                     .build()
-                    .send(broker, originalTeamOwner));
+                    .send(broker, randomPlayer));
         });
     }
 }
