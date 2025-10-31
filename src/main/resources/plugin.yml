@@ -1,11 +1,11 @@
 name: UltimateTeams
-version: "4.6.3"
+version: "dei2004-v1.0.0"
 main: dev.xf3d3.ultimateteams.UltimateTeams
 api-version: 1.16
 prefix: UltimateTeams
-website: "https://modrinth.com/plugin/ultimate-teams"
-authors: [ xF3d3 ]
-description: A simple and lightweight Teams plugin for Minecraft, with cross-server support, developed with optimization in mind!
+website: "https://github.com/dei2004"
+authors: [ xF3d3, dei0 ]
+description: A simple and lightweight Teams plugin for Minecraft, with cross-server support, developed with optimization in mind! Improved by dei0 with Team Ender Chest feature.
 folia-supported: true
 softdepend:
   - 'PlaceholderAPI'
@@ -54,6 +54,7 @@ permissions:
       ultimateteams.team.demote: true
       ultimateteams.team.permissions.add: true
       ultimateteams.team.permissions.remove: true
+      ultimateteams.team.echest: true
       ultimateteams.allychat: true
       ultimateteams.teamchat: true
 
@@ -70,3 +71,6 @@ permissions:
       ultimateteams.bypass.chatcooldown: true
       ultimateteams.bypass.warpcooldown: true
       ultimateteams.chat.spy: true
+      ultimateteams.admin.echest.add: true
+      ultimateteams.admin.echest.remove: true
+      ultimateteams.admin.echest.list: true

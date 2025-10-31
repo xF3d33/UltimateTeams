@@ -187,4 +187,29 @@ public class TeamAdmin extends BaseCommand {
 
     }
 
+    // TEAM ENDER CHEST ADMIN COMMANDS
+    @Subcommand("addechest")
+    @CommandCompletion("@teams <1-6|chest|doublechest> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.add")
+    @Syntax("<team-name> <rows|chest|doublechest>")
+    public void addEnderChestSubCommand(CommandSender sender, @Values("@teams") String teamName, String rowsOrType) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand(plugin).addEnderChest(sender, teamName, rowsOrType);
+    }
+
+    @Subcommand("removeechest")
+    @CommandCompletion("@teams <chest-number> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.remove")
+    @Syntax("<team-name> <chest-number>")
+    public void removeEnderChestSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand(plugin).removeEnderChest(sender, teamName, chestNumber);
+    }
+
+    @Subcommand("listechests")
+    @CommandCompletion("@teams @nothing")
+    @CommandPermission("ultimateteams.admin.echest.list")
+    @Syntax("<team-name>")
+    public void listEnderChestsSubCommand(CommandSender sender, @Values("@teams") String teamName) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand(plugin).listEnderChests(sender, teamName);
+    }
+
 }

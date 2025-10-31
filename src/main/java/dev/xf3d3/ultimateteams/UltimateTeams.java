@@ -277,6 +277,15 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         if (getSettings().doCheckForUpdates()) {
             updateChecker.checkForUpdates();
         }
+
+        // Plugin enabled message
+        sendConsole("-------------------------------------------");
+        sendConsole("&6UltimateTeams: &3Plugin by: &b&lxF3d3");
+        sendConsole("&6UltimateTeams: &3Improved by: &b&ldei0");
+        sendConsole("&6UltimateTeams: &3GitHub: &e&nhttps://github.com/dei2004");
+        sendConsole("&6UltimateTeams: &3Version: &d&l" + pluginVersion);
+        sendConsole("&6UltimateTeams: &aSuccessfully enabled!");
+        sendConsole("-------------------------------------------");
     }
 
     @Override
@@ -284,6 +293,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         // Plugin shutdown logic
         sendConsole("-------------------------------------------");
         sendConsole("&6UltimateTeams: &3Plugin by: &b&lxF3d3");
+        sendConsole("&6UltimateTeams: &3Improved by: &b&ldei0");
 
         // Cancel plugin tasks and close the database connection
         getScheduler().cancelAllTasks();

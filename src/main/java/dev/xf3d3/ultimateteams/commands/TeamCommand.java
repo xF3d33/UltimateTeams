@@ -349,6 +349,21 @@ public class TeamCommand extends BaseCommand {
         new TeamPermissionsSubCommand(plugin).teamPermissionsAddSubCommand(sender, permission);
     }
 
+    // TEAM ENDER CHEST
+    @Subcommand("echest")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.team.echest")
+    public void onTeamEnderChestCommand(@NotNull CommandSender sender) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand(plugin).openEnderChest(sender, 1);
+    }
+
+    @Subcommand("echest")
+    @CommandCompletion("<number> @nothing")
+    @CommandPermission("ultimateteams.team.echest")
+    public void onTeamEnderChestNumberCommand(@NotNull CommandSender sender, int chestNumber) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand(plugin).openEnderChest(sender, chestNumber);
+    }
+
     @Subcommand("permissions remove")
     @CommandCompletion("@teamPermissions @nothing")
     @Syntax("<permission>")

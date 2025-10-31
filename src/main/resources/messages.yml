@@ -242,7 +242,8 @@ team-command-incorrect-usage:
   line-16: "/team demote <player>"
   line-17: "/team permissions add <permission>"
   line-18: "/team permissions remove <permission>"
-  line-19: ""
+  line-19: "/team echest [number]"
+  line-20: ""
 
 #/teamadmin Command Responses
 teamadmin-command-incorrect-usage:
@@ -251,3 +252,10 @@ teamadmin-command-incorrect-usage:
   line-3: "/teamadmin reload"
   line-4: "/teamadmin disband <team-owner>"
   line-5: "/teamadmin about"
+#Team Ender Chest Messages
+team-echest-opened: "&3Opened team ender chest #%NUMBER%"
+team-echest-not-exist: "&cTeam ender chest #%NUMBER% does not exist!"
+team-echest-added: "&aAdded ender chest #%NUMBER% with %ROWS% rows to team %TEAM%"
+team-echest-removed: "&aRemoved ender chest #%NUMBER% from team %TEAM%"
+team-echest-rows-added: "&aAdded %ROWS% rows to chest #%NUMBER% (now %TOTAL% rows / %SLOTS% slots) for team %TEAM%"
+team-echest-page-added: "&aAdded %TYPE% page #%NUMBER% (%ROWS% rows / %SLOTS% slots) to team %TEAM%"
