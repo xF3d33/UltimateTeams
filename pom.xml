@@ -6,7 +6,7 @@
 
     <groupId>dev.xf3d3</groupId>
     <artifactId>UltimateTeams</artifactId>
-    <version>dei2004-v1.0.0</version>
+    <version>5.0.0</version>
     <packaging>jar</packaging>
 
     <name>UltimateTeams-dei2004</name>
@@ -17,6 +17,7 @@
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jar.finalName>UltimateTeams-dei2004-v1.0.0</jar.finalName>
     </properties>
 
     <repositories>
@@ -235,7 +236,7 @@
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}-${project.version}</finalName>
+        <finalName>${jar.finalName}</finalName>
         <defaultGoal>clean package</defaultGoal>
         <resources>
             <resource>
