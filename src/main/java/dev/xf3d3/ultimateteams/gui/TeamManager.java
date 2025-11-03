@@ -200,6 +200,33 @@ public class TeamManager {
                 plugin.getTeamsGui().getTeamsManagerGuiEnemiesText().toArray(new String[0])
         ));
 
+        // TEAM UPGRADES
+        DynamicGuiElement upgrades = new DynamicGuiElement('f', (viewer) -> new StaticGuiElement('f',
+                new ItemStack(plugin.getTeamsGui().getTeamsManagerGuiUpgradesMaterial()),
+                1, // Display a number as the item count
+                click -> {
+                    if (click.getType().isLeftClick()) {
+                        click.getGui().close();
+                        
+                        // Show upgrade info using the command
+                        new dev.xf3d3.ultimateteams.commands.subCommands.members.TeamUpgradeSubCommand(plugin).showUpgradeInfo(player);
+                    }
+
+                    return true;
+                },
+                plugin.getTeamsGui().getTeamsManagerGuiUpgradesText()
+                        .stream()
+                        .map(s -> s
+                                .replace("%MAX_MEMBERS%", String.valueOf(team.getMaxMembers()))
+                                .replace("%MAX_WARPS%", String.valueOf(team.getMaxWarps()))
+                                .replace("%REMAINING_MEMBERS%", String.valueOf(team.getRemainingMemberSlots()))
+                                .replace("%REMAINING_WARPS%", String.valueOf(team.getRemainingWarpSlots()))
+                        )
+                        .toArray(String[]::new)
+        ));
+
+        gui.addElement(upgrades);
+
         gui.show(player);
     }
 }

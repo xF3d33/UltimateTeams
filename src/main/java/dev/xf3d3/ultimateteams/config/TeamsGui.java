@@ -109,7 +109,7 @@ public class TeamsGui {
             "         ",
             "    x    ",
             "  abcde  ",
-            "    h    ",
+            "   fh    ",
             "         ",
             "    y    "
     );
@@ -326,6 +326,24 @@ public class TeamsGui {
             "&e&l%NAME%",
             " ",
             "&r&8&lRIGHT CLICK &r&7to delete the team from your enemies (you must be the team owner)"
+    );
+
+    // UPGRADES
+    @YamlComment("Upgrades item material (according to the server's version)")
+    @YamlKey("team-manager.upgrades.material")
+    @Getter
+    private Material teamsManagerGuiUpgradesMaterial = Material.EXPERIENCE_BOTTLE;
+
+    @YamlComment("Upgrades item name and lore (you can add more lines). Use %MAX_MEMBERS%, %MAX_WARPS%, %REMAINING_MEMBERS%, %REMAINING_WARPS% as placeholders")
+    @YamlKey("team-manager.upgrades.text")
+    @Getter
+    private List<String> teamsManagerGuiUpgradesText = List.of(
+            "&6&lTEAM UPGRADES",
+            " ",
+            "&r&7Max Members: &e%MAX_MEMBERS% &7(&a%REMAINING_MEMBERS% &7slots left)",
+            "&r&7Max Warps: &e%MAX_WARPS% &7(&a%REMAINING_WARPS% &7slots left)",
+            " ",
+            "&r&8&lLEFT CLICK &r&7to view upgrade options"
     );
 
 
