@@ -87,9 +87,12 @@ public class TeamChatCommand extends BaseCommand {
                     // Send message to team members
                     team.sendTeamMessage(Utils.Color(msg));
 
-                    // Send spy message
+                    // Send spy message directly to players with permission (hidden from Discord)
                     if (plugin.getSettings().teamChatSpyEnabled()) {
-                        Bukkit.broadcast(Utils.Color(chatSpyPrefix + " " + msg), "ultimateteams.chat.spy");
+                        String spyMessage = Utils.Color(chatSpyPrefix + " " + msg);
+                        Bukkit.getOnlinePlayers().stream()
+                                .filter(p -> p.hasPermission("ultimateteams.chat.spy"))
+                                .forEach(p -> p.sendMessage(spyMessage));
                     }
 
                     // Send globally via a message
