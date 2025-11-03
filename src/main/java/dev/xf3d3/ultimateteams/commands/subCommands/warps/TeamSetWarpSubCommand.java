@@ -45,8 +45,10 @@ public class TeamSetWarpSubCommand {
                     }
 
                     plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAccept(teamPlayer -> {
-                        if (team.getWarps().size() >= teamPlayer.getMaxWarps(player, plugin.getSettings().getTeamWarpLimit(), plugin.getSettings().getTeamWarpStackEnabled())) {
-                            player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-limit-reached")));
+                        // Check if team has reached max warps limit
+                        if (team.hasReachedMaxWarps()) {
+                            player.sendMessage(Utils.Color("&cYour team has reached the maximum warp limit of &e" + team.getMaxWarps() + "&c!"));
+                            player.sendMessage(Utils.Color("&7Use &e/team upgrade warps &7to increase this limit."));
                             return;
                         }
 

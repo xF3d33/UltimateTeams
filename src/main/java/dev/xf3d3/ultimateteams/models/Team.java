@@ -66,6 +66,16 @@ public class Team {
     @Builder.Default
     private Map<Integer, TeamEnderChest> enderChests = Maps.newHashMap();
 
+    @Expose
+    @Getter @Setter
+    @Builder.Default
+    private int maxMembers = 8; // Default max members (configurable)
+
+    @Expose
+    @Getter @Setter
+    @Builder.Default
+    private int maxWarps = 2; // Default max warps (configurable)
+
     @NotNull
     @ApiStatus.Internal
     public static Team create(@NotNull String name, @NotNull Player owner, @NotNull Boolean friendlyFire) {
@@ -79,11 +89,17 @@ public class Team {
         Map<Integer, TeamEnderChest> defaultChests = Maps.newHashMap();
         defaultChests.put(1, defaultChest);
         
+        // Get default max values from config
+        int defaultMaxMembers = dev.xf3d3.ultimateteams.UltimateTeams.getPlugin().getSettings().getDefaultMaxMembers();
+        int defaultMaxWarps = dev.xf3d3.ultimateteams.UltimateTeams.getPlugin().getSettings().getDefaultMaxWarps();
+        
         return Team.builder()
                 .name(name)
                 .friendlyFire(friendlyFire)
                 .members(Maps.newHashMap(Map.of(owner.getUniqueId(), TeamRank.OWNER.getWeight())))
                 .enderChests(defaultChests)
+                .maxMembers(defaultMaxMembers)
+                .maxWarps(defaultMaxWarps)
                 .build();
     }
 
@@ -358,6 +374,56 @@ public class Team {
      */
     public void demoteFromCoOwner(@NotNull UUID uuid) {
         setMemberRank(uuid, TeamRank.MANAGER);
+    }
+
+    // ========== Team Limits & Upgrades ==========
+
+    /**
+     * Check if the team has reached max members
+     * @return true if at or over limit
+     */
+    public boolean hasReachedMaxMembers() {
+        return members.size() >= maxMembers;
+    }
+
+    /**
+     * Check if the team has reached max warps
+     * @return true if at or over limit
+     */
+    public boolean hasReachedMaxWarps() {
+        return warps.size() >= maxWarps;
+    }
+
+    /**
+     * Upgrade max members by specified amount
+     * @param amount The amount to increase
+     */
+    public void upgradeMaxMembers(int amount) {
+        this.maxMembers += amount;
+    }
+
+    /**
+     * Upgrade max warps by specified amount
+     * @param amount The amount to increase
+     */
+    public void upgradeMaxWarps(int amount) {
+        this.maxWarps += amount;
+    }
+
+    /**
+     * Get remaining member slots
+     * @return Number of available member slots
+     */
+    public int getRemainingMemberSlots() {
+        return Math.max(0, maxMembers - members.size());
+    }
+
+    /**
+     * Get remaining warp slots
+     * @return Number of available warp slots
+     */
+    public int getRemainingWarpSlots() {
+        return Math.max(0, maxWarps - warps.size());
     }
 }
 

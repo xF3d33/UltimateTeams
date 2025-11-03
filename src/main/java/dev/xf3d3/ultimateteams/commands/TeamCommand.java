@@ -355,6 +355,26 @@ public class TeamCommand extends BaseCommand {
     }
 
 
+    // TEAM UPGRADES
+    @Subcommand("upgrade")
+    @CommandPermission("ultimateteams.team.upgrade.info")
+    public void onTeamUpgradeInfoCommand(@NotNull CommandSender sender) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.members.TeamUpgradeSubCommand(plugin).showUpgradeInfo(sender);
+    }
+
+    @Subcommand("upgrade members")
+    @CommandPermission("ultimateteams.team.upgrade.members")
+    public void onTeamUpgradeMembersCommand(@NotNull CommandSender sender) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.members.TeamUpgradeSubCommand(plugin).upgradeMembers(sender);
+    }
+
+    @Subcommand("upgrade warps")
+    @CommandPermission("ultimateteams.team.upgrade.warps")
+    public void onTeamUpgradeWarpsCommand(@NotNull CommandSender sender) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.members.TeamUpgradeSubCommand(plugin).upgradeWarps(sender);
+    }
+
+
     // TEAM PERMISSIONS
     @Subcommand("permissions")
     public void onTeamPermissionsCommand(@NotNull CommandSender sender) {

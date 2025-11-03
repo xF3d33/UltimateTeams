@@ -336,6 +336,33 @@ public class Settings {
     @Getter
     private double teamCreateCost = 100.0;
 
+
+    // Team Upgrades
+    @YamlComment("Default maximum members limit for new teams")
+    @YamlKey("team.upgrades.default-max-members")
+    @Getter
+    private int defaultMaxMembers = 8;
+
+    @YamlComment("Default maximum warps limit for new teams")
+    @YamlKey("team.upgrades.default-max-warps")
+    @Getter
+    private int defaultMaxWarps = 2;
+
+    @YamlComment("Cost to upgrade max members (requires Vault)")
+    @YamlKey("team.upgrades.cost.members")
+    @Getter
+    private double upgradeCostMembers = 1000.0;
+
+    @YamlComment("Cost to upgrade max warps (requires Vault)")
+    @YamlKey("team.upgrades.cost.warps")
+    @Getter
+    private double upgradeCostWarps = 1000.0;
+
+    @YamlComment("Amount to increase limit by per upgrade")
+    @YamlKey("team.upgrades.upgrade-amount")
+    @Getter
+    private int upgradeAmount = 1;
+
     // Update Checker
     @YamlComment("Do you want to enable in game plugin update notifications? (Permission:'ultimateteams.update'). [Default value: true]")
     @YamlKey("plugin-update-notifications.enabled")

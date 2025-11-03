@@ -71,10 +71,10 @@ public class TeamInviteSubCommand {
 
 
                     plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAccept(teamPlayer -> {
-                        final int maxMembers = teamPlayer.getMaxMembers(player, plugin.getSettings().getTeamMaxSize(), plugin.getSettings().getStackedTeamSize());
-
-                        if (team.getMembers().size() >= maxMembers) {
-                            player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-max-size-reached")).replace("%LIMIT%", String.valueOf(maxMembers)));
+                        // Check if team has reached max members limit
+                        if (team.hasReachedMaxMembers()) {
+                            player.sendMessage(Utils.Color("&cYour team has reached the maximum member limit of &e" + team.getMaxMembers() + "&c!"));
+                            player.sendMessage(Utils.Color("&7Use &e/team upgrade members &7to increase this limit."));
                             return;
                         }
 
