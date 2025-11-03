@@ -29,6 +29,15 @@ The whole plugin is developed with optimization in mind, and it has been tested 
 ⭐ **Home & Warps**\
 Each team can have a home and one ore more warps (check the config). Teleportation can also be handled by HuskHomes
 
+⭐ **Team Upgrades System** *(NEW in v1.0.3)*\
+Teams can now purchase upgrades to increase their member and warp limits using economy integration (Vault)
+
+⭐ **Co-Owner Rank** *(NEW in v1.0.3)*\
+Introducing a new rank between Owner and Manager with invite/kick permissions but cannot disband the team
+
+⭐ **Interactive Invites** *(NEW in v1.0.3)*\
+Modern clickable accept/decline buttons for team invitations with hover text
+
 ⭐ **Bedrock Support** \
 With floodgate correctly installed, bedrock players are automatically managed
 
@@ -45,7 +54,7 @@ Some placeholders are already available without requiring to download an externa
 Staff members can force players to join a team or disband another
 
 ⭐ **GUI**\
-Teams list can also be accessed in a paginated GUI
+Teams list can also be accessed in a paginated GUI with upgrade management
 <br>&nbsp;<br>
 <center>
 <img     src="https://cdn.modrinth.com/data/cached_images/257f92ada5da2edf5e0513324f56f5190dff15d0.png"  alt="Image Description" width="400">
@@ -56,10 +65,11 @@ Teams list can also be accessed in a paginated GUI
 Aliases: `/team`
 
 The `/team` command is the main command of the plugin, with `/team` you can do the following:
+* `/team` - Opens Team Manager GUI (if in a team) or Team List GUI (if not in a team)
 * `/team create <name>` - Creates A new team if not already in one
 * `/team disband` - If you are the team owner, this will destroy your team
 * `/team leave` - If you are in a team, this will remove you from it
-* `/team invite <player>` - Will invite a player to your team if they are not already in one
+* `/team invite <player>` - Will invite a player to your team if they are not already in one *(simplified in v1.0.3)*
 * `/team join` - Will add you to a team that you have been invited too.
 * `/team kick <player>` - Will kick a player from your team
 * `/team info` - Will display information about your current team
@@ -71,6 +81,11 @@ The `/team` command is the main command of the plugin, with `/team` you can do t
 * `/team [sethome|home]` - Will set a team home location or teleport you or you team members to this location.
 * `/team [promote|demote] <player>` - Will promote/demote a team member to/from team manager.
 * `/team permission [add|remove] <permission>` - Will add/remove a permission to make team managers use specific team commands.
+* `/team coowner <player>` - Will promote a player to Co-Owner rank *(NEW in v1.0.3)*
+* `/team coowner demote <player>` - Will demote a Co-Owner to Manager rank *(NEW in v1.0.3)*
+* `/team upgrade` - View current team limits and upgrade costs *(NEW in v1.0.3)*
+* `/team upgrade members` - Purchase an upgrade to increase max member limit *(NEW in v1.0.3)*
+* `/team upgrade warps` - Purchase an upgrade to increase max warp limit *(NEW in v1.0.3)*
 
 ## /teamadmin command
 Aliases: `/ta`
@@ -126,6 +141,11 @@ Player permissions
 * `ultimateteams.team.demote`
 * `ultimateteams.team.permissions.add`
 * `ultimateteams.team.permissions.remove`
+* `ultimateteams.team.coowner.promote` *(NEW in v1.0.3)*
+* `ultimateteams.team.coowner.demote` *(NEW in v1.0.3)*
+* `ultimateteams.team.upgrade.info` *(NEW in v1.0.3)*
+* `ultimateteams.team.upgrade.members` *(NEW in v1.0.3)*
+* `ultimateteams.team.upgrade.warps` *(NEW in v1.0.3)*
 * `ultimateteams.allychat`
 * `ultimateteams.teamchat`
 
@@ -148,7 +168,7 @@ Admin permissions:
 
 UltimateTeams exposes `8` external placeholders using `PlaceholderAPI` to enable the fetching of a players team name or the team prefix or if the team has friendly fire enabled or if the team has a home set.
 
-The four available placeholders are:
+The available placeholders are:
 * `%ultimateteams_teamName%`
 * `%ultimateteams_teamPrefix%`
 * `%ultimateteams_friendlyFire%`
@@ -159,6 +179,47 @@ The four available placeholders are:
 * `%ultimateteams_isInTeam%`
 
 To be able to use these The latest release of [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) MUST be installed!  Without it, you can't use these placeholders.
+
+<br>&nbsp;<br>
+
+## What's New in v1.0.3-dei2004
+
+### 🏆 Team Upgrades System
+- Teams can purchase upgrades to increase member and warp limits
+- Default limits: 8 members, 2 warps (configurable)
+- Economy integration via Vault (default cost: $1000 per upgrade)
+- Commands: `/team upgrade members`, `/team upgrade warps`, `/team upgrade` (info)
+
+### 👑 Co-Owner Rank
+- New rank between Owner and Manager
+- 4-tier hierarchy: Owner → Co-Owner → Manager → Member
+- Co-Owners can invite/kick but cannot disband teams
+- Commands: `/team coowner <player>`, `/team coowner demote <player>`
+
+### ⚡ Simplified Commands
+- `/team invite <player>` - Quick invite without typing "send"
+- `/team` - Smart behavior: opens Team Manager or Team List based on status
+
+### 🎯 Interactive Features
+- Clickable accept/decline buttons for team invitations
+- Hover text for better user experience
+- Updated Team Manager GUI with upgrade button
+
+### 🐛 Bug Fixes
+- Fixed NullPointerException when Vault is not installed
+- Improved error messages for missing economy plugin
+- Enhanced validation for team limits
+
+<br>&nbsp;<br>
+
+## Requirements for v1.0.3+
+
+For the upgrade system to work, you need:
+- **Vault** plugin installed
+- **Economy plugin** (EssentialsX, CMI, etc.)
+- Enable `economy.enable: true` in config.yml
+
+<br>&nbsp;<br>
 
 ## Please report any issue on GitHub.
 
