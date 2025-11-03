@@ -67,7 +67,20 @@ public class TeamPrefixSubCommand {
                         team.setPrefix(prefix);
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-change-successful")).replace("%TEAMPREFIX%", prefix));
+                        // Update EssentialsX scoreboard team if hook is enabled
+                        if (plugin.getSettings().EssentialsHook() && plugin.getEssentialsHook() != null) {
+                            plugin.runSync(task -> plugin.getEssentialsHook().updateTeamMembers(team));
+                        }
+
+                        // Show success message with colored prefix
+                        String successMessage = messagesConfig.getString("team-prefix-change-successful");
+                        if (successMessage != null) {
+                            // Replace placeholder with colored version for display
+                            successMessage = successMessage.replace("%TEAMPREFIX%", Utils.Color(prefix));
+                            sender.sendMessage(Utils.Color(successMessage));
+                        } else {
+                            sender.sendMessage(Utils.Color("&aTeam prefix changed to: " + Utils.Color(prefix)));
+                        }
                     },
                     () -> sender.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
             );

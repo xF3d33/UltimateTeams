@@ -49,6 +49,7 @@ permissions:
       ultimateteams.team.list: true
       ultimateteams.team.transfer: true
       ultimateteams.team.prefix: true
+      ultimateteams.team.tag.usecolors: true
       ultimateteams.team.info: true
       ultimateteams.team.promote: true
       ultimateteams.team.demote: true
@@ -74,3 +75,4 @@ permissions:
       ultimateteams.admin.echest.add: true
       ultimateteams.admin.echest.remove: true
       ultimateteams.admin.echest.list: true
+      ultimateteams.admin.echest.see: true

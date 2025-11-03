@@ -88,6 +88,11 @@ public class TeamsStorage {
         plugin.getDatabase().deleteTeam(team.getId());
         removeTeam(team);
 
+        // Clean up EssentialsX scoreboard team if hook is enabled
+        if (plugin.getSettings().EssentialsHook() && plugin.getEssentialsHook() != null) {
+            plugin.runSync(task -> plugin.getEssentialsHook().cleanupTeam(team));
+        }
+
         // Propagate the town deletion to all servers
         if (player != null) {
             plugin.getMessageBroker().ifPresent(broker -> Message.builder()
@@ -107,8 +112,20 @@ public class TeamsStorage {
         return teams.stream().anyMatch(team -> team.getOwner().equals(player.getUniqueId()));
     }
 
+    public boolean isTeamCoOwner(Player player) {
+        return teams.stream().anyMatch(team -> team.isCoOwner(player.getUniqueId()));
+    }
+
+    public boolean isTeamCoOwnerOrHigher(Player player) {
+        return teams.stream().anyMatch(team -> team.isCoOwnerOrHigher(player.getUniqueId()));
+    }
+
     public boolean isTeamManager(Player player) {
         return teams.stream().anyMatch(team -> team.getMembers().getOrDefault(player.getUniqueId(), 0) == 2);
+    }
+
+    public boolean isTeamManagerOrHigher(Player player) {
+        return teams.stream().anyMatch(team -> team.isManagerOrHigher(player.getUniqueId()));
     }
 
     public Optional<Team> findTeam(int id) {
@@ -131,6 +148,11 @@ public class TeamsStorage {
     public void addTeamMember(Team team, Player player) {
         team.addMember(player.getUniqueId(), null);
         plugin.runAsync(task -> updateTeamData(player, team));
+        
+        // Update EssentialsX scoreboard team if hook is enabled
+        if (plugin.getSettings().EssentialsHook() && plugin.getEssentialsHook() != null) {
+            plugin.runSync(task -> plugin.getEssentialsHook().updatePlayerScoreboardTeam(player));
+        }
     }
 
     public void addTeamEnemy(Team team, Team otherTeam, Player player) {
@@ -191,6 +213,11 @@ public class TeamsStorage {
                                     plugin.getDatabase().updatePlayer(teamPlayer);
                                 }
                             });
+                            
+                            // Update EssentialsX scoreboard team if hook is enabled
+                            if (plugin.getSettings().EssentialsHook() && plugin.getEssentialsHook() != null) {
+                                plugin.runSync(task -> plugin.getEssentialsHook().removePlayerFromScoreboardTeam(onlineUser));
+                            }
                         },
                         () -> plugin.getMessageBroker().ifPresent(broker -> Message.builder()
                                 .type(Message.Type.TEAM_EVICTED)

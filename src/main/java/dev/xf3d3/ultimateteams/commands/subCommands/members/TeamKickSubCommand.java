@@ -34,8 +34,12 @@ public class TeamKickSubCommand {
 
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
-                    // Check permission
-                    if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.KICK)))) {
+                    // Check permission - Co-owners can kick without needing the KICK permission
+                    boolean canKick = plugin.getTeamStorageUtil().isTeamOwner(player) 
+                        || plugin.getTeamStorageUtil().isTeamCoOwner(player)
+                        || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.KICK));
+                    
+                    if (!canKick) {
                         sender.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
                         return;
                     }

@@ -82,6 +82,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     @Getter private Settings settings;
     @Getter private TeamsGui teamsGui;
     @Getter @Nullable private VaultHook economyHook;
+    @Getter @Nullable private EssentialsHook essentialsHook;
 
     // HashMaps
     private final ConcurrentHashMap<String, Player> bedrockPlayers = new ConcurrentHashMap<>();
@@ -258,6 +259,26 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         // Enable economy features
         if (getServer().getPluginManager().isPluginEnabled("Vault") && getSettings().isEconomyEnabled()) {
             initialize("economy", (plugin) -> this.economyHook = new VaultHook(this));
+        }
+
+        // Initialize EssentialsX hook
+        if (getServer().getPluginManager().isPluginEnabled("Essentials") && getSettings().EssentialsHook()) {
+            sendConsole("-------------------------------------------");
+            sendConsole("&6UltimateTeams: &3EssentialsX found!");
+            
+            initialize("essentials", (plugin) -> {
+                this.essentialsHook = new EssentialsHook(this);
+                // Update all online players' scoreboard teams
+                this.essentialsHook.updateAllPlayers();
+            });
+            
+            sendConsole("&6UltimateTeams: &3Team data will be available via {TEAMNAME}, {TEAMPREFIX}, {TEAMSUFFIX}");
+            sendConsole("-------------------------------------------");
+        } else {
+            sendConsole("-------------------------------------------");
+            sendConsole("&6UltimateTeams: &3EssentialsX not found/feature disabled!");
+            sendConsole("&6UltimateTeams: &3Scoreboard team integration disabled!");
+            sendConsole("-------------------------------------------");
         }
 
         // Start auto invite clear task

@@ -25,10 +25,18 @@ public class TeamAdmin extends BaseCommand {
 
     private final UltimateTeams plugin;
     private Migrator migrator;
+    
+    // Ender chest subcommand instances (shared for real-time sync between admin and players)
+    private final dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand teamEnderChestSubCommand;
+    private final dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand teamAdminEnderChestSubCommand;
 
     public TeamAdmin(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
+        
+        // Initialize ender chest subcommands
+        this.teamEnderChestSubCommand = new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand(plugin);
+        this.teamAdminEnderChestSubCommand = new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand(plugin, teamEnderChestSubCommand);
     }
 
 
@@ -193,7 +201,7 @@ public class TeamAdmin extends BaseCommand {
     @CommandPermission("ultimateteams.admin.echest.add")
     @Syntax("<team-name> <rows|chest|doublechest>")
     public void addEnderChestSubCommand(CommandSender sender, @Values("@teams") String teamName, String rowsOrType) {
-        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand(plugin).addEnderChest(sender, teamName, rowsOrType);
+        teamAdminEnderChestSubCommand.addEnderChest(sender, teamName, rowsOrType);
     }
 
     @Subcommand("removeechest")
@@ -201,7 +209,7 @@ public class TeamAdmin extends BaseCommand {
     @CommandPermission("ultimateteams.admin.echest.remove")
     @Syntax("<team-name> <chest-number>")
     public void removeEnderChestSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber) {
-        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand(plugin).removeEnderChest(sender, teamName, chestNumber);
+        teamAdminEnderChestSubCommand.removeEnderChest(sender, teamName, chestNumber);
     }
 
     @Subcommand("listechests")
@@ -209,7 +217,15 @@ public class TeamAdmin extends BaseCommand {
     @CommandPermission("ultimateteams.admin.echest.list")
     @Syntax("<team-name>")
     public void listEnderChestsSubCommand(CommandSender sender, @Values("@teams") String teamName) {
-        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand(plugin).listEnderChests(sender, teamName);
+        teamAdminEnderChestSubCommand.listEnderChests(sender, teamName);
+    }
+
+    @Subcommand("see")
+    @CommandCompletion("@teams <chest-number> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.see")
+    @Syntax("<team-name> <chest-number>")
+    public void seeEnderChestSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber) {
+        teamAdminEnderChestSubCommand.seeEnderChest(sender, teamName, chestNumber);
     }
 
 }

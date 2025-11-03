@@ -6,6 +6,8 @@ import dev.xf3d3.ultimateteams.models.TeamEnderChest;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -13,10 +15,12 @@ import java.util.Optional;
 public class TeamAdminEnderChestSubCommand {
     private final UltimateTeams plugin;
     private final FileConfiguration messagesConfig;
+    private final TeamEnderChestSubCommand teamEnderChestSubCommand;
     
-    public TeamAdminEnderChestSubCommand(@NotNull UltimateTeams plugin) {
+    public TeamAdminEnderChestSubCommand(@NotNull UltimateTeams plugin, @NotNull TeamEnderChestSubCommand teamEnderChestSubCommand) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
+        this.teamEnderChestSubCommand = teamEnderChestSubCommand;
     }
     
     /**
@@ -222,5 +226,67 @@ public class TeamAdminEnderChestSubCommand {
             sender.sendMessage(Utils.Color("&e  #" + chest.getChestNumber() + " - " + chestType + 
                     " (" + chest.getSize() + " slots)"));
         });
+    }
+    
+    /**
+     * Open an ender chest for viewing/editing (admin only)
+     * Uses the same shared inventory system as players for real-time synchronization
+     * @param sender The command sender (must be a player)
+     * @param teamName The name of the team
+     * @param chestNumber The chest number to view
+     */
+    public void seeEnderChest(@NotNull CommandSender sender, @NotNull String teamName, int chestNumber) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            return;
+        }
+        
+        // Find the team
+        Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByName(teamName);
+        if (teamOpt.isEmpty()) {
+            String message = messagesConfig.getString("team-not-found");
+            if (message != null) {
+                message = message.replace("%TEAM%", teamName);
+                sender.sendMessage(Utils.Color(message));
+            } else {
+                sender.sendMessage(Utils.Color("&cTeam not found: " + teamName));
+            }
+            return;
+        }
+        
+        Team team = teamOpt.get();
+        
+        // Check if the chest exists
+        if (!team.hasEnderChest(chestNumber)) {
+            String message = messagesConfig.getString("team-echest-not-exist");
+            if (message != null) {
+                message = message.replace("%NUMBER%", String.valueOf(chestNumber));
+                sender.sendMessage(Utils.Color(message));
+            } else {
+                sender.sendMessage(Utils.Color("&cTeam ender chest #" + chestNumber + " does not exist!"));
+            }
+            return;
+        }
+        
+        TeamEnderChest chest = team.getEnderChest(chestNumber).get();
+        
+        // Use the shared inventory system from TeamEnderChestSubCommand
+        // This ensures admins see real-time changes alongside players
+        Inventory sharedInventory = teamEnderChestSubCommand.getOrCreateSharedInventory(team, chest, chestNumber);
+        
+        // Track this admin viewer using the same system as regular players
+        teamEnderChestSubCommand.trackAdminViewer(player.getUniqueId(), team.getId(), chestNumber);
+        
+        // Open the shared inventory
+        player.openInventory(sharedInventory);
+        
+        sender.sendMessage(Utils.Color("&c[ADMIN] &aOpened team ender chest #" + chestNumber + 
+                " for team &6" + team.getName() + "&a (Real-time View)"));
+        sender.sendMessage(Utils.Color("&eChanges are synchronized in real-time with all viewers."));
+        
+        if (plugin.getSettings().debugModeEnabled()) {
+            plugin.log(java.util.logging.Level.INFO, 
+                "Admin " + player.getName() + " opened shared chest #" + chestNumber + " for team " + team.getName());
+        }
     }
 }

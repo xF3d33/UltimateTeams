@@ -40,6 +40,10 @@ public class TeamEnderChestSubCommand implements Listener {
     // Track viewers for each shared inventory
     private static final Map<String, Set<UUID>> inventoryViewers = new HashMap<>();
     
+    // Track pending saves to prevent concurrent database writes (key: teamId-chestNumber)
+    private static final Map<String, Integer> pendingSaveTasks = new HashMap<>();
+    private static final long SAVE_DELAY_TICKS = 20L; // 1 second delay before saving
+    
     public TeamEnderChestSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
@@ -57,8 +61,9 @@ public class TeamEnderChestSubCommand implements Listener {
     
     /**
      * Get or create a shared inventory for a team chest
+     * Made public to allow admin commands to use the same shared inventory system
      */
-    private Inventory getOrCreateSharedInventory(@NotNull Team team, @NotNull TeamEnderChest chest, int chestNumber) {
+    public Inventory getOrCreateSharedInventory(@NotNull Team team, @NotNull TeamEnderChest chest, int chestNumber) {
         String key = getInventoryKey(team.getId(), chestNumber);
         
         Inventory inventory = sharedInventories.get(key);
@@ -86,25 +91,64 @@ public class TeamEnderChestSubCommand implements Listener {
     }
     
     /**
-     * Save the inventory contents to the database asynchronously
+     * Track an admin viewer for a team chest
+     * This allows admins to see the same real-time inventory as players
+     */
+    public void trackAdminViewer(@NotNull UUID adminUUID, int teamId, int chestNumber) {
+        String key = getInventoryKey(teamId, chestNumber);
+        activeViews.put(adminUUID, new TeamChestView(teamId, chestNumber));
+        inventoryViewers.computeIfAbsent(key, k -> new HashSet<>()).add(adminUUID);
+        
+        if (plugin.getSettings().debugModeEnabled()) {
+            plugin.log(java.util.logging.Level.INFO, 
+                "Admin viewer added to chest " + key + " (total viewers: " + inventoryViewers.get(key).size() + ")");
+        }
+    }
+    
+    /**
+     * Save the inventory contents to the database asynchronously with debouncing
+     * This prevents concurrent database writes when multiple players interact rapidly
      */
     private void saveInventoryAsync(@NotNull Team team, int chestNumber, @NotNull Inventory inventory) {
-        plugin.runAsync(task -> {
-            Optional<TeamEnderChest> chestOpt = team.getEnderChest(chestNumber);
-            if (chestOpt.isPresent()) {
-                TeamEnderChest chest = chestOpt.get();
-                ItemStack[] contents = inventory.getContents();
-                chest.setContents(contents);
-                
-                // Update the team in storage
-                plugin.getTeamStorageUtil().updateTeamData(null, team);
-                
-                if (plugin.getSettings().debugModeEnabled()) {
-                    plugin.log(java.util.logging.Level.INFO, 
-                        "Auto-saved team ender chest #" + chestNumber + " for team " + team.getName());
-                }
+        String key = getInventoryKey(team.getId(), chestNumber);
+        
+        // Cancel any pending save task for this chest (synchronized to prevent race conditions)
+        synchronized (pendingSaveTasks) {
+            Integer existingTaskId = pendingSaveTasks.get(key);
+            if (existingTaskId != null) {
+                Bukkit.getScheduler().cancelTask(existingTaskId);
+                pendingSaveTasks.remove(key);
             }
-        });
+            
+            // Schedule a new save task with delay (debouncing)
+            int taskId = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                // Remove from pending tasks (synchronized)
+                synchronized (pendingSaveTasks) {
+                    pendingSaveTasks.remove(key);
+                }
+                
+                // Perform the actual save asynchronously
+                plugin.runAsync(task -> {
+                    Optional<TeamEnderChest> chestOpt = team.getEnderChest(chestNumber);
+                    if (chestOpt.isPresent()) {
+                        TeamEnderChest chest = chestOpt.get();
+                        ItemStack[] contents = inventory.getContents();
+                        chest.setContents(contents);
+                        
+                        // Update the team in storage
+                        plugin.getTeamStorageUtil().updateTeamData(null, team);
+                        
+                        if (plugin.getSettings().debugModeEnabled()) {
+                            plugin.log(java.util.logging.Level.INFO, 
+                                "Auto-saved team ender chest #" + chestNumber + " for team " + team.getName());
+                        }
+                    }
+                });
+            }, SAVE_DELAY_TICKS).getTaskId();
+            
+            // Track this pending save
+            pendingSaveTasks.put(key, taskId);
+        }
     }
 
     
@@ -241,8 +285,16 @@ public class TeamEnderChestSubCommand implements Listener {
         if (viewers != null) {
             viewers.remove(playerUUID);
             
-            // If no more viewers, save and remove the shared inventory
+            // If no more viewers, save immediately and remove the shared inventory
             if (viewers.isEmpty()) {
+                // Cancel any pending save task since we're doing an immediate save (synchronized)
+                synchronized (pendingSaveTasks) {
+                    Integer pendingTaskId = pendingSaveTasks.remove(key);
+                    if (pendingTaskId != null) {
+                        Bukkit.getScheduler().cancelTask(pendingTaskId);
+                    }
+                }
+                
                 // Find the team
                 Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeam(view.teamId);
                 if (teamOpt.isPresent()) {
@@ -253,7 +305,7 @@ public class TeamEnderChestSubCommand implements Listener {
                     if (chestOpt.isPresent()) {
                         TeamEnderChest chest = chestOpt.get();
                         
-                        // Save the contents
+                        // Save the contents immediately (not debounced since chest is closing)
                         ItemStack[] contents = event.getInventory().getContents();
                         chest.setContents(contents);
                         

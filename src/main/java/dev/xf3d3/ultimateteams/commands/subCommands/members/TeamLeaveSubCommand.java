@@ -38,6 +38,11 @@ public class TeamLeaveSubCommand {
 
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
+                        // Update EssentialsX scoreboard team if hook is enabled
+                        if (plugin.getSettings().EssentialsHook() && plugin.getEssentialsHook() != null) {
+                            plugin.runSync(task -> plugin.getEssentialsHook().removePlayerFromScoreboardTeam(player));
+                        }
+
                         String leaveMessage = Utils.Color(messagesConfig.getString("team-leave-successful")).replace(Team_PLACEHOLDER, Utils.Color(team.getName()));
                         player.sendMessage(leaveMessage);
 

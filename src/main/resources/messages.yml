@@ -93,10 +93,11 @@ incorrect-kick-command-usage: "&3Unrecognised argument please use &6/team kick <
 failed-cannot-kick-yourself: "&3You cannot kick yourself, use &6/team leave&3."
 
 #Team Prefix Messages
-team-prefix-change-successful: "&3Successfully changed team prefix to &6%TEAMPREFIX%&3!"
+team-prefix-change-successful: "&3Successfully changed team prefix to %TEAMPREFIX%&r&3!"
 team-prefix-too-long: "&3Team prefix too long - maximum length is &6%CHARMAX% &3characters."
 team-prefix-too-short: "&3Team prefix too short - minimum length is &6%CHARMIN% &3characters."
 team-invalid-prefix: "&3Please provide a new prefix. Use &b/team prefix <prefix>&3!"
+team-prefix-color-hint: "&7Tip: Use &e&& &7for color codes (e.g. &c&a for green) or &e# &7for hex colors (e.g. &#FF5555)"
 team-prefix-already-taken: "&3Sorry but &6%TEAMPREFIX% &3is already taken.\n&3Please choose another!"
 team-prefix-is-banned: "&3Sorry but &6%TEAMPREFIX% &3is a &cBANNED &3name!\n&3Please choose another!"
 must-be-owner-to-change-prefix: "&3You are not an owner of a team!"
@@ -252,6 +253,10 @@ teamadmin-command-incorrect-usage:
   line-3: "/teamadmin reload"
   line-4: "/teamadmin disband <team-owner>"
   line-5: "/teamadmin about"
+  line-6: "/teamadmin see <team-name> <chest-number>"
+  line-7: "/teamadmin addechest <team-name> <rows|chest|doublechest>"
+  line-8: "/teamadmin removeechest <team-name> <chest-number>"
+  line-9: "/teamadmin listechests <team-name>"
 #Team Ender Chest Messages
 team-echest-opened: "&3Opened team ender chest #%NUMBER%"
 team-echest-not-exist: "&cTeam ender chest #%NUMBER% does not exist!"

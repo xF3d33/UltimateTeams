@@ -156,6 +156,15 @@ public class TeamCommand extends BaseCommand {
         new TeamInviteSubCommand(plugin).teamInviteSendSubCommand(sender, invitee);
     }
 
+    @Subcommand("invite")
+    @CommandCompletion("@onlineUsers @nothing")
+    @Syntax("<playername>")
+    @CommandPermission("ultimateteams.team.invite.send")
+    public void onTeamInviteCommand(@NotNull CommandSender sender, @Values("@onlineUsers") String invitee) {
+        // Simplified invite command - same as /team invite send
+        new TeamInviteSubCommand(plugin).teamInviteSendSubCommand(sender, invitee);
+    }
+
     @Subcommand("invite accept")
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.team.invite.accept")
@@ -328,6 +337,21 @@ public class TeamCommand extends BaseCommand {
     @CommandPermission("ultimateteams.team.demote")
     public void onTeamDemoteCommand(@NotNull Player sender, @Values("@teamPlayers") OfflinePlayer offlinePlayer) {
         new TeamManagersSubCommand(plugin).teamDemoteSubCommand(sender, offlinePlayer);
+    }
+
+    // TEAM CO-OWNER
+    @Subcommand("coowner")
+    @CommandCompletion("@teamPlayers")
+    @CommandPermission("ultimateteams.team.coowner.promote")
+    public void onTeamCoOwnerPromoteCommand(@NotNull Player sender, @Values("@teamPlayers") OfflinePlayer offlinePlayer) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.members.TeamCoOwnerSubCommand(plugin).promoteToCoOwner(sender, offlinePlayer);
+    }
+
+    @Subcommand("coowner demote")
+    @CommandCompletion("@teamPlayers")
+    @CommandPermission("ultimateteams.team.coowner.demote")
+    public void onTeamCoOwnerDemoteCommand(@NotNull Player sender, @Values("@teamPlayers") OfflinePlayer offlinePlayer) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.members.TeamCoOwnerSubCommand(plugin).demoteFromCoOwner(sender, offlinePlayer);
     }
 
 

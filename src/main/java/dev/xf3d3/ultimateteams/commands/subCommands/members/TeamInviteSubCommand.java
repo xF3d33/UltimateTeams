@@ -3,6 +3,10 @@ package dev.xf3d3.ultimateteams.commands.subCommands.members;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -37,8 +41,12 @@ public class TeamInviteSubCommand {
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
 
-                    // Check permission
-                    if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.INVITE)))) {
+                    // Check permission - Co-owners can invite without needing the INVITE permission
+                    boolean canInvite = plugin.getTeamStorageUtil().isTeamOwner(player) 
+                        || plugin.getTeamStorageUtil().isTeamCoOwner(player)
+                        || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.INVITE));
+                    
+                    if (!canInvite) {
                         sender.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
                         return;
                     }
@@ -79,7 +87,12 @@ public class TeamInviteSubCommand {
                             String invitationString = Utils.Color(messagesConfig.getString("team-invited-player-invite-pending")).replace("%TEAMOWNER%", player.getName());
 
                             Optional.ofNullable(offlinePlayer.getPlayer())
-                                    .ifPresent(invitedPlayer -> invitedPlayer.sendMessage(invitationString));
+                                    .ifPresent(invitedPlayer -> {
+                                        invitedPlayer.sendMessage(invitationString);
+                                        
+                                        // Send clickable accept/decline buttons
+                                        sendClickableInvite(invitedPlayer, team.getName(), player.getName());
+                                    });
                         } else {
                             player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-failed")).replace(INVITED_PLAYER, inviteeName));
                         }
@@ -176,5 +189,47 @@ public class TeamInviteSubCommand {
                 ),
                 () -> player.sendMessage(Utils.Color(messagesConfig.getString("team-join-failed-no-invite")))
         );
+    }
+
+    /**
+     * Send a clickable invite message with Accept and Decline buttons
+     */
+    private void sendClickableInvite(Player invitedPlayer, String teamName, String inviterName) {
+        // Create the main message
+        TextComponent message = new TextComponent(Utils.Color("&7&m                                                    "));
+        invitedPlayer.spigot().sendMessage(message);
+        
+        TextComponent header = new TextComponent(Utils.Color("&6&lTeam Invitation"));
+        invitedPlayer.spigot().sendMessage(header);
+        
+        TextComponent info = new TextComponent(Utils.Color("&eYou've been invited to join &6" + teamName + " &eby &6" + inviterName));
+        invitedPlayer.spigot().sendMessage(info);
+        
+        // Create clickable buttons
+        TextComponent buttons = new TextComponent("");
+        
+        // Accept button (green)
+        TextComponent acceptButton = new TextComponent(Utils.Color("&a&l[✔ ACCEPT]"));
+        acceptButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team invite accept"));
+        acceptButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
+            new ComponentBuilder(Utils.Color("&aClick to accept the invitation")).create()));
+        
+        // Space between buttons
+        TextComponent space = new TextComponent("  ");
+        
+        // Decline button (red)
+        TextComponent declineButton = new TextComponent(Utils.Color("&c&l[✖ DECLINE]"));
+        declineButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team invite deny"));
+        declineButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
+            new ComponentBuilder(Utils.Color("&cClick to decline the invitation")).create()));
+        
+        buttons.addExtra(acceptButton);
+        buttons.addExtra(space);
+        buttons.addExtra(declineButton);
+        
+        invitedPlayer.spigot().sendMessage(buttons);
+        
+        TextComponent footer = new TextComponent(Utils.Color("&7&m                                                    "));
+        invitedPlayer.spigot().sendMessage(footer);
     }
 }

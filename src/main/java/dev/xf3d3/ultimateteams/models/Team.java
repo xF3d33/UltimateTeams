@@ -82,7 +82,7 @@ public class Team {
         return Team.builder()
                 .name(name)
                 .friendlyFire(friendlyFire)
-                .members(Maps.newHashMap(Map.of(owner.getUniqueId(), 3)))
+                .members(Maps.newHashMap(Map.of(owner.getUniqueId(), TeamRank.OWNER.getWeight())))
                 .enderChests(defaultChests)
                 .build();
     }
@@ -275,6 +275,89 @@ public class Team {
      */
     public boolean hasEnderChest(int chestNumber) {
         return enderChests.containsKey(chestNumber);
+    }
+
+    // ========== Team Rank Methods ==========
+
+    /**
+     * Get the rank of a team member
+     * @param uuid The UUID of the member
+     * @return The TeamRank of the member
+     */
+    @NotNull
+    public TeamRank getMemberRank(@NotNull UUID uuid) {
+        int weight = members.getOrDefault(uuid, 1);
+        return TeamRank.fromWeight(weight);
+    }
+
+    /**
+     * Set the rank of a team member
+     * @param uuid The UUID of the member
+     * @param rank The TeamRank to set
+     */
+    public void setMemberRank(@NotNull UUID uuid, @NotNull TeamRank rank) {
+        members.put(uuid, rank.getWeight());
+    }
+
+    /**
+     * Check if a member is the owner
+     * @param uuid The UUID to check
+     * @return true if the member is the owner
+     */
+    public boolean isOwner(@NotNull UUID uuid) {
+        return getOwner().equals(uuid);
+    }
+
+    /**
+     * Check if a member is a co-owner
+     * @param uuid The UUID to check
+     * @return true if the member is a co-owner
+     */
+    public boolean isCoOwner(@NotNull UUID uuid) {
+        return getMemberRank(uuid) == TeamRank.CO_OWNER;
+    }
+
+    /**
+     * Check if a member is co-owner or higher (co-owner or owner)
+     * @param uuid The UUID to check
+     * @return true if the member is co-owner or owner
+     */
+    public boolean isCoOwnerOrHigher(@NotNull UUID uuid) {
+        return getMemberRank(uuid).isCoOwnerOrHigher();
+    }
+
+    /**
+     * Check if a member is a manager
+     * @param uuid The UUID to check
+     * @return true if the member is a manager
+     */
+    public boolean isManager(@NotNull UUID uuid) {
+        return getMemberRank(uuid) == TeamRank.MANAGER;
+    }
+
+    /**
+     * Check if a member is manager or higher
+     * @param uuid The UUID to check
+     * @return true if the member is manager or higher
+     */
+    public boolean isManagerOrHigher(@NotNull UUID uuid) {
+        return getMemberRank(uuid).isManagerOrHigher();
+    }
+
+    /**
+     * Promote a member to co-owner
+     * @param uuid The UUID of the member to promote
+     */
+    public void promoteToCoOwner(@NotNull UUID uuid) {
+        setMemberRank(uuid, TeamRank.CO_OWNER);
+    }
+
+    /**
+     * Demote a co-owner to manager
+     * @param uuid The UUID of the member to demote
+     */
+    public void demoteFromCoOwner(@NotNull UUID uuid) {
+        setMemberRank(uuid, TeamRank.MANAGER);
     }
 }
 

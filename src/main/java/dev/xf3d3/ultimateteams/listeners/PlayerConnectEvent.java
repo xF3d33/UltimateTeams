@@ -36,6 +36,10 @@ public class PlayerConnectEvent implements Listener {
                 player, plugin.getUsersStorageUtil().getOnlineUserMap().values().stream().map(online -> User.of(online.getUniqueId(), online.getName())).toList()), 40L
         );
 
+        // Update EssentialsX scoreboard team if hook is enabled
+        if (plugin.getSettings().EssentialsHook() && plugin.getEssentialsHook() != null) {
+            plugin.runSyncDelayed(() -> plugin.getEssentialsHook().updatePlayerScoreboardTeam(player), 20L);
+        }
 
         // check if floodgate hook is enabled and available
         if (plugin.getSettings().FloodGateHook() && (plugin.getFloodgateApi() != null)) {
