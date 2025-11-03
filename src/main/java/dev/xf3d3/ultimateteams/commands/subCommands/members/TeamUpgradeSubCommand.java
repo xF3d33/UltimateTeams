@@ -27,9 +27,15 @@ public class TeamUpgradeSubCommand {
             return;
         }
 
-        // Check if Vault is enabled
+        // Check if economy is enabled
         if (!plugin.getSettings().isEconomyEnabled()) {
             player.sendMessage(Utils.Color("&cEconomy is not enabled on this server!"));
+            return;
+        }
+
+        // Check if Vault hook is available
+        if (plugin.getEconomyHook() == null) {
+            player.sendMessage(Utils.Color("&cVault is not installed or economy plugin is missing!"));
             return;
         }
 
@@ -76,9 +82,15 @@ public class TeamUpgradeSubCommand {
             return;
         }
 
-        // Check if Vault is enabled
+        // Check if economy is enabled
         if (!plugin.getSettings().isEconomyEnabled()) {
             player.sendMessage(Utils.Color("&cEconomy is not enabled on this server!"));
+            return;
+        }
+
+        // Check if Vault hook is available
+        if (plugin.getEconomyHook() == null) {
+            player.sendMessage(Utils.Color("&cVault is not installed or economy plugin is missing!"));
             return;
         }
 
