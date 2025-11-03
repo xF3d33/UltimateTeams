@@ -252,4 +252,28 @@ public class TeamAdmin extends BaseCommand {
         new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestRollbackSubCommand(plugin).rollbackChestAdmin(sender, teamName, chestNumber, backupNumber, true);
     }
 
+    @Subcommand("echest allbackup")
+    @CommandCompletion("@teams @nothing")
+    @CommandPermission("ultimateteams.admin.echest.backup")
+    @Syntax("<team-name>")
+    public void echestAllBackupSubCommand(CommandSender sender, @Values("@teams") String teamName) {
+        teamAdminEnderChestSubCommand.backupAllChests(sender, teamName);
+    }
+
+    @Subcommand("removerow")
+    @CommandCompletion("@teams <chest-number> <rows> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.remove")
+    @Syntax("<team-name> <chest-number> <rows-to-remove>")
+    public void removeRowSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber, int rowsToRemove) {
+        teamAdminEnderChestSubCommand.removeRows(sender, teamName, chestNumber, rowsToRemove);
+    }
+
+    @Subcommand("removechest")
+    @CommandCompletion("@teams <chest-number> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.remove")
+    @Syntax("<team-name> <chest-number>")
+    public void removeChestSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber) {
+        teamAdminEnderChestSubCommand.removeEnderChest(sender, teamName, chestNumber);
+    }
+
 }

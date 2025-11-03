@@ -89,6 +89,26 @@ public class EnderChestBackupManager {
     }
     
     /**
+     * Backup all chests for a specific team
+     * @param teamId The team ID
+     * @return Number of chests backed up
+     */
+    public int backupTeamChests(int teamId) {
+        int count = 0;
+        Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeam(teamId);
+        if (teamOpt.isPresent()) {
+            Team team = teamOpt.get();
+            for (int chestNumber = 1; chestNumber <= team.getEnderChestCount(); chestNumber++) {
+                team.getEnderChest(chestNumber).ifPresent(chest -> {
+                    backupChest(team.getId(), chest);
+                });
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    /**
      * Backup a specific chest
      * @param teamId The team ID
      * @param chest The chest to backup

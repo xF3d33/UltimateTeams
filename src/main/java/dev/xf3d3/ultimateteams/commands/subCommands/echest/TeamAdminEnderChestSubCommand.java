@@ -289,4 +289,104 @@ public class TeamAdminEnderChestSubCommand {
                 "Admin " + player.getName() + " opened shared chest #" + chestNumber + " for team " + team.getName());
         }
     }
+    
+    /**
+     * Backup all ender chests for a specific team
+     * @param sender The command sender
+     * @param teamName The name of the team
+     */
+    public void backupAllChests(@NotNull CommandSender sender, @NotNull String teamName) {
+        // Find the team
+        Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByName(teamName);
+        if (teamOpt.isEmpty()) {
+            String message = messagesConfig.getString("team-not-found");
+            if (message != null) {
+                message = message.replace("%TEAM%", teamName);
+                sender.sendMessage(Utils.Color(message));
+            } else {
+                sender.sendMessage(Utils.Color("&cTeam not found: " + teamName));
+            }
+            return;
+        }
+        
+        Team team = teamOpt.get();
+        
+        if (team.getEnderChestCount() == 0) {
+            sender.sendMessage(Utils.Color("&eTeam " + team.getName() + " has no ender chests to backup."));
+            return;
+        }
+        
+        // Backup all chests
+        int backedUp = plugin.getBackupManager().backupTeamChests(team.getId());
+        plugin.getBackupManager().saveBackups();
+        
+        sender.sendMessage(Utils.Color("&a✓ Successfully backed up all " + backedUp + " ender chest(s) for team " + team.getName() + "!"));
+    }
+    
+    /**
+     * Remove rows from an ender chest
+     * @param sender The command sender
+     * @param teamName The name of the team
+     * @param chestNumber The chest number
+     * @param rowsToRemove Number of rows to remove (1-5)
+     */
+    public void removeRows(@NotNull CommandSender sender, @NotNull String teamName, int chestNumber, int rowsToRemove) {
+        // Find the team
+        Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByName(teamName);
+        if (teamOpt.isEmpty()) {
+            String message = messagesConfig.getString("team-not-found");
+            if (message != null) {
+                message = message.replace("%TEAM%", teamName);
+                sender.sendMessage(Utils.Color(message));
+            } else {
+                sender.sendMessage(Utils.Color("&cTeam not found: " + teamName));
+            }
+            return;
+        }
+        
+        Team team = teamOpt.get();
+        
+        // Check if chest exists
+        if (!team.hasEnderChest(chestNumber)) {
+            String message = messagesConfig.getString("team-echest-not-exist");
+            if (message != null) {
+                message = message.replace("%NUMBER%", String.valueOf(chestNumber))
+                        .replace("%CHEST%", String.valueOf(chestNumber));
+                sender.sendMessage(Utils.Color(message));
+            } else {
+                sender.sendMessage(Utils.Color("&cTeam ender chest #" + chestNumber + " does not exist!"));
+            }
+            return;
+        }
+        
+        TeamEnderChest chest = team.getEnderChest(chestNumber).get();
+        
+        // Validate rows to remove
+        if (rowsToRemove < 1 || rowsToRemove > 5) {
+            sender.sendMessage(Utils.Color("&cRows to remove must be between 1 and 5!"));
+            return;
+        }
+        
+        int newRows = chest.getRows() - rowsToRemove;
+        
+        if (newRows < 1) {
+            sender.sendMessage(Utils.Color("&cCannot remove " + rowsToRemove + " rows! Chest #" + chestNumber + 
+                    " only has " + chest.getRows() + " rows."));
+            sender.sendMessage(Utils.Color("&eMinimum is 1 row. Use &6/ta removechest " + teamName + " " + 
+                    chestNumber + " &eto delete the entire chest."));
+            return;
+        }
+        
+        // Update chest
+        chest.setRows(newRows);
+        team.setEnderChest(chest);
+        
+        // Save to database
+        plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(null, team));
+        
+        sender.sendMessage(Utils.Color("&a✓ Removed " + rowsToRemove + " row(s) from chest #" + chestNumber + 
+                " for team " + team.getName()));
+        sender.sendMessage(Utils.Color("&7New size: " + newRows + " rows (" + chest.getSize() + " slots)"));
+        sender.sendMessage(Utils.Color("&c⚠ Warning: Items in removed slots will be lost!"));
+    }
 }
