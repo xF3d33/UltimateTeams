@@ -83,6 +83,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     @Getter private TeamsGui teamsGui;
     @Getter @Nullable private VaultHook economyHook;
     @Getter @Nullable private EssentialsHook essentialsHook;
+    @Getter private EnderChestBackupManager backupManager;
 
     // HashMaps
     private final ConcurrentHashMap<String, Player> bedrockPlayers = new ConcurrentHashMap<>();
@@ -167,6 +168,9 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
 
         // Load the teams
         initialize("teams", (plugin) -> runAsync(task -> teamsStorage.loadTeams()));
+
+        // Initialize backup manager for ender chests
+        initialize("ender chest backup manager", (plugin) -> this.backupManager = new EnderChestBackupManager(this));
 
         // Initialize HuskHomes hook
         if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && getSettings().HuskHomesHook()) {
@@ -315,6 +319,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         sendConsole("-------------------------------------------");
         sendConsole("&6UltimateTeams: &3Plugin by: &b&lxF3d3");
         sendConsole("&6UltimateTeams: &3Improved by: &b&ldei0");
+
+        // Shutdown backup manager
+        if (backupManager != null) {
+            backupManager.shutdown();
+        }
 
         // Cancel plugin tasks and close the database connection
         getScheduler().cancelAllTasks();
