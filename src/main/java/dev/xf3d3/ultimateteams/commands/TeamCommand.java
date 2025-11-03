@@ -415,22 +415,6 @@ public class TeamCommand extends BaseCommand {
         new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand(plugin).openEnderChest(sender, chestNumber);
     }
 
-    @Subcommand("echest backups")
-    @CommandCompletion("<number> @nothing")
-    @CommandPermission("ultimateteams.team.echest")
-    @Syntax("<chest-number>")
-    public void onTeamEnderChestBackupsCommand(@NotNull CommandSender sender, int chestNumber) {
-        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestRollbackSubCommand(plugin).listBackups(sender, chestNumber);
-    }
-
-    @Subcommand("echest rollback")
-    @CommandCompletion("<number> <backup#> @nothing")
-    @CommandPermission("ultimateteams.team.echest")
-    @Syntax("<chest-number> <backup-number>")
-    public void onTeamEnderChestRollbackCommand(@NotNull CommandSender sender, int chestNumber, int backupNumber) {
-        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestRollbackSubCommand(plugin).rollbackChest(sender, chestNumber, backupNumber);
-    }
-
     @Subcommand("permissions remove")
     @CommandCompletion("@teamPermissions @nothing")
     @Syntax("<permission>")

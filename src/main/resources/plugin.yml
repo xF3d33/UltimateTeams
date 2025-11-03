@@ -77,3 +77,4 @@ permissions:
       ultimateteams.admin.echest.remove: true
       ultimateteams.admin.echest.list: true
       ultimateteams.admin.echest.see: true
+      ultimateteams.admin.echest.rollback: true

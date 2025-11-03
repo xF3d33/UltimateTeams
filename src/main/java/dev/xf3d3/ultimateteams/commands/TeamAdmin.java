@@ -228,4 +228,28 @@ public class TeamAdmin extends BaseCommand {
         teamAdminEnderChestSubCommand.seeEnderChest(sender, teamName, chestNumber);
     }
 
+    @Subcommand("echest backups")
+    @CommandCompletion("@teams <chest-number> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.rollback")
+    @Syntax("<team-name> <chest-number>")
+    public void echestBackupsSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestRollbackSubCommand(plugin).listBackupsAdmin(sender, teamName, chestNumber);
+    }
+
+    @Subcommand("echest rollback")
+    @CommandCompletion("@teams <chest-number> <backup#> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.rollback")
+    @Syntax("<team-name> <chest-number> <backup-number>")
+    public void echestRollbackSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber, int backupNumber) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestRollbackSubCommand(plugin).rollbackChestAdmin(sender, teamName, chestNumber, backupNumber, false);
+    }
+
+    @Subcommand("echest forcerollback")
+    @CommandCompletion("@teams <chest-number> <backup#> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.rollback")
+    @Syntax("<team-name> <chest-number> <backup-number>")
+    public void echestForceRollbackSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber, int backupNumber) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestRollbackSubCommand(plugin).rollbackChestAdmin(sender, teamName, chestNumber, backupNumber, true);
+    }
+
 }
