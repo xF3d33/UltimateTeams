@@ -349,14 +349,12 @@ public class TeamCommand extends BaseCommand {
     // TEAM CO-OWNER
     @Subcommand("coowner")
     @CommandCompletion("@teamPlayers")
-    @CommandPermission("ultimateteams.team.coowner.promote")
     public void onTeamCoOwnerPromoteCommand(@NotNull Player sender, @Values("@teamPlayers") OfflinePlayer offlinePlayer) {
         new dev.xf3d3.ultimateteams.commands.subCommands.members.TeamCoOwnerSubCommand(plugin).promoteToCoOwner(sender, offlinePlayer);
     }
 
     @Subcommand("coowner demote")
     @CommandCompletion("@teamPlayers")
-    @CommandPermission("ultimateteams.team.coowner.demote")
     public void onTeamCoOwnerDemoteCommand(@NotNull Player sender, @Values("@teamPlayers") OfflinePlayer offlinePlayer) {
         new dev.xf3d3.ultimateteams.commands.subCommands.members.TeamCoOwnerSubCommand(plugin).demoteFromCoOwner(sender, offlinePlayer);
     }
