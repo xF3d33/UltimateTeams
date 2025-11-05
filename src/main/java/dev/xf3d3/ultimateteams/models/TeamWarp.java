@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,9 +67,16 @@ public class TeamWarp {
         return new TeamWarp(name, location, server);
     }
 
+    @Nullable
     public Location getLocation() {
+        World world = Bukkit.getWorld(this.WarpWorld);
+
+        if (world == null) {
+            return null;
+        }
+
         return new Location(
-                Bukkit.getWorld(this.WarpWorld),
+                world,
                 this.WarpX,
                 this.WarpY,
                 this.WarpZ,
