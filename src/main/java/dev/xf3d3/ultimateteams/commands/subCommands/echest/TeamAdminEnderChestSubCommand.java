@@ -4,6 +4,7 @@ import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamEnderChest;
 import dev.xf3d3.ultimateteams.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -82,9 +83,12 @@ public class TeamAdminEnderChestSubCommand {
                     // Update existing chest
                     lastChest.setRows(newRows);
                     team.setEnderChest(lastChest);
+
+                    Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
                     
                     // Save to database
-                    plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(null, team));
+                    if (randomPlayer != null)
+                        plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
                     
                     String message = messagesConfig.getString("team-echest-rows-added");
                     if (message != null) {
@@ -124,9 +128,12 @@ public class TeamAdminEnderChestSubCommand {
                 .build();
         
         team.setEnderChest(chest);
-        
+
+        Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
+
         // Save to database
-        plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(null, team));
+        if (randomPlayer != null)
+            plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
         
         String chestType = rows == 6 ? "double chest" : "single chest";
         String message = messagesConfig.getString("team-echest-page-added");
@@ -179,9 +186,12 @@ public class TeamAdminEnderChestSubCommand {
         
         // Remove the chest
         team.removeEnderChest(chestNumber);
-        
-        // Save to database (use null for actor in admin commands)
-        plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(null, team));
+
+        Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
+
+        // Save to database
+        if (randomPlayer != null)
+            plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
         
         String message = messagesConfig.getString("team-echest-removed");
         if (message != null) {
@@ -380,9 +390,12 @@ public class TeamAdminEnderChestSubCommand {
         // Update chest
         chest.setRows(newRows);
         team.setEnderChest(chest);
-        
+
+        Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
+
         // Save to database
-        plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(null, team));
+        if (randomPlayer != null)
+            plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
         
         sender.sendMessage(Utils.Color("&a✓ Removed " + rowsToRemove + " row(s) from chest #" + chestNumber + 
                 " for team " + team.getName()));

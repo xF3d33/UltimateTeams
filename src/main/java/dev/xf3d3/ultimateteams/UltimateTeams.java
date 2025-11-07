@@ -209,6 +209,12 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
                 )
                 .orElse(Collections.emptySet())
         );
+        this.manager.getCommandCompletions().registerAsyncCompletion("teamChests", c -> getTeamStorageUtil().findTeamByMember(c.getPlayer().getUniqueId())
+                .map(team -> team.getEnderChests().keySet().stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.toSet()))
+                .orElse(Collections.emptySet())
+        );
         this.manager.getCommandCompletions().registerAsyncCompletion("teamPermissions", c -> getTeamStorageUtil().findTeamByMember(c.getPlayer().getUniqueId())
                 .map(team -> team.getPermissions().stream()
                         .map(String::valueOf)

@@ -382,7 +382,7 @@ public class TeamCommand extends BaseCommand {
     }
 
     @Subcommand("echest")
-    @CommandCompletion("<number> @nothing")
+    @CommandCompletion("@teamChests @nothing")
     @CommandPermission("ultimateteams.team.echest")
     public void onTeamEnderChestNumberCommand(@NotNull CommandSender sender, int chestNumber) {
         new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand(plugin).openEnderChest(sender, chestNumber);

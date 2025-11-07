@@ -1,11 +1,11 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.echest;
 
+import com.google.common.collect.Maps;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamEnderChest;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -20,7 +20,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -32,16 +31,16 @@ public class TeamEnderChestSubCommand implements Listener {
     private final FileConfiguration messagesConfig;
     
     // Track which player is viewing which team chest
-    private static final Map<UUID, TeamChestView> activeViews = new HashMap<>();
+    private static final Map<UUID, TeamChestView> activeViews = Maps.newConcurrentMap();
     
     // Shared inventories for each team chest (key: teamId-chestNumber)
-    private static final Map<String, Inventory> sharedInventories = new HashMap<>();
+    private static final Map<String, Inventory> sharedInventories = Maps.newConcurrentMap();
     
     // Track viewers for each shared inventory
-    private static final Map<String, Set<UUID>> inventoryViewers = new HashMap<>();
+    private static final Map<String, Set<UUID>> inventoryViewers = Maps.newConcurrentMap();
     
     // Track pending saves to prevent concurrent database writes (key: teamId-chestNumber)
-    private static final Map<String, Integer> pendingSaveTasks = new HashMap<>();
+    private static final Map<String, Integer> pendingSaveTasks = Maps.newConcurrentMap();
     private static final long SAVE_DELAY_TICKS = 20L; // 1 second delay before saving
     
     public TeamEnderChestSubCommand(@NotNull UltimateTeams plugin) {
@@ -134,9 +133,12 @@ public class TeamEnderChestSubCommand implements Listener {
                         TeamEnderChest chest = chestOpt.get();
                         ItemStack[] contents = inventory.getContents();
                         chest.setContents(contents);
-                        
-                        // Update the team in storage
-                        plugin.getTeamStorageUtil().updateTeamData(null, team);
+
+                        Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
+
+                        // Save to database
+                        if (randomPlayer != null)
+                            plugin.runAsync(task1 -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
                         
                         if (plugin.getSettings().debugModeEnabled()) {
                             plugin.log(java.util.logging.Level.INFO, 
@@ -335,36 +337,22 @@ public class TeamEnderChestSubCommand implements Listener {
             }
         }
     }
-    
+
     /**
-     * Helper class to track which team chest a player is viewing
-     */
-    private static class TeamChestView {
-        final int teamId;
-        final int chestNumber;
-        
-        TeamChestView(int teamId, int chestNumber) {
-            this.teamId = teamId;
-            this.chestNumber = chestNumber;
-        }
+         * Helper class to track which team chest a player is viewing
+         */
+        private record TeamChestView(int teamId, int chestNumber) {
     }
-    
+
     /**
-     * Custom inventory holder to identify team chest inventories
-     */
-    private static class TeamChestHolder implements InventoryHolder {
-        final int teamId;
-        final int chestNumber;
-        
-        TeamChestHolder(int teamId, int chestNumber) {
-            this.teamId = teamId;
-            this.chestNumber = chestNumber;
-        }
-        
+         * Custom inventory holder to identify team chest inventories
+         */
+        private record TeamChestHolder(int teamId, int chestNumber) implements InventoryHolder {
+
         @Override
-        public @NotNull Inventory getInventory() {
-            // This method is required by the interface but not used in our implementation
-            throw new UnsupportedOperationException("Not implemented");
+            public @NotNull Inventory getInventory() {
+                // This method is required by the interface but not used in our implementation
+                throw new UnsupportedOperationException("Not implemented");
+            }
         }
-    }
 }
