@@ -390,7 +390,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     }
 
     @Override
-    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte[] message) {
+    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
         if (broker != null && broker instanceof PluginMessageBroker pluginMessenger
                 && getSettings().getBrokerType() == Broker.Type.PLUGIN_MESSAGE) {
             pluginMessenger.onReceive(channel, player, message);
