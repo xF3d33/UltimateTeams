@@ -27,7 +27,7 @@ public class TeamEnderChestRollbackSubCommand {
     /**
      * List available backups for a chest
      */
-    public void listBackups(@NotNull CommandSender sender, int chestNumber) {
+    /*public void listBackups(@NotNull CommandSender sender, int chestNumber) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
             return;
@@ -68,9 +68,7 @@ public class TeamEnderChestRollbackSubCommand {
         );
     }
     
-    /**
-     * Rollback a chest to a specific backup
-     */
+
     public void rollbackChest(@NotNull CommandSender sender, int chestNumber, int backupNumber) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
@@ -79,11 +77,6 @@ public class TeamEnderChestRollbackSubCommand {
         
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
-                    // Check permissions
-                    if (!team.isOwner(player.getUniqueId()) && !team.isCoOwner(player.getUniqueId())) {
-                        player.sendMessage(Utils.Color(messagesConfig.getString("not-enough-permissions")));
-                        return;
-                    }
                     
                     if (!team.hasEnderChest(chestNumber)) {
                         player.sendMessage(Utils.Color(messagesConfig.getString("team-echest-not-exist")
@@ -139,7 +132,8 @@ public class TeamEnderChestRollbackSubCommand {
                 () -> player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
         );
     }
-    
+    */
+
     /**
      * List available backups for a chest (Admin version)
      */

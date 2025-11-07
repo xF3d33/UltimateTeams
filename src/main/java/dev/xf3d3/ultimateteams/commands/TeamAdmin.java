@@ -87,7 +87,10 @@ public class TeamAdmin extends BaseCommand {
     @CommandCompletion("<parameter> <value>")
     @CommandPermission("ultimateteams.admin.migrate")
     public void migrateSetSubcommand(CommandSender sender, String parameter, String value) {
-        migrator = new Migrator(plugin);
+
+        if (migrator == null)
+            migrator = new Migrator(plugin);
+
         migrator.setParameter(parameter, value);
 
         sender.sendMessage(Utils.Color(String.format("Parameter %s set to %s", parameter, value)));

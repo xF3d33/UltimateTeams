@@ -73,11 +73,11 @@ public class Team {
 
     @NotNull
     @ApiStatus.Internal
-    public static Team create(@NotNull String name, @NotNull Player owner, @NotNull Boolean friendlyFire) {
+    public static Team create(@NotNull String name, @NotNull Player owner, @NotNull Boolean friendlyFire, @NotNull Integer rows) {
         // Create default ender chest with 3 rows (27 slots)
         TeamEnderChest defaultChest = TeamEnderChest.builder()
                 .chestNumber(1)
-                .rows(3)
+                .rows(rows)
                 .serializedContents("")
                 .build();
 

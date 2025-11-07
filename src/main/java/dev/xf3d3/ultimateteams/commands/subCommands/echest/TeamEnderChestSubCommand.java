@@ -159,6 +159,11 @@ public class TeamEnderChestSubCommand implements Listener {
             sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
             return;
         }
+
+        if (!plugin.getSettings().isTeamEnderChestEnabled()) {
+            player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            return;
+        }
         
         // Check if player is in a team
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId());

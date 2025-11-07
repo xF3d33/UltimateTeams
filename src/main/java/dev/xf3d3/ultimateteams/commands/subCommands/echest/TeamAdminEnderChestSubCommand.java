@@ -31,6 +31,11 @@ public class TeamAdminEnderChestSubCommand {
      * @param rowsToAdd Number of rows to add (1-6)
      */
     public void addEnderChest(@NotNull CommandSender sender, @NotNull String teamName, @NotNull String rowsOrType) {
+        if (!plugin.getSettings().isTeamEnderChestEnabled()) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            return;
+        }
+
         // Find the team
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByName(teamName);
         if (teamOpt.isEmpty()) {
@@ -157,6 +162,11 @@ public class TeamAdminEnderChestSubCommand {
      * @param chestNumber The chest number to remove
      */
     public void removeEnderChest(@NotNull CommandSender sender, @NotNull String teamName, int chestNumber) {
+        if (!plugin.getSettings().isTeamEnderChestEnabled()) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            return;
+        }
+
         // Find the team
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByName(teamName);
         if (teamOpt.isEmpty()) {
@@ -210,6 +220,11 @@ public class TeamAdminEnderChestSubCommand {
      * @param teamName The name of the team
      */
     public void listEnderChests(@NotNull CommandSender sender, @NotNull String teamName) {
+        if (!plugin.getSettings().isTeamEnderChestEnabled()) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            return;
+        }
+
         // Find the team
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByName(teamName);
         if (teamOpt.isEmpty()) {
@@ -248,6 +263,11 @@ public class TeamAdminEnderChestSubCommand {
     public void seeEnderChest(@NotNull CommandSender sender, @NotNull String teamName, int chestNumber) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            return;
+        }
+
+        if (!plugin.getSettings().isTeamEnderChestEnabled()) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
             return;
         }
         
@@ -306,6 +326,11 @@ public class TeamAdminEnderChestSubCommand {
      * @param teamName The name of the team
      */
     public void backupAllChests(@NotNull CommandSender sender, @NotNull String teamName) {
+        if (!plugin.getSettings().isTeamEnderChestEnabled()) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            return;
+        }
+
         // Find the team
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByName(teamName);
         if (teamOpt.isEmpty()) {
@@ -341,6 +366,11 @@ public class TeamAdminEnderChestSubCommand {
      * @param rowsToRemove Number of rows to remove (1-5)
      */
     public void removeRows(@NotNull CommandSender sender, @NotNull String teamName, int chestNumber, int rowsToRemove) {
+        if (!plugin.getSettings().isTeamEnderChestEnabled()) {
+            sender.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            return;
+        }
+
         // Find the team
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByName(teamName);
         if (teamOpt.isEmpty()) {

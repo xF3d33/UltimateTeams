@@ -306,6 +306,18 @@ public class Settings {
     private String bracketsClosing = "&f]";
 
 
+    // Team Echest
+    @YamlComment("Enable the team enderchest system. [Default value: true]\nThis is not compatible with cross-server (yet).")
+    @YamlKey("team.echest.enabled")
+    @Getter
+    private boolean teamEnderChestEnabled = true;
+
+    @YamlComment("How many rows will the default enderchest have? [Default value: 3]\nValue can go from 1 to 6, being 3 a normal chest and 6 a double chest")
+    @YamlKey("team.echest.enabled")
+    @Getter
+    private int teamEnderChestRows = 3;
+
+
     // Chat Spy
     @YamlComment("Do you want players with the perm 'ultimateteams.chat.spy' be able to spy on all team chat messages? [Default value: true]")
     @YamlKey("chat.chat-spy.enabled")

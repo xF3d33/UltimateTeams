@@ -288,7 +288,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         // Plugin enabled message
         sendConsole("-------------------------------------------");
         sendConsole("&6UltimateTeams: &3Plugin by: &b&lxF3d3");
-        sendConsole("&6UltimateTeams: &3Improved by: &b&ldei0");
+        sendConsole("&6UltimateTeams: &3Contributors: &b&ldei0 (TeamEnderChest)");
         sendConsole("&6UltimateTeams: &3Version: &d&l" + pluginVersion);
         sendConsole("&6UltimateTeams: &aSuccessfully enabled!");
         sendConsole("-------------------------------------------");
@@ -299,7 +299,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         // Plugin shutdown logic
         sendConsole("-------------------------------------------");
         sendConsole("&6UltimateTeams: &3Plugin by: &b&lxF3d3");
-        sendConsole("&6UltimateTeams: &3Improved by: &b&ldei0");
+        sendConsole("&6UltimateTeams: &3Contributors: &b&ldei0 (TeamEnderChest)");
 
         // Shutdown backup manager
         if (backupManager != null) {
