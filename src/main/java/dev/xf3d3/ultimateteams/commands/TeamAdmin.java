@@ -4,6 +4,9 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestRollbackSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand;
 import dev.xf3d3.ultimateteams.migrator.Migrator;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
@@ -25,10 +28,18 @@ public class TeamAdmin extends BaseCommand {
 
     private final UltimateTeams plugin;
     private Migrator migrator;
+    
+    // Ender chest subcommand instances (shared for real-time sync between admin and players)
+    private final TeamEnderChestSubCommand teamEnderChestSubCommand;
+    private final TeamAdminEnderChestSubCommand teamAdminEnderChestSubCommand;
 
     public TeamAdmin(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
+        
+        // Initialize ender chest subcommands
+        this.teamEnderChestSubCommand = new TeamEnderChestSubCommand(plugin);
+        this.teamAdminEnderChestSubCommand = new TeamAdminEnderChestSubCommand(plugin, teamEnderChestSubCommand);
     }
 
 
@@ -42,6 +53,7 @@ public class TeamAdmin extends BaseCommand {
         sender.sendMessage(Utils.Color("&3Database Type: &6" + plugin.getSettings().getDatabaseType().getDisplayName()));
         plugin.getMessageBroker().ifPresent(broker -> sender.sendMessage(Utils.Color("&3Broker Type: &6" + plugin.getSettings().getBrokerType().getDisplayName())));
         sender.sendMessage(Utils.Color("&3Author: &6" + plugin.getDescription().getAuthors()));
+        sender.sendMessage(Utils.Color("&3Contributors: &6" + plugin.getDescription().getContributors()));
         sender.sendMessage(Utils.Color("&3Description: &6" + plugin.getDescription().getDescription()));
         sender.sendMessage(Utils.Color("&3Website: "));
         sender.sendMessage(Utils.Color("&6" + plugin.getDescription().getWebsite()));
@@ -185,6 +197,87 @@ public class TeamAdmin extends BaseCommand {
                 () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-not-found")))
         );
 
+    }
+
+    // TEAM ENDER CHEST ADMIN COMMANDS
+    @Subcommand("echest add")
+    @CommandCompletion("@teams 1-6|chest|doublechest @nothing")
+    @CommandPermission("ultimateteams.admin.echest.add")
+    @Syntax("<team-name> <rows|chest|doublechest>")
+    public void addEnderChestSubCommand(CommandSender sender, @Values("@teams") String teamName, String rowsOrType) {
+        teamAdminEnderChestSubCommand.addEnderChest(sender, teamName, rowsOrType);
+    }
+
+    @Subcommand("echest remove")
+    @CommandCompletion("@teams <chest-number> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.remove")
+    @Syntax("<team-name> <chest-number>")
+    public void removeEnderChestSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber) {
+        teamAdminEnderChestSubCommand.removeEnderChest(sender, teamName, chestNumber);
+    }
+
+    @Subcommand("echest list")
+    @CommandCompletion("@teams @nothing")
+    @CommandPermission("ultimateteams.admin.echest.list")
+    @Syntax("<team-name>")
+    public void listEnderChestsSubCommand(CommandSender sender, @Values("@teams") String teamName) {
+        teamAdminEnderChestSubCommand.listEnderChests(sender, teamName);
+    }
+
+    @Subcommand("echest see")
+    @CommandCompletion("@teams <chest-number> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.see")
+    @Syntax("<team-name> <chest-number>")
+    public void seeEnderChestSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber) {
+        teamAdminEnderChestSubCommand.seeEnderChest(sender, teamName, chestNumber);
+    }
+
+    @Subcommand("echest backups")
+    @CommandCompletion("@teams <chest-number> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.rollback")
+    @Syntax("<team-name> <chest-number>")
+    public void echestBackupsSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber) {
+        new TeamEnderChestRollbackSubCommand(plugin).listBackupsAdmin(sender, teamName, chestNumber);
+    }
+
+    @Subcommand("echest rollback")
+    @CommandCompletion("@teams <chest-number> <backup#> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.rollback")
+    @Syntax("<team-name> <chest-number> <backup-number>")
+    public void echestRollbackSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber, int backupNumber) {
+        new TeamEnderChestRollbackSubCommand(plugin).rollbackChestAdmin(sender, teamName, chestNumber, backupNumber, false);
+    }
+
+    @Subcommand("echest forcerollback")
+    @CommandCompletion("@teams <chest-number> <backup#> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.rollback")
+    @Syntax("<team-name> <chest-number> <backup-number>")
+    public void echestForceRollbackSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber, int backupNumber) {
+        new TeamEnderChestRollbackSubCommand(plugin).rollbackChestAdmin(sender, teamName, chestNumber, backupNumber, true);
+    }
+
+    @Subcommand("echest backupall")
+    @CommandCompletion("@teams @nothing")
+    @CommandPermission("ultimateteams.admin.echest.backup")
+    @Syntax("<team-name>")
+    public void echestAllBackupSubCommand(CommandSender sender, @Values("@teams") String teamName) {
+        teamAdminEnderChestSubCommand.backupAllChests(sender, teamName);
+    }
+
+    @Subcommand("echest removerow")
+    @CommandCompletion("@teams <chest-number> <rows> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.remove")
+    @Syntax("<team-name> <chest-number> <rows-to-remove>")
+    public void removeRowSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber, int rowsToRemove) {
+        teamAdminEnderChestSubCommand.removeRows(sender, teamName, chestNumber, rowsToRemove);
+    }
+
+    @Subcommand("echest removechest")
+    @CommandCompletion("@teams <chest-number> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.remove")
+    @Syntax("<team-name> <chest-number>")
+    public void removeChestSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber) {
+        teamAdminEnderChestSubCommand.removeEnderChest(sender, teamName, chestNumber);
     }
 
 }

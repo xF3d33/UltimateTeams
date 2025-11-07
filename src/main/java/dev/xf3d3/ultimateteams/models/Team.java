@@ -17,18 +17,21 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Team {
-    @Getter @Setter
+    @Getter
+    @Setter
     @Builder.Default
     public int id = 0;
 
     @Expose
-    @Getter @Setter
+    @Getter
+    @Setter
     private String name;
 
     @Expose
     @Builder.Default
     @Nullable
-    @Getter @Setter
+    @Getter
+    @Setter
     private String prefix = null;
 
     @Getter
@@ -47,13 +50,15 @@ public class Team {
 
     @Expose
     @Builder.Default
-    @Getter @Setter
+    @Getter
+    @Setter
     private boolean friendlyFire = false;
 
     @Nullable
     @Expose
     @Builder.Default
-    @Getter @Setter
+    @Getter
+    @Setter
     private TeamHome home = null;
 
     @Expose
@@ -61,12 +66,28 @@ public class Team {
     @Setter
     private EnumSet<Permission> permissions = EnumSet.noneOf(Permission.class);
 
+    @Expose
+    @Getter
+    @Builder.Default
+    private Map<Integer, TeamEnderChest> enderChests = Maps.newHashMap();
+
     @NotNull
     @ApiStatus.Internal
     public static Team create(@NotNull String name, @NotNull Player owner, @NotNull Boolean friendlyFire) {
+        // Create default ender chest with 3 rows (27 slots)
+        TeamEnderChest defaultChest = TeamEnderChest.builder()
+                .chestNumber(1)
+                .rows(3)
+                .serializedContents("")
+                .build();
+
+        Map<Integer, TeamEnderChest> defaultChests = Maps.newHashMap();
+        defaultChests.put(1, defaultChest);
+
         return Team.builder()
                 .name(name)
                 .friendlyFire(friendlyFire)
+                .enderChests(defaultChests)
                 .members(Maps.newHashMap(Map.of(owner.getUniqueId(), 3)))
                 .build();
     }
@@ -82,11 +103,11 @@ public class Team {
                 .forEach(player -> player.sendMessage(message));
     }
 
-    public Optional<TeamWarp> getTeamWarp(@NotNull String name){
+    public Optional<TeamWarp> getTeamWarp(@NotNull String name) {
         return Optional.ofNullable(warps.get(name));
     }
 
-    public void addTeamWarp(@NotNull TeamWarp warp){
+    public void addTeamWarp(@NotNull TeamWarp warp) {
         warps.put(warp.getName(), warp);
     }
 
@@ -160,7 +181,7 @@ public class Team {
         return permissions.contains(perm);
     }
 
-    public boolean isFriendlyFireAllowed(){
+    public boolean isFriendlyFireAllowed() {
         return friendlyFire;
     }
 
@@ -170,7 +191,6 @@ public class Team {
         }
         return getRelationWith(otherTeam) == relation && otherTeam.getRelationWith(this) == relation;
     }
-
 
 
     public enum Relation {
@@ -216,6 +236,56 @@ public class Team {
                     .findFirst();
         }
     }
+
+    // ========== Team Ender Chest Methods ==========
+
+    /**
+     * Get a team ender chest by number
+     *
+     * @param chestNumber The chest number (1, 2, 3, etc.)
+     * @return Optional containing the TeamEnderChest if it exists
+     */
+    public Optional<TeamEnderChest> getEnderChest(int chestNumber) {
+        return Optional.ofNullable(enderChests.get(chestNumber));
+    }
+
+    /**
+     * Add or update a team ender chest
+     *
+     * @param chest The TeamEnderChest to add/update
+     */
+    public void setEnderChest(@NotNull TeamEnderChest chest) {
+        enderChests.put(chest.getChestNumber(), chest);
+    }
+
+    /**
+     * Remove a team ender chest
+     *
+     * @param chestNumber The chest number to remove
+     */
+    public void removeEnderChest(int chestNumber) {
+        enderChests.remove(chestNumber);
+    }
+
+    /**
+     * Get the number of ender chests this team has
+     *
+     * @return The count of ender chests
+     */
+    public int getEnderChestCount() {
+        return enderChests.size();
+    }
+
+    /**
+     * Check if the team has a specific ender chest
+     *
+     * @param chestNumber The chest number to check
+     * @return true if the chest exists
+     */
+    public boolean hasEnderChest(int chestNumber) {
+        return enderChests.containsKey(chestNumber);
+    }
+
 }
 
 

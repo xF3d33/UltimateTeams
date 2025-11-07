@@ -67,7 +67,7 @@ public class TeamPrefixSubCommand {
                         team.setPrefix(prefix);
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-change-successful")).replace("%TEAMPREFIX%", prefix));
+                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-change-successful")).replace("%TEAMPREFIX%", Utils.Color(prefix)));
                     },
                     () -> sender.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
             );
@@ -77,5 +77,4 @@ public class TeamPrefixSubCommand {
         } else {
             sender.sendMessage(Utils.Color(messagesConfig.getString("team-prefix-too-short").replace("%CHARMIN%", String.valueOf(MIN_CHAR_LIMIT))));
         }
-    }
-}
+    }}

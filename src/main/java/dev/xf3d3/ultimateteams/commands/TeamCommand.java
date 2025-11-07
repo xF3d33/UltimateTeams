@@ -55,7 +55,14 @@ public class TeamCommand extends BaseCommand {
 
         if (sender instanceof final Player player) {
             if (plugin.getSettings().useGlobalGui()) {
-                new TeamList(plugin, player);
+                // Check if player is in a team
+                if (plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).isPresent()) {
+                    // Player is in a team, open team manager
+                    new TeamManager(plugin, player);
+                } else {
+                    // Player is not in a team, open team list
+                    new TeamList(plugin, player);
+                }
                 return;
             }
 
@@ -153,6 +160,15 @@ public class TeamCommand extends BaseCommand {
     @Syntax("<playername>")
     @CommandPermission("ultimateteams.team.invite.send")
     public void onTeamInviteSendCommand(@NotNull CommandSender sender, @Values("@onlineUsers") String invitee) {
+        new TeamInviteSubCommand(plugin).teamInviteSendSubCommand(sender, invitee);
+    }
+
+    @Subcommand("invite")
+    @CommandCompletion("@onlineUsers @nothing")
+    @Syntax("<playername>")
+    @CommandPermission("ultimateteams.team.invite.send")
+    public void onTeamInviteCommand(@NotNull CommandSender sender, @Values("@onlineUsers") String invitee) {
+        // Simplified invite command - same as /team invite send
         new TeamInviteSubCommand(plugin).teamInviteSendSubCommand(sender, invitee);
     }
 
@@ -356,4 +372,20 @@ public class TeamCommand extends BaseCommand {
     public void onTeamPermissionsRemoveCommand(@NotNull CommandSender sender, @Values("@teamPermissions") String permission) {
         new TeamPermissionsSubCommand(plugin).teamPermissionsRemoveSubCommand(sender, permission);
     }
+
+    // TEAM ENDER CHEST
+    @Subcommand("echest")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.team.echest")
+    public void onTeamEnderChestCommand(@NotNull CommandSender sender) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand(plugin).openEnderChest(sender, 1);
+    }
+
+    @Subcommand("echest")
+    @CommandCompletion("<number> @nothing")
+    @CommandPermission("ultimateteams.team.echest")
+    public void onTeamEnderChestNumberCommand(@NotNull CommandSender sender, int chestNumber) {
+        new dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand(plugin).openEnderChest(sender, chestNumber);
+    }
+
 }

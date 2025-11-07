@@ -106,9 +106,12 @@ public interface MessageHandler {
                         .ifPresent(team -> {
                             team.sendTeamMessage(Utils.Color(text));
 
-                            // Send spy message
+                            // Send spy message directly to players with permission (hidden from Discord)
                             if (getPlugin().getSettings().teamChatSpyEnabled()) {
-                                Bukkit.broadcast(Utils.Color(getPlugin().getSettings().getTeamChatSpyPrefix() + " " + text), "ultimateteams.chat.spy");
+                                String spyMessage = Utils.Color(getPlugin().getSettings().getTeamChatSpyPrefix() + " " + text);
+                                Bukkit.getOnlinePlayers().stream()
+                                        .filter(p -> p.hasPermission("ultimateteams.chat.spy"))
+                                        .forEach(p -> p.sendMessage(spyMessage));
                             }
                         }));
     }
@@ -131,9 +134,12 @@ public interface MessageHandler {
                             alliedTeam -> alliedTeam.sendTeamMessage(Utils.Color(text))
                     );
 
-                    // Send spy message
+                    // Send spy message directly to players with permission (hidden from Discord)
                     if (getPlugin().getSettings().teamChatSpyEnabled()) {
-                        Bukkit.broadcast(Utils.Color(getPlugin().getSettings().getTeamChatSpyPrefix() + " " + text), "ultimateteams.chat.spy");
+                        String spyMessage = Utils.Color(getPlugin().getSettings().getTeamChatSpyPrefix() + " " + text);
+                        Bukkit.getOnlinePlayers().stream()
+                                .filter(p -> p.hasPermission("ultimateteams.chat.spy"))
+                                .forEach(p -> p.sendMessage(spyMessage));
                     }
                 }));
     }

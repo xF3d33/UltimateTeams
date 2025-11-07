@@ -79,6 +79,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     @Getter private Settings settings;
     @Getter private TeamsGui teamsGui;
     @Getter @Nullable private VaultHook economyHook;
+    @Getter private EnderChestBackupManager backupManager;
 
     // HashMaps
     private final ConcurrentHashMap<String, Player> bedrockPlayers = new ConcurrentHashMap<>();
@@ -163,6 +164,9 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
 
         // Load the teams
         initialize("teams", (plugin) -> runAsync(task -> teamsStorage.loadTeams()));
+
+        // Initialize backup manager for ender chests
+        initialize("ender chest backup manager", (plugin) -> this.backupManager = new EnderChestBackupManager(this));
 
         // Initialize HuskHomes hook
         if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && getSettings().HuskHomesHook()) {
@@ -274,6 +278,14 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         if (getSettings().doCheckForUpdates()) {
             updateChecker.checkForUpdates();
         }
+
+        // Plugin enabled message
+        sendConsole("-------------------------------------------");
+        sendConsole("&6UltimateTeams: &3Plugin by: &b&lxF3d3");
+        sendConsole("&6UltimateTeams: &3Improved by: &b&ldei0");
+        sendConsole("&6UltimateTeams: &3Version: &d&l" + pluginVersion);
+        sendConsole("&6UltimateTeams: &aSuccessfully enabled!");
+        sendConsole("-------------------------------------------");
     }
 
     @Override
@@ -281,6 +293,12 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         // Plugin shutdown logic
         sendConsole("-------------------------------------------");
         sendConsole("&6UltimateTeams: &3Plugin by: &b&lxF3d3");
+        sendConsole("&6UltimateTeams: &3Improved by: &b&ldei0");
+
+        // Shutdown backup manager
+        if (backupManager != null) {
+            backupManager.shutdown();
+        }
 
         // Cancel plugin tasks and close the database connection
         getScheduler().cancelAllTasks();

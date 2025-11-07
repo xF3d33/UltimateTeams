@@ -131,6 +131,14 @@ public class Settings {
     @YamlKey("floodgate-hook")
     private boolean floodgateHook = false;
 
+    @YamlComment("Hook into EssentialsX to provide team data via Bukkit scoreboard (for {TEAMNAME}, {TEAMPREFIX}, {TEAMSUFFIX} placeholders) [Default value: true]")
+    @YamlKey("essentials-hook")
+    private boolean essentialsHook = true;
+
+    @YamlComment("Enable team suffix in EssentialsX (shows member count) [Default value: true]")
+    @YamlKey("essentials-suffix-enabled")
+    private boolean essentialsSuffixEnabled = true;
+
     @YamlComment("When the placeholder would be blank, the text below will be shown instead (you can use color codes)")
     @YamlKey("placeholder.not-in-a-team")
     private String notInTeamPlaceholder = "Not in a team";
@@ -271,7 +279,7 @@ public class Settings {
     @YamlComment("Whether to allow color codes (& and #) in the teams tag")
     @YamlKey("team.tag.allow-color-codes")
     @Getter
-    private boolean teamTagAllowColorCodes = false;
+    private boolean teamTagAllowColorCodes = true;
 
     @YamlComment("If enabled, players need the ultimateteams.team.tag.usecolors permission to use color codes")
     @YamlKey("team.tag.require-perm-for-color-codes")
@@ -327,6 +335,33 @@ public class Settings {
     @YamlKey("economy.team-create")
     @Getter
     private double teamCreateCost = 100.0;
+
+
+    // Team Upgrades
+    @YamlComment("Default maximum members limit for new teams")
+    @YamlKey("team.upgrades.default-max-members")
+    @Getter
+    private int defaultMaxMembers = 8;
+
+    @YamlComment("Default maximum warps limit for new teams")
+    @YamlKey("team.upgrades.default-max-warps")
+    @Getter
+    private int defaultMaxWarps = 2;
+
+    @YamlComment("Cost to upgrade max members (requires Vault)")
+    @YamlKey("team.upgrades.cost.members")
+    @Getter
+    private double upgradeCostMembers = 1000.0;
+
+    @YamlComment("Cost to upgrade max warps (requires Vault)")
+    @YamlKey("team.upgrades.cost.warps")
+    @Getter
+    private double upgradeCostWarps = 1000.0;
+
+    @YamlComment("Amount to increase limit by per upgrade")
+    @YamlKey("team.upgrades.upgrade-amount")
+    @Getter
+    private int upgradeAmount = 1;
 
     // Update Checker
     @YamlComment("Do you want to enable in game plugin update notifications? (Permission:'ultimateteams.update'). [Default value: true]")
@@ -430,6 +465,14 @@ public class Settings {
 
     public boolean FloodGateHook() {
         return floodgateHook;
+    }
+
+    public boolean EssentialsHook() {
+        return essentialsHook;
+    }
+
+    public boolean isEssentialsSuffixEnabled() {
+        return essentialsSuffixEnabled;
     }
 
     public int getTeamTagsMinCharLimit() {
