@@ -6,6 +6,7 @@ import com.google.common.io.ByteStreams;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.logging.Level;
@@ -59,7 +60,9 @@ public class PluginMessageBroker extends Broker {
     }
 
     @Override
-    protected void send(@NotNull Message message, @NotNull Player sender) {
+    protected void send(@NotNull Message message, @Nullable Player sender) {
+        if (sender == null) return;
+
         final ByteArrayDataOutput messageWriter = ByteStreams.newDataOutput();
         messageWriter.writeUTF(message.getTargetType().getPluginMessageChannel());
         messageWriter.writeUTF(message.getTarget());

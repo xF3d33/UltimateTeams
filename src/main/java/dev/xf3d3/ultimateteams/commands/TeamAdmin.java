@@ -129,7 +129,7 @@ public class TeamAdmin extends BaseCommand {
                                 plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(randomPlayer, team));
                                 sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
                             },
-                            () -> plugin.log(Level.WARNING, "No players online to send message to other servers")
+                            () -> plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(null, team))
                     );
                 },
                 () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-admin-disband-failure")))

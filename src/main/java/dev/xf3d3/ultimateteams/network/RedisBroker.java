@@ -4,6 +4,7 @@ import dev.xf3d3.ultimateteams.UltimateTeams;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -78,7 +79,7 @@ public class RedisBroker extends PluginMessageBroker {
     }
 
     @Override
-    protected void send(@NotNull Message message, @NotNull Player sender) {
+    protected void send(@NotNull Message message, @Nullable Player sender) {
         plugin.runAsync(task -> {
             try (Jedis jedis = jedisPool.getResource()) {
                 jedis.publish(getSubChannelId(), plugin.getGson().toJson(message));

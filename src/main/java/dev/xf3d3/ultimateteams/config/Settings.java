@@ -95,7 +95,7 @@ public class Settings {
     @Getter
     private String clusterId = "main";
 
-    @YamlComment("Type of network message broker to ues for data synchronization (PLUGIN_MESSAGE or REDIS). REDIS is preferred over PLUGIN_MESSAGE.")
+    @YamlComment("Type of network message broker to ues for data synchronization (PLUGIN_MESSAGE or REDIS). Always use REDIS if possible.")
     @YamlKey("cross-server.broker")
     @Getter
     private Broker.Type brokerType = Broker.Type.PLUGIN_MESSAGE;
@@ -313,9 +313,14 @@ public class Settings {
     private boolean teamEnderChestEnabled = true;
 
     @YamlComment("How many rows will the default enderchest have? [Default value: 3]\nValue can go from 1 to 6, being 3 a normal chest and 6 a double chest")
-    @YamlKey("team.echest.enabled")
+    @YamlKey("team.echest.rows")
     @Getter
     private int teamEnderChestRows = 3;
+
+    @YamlComment("ONLY FOR SERVERS WHO JUST UPDATED TO A VERSION THAT SUPPORTS THIS FEATURE!\nShould the plugin add an enderchest to each team on startup? [Default value: false]\nSince teams created before this version didn't have enderchests, add one.\nAFTER A FULL STARTUP DISABLE THIS AND RESTART THE SERVER!")
+    @YamlKey("team.echest.migrate")
+    @Getter
+    private boolean teamEnderChestMigrate = false;
 
 
     // Chat Spy

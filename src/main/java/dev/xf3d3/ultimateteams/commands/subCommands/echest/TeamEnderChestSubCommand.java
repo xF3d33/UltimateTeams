@@ -135,10 +135,7 @@ public class TeamEnderChestSubCommand implements Listener {
                         chest.setContents(contents);
 
                         Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
-
-                        // Save to database
-                        if (randomPlayer != null)
-                            plugin.runAsync(task1 -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
+                        plugin.runAsync(task1 -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
                         
                         if (plugin.getSettings().debugModeEnabled()) {
                             plugin.log(java.util.logging.Level.INFO, 
