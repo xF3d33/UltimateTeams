@@ -53,6 +53,7 @@ permissions:
       ultimateteams.team.info: true
       ultimateteams.team.promote: true
       ultimateteams.team.demote: true
+      ultimateteams.team.echest: true
       ultimateteams.team.permissions.add: true
       ultimateteams.team.permissions.remove: true
       ultimateteams.allychat: true

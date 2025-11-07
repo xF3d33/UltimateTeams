@@ -10,6 +10,7 @@ import dev.xf3d3.ultimateteams.commands.TeamCommand;
 import dev.xf3d3.ultimateteams.commands.chat.TeamAllyChatCommand;
 import dev.xf3d3.ultimateteams.commands.chat.TeamChatCommand;
 import dev.xf3d3.ultimateteams.commands.chat.TeamChatSpyCommand;
+import dev.xf3d3.ultimateteams.config.Messages;
 import dev.xf3d3.ultimateteams.config.MessagesFileManager;
 import dev.xf3d3.ultimateteams.config.Settings;
 import dev.xf3d3.ultimateteams.config.TeamsGui;
@@ -78,6 +79,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     @Getter private Utils utils;
     @Getter private Settings settings;
     @Getter private TeamsGui teamsGui;
+    @Getter private Messages  messages;
     @Getter @Nullable private VaultHook economyHook;
     @Getter private EnderChestBackupManager backupManager;
 
@@ -325,6 +327,10 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         this.teamsGui = teamsGui;
     }
 
+    public void setMessages(@NotNull Messages messages) {
+        this.messages = messages;
+    }
+
      /**
      * Reloads the {@link Settings} from its config file
      *
@@ -338,6 +344,9 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
 
             // Load Gui File
             setGuiFile(Annotaml.create(new File(getDataFolder(), "teamgui.yml"), TeamsGui.class).get());
+
+            // Load messages
+            setMessages(Annotaml.create(new File(getDataFolder(), "messages-new.yml"), Messages.class).get());
 
             return true;
         } catch (IOException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
