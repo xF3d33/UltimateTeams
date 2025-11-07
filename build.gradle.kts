@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.xf3d3"
-version = "4.6.3"
+version = "4.6.4"
 
 repositories {
     mavenLocal()
@@ -98,7 +98,6 @@ tasks {
         relocate("org.json", "dev.xf3d3.ultimateteams.libraries.json")
         relocate("de.themoep", "dev.xf3d3.ultimateteams.libraries.inventorygui")
         relocate("dev.dejvokep", "dev.xf3d3.ultimateteams.libraries.boostedyaml")
-        relocate("net.kyori", "dev.xf3d3.ultimateteams.libraries.kyori")
         relocate("net.william278.desertwell", "dev.xf3d3.ultimateteams.libraries.william278.desertwell")
         relocate("net.william278.annotaml", "dev.xf3d3.ultimateteams.libraries.william278.annotaml")
     }
