@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.xf3d3"
-version = "4.6.4"
+version = "4.7"
 
 repositories {
     mavenLocal()
