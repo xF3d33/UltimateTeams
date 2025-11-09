@@ -68,7 +68,6 @@ public class Migrator {
                 plugin.log(Level.INFO, "Migration ended successfully.");
 
                 plugin.loadConfigs();
-                plugin.msgFileManager.reloadMessagesConfig();
                 TeamCommand.updateBannedTagsList();
                 plugin.getTeamStorageUtil().loadTeams();
 

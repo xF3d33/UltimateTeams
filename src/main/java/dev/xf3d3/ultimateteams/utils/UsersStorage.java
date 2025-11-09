@@ -99,12 +99,13 @@ public class UsersStorage {
             return CompletableFuture.completedFuture(usermap.get(uuid));
         }
 
+        final String name = Bukkit.getOfflinePlayer(uuid).getName();
+
         return plugin.supplyAsync(() -> plugin.getDatabase().getPlayer(uuid).map(teamPlayer -> {
             usermap.put(teamPlayer.getJavaUUID(), teamPlayer);
 
             return teamPlayer;
         }).orElseGet(() -> {
-            final String name = Bukkit.getOfflinePlayer(uuid).getName();
             if (name == null) {
                 throw new IllegalArgumentException("Player " + uuid + " not found");
             }

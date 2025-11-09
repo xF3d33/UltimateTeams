@@ -1,6 +1,7 @@
 package dev.xf3d3.ultimateteams.gui;
 
 import de.themoep.inventorygui.*;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamWarp;
@@ -13,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public class WarpsManager {
-    private final FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
 
     private final UltimateTeams plugin;
     private final Player player;
@@ -77,12 +77,12 @@ public class WarpsManager {
                                         team.removeTeamWarp(warp.getName());
                                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                                        player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-deleted-successful").replaceAll("%WARP_NAME%", warp.getName())));
+                                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpDeletedSuccessful().replaceAll("%WARP_NAME%", warp.getName())));
 
                                         click.getGui().close();
                                         new WarpsManager(plugin, player);
                                     } else {
-                                        player.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                                        player.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
                                     }
                                 }
 

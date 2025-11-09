@@ -1,5 +1,6 @@
 package dev.xf3d3.ultimateteams.utils;
 
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Position;
 import dev.xf3d3.ultimateteams.models.Team;
@@ -23,11 +24,9 @@ import java.util.stream.Collectors;
 
 public class Utils {
     private final UltimateTeams plugin;
-    private final FileConfiguration messagesConfig;
 
     public Utils(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
 
     public void teleportPlayer(@NotNull Player player, @NotNull Location location, @Nullable String server, @NotNull TeleportType teleportType, @Nullable String warpName) {
@@ -55,13 +54,13 @@ public class Utils {
 
         // if tp is Home and cooldown is enabled handle teleport
         if ((plugin.getSettings().getTeamHomeTpDelay() > 0) && teleportType.equals(TeleportType.HOME)) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-home-cooldown-start").replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeamHomeTpDelay()))));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamHomeCooldownStart().replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeamHomeTpDelay()))));
 
             plugin.runLater(() -> {
                 // Run on the appropriate thread scheduler for this platform
                 plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
-                player.sendMessage(Utils.Color(messagesConfig.getString("successfully-teleported-to-home")));
+                player.sendMessage(MineDown.parse(plugin.getMessages().getSuccessfullyTeleportedToHome()));
             }, plugin.getSettings().getTeamHomeTpDelay());
 
             return;
@@ -69,12 +68,12 @@ public class Utils {
 
         // if tp is Warp and cooldown is enabled handle teleport
         if ((plugin.getSettings().getTeamWarpTpDelay() > 0) && teleportType.equals(TeleportType.WARP)) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-cooldown-start").replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeamWarpTpDelay()))));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpCooldownStart().replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeamWarpTpDelay()))));
 
             plugin.runLater(() -> {
                 // Run on the appropriate thread scheduler for this platform
                 plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                player.sendMessage(Utils.Color(messagesConfig.getString("team-warp-teleported-successful").replaceAll("%WARP_NAME%", String.valueOf(warpName))));
+                player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpTeleportedSuccessful().replaceAll("%WARP_NAME%", String.valueOf(warpName))));
 
             }, plugin.getSettings().getTeamWarpTpDelay());
 

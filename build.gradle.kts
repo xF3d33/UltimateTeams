@@ -1,11 +1,11 @@
 plugins {
     kotlin("jvm") version "1.8.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "9.2.2"
     id("java")
 }
 
 group = "dev.xf3d3"
-version = "4.6.4"
+version = "4.7.2"
 
 repositories {
     mavenLocal()
@@ -46,7 +46,7 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.40")
 
     // Folia and Spigot
-    compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
     implementation("org.bstats:bstats-bukkit:3.1.0")
@@ -57,9 +57,11 @@ dependencies {
     implementation("com.tcoded:FoliaLib:0.5.1")
 
     // Libs
-    implementation("co.aikar:acf-bukkit:0.5.1-SNAPSHOT")
+    implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("dev.dejvokep:boosted-yaml:1.3.1")
+
+    implementation("de.themoep:minedown-adventure:1.7.5")
 
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
@@ -90,6 +92,7 @@ tasks {
         exclude("com/google/errorprone/annotations/**")
 
         relocate("org.bstats", "dev.xf3d3.ultimateteams.libraries.bstats")
+        relocate("de.themoep.minedown", "dev.xf3d3.ultimateteams.libraries.minedown")
         relocate("com.tcoded.folialib", "dev.xf3d3.ultimateteams.libraries.folialib")
         relocate("co.aikar", "dev.xf3d3.ultimateteams.libraries.aikar")
         relocate("com.google.gson", "dev.xf3d3.ultimateteams.libraries.gson")

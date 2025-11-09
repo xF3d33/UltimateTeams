@@ -4,14 +4,16 @@
 
 <br>&nbsp;<br>
 
-UltimateTeams is a light-weight teams plugin for Minecraft servers running Spigot and most of its forks, developed with optimization in mind!
+UltimateTeams is a light-weight teams plugin for Minecraft servers running Spigot and most of its forks, with cross-server support, developed with optimization in mind!
 
 UltimateTeams does offer the ability to disable friendly fire within your team and allies!
 
-[bStats (400+ servers)](https://bstats.org/plugin/bukkit/UltimateTeams/18842)
+[bStats (800+ servers, 2000+ players)](https://bstats.org/plugin/bukkit/UltimateTeams/18842)
 <br>&nbsp;<br>
 
-###  _**I'm currently adding support for cross-server. If you want to help me on this, write me a message on Discord (xF3d3) and i'll provide some test builds**_
+## [Check the Images Gallery!](https://modrinth.com/plugin/ultimate-teams/gallery)
+
+
 
 <img     src="https://cdn.modrinth.com/data/cached_images/be59361ea48c350f68566f613ed176c19c266504.png"  alt="Image Description" width="WIDTH">
 <br>&nbsp;<br>
@@ -23,16 +25,25 @@ UltimateTeams does support H2 (preferred over SQLite), SQLite, MySQL, MariaDB (p
 <img     src="https://cdn.modrinth.com/data/cached_images/163f5d441b2112c81ce92f2c288cec7bf049a8ac.png"  alt="Image Description" width="WIDTH">
 <br>&nbsp;<br>
 
+⭐ **Works Cross-Server**\
+The plugin will synchronize all data real-time between proxied servers using MySQL and a message broker (check the config).
+
 ⭐ **Optimization**\
 The whole plugin is developed with optimization in mind, and it has been tested with more than 100 active players.
 
+⭐ **Team Enderchests**\
+Teams can have one or more shared enderchests with configurable slots. Admin can manage (add, remove, see, modify etc) them, and they are updated real-time between viewers to avoid dupe glitches.
+
 ⭐ **Home & Warps**\
-Each team can have a home and one ore more warps (check the config). Teleportation can also be handled by HuskHomes
+Each team can have a home and one ore more warps (check the config). Teleportation can also be handled by HuskHomes. Max warps/members can also be dynamically modified with a permission
 
-⭐ **Bedrock Support** \
-With floodgate correctly installed, bedrock players are automatically managed
+⭐ **GUI**\
+Teams can be managed in a GUI. Team list can also be accessed in a paginated GUI.
 
-⭐ **Team & Team allies chat**\
+⭐ **Economy**\
+Economy can be enabled to support features like team creation cost, team join fee, team bank...
+
+⭐ **Team & Allies chat**\
 Players of each team and all its allies can talk in their dedicated channels
 
 ⭐ **Allies and Enemies**\
@@ -44,8 +55,16 @@ Some placeholders are already available without requiring to download an externa
 ⭐ **Admin commands**\
 Staff members can force players to join a team or disband another
 
-⭐ **GUI**\
-Teams list can also be accessed in a paginated GUI
+⭐ **LuckPerms contexts**\
+The plugin provides context for LuckPerms such as "is-in-team"/"is-team-owner"
+
+⭐ **HuskHomes support**\
+The plugin will use its own teleportation handler (even between servers if cross-server is enabled), but it supports [HuskHomes](https://modrinth.com/plugin/huskhomes) for a more seamlessly integration
+
+⭐ **Bedrock Support** \
+With floodgate correctly installed, bedrock players are automatically managed
+
+
 <br>&nbsp;<br>
 <center>
 <img     src="https://cdn.modrinth.com/data/cached_images/257f92ada5da2edf5e0513324f56f5190dff15d0.png"  alt="Image Description" width="400">
@@ -71,6 +90,11 @@ The `/team` command is the main command of the plugin, with `/team` you can do t
 * `/team [sethome|home]` - Will set a team home location or teleport you or you team members to this location.
 * `/team [promote|demote] <player>` - Will promote/demote a team member to/from team manager.
 * `/team permission [add|remove] <permission>` - Will add/remove a permission to make team managers use specific team commands.
+* `/team deposit <amount>` - deposit money into the team bank
+* `/team withdraw <amount>` - withdraw money from the team bank
+* `/team fee [set/disable] [amount]` - see, disable, or set the team join fee
+* `/invites <enable/disable>` - enable/disable invites from teams
+
 
 ## /teamadmin command
 Aliases: `/ta`
@@ -124,10 +148,19 @@ Player permissions
 * `ultimateteams.team.info`
 * `ultimateteams.team.promote`
 * `ultimateteams.team.demote`
+* `ultimateteams.team.echest`
 * `ultimateteams.team.permissions.add`
 * `ultimateteams.team.permissions.remove`
 * `ultimateteams.allychat`
 * `ultimateteams.teamchat`
+* `ultimateteams.team.echest`
+* `ultimateteams.team.deposit`
+* `ultimateteams.team.withdraw`
+* `ultimateteams.team.invites.enable`
+* `ultimateteams.team.invites.disable`
+* `ultimateteams.team.fee.see`
+* `ultimateteams.team.fee.set`
+* `ultimateteams.team.fee.disable`
 
 Admin permissions:
 * `ultimateteams.admin.about`
@@ -140,15 +173,20 @@ Admin permissions:
 * `ultimateteams.bypass.chatcooldown`
 * `ultimateteams.bypass.warpcooldown`
 * `ultimateteams.chat.spy`
+* `ultimateteams.admin.echest.add`
+* `ultimateteams.admin.echest.remove`
+* `ultimateteams.admin.echest.list`
+* `ultimateteams.admin.echest.see`
+* `ultimateteams.admin.echest.rollback`
+* `ultimateteams.admin.echest.backup`
+* `ultimateteams.admin.echest.remove`
 
 <br>&nbsp;<br>
 
 <img     src="https://cdn.modrinth.com/data/cached_images/33a45de13c09e4853203944c4105cfb3105a50d9.png"  alt="Image Description" width="250">
 <br>&nbsp;<br>
 
-UltimateTeams exposes `8` external placeholders using `PlaceholderAPI` to enable the fetching of a players team name or the team prefix or if the team has friendly fire enabled or if the team has a home set.
-
-The four available placeholders are:
+The available placeholders are:
 * `%ultimateteams_teamName%`
 * `%ultimateteams_teamPrefix%`
 * `%ultimateteams_friendlyFire%`
@@ -158,7 +196,7 @@ The four available placeholders are:
 * `%ultimateteams_teamEnemySize%`
 * `%ultimateteams_isInTeam%`
 
-To be able to use these The latest release of [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) MUST be installed!  Without it, you can't use these placeholders.
+To be able to use the placeholders, the latest release of [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) MUST be installed!
 
 ## Please report any issue on GitHub.
 

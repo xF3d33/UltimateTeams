@@ -22,6 +22,12 @@ public class Preferences {
     @SerializedName("team_chat_spying")
     private boolean teamChatSpying;
 
+    @Setter
+    @Getter
+    @Expose
+    @SerializedName("invitations_status")
+    private boolean acceptInvitations = true;
+
     @Expose
     @SerializedName("teleport_target")
     @Nullable
@@ -37,13 +43,15 @@ public class Preferences {
     public static Preferences getDefaults() {
         return new Preferences(
                 false,
-                false
+                false,
+                true
         );
     }
 
-    private Preferences(boolean teamChatTalking, boolean teamChatSpying) {
+    private Preferences(boolean teamChatTalking, boolean teamChatSpying, boolean invitationsStatus) {
         this.teamChatTalking = teamChatTalking;
         this.teamChatSpying = teamChatSpying;
+        this.acceptInvitations = invitationsStatus;
     }
 
     @SuppressWarnings("unused")

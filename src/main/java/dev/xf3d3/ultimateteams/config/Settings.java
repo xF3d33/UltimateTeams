@@ -28,8 +28,13 @@ public class Settings {
 
     // Top-level settings
     @YamlComment("Do you want to use the GUI system? [Default value: true]")
-    @YamlKey("use-global-GUI-system")
+    @YamlKey("gui.enable")
     private boolean useGlobalGui = true;
+
+    @YamlComment("Should the plugin open the team list GUI instead of sending chat message when /team list is used? [Default value: false]")
+    @YamlKey("gui.use-gui-for-team-list")
+    @Getter
+    private boolean teamListUseGui = false;
 
     // Database settings
     @YamlComment("Type of database to use (SQLITE, H2, MYSQL, MARIADB, or POSTGRESQL). MARIADB is preferred over MYSQL. H2 is preferred over SQLITE")
@@ -95,7 +100,7 @@ public class Settings {
     @Getter
     private String clusterId = "main";
 
-    @YamlComment("Type of network message broker to ues for data synchronization (PLUGIN_MESSAGE or REDIS). REDIS is preferred over PLUGIN_MESSAGE.")
+    @YamlComment("Type of network message broker to ues for data synchronization (PLUGIN_MESSAGE or REDIS). Always use REDIS if possible.")
     @YamlKey("cross-server.broker")
     @Getter
     private Broker.Type brokerType = Broker.Type.PLUGIN_MESSAGE;
@@ -271,7 +276,7 @@ public class Settings {
     @YamlComment("Whether to allow color codes (& and #) in the teams tag")
     @YamlKey("team.tag.allow-color-codes")
     @Getter
-    private boolean teamTagAllowColorCodes = false;
+    private boolean teamTagAllowColorCodes = true;
 
     @YamlComment("If enabled, players need the ultimateteams.team.tag.usecolors permission to use color codes")
     @YamlKey("team.tag.require-perm-for-color-codes")
@@ -306,6 +311,23 @@ public class Settings {
     private String bracketsClosing = "&f]";
 
 
+    // Team Echest
+    @YamlComment("Enable the team enderchest system. [Default value: true]\nThis is not compatible with cross-server (yet).")
+    @YamlKey("team.echest.enabled")
+    @Getter
+    private boolean teamEnderChestEnabled = true;
+
+    @YamlComment("How many rows will the default enderchest have? [Default value: 3]\nValue can go from 1 to 6, being 3 a normal chest and 6 a double chest")
+    @YamlKey("team.echest.rows")
+    @Getter
+    private int teamEnderChestRows = 3;
+
+    @YamlComment("ONLY FOR SERVERS WHO JUST UPDATED TO A VERSION THAT SUPPORTS THIS FEATURE!\nShould the plugin add an enderchest to each team on startup? [Default value: false]\nSince teams created before this version didn't have enderchests, add one.\nAFTER A FULL STARTUP DISABLE THIS AND RESTART THE SERVER!")
+    @YamlKey("team.echest.migrate")
+    @Getter
+    private boolean teamEnderChestMigrate = false;
+
+
     // Chat Spy
     @YamlComment("Do you want players with the perm 'ultimateteams.chat.spy' be able to spy on all team chat messages? [Default value: true]")
     @YamlKey("chat.chat-spy.enabled")
@@ -318,15 +340,36 @@ public class Settings {
 
 
     // Economy
-    @YamlComment("Whether to enable economy (Vault is required)")
+    @YamlComment("Whether to enable economy (Vault is required). Changes might require to restart the server")
     @YamlKey("economy.enable")
     @Getter
     private boolean economyEnabled = false;
 
+    @YamlComment("Should players pay to create a team?")
+    @YamlKey("economy.team-create.enabled")
+    @Getter
+    private boolean teamCreateCostEnabled = false;
+
     @YamlComment("The cost to create a team")
-    @YamlKey("economy.team-create")
+    @YamlKey("economy.team-create.cost")
     @Getter
     private double teamCreateCost = 100.0;
+
+    @YamlComment("Should players be allowed to ask who joins a team a fee (that will be deposited in the team bank)?")
+    @YamlKey("economy.team-join-fee.enabled")
+    @Getter
+    private boolean teamJoinFeeEnabled = false;
+
+    @YamlComment("The default cost of the join fee")
+    @YamlKey("economy.team-join-fee.default")
+    @Getter
+    private double teamJoinFeeDefault = 100.0;
+
+    @YamlComment("The max cost of the join fee")
+    @YamlKey("economy.team-join-fee.max-fee")
+    @Getter
+    private double teamJoinFeeMax = 10000.0;
+
 
     // Update Checker
     @YamlComment("Do you want to enable in game plugin update notifications? (Permission:'ultimateteams.update'). [Default value: true]")
