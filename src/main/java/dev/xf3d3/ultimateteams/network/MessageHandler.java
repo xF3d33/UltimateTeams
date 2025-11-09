@@ -1,5 +1,6 @@
 package dev.xf3d3.ultimateteams.network;
 
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamInvite;
@@ -88,7 +89,7 @@ public interface MessageHandler {
             final Player inviter = Bukkit.getPlayer(invite.getInviter());
 
             if (inviter != null)  {
-                inviter.sendMessage(Utils.Color(getPlugin().msgFileManager.getMessagesConfig().getString("team-invite-denied-inviter")
+                inviter.sendMessage(MineDown.parse(getPlugin().getMessages().getTeamInviteDeniedInviter()
                         .replace("%PLAYER%", Objects.requireNonNullElse(Bukkit.getOfflinePlayer(invite.getInvitee()).getName(), "?"))));
             }
 
@@ -96,7 +97,7 @@ public interface MessageHandler {
         }
 
         // Send message to team members
-        team.get().sendTeamMessage(Utils.Color(getPlugin().msgFileManager.getMessagesConfig().getString("team-join-broadcast-chat")
+        team.get().sendTeamMessage(MineDown.parse(getPlugin().getMessages().getTeamJoinBroadcastChat()
                 .replace(PLAYER_PLACEHOLDER, Objects.requireNonNullElse(Bukkit.getOfflinePlayer(invite.getInvitee()).getName(), "?"))
                 .replace(TEAM_PLACEHOLDER, Utils.Color(team.get().getName()))));
     }
@@ -152,7 +153,7 @@ public interface MessageHandler {
                         final Player owner = Bukkit.getPlayer(team.getOwner());
 
                         if (owner != null) {
-                            owner.sendMessage(Utils.Color(getPlugin().msgFileManager.getMessagesConfig().getString("team-ownership-transfer-new-owner")
+                            owner.sendMessage(MineDown.parse(getPlugin().getMessages().getTeamOwnershipTransferNewOwner()
                                     .replace("%TEAM%", team.getName())));
                         }
                     }
@@ -165,8 +166,8 @@ public interface MessageHandler {
             return;
         }
 
-        receiver.sendMessage(Utils.Color(getPlugin().msgFileManager.getMessagesConfig().getString("team-kicked-player-message"))
-                .replace("%TEAM%", getPlugin().getTeamStorageUtil().findTeamByMember(receiver.getUniqueId()).map(Team::getName).orElse("?")));
+        receiver.sendMessage(MineDown.parse(getPlugin().getMessages().getTeamKickedPlayerMessage()
+                .replace("%TEAM%", getPlugin().getTeamStorageUtil().findTeamByMember(receiver.getUniqueId()).map(Team::getName).orElse("?"))));
 
         getPlugin().getUsersStorageUtil().getPlayer(receiver.getUniqueId()).thenAccept(teamPlayer -> {
             teamPlayer.getPreferences().setTeamChatTalking(false);

@@ -1,5 +1,6 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.home;
 
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamHomePreTeleportEvent;
 import dev.xf3d3.ultimateteams.api.events.TeamHomeTeleportEvent;
@@ -18,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class TeamHomeSubCommand {
-    private final FileConfiguration messagesConfig;
     private static final String TIME_LEFT = "%TIMELEFT%";
     private static TeamHomePreTeleportEvent homePreTeleportEvent = null;
     private static final ConcurrentHashMap<UUID, Long> homeCoolDownTimer = new ConcurrentHashMap<>();
@@ -26,18 +26,17 @@ public class TeamHomeSubCommand {
 
     public TeamHomeSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
 
     public void tpTeamHomeSubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
             return;
         }
 
         // check if function is enabled
         if (!plugin.getSettings().teamHomeEnabled()) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
 
@@ -47,7 +46,7 @@ public class TeamHomeSubCommand {
 
                     // check if home exists
                     if (home == null) {
-                        player.sendMessage(Utils.Color(messagesConfig.getString("failed-no-home-set")));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getFailedNoHomeSet()));
                         return;
                     }
 
@@ -64,7 +63,7 @@ public class TeamHomeSubCommand {
                             if (homeCoolDownTimer.get(player.getUniqueId()) > System.currentTimeMillis()) {
                                 long timeLeft = (homeCoolDownTimer.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000;
 
-                                player.sendMessage(Utils.Color(messagesConfig.getString("home-cool-down-timer-wait")
+                                player.sendMessage(MineDown.parse(plugin.getMessages().getHomeCoolDownTimerWait()
                                         .replaceAll(TIME_LEFT, Long.toString(timeLeft))));
                             } else {
                                 homeCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
@@ -82,7 +81,7 @@ public class TeamHomeSubCommand {
                     fireTeamHomeTeleportEvent(player, team, home.getLocation(), player.getLocation());
                     tpHome(player, home);
                 },
-                () -> player.sendMessage(Utils.Color(messagesConfig.getString("failed-tp-not-in-team")))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getFailedTpNotInTeam()))
         );
 
 

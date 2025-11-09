@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.Default;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.command.CommandSender;
@@ -12,14 +13,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-@CommandAlias("chatspy")
+@CommandAlias("chatspy|teamchatspy|tchatspy")
 public class TeamChatSpyCommand extends BaseCommand {
-    private final FileConfiguration messagesConfig;
     private final UltimateTeams plugin;
 
     public TeamChatSpyCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
 
     @CommandCompletion("@nothing")
@@ -29,15 +28,15 @@ public class TeamChatSpyCommand extends BaseCommand {
             if (plugin.getSettings().teamChatSpyEnabled()){
                 if (player.hasPermission("ultimateteams.chat.spy")) {
                     if (plugin.getUsersStorageUtil().toggleChatSpy(player)) {
-                        player.sendMessage(Utils.Color(messagesConfig.getString("chatspy-toggle-on")));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getChatspyToggleOn()));
                     } else {
-                        player.sendMessage(Utils.Color(messagesConfig.getString("chatspy-toggle-off")));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getChatspyToggleOff()));
                     }
                 } else {
-                    player.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                    player.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
                 }
             } else {
-                player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+                player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             }
         }
     }

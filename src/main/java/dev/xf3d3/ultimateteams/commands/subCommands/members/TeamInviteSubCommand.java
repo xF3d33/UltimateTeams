@@ -1,5 +1,6 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.members;
 
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
@@ -18,7 +19,6 @@ import java.util.Optional;
 
 public class TeamInviteSubCommand {
 
-    private final FileConfiguration messagesConfig;
     private static final String INVITED_PLAYER = "%INVITED%";
     public static final String PLAYER_PLACEHOLDER = "%PLAYER%";
     public static final String TEAM_PLACEHOLDER = "%TEAM%";
@@ -27,12 +27,11 @@ public class TeamInviteSubCommand {
 
     public TeamInviteSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
 
     public void teamInviteSendSubCommand(CommandSender sender, String inviteeName) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
             return;
         }
 
@@ -43,25 +42,24 @@ public class TeamInviteSubCommand {
 
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.INVITE)))) {
-                        sender.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
                         return;
                     }
 
                     if (offlinePlayer.getUniqueId().toString().equals(player.getUniqueId().toString())) {
-                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-invite-self-error")));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteSelfError()));
                         return;
                     }
 
                     // Check if the player is already in a team
                     if (plugin.getTeamStorageUtil().findTeamByMember(offlinePlayer.getUniqueId()).isPresent()) {
-                        String playerAlreadyInTeam = Utils.Color(messagesConfig.getString("team-invite-invited-already-in-team")).replace(INVITED_PLAYER, inviteeName);
-                        sender.sendMessage(playerAlreadyInTeam);
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteInvitedAlreadyInTeam().replace(INVITED_PLAYER, inviteeName)));
                         return;
                     }
 
                     // Check if the player has another active invite
                     if (plugin.getTeamInviteUtil().hasInvitee(offlinePlayer.getUniqueId())) {
-                        player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-failed").replaceAll("%INVITED%", inviteeName)));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteFailed().replaceAll("%INVITED%", inviteeName)));
                         return;
                     }
 
@@ -70,32 +68,34 @@ public class TeamInviteSubCommand {
                         final int maxMembers = teamPlayer.getMaxMembers(player, plugin.getSettings().getTeamMaxSize(), plugin.getSettings().getStackedTeamSize());
 
                         if (team.getMembers().size() >= maxMembers) {
-                            player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-max-size-reached")).replace("%LIMIT%", String.valueOf(maxMembers)));
+                            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteMaxSizeReached().replace("%LIMIT%", String.valueOf(maxMembers))));
                             return;
                         }
 
-                        boolean invited = plugin.getTeamInviteUtil().createInvite(team.getId(), player, offlinePlayer.getUniqueId());
+                        plugin.getUsersStorageUtil().getPlayer(offlinePlayer.getUniqueId()).thenAccept(invitedTeamPlayer -> {
+                            if (!invitedTeamPlayer.getPreferences().isAcceptInvitations()) {
+                                player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteFailInvitesOff().replace("%NAME%", inviteeName)));
 
-                        if (invited) {
-                            String confirmationString = Utils.Color(messagesConfig.getString("team-invite-successful")).replace(INVITED_PLAYER, inviteeName);
-                            player.sendMessage(confirmationString);
+                                return;
+                            }
 
-                            String invitationString = Utils.Color(messagesConfig.getString("team-invited-player-invite-pending")).replace("%TEAMOWNER%", player.getName());
+                            boolean invited = plugin.getTeamInviteUtil().createInvite(team.getId(), player, offlinePlayer.getUniqueId());
 
-                            Optional.ofNullable(offlinePlayer.getPlayer())
-                                    .ifPresent(invitedPlayer -> {
-                                        invitedPlayer.sendMessage(invitationString);
-                                        
-                                        // Send clickable accept/decline buttons
-                                        sendClickableInvite(invitedPlayer, team.getName(), player.getName());
-                                    });
-                        } else {
-                            player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-failed")).replace(INVITED_PLAYER, inviteeName));
-                        }
+                            if (invited) {
+                                player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteSuccessful().replace(INVITED_PLAYER, inviteeName)));
 
+                                Optional.ofNullable(offlinePlayer.getPlayer())
+                                        .ifPresent(invitedPlayer -> invitedPlayer.sendMessage(MineDown.parse(String.join("\n", plugin.getMessages().getTeamInviteInvitedMessage())
+                                                .replace("%TEAM%", team.getName())
+                                                .replace("%INVITER%", player.getName())
+                                        )));
+                            } else {
+                                player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteFailed().replace(INVITED_PLAYER, inviteeName)));
+                            }
+                        });
                     });
                 },
-                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
         );
 
 
@@ -135,19 +135,19 @@ public class TeamInviteSubCommand {
 
     public void teamInviteDenySubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getTeamInviteUtil().hasInvitee(player.getUniqueId())) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-deny-failed-no-invite")));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteDenyFail()));
             return;
         }
 
         if (plugin.getTeamInviteUtil().declineInvite(player)) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-denied")));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteDenied()));
         } else {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-invite-deny-fail")));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteDenyFail()));
         }
     }
 
@@ -155,80 +155,52 @@ public class TeamInviteSubCommand {
     // ACCEPT
     public void teamInviteAcceptSubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getTeamInviteUtil().hasInvitee(player.getUniqueId())) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-join-failed-no-invite")));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinFailedNoInvite()));
             return;
         }
 
         plugin.getTeamInviteUtil().getInvite(player.getUniqueId()).ifPresentOrElse(
                 invite -> plugin.getTeamStorageUtil().findTeamByMember(invite.getInviter()).ifPresentOrElse(
                         team -> {
+                            if (plugin.getEconomyHook() != null && team.getJoin_fee() > 0) {
+                                if (!plugin.getEconomyHook().takeMoney(player, team.getJoin_fee())) {
+                                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeamFeeCantJoin()
+                                            .replace("%TEAM%",  team.getName())
+                                            .replace("%AMOUNT%", String.valueOf(team.getJoin_fee()))
+                                    ));
+
+                                    return;
+                                }
+
+                                team.addBalance(team.getJoin_fee());
+                                team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeamFeeDeposited()
+                                        .replace("%PLAYER%", player.getName())
+                                        .replace("%AMOUNT%", String.valueOf(team.getJoin_fee()))
+                                ));
+                            }
+
+
                             plugin.getTeamStorageUtil().addTeamMember(team, player);
                             plugin.getTeamInviteUtil().acceptInvite(invite, player);
 
-                            String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace(TEAM_PLACEHOLDER, team.getName());
-                            player.sendMessage(joinMessage);
+                            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinSuccessful().replace(TEAM_PLACEHOLDER, team.getName())));
 
                             if (!plugin.getSettings().teamJoinAnnounce())
                                 return;
 
                             // Send message to team members
-                            team.sendTeamMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
+                            team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeamJoinBroadcastChat()
                                     .replace(PLAYER_PLACEHOLDER, player.getName())
                                     .replace(TEAM_PLACEHOLDER, Utils.Color(team.getName()))));
                         },
-                        () -> player.sendMessage(Utils.Color(messagesConfig.getString("team-join-failed-no-valid-team")))
+                        () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinFailedNoValidTeam()))
                 ),
-                () -> player.sendMessage(Utils.Color(messagesConfig.getString("team-join-failed-no-invite")))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinFailedNoInvite()))
         );
-    }
-
-    /**
-     * Send a clickable invite message with Accept and Decline buttons
-     */
-    private void sendClickableInvite(Player invitedPlayer, String teamName, String inviterName) {
-        // Create the main message
-        TextComponent message = new TextComponent(Utils.Color("&7&m                                                    "));
-        invitedPlayer.spigot().sendMessage(message);
-        
-        TextComponent header = new TextComponent(Utils.Color("&6&lTeam Invitation"));
-        invitedPlayer.spigot().sendMessage(header);
-        
-        TextComponent info = new TextComponent(Utils.Color("&eYou've been invited to join &6" + teamName + " &eby &6" + inviterName));
-        invitedPlayer.spigot().sendMessage(info);
-
-        TextComponent message2 = new TextComponent("");
-        invitedPlayer.spigot().sendMessage(message2);
-        
-        // Create clickable buttons
-        TextComponent buttons = new TextComponent("");
-        
-        // Accept button (green)
-        TextComponent acceptButton = new TextComponent(Utils.Color("&a&l[✔ ACCEPT]"));
-        acceptButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team invite accept"));
-        acceptButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
-            new ComponentBuilder(Utils.Color("&aClick to accept the invitation")).create()));
-        
-        // Space between buttons
-        TextComponent space = new TextComponent("  ");
-        
-        // Decline button (red)
-        TextComponent declineButton = new TextComponent(Utils.Color("&c&l[✖ DECLINE]"));
-        declineButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team invite deny"));
-        declineButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
-            new ComponentBuilder(Utils.Color("&cClick to decline the invitation")).create()));
-        
-        buttons.addExtra(acceptButton);
-        buttons.addExtra(space);
-        buttons.addExtra(declineButton);
-        
-        invitedPlayer.spigot().sendMessage(buttons);
-        
-        TextComponent footer = new TextComponent(Utils.Color("&7&m                                                    "));
-        invitedPlayer.spigot().sendMessage(footer);
     }
 }

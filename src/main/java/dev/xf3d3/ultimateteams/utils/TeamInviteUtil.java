@@ -1,6 +1,7 @@
 package dev.xf3d3.ultimateteams.utils;
 
 import com.google.common.collect.Maps;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.TeamInvite;
 import dev.xf3d3.ultimateteams.network.Message;
@@ -49,10 +50,14 @@ public class TeamInviteUtil {
     }
 
     public void handleInboundInvite(Player invitee, TeamInvite invite) {
-        invitee.sendMessage(Utils.Color(plugin.msgFileManager.getMessagesConfig().getString("team-invited-player-invite-pending"))
-                .replace("%TEAMOWNER%", Objects.requireNonNullElse(Bukkit.getOfflinePlayer(invite.getInviter()).getName(), ""))
-        );
-        invites.put(invite.getInviter(), invite);
+        plugin.getTeamStorageUtil().findTeam(invite.getTeamId()).ifPresent(team -> {
+            invitee.sendMessage((MineDown.parse(String.join("\n", plugin.getMessages().getTeamInviteInvitedMessage())
+                    .replace("%TEAM%", team.getName())
+                    .replace("%INVITER%", Objects.requireNonNullElse(Bukkit.getOfflinePlayer(invite.getInviter()).getName(), "player not found"))
+            )));
+
+            invites.put(invite.getInviter(), invite);
+        });
     }
 
     public boolean hasInvitee(UUID inviteeUUID) {
@@ -88,7 +93,7 @@ public class TeamInviteUtil {
 
         final Player inviter = Bukkit.getPlayer(invite.getInviter());
         if (inviter != null)  {
-            inviter.sendMessage(Utils.Color(plugin.msgFileManager.getMessagesConfig().getString("team-invite-denied-inviter")
+            inviter.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteDeniedInviter()
                     .replace("%PLAYER%", player.getName())));
         }
 

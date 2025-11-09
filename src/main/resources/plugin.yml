@@ -1,5 +1,5 @@
 name: UltimateTeams
-version: "4.7"
+version: "4.7.1"
 main: dev.xf3d3.ultimateteams.UltimateTeams
 api-version: 1.16
 prefix: UltimateTeams
@@ -58,6 +58,13 @@ permissions:
       ultimateteams.team.permissions.remove: true
       ultimateteams.allychat: true
       ultimateteams.teamchat: true
+      ultimateteams.team.deposit: true
+      ultimateteams.team.withdraw: true
+      ultimateteams.invites.enable: true
+      ultimateteams.invites.disable: true
+      ultimateteams.team.fee.see: true
+      ultimateteams.team.fee.set: true
+      ultimateteams.team.fee.disable: true
 
   ultimateteams.defaultsop:
     default: op

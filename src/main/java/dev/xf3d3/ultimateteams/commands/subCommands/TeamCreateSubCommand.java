@@ -1,5 +1,6 @@
 package dev.xf3d3.ultimateteams.commands.subCommands;
 
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamCreateEvent;
 import dev.xf3d3.ultimateteams.models.Team;
@@ -16,7 +17,6 @@ import java.util.List;
 public class TeamCreateSubCommand {
     private final UltimateTeams plugin;
 
-    private final FileConfiguration messagesConfig;
     private final TeamsStorage storageUtil;
     private static final String TEAM_PLACEHOLDER = "%TEAM%";
 
@@ -27,7 +27,6 @@ public class TeamCreateSubCommand {
         this.plugin = plugin;
 
         this.storageUtil = plugin.getTeamStorageUtil();
-        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
 
         this.MIN_CHAR_LIMIT = plugin.getSettings().getTeamNameMinLength();
         this.MAX_CHAR_LIMIT = plugin.getSettings().getTeamNameMaxLength();
@@ -36,65 +35,64 @@ public class TeamCreateSubCommand {
     public void createTeamSubCommand(CommandSender sender, String name, List<String> bannedTags) {
 
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
             return;
         }
 
 
         if (name.contains(" ")) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-name-contains-space").replace(TEAM_PLACEHOLDER, name)));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameContainsSpace().replace(TEAM_PLACEHOLDER, name)));
             return;
         }
 
         if (bannedTags.stream().map(String::toLowerCase).toList().contains(name.toLowerCase())) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-name-is-banned").replace(TEAM_PLACEHOLDER, name)));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameIsBanned().replace(TEAM_PLACEHOLDER, name)));
             return;
         }
 
         if (plugin.getTeamStorageUtil().getTeamsName().stream().map(String::toLowerCase).toList().contains(name.toLowerCase())) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-name-already-taken").replace(TEAM_PLACEHOLDER, name)));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameAlreadyTaken().replace(TEAM_PLACEHOLDER, name)));
             return;
         }
 
         if (!plugin.getSettings().isTeamCreateAllowColorCodes() && (name.contains("&") || name.contains("#"))) {
 
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-name-cannot-contain-colours")));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameCannotContainColours()));
             return;
         }
 
         if (plugin.getSettings().isTeamCreateRequirePermColorCodes() && !player.hasPermission("ultimateteams.team.create.usecolors") && (name.contains("&") || name.contains("#"))) {
 
-            player.sendMessage(Utils.Color(messagesConfig.getString("use-colours-missing-permission")));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getUseColoursMissingPermission()));
             return;
         }
 
         if (storageUtil.isInTeam(player)) {
 
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-creation-failed").replace(TEAM_PLACEHOLDER, Utils.Color(name))));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamCreationFailed().replace(TEAM_PLACEHOLDER, Utils.Color(name))));
             return;
         }
 
         final int nameLength = Utils.removeColors(name).length();
         if (nameLength < MIN_CHAR_LIMIT) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-short").replace("%CHARMIN%", Integer.toString(MIN_CHAR_LIMIT))));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameTooShort().replace("%CHARMIN%", Integer.toString(MIN_CHAR_LIMIT))));
 
             return;
         } else if (nameLength > MAX_CHAR_LIMIT) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("team-name-too-long").replace("%CHARMAX%", Integer.toString(MAX_CHAR_LIMIT))));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameTooLong().replace("%CHARMAX%", Integer.toString(MAX_CHAR_LIMIT))));
 
             return;
         }
 
         if (plugin.getEconomyHook() != null && !plugin.getEconomyHook().takeMoney(player, plugin.getSettings().getTeamCreateCost())) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("not-enough-money").replace("%MONEY%", String.valueOf(plugin.getSettings().getTeamCreateCost()))));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getNotEnoughMoney().replace("%MONEY%", String.valueOf(plugin.getSettings().getTeamCreateCost()))));
             return;
         }
 
 
         storageUtil.createTeam(player, name);
-        String teamCreated = Utils.Color(messagesConfig.getString("team-created-successfully")).replace(TEAM_PLACEHOLDER, Utils.Color(name));
 
-        player.sendMessage(teamCreated);
+        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamCreatedSuccessfully().replace(TEAM_PLACEHOLDER, Utils.Color(name))));
 
         //fireTeamCreateEvent(player, team);
     }

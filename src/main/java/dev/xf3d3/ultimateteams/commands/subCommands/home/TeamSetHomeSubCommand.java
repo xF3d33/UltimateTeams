@@ -1,5 +1,6 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.home;
 
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamHomeCreateEvent;
 import dev.xf3d3.ultimateteams.models.Team;
@@ -15,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.logging.Level;
 
 public class TeamSetHomeSubCommand {
-    FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
-
     private final UltimateTeams plugin;
 
     public TeamSetHomeSubCommand(@NotNull UltimateTeams plugin) {
@@ -25,12 +24,12 @@ public class TeamSetHomeSubCommand {
 
     public void setTeamHomeSubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getSettings().teamHomeEnabled()) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
 
@@ -38,7 +37,7 @@ public class TeamSetHomeSubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.HOME)))) {
-                        sender.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
                         return;
                     }
 
@@ -53,9 +52,9 @@ public class TeamSetHomeSubCommand {
                     team.setHome(home);
 
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
-                    player.sendMessage(Utils.Color(messagesConfig.getString("successfully-set-team-home")));
+                    player.sendMessage(MineDown.parse(plugin.getMessages().getSuccessfullySetTeamHome()));
                 },
-                () -> player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getFailedNotInTeam()))
         );
     }
 

@@ -1,6 +1,7 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.echest;
 
 import com.google.common.collect.Maps;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamEnderChest;
@@ -28,7 +29,6 @@ import java.util.UUID;
 
 public class TeamEnderChestSubCommand implements Listener {
     private final UltimateTeams plugin;
-    private final FileConfiguration messagesConfig;
     
     // Track which player is viewing which team chest
     private static final Map<UUID, TeamChestView> activeViews = Maps.newConcurrentMap();
@@ -45,7 +45,6 @@ public class TeamEnderChestSubCommand implements Listener {
     
     public TeamEnderChestSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
         
         // Register the listener
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -153,19 +152,19 @@ public class TeamEnderChestSubCommand implements Listener {
     
     public void openEnderChest(@NotNull CommandSender sender, int chestNumber) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getSettings().isTeamEnderChestEnabled()) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
         
         // Check if player is in a team
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId());
         if (teamOpt.isEmpty()) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()));
             return;
         }
         
@@ -173,13 +172,9 @@ public class TeamEnderChestSubCommand implements Listener {
         
         // Check if the chest exists
         if (!team.hasEnderChest(chestNumber)) {
-            String message = messagesConfig.getString("team-echest-not-exist");
-            if (message != null) {
-                message = message.replace("%NUMBER%", String.valueOf(chestNumber));
-                player.sendMessage(Utils.Color(message));
-            } else {
-                player.sendMessage(Utils.Color("&cTeam ender chest #" + chestNumber + " does not exist!"));
-            }
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestNotExist()
+                    .replace("%NUMBER%", String.valueOf(chestNumber))
+            ));
             return;
         }
         
@@ -195,12 +190,10 @@ public class TeamEnderChestSubCommand implements Listener {
         
         // Open the inventory
         player.openInventory(inventory);
-        
-        String message = messagesConfig.getString("team-echest-opened");
-        if (message != null) {
-            message = message.replace("%NUMBER%", String.valueOf(chestNumber));
-            player.sendMessage(Utils.Color(message));
-        }
+
+        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestOpened()
+                .replace("%NUMBER%", String.valueOf(chestNumber))
+        ));
         
         if (plugin.getSettings().debugModeEnabled()) {
             plugin.log(java.util.logging.Level.INFO, 

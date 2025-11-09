@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.annotations.Expose;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import lombok.*;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
@@ -26,6 +27,16 @@ public class Team {
     @Getter
     @Setter
     private String name;
+
+    @Expose
+    @Getter
+    @Setter
+    private double balance;
+
+    @Expose
+    @Getter
+    @Setter
+    private double join_fee;
 
     @Expose
     @Builder.Default
@@ -101,6 +112,12 @@ public class Team {
         Bukkit.getOnlinePlayers().stream()
                 .filter(player -> getMembers().containsKey(player.getUniqueId()))
                 .forEach(player -> player.sendMessage(message));
+    }
+
+    public void sendTeamMessage(@NotNull Component component) {
+        Bukkit.getOnlinePlayers().stream()
+                .filter(player -> getMembers().containsKey(player.getUniqueId()))
+                .forEach(player -> player.sendMessage(component));
     }
 
     public Optional<TeamWarp> getTeamWarp(@NotNull String name) {
@@ -192,6 +209,19 @@ public class Team {
         return getRelationWith(otherTeam) == relation && otherTeam.getRelationWith(this) == relation;
     }
 
+    public void addBalance(double balance) {
+        this.balance += balance;
+    }
+
+    public boolean subBalance(double amount) {
+        if (amount <= 0) return false; // prevent negative/zero
+        if (amount > this.balance) return false; // not enough funds
+
+        this.balance -= amount;
+        return true;
+    }
+
+
 
     public enum Relation {
         ALLY,
@@ -222,7 +252,10 @@ public class Team {
         RENAME,
         PREFIX,
         HOME,
-        PROMOTE;
+        PROMOTE,
+        FEE,
+        WITHDRAW,
+        DEPOSIT;
 
         /**
          * Parse a {@link Permission} from a string name

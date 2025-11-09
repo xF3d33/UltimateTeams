@@ -1,5 +1,6 @@
 package dev.xf3d3.ultimateteams.listeners;
 
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamFriendlyFireAttackEvent;
 import dev.xf3d3.ultimateteams.models.Team;
@@ -26,7 +27,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerDamageEvent implements Listener {
-    FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
 
     private final Map<Block, UUID> explodingAnchors = new ConcurrentHashMap<>();
 
@@ -93,13 +93,15 @@ public class PlayerDamageEvent implements Listener {
             return;
         }
 
-        if (attackerTeam.equals(victimTeam) && attackerTeam.isFriendlyFire()) {
+        if (attackerTeam.equals(victimTeam) && !attackerTeam.isFriendlyFire()) {
+            e.setCancelled(true);
+            attackingPlayer.sendMessage(MineDown.parse(plugin.getMessages().getFriendlyFireIsDisabled()));
             return;
         }
 
         if (attackerTeam.areRelationsBilateral(victimTeam, Team.Relation.ALLY)) {
             e.setCancelled(true);
-            attackingPlayer.sendMessage(Utils.Color(messagesConfig.getString("friendly-fire-is-disabled-for-allies")));
+            attackingPlayer.sendMessage(MineDown.parse(plugin.getMessages().getFriendlyFireIsDisabledForAllies()));
         }
     }
 

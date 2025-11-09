@@ -106,17 +106,17 @@ public class TeamList {
         // Members
         if (!team.getMembers().isEmpty()) {
 
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("members")));
             for (UUID teamMember : teamMembers) {
                 String offlinePlayer = Bukkit.getOfflinePlayer(teamMember).getName();
 
-                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("members")));
                 lore.add(offlinePlayer != null ? ("&r" +  offlinePlayer) : "&rplayer not found");
             }
 
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("managers")));
             for (UUID teamMember : teamManagers) {
                 String offlinePlayer = Bukkit.getOfflinePlayer(teamMember).getName();
 
-                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("managers")));
                 lore.add(offlinePlayer != null ? ("&r" +  offlinePlayer) : "&rplayer not found");
             }
         }
@@ -144,6 +144,19 @@ public class TeamList {
 
         lore.add(" ");
         lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("prefix") + (team.getPrefix() != null ? team.getPrefix() : "")));
+
+        if (plugin.getSettings().isEconomyEnabled()) {
+            lore.add(Utils.Color(plugin.getMessages().getTeamInfoBankAmount()
+                    .replace("%AMOUNT%", String.format("%.2f", team.getBalance()))
+            ));
+
+            if (plugin.getSettings().isTeamJoinFeeEnabled()) {
+                lore.add(Utils.Color(plugin.getMessages().getTeamInfoJoinFee()
+                        .replace("%AMOUNT%", String.valueOf(team.getJoin_fee()))
+                ));
+            }
+        }
+
         if (team.isFriendlyFire()) {
             lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("pvp") + " &cTRUE"));
         } else {
@@ -168,7 +181,6 @@ public class TeamList {
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 
         if (skullMeta != null) {
-
             skullMeta.setOwningPlayer(owner);
             skull.setItemMeta(skullMeta);
         }

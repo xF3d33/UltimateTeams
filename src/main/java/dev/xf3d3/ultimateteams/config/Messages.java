@@ -15,10 +15,14 @@ import java.util.List;
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         #                                  ----[Plugin Messages File]----                                   #
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#""")
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+        
+        You can use MineDown: https://github.com/Phoenix616/MineDown?tab=readme-ov-file#syntax
+        You can use \\n anywhere to go to a new line.
+        """)
 public class Messages {
 
-    @YamlComment("You can also use Hex colors anywhere in the messages (#ffffffWHITE)\n\n#Team Creation Messages")
+    @YamlComment("You can also use Hex colors anywhere in the messages (#ffffffWHITE)\n\nTeam Creation Messages")
     @YamlKey("team.create.incorrect-usage")
     @Getter
     private String teamCreateIncorrectUsage = "&3use /team create <name>.";
@@ -187,6 +191,22 @@ public class Messages {
     @Getter
     private String teamInviteDenyFail = "&3Failed to deny the invite.";
 
+    @YamlKey("team.invite.received-message")
+    @Getter
+    private List<String> teamInviteInvitedMessage = List.of(
+            "&7&m                                                    &r",
+            "[Team Invitation](gold bold)",
+            "[You've been invited to join](yellow) [%TEAM%](gold) [by](yellow) [%INVITER%](gold)",
+            "",
+            "[[✔ ACCEPT]](green bold run_command=/team invite accept hover=[Click to accept the invitation](green)) [[✔ DECLINE]](red bold run_command=/team invite deny hover=[Click to deny the invitation](red))",
+            "&7&m                                                    &r"
+    );
+
+    @YamlKey("team.invite.error-invites-disabled")
+    @Getter
+    private String teamInviteFailInvitesOff = "[%NAME%](gold) [has invites disabled, you can't invite him!](dark_aqua)";
+
+
     @YamlComment("Team Join Messages")
     @YamlKey("team.join.successful")
     @Getter
@@ -253,6 +273,31 @@ public class Messages {
     @YamlKey("team.warp.teleported-successful")
     @Getter
     private String teamWarpTeleportedSuccessful = "&3Successfully teleported to the team warp!";
+
+    @YamlKey("team.warp.no-warps")
+    @Getter
+    private String teamWarpEmpty = "[Your team has no warps!](red)";
+
+    @YamlKey("team.warp.menu.header")
+    @Getter
+    private List<String> teamWarpMenuHeader = List.of(
+            "[List of](dark_aqua) [%TEAM%](gold) [warps.](dark_aqua)",
+            "[You can Hover each warp name to get details](dark_aqua)",
+            ""
+    );
+
+    @YamlKey("team.warp.menu.warp")
+    @Getter
+    private String teamWarpMenuItem = "[[%WARP_NAME%]](#1055C9 hover=%WARP_INFO% run_command=/team warp %WARP_NAME%)";
+
+    @YamlKey("team.warp.menu.warp-info")
+    @Getter
+    private List<String> teamWarpMenuItemInfo = List.of(
+            "[Left click to TP to](gray) [%WARP_NAME%](gold) [position](gray)",
+            "",
+            "[Coordinates:](gray) [X:](gray)[%X%](dark_aqua) [Y:](gray)[%Y%](dark_aqua) [Z:](gray)[%Z%](dark_aqua)",
+            "[World:](gray) [%WORLD_NAME%](dark_aqua) [Server:](gray) [%SERVER_NAME%](dark_aqua)"
+    );
 
     @YamlComment("Team Kick Messages")
     @YamlKey("team.kick.successful")
@@ -331,7 +376,7 @@ public class Messages {
 
     @YamlKey("team.list.footer")
     @Getter
-    private String teamsListFooter = "\n&7-----";
+    private String teamsListFooter = "&7-----";
 
     @YamlComment("Team Info Messages")
     @YamlKey("team.info.header")
@@ -340,71 +385,79 @@ public class Messages {
 
     @YamlKey("team.info.owner-online")
     @Getter
-    private String teamInfoOwnerOnline = "\n\n&3Owner: &a%OWNER%";
+    private String teamInfoOwnerOnline = "&3Owner: &a%OWNER%";
 
     @YamlKey("team.info.owner-offline")
     @Getter
-    private String teamInfoOwnerOffline = "\n\n&3Owner: &c%OWNER%&7&o(offline)";
+    private String teamInfoOwnerOffline = "&3Owner: &c%OWNER%&7&o(offline)";
 
     @YamlKey("team.info.members-header")
     @Getter
-    private String teamInfoMembersHeader = "\n\n&3Members: &3&o(%NUMBER%)";
+    private String teamInfoMembersHeader = "&3Members: &3&o(%NUMBER%)";
 
     @YamlKey("team.info.managers-header")
     @Getter
-    private String teamInfoManagersHeader = "\n\n&3Managers: &3&o(%NUMBER%)";
+    private String teamInfoManagersHeader = "&3Managers: &3&o(%NUMBER%)";
 
     @YamlKey("team.info.members-online")
     @Getter
-    private String teamInfoMembersOnline = "\n&a%MEMBER%\n";
+    private String teamInfoMembersOnline = "&a%MEMBER%";
 
     @YamlKey("team.info.members-offline")
     @Getter
-    private String teamInfoMembersOffline = "\n&c%MEMBER% &7&o(offline)\n";
+    private String teamInfoMembersOffline = "&c%MEMBER% &7&o(offline)";
 
     @YamlKey("team.info.allies-header")
     @Getter
-    private String teamInfoAlliesHeader = "\n\n&3Allied Teams:";
+    private String teamInfoAlliesHeader = "&3Allied Teams:";
 
     @YamlKey("team.info.ally-list-entry")
     @Getter
-    private String teamAllyMembers = "\n&a%ALLYTEAM%\n";
+    private String teamAllyMembers = "&a%ALLYTEAM%";
 
     @YamlKey("team.info.ally-list-not-found")
     @Getter
-    private String teamAllyMembersNotFound = "\n&aAlly not found\n";
+    private String teamAllyMembersNotFound = "&aAlly not found";
 
     @YamlKey("team.info.enemies-header")
     @Getter
-    private String teamInfoEnemiesHeader = "\n\n&3Enemy Teams:";
+    private String teamInfoEnemiesHeader = "&3Enemy Teams:";
 
     @YamlKey("team.info.enemy-list-entry")
     @Getter
-    private String teamEnemyMembers = "\n&c%ENEMYTEAM%\n";
+    private String teamEnemyMembers = "&c%ENEMYTEAM%";
 
     @YamlKey("team.info.enemy-list-not-found")
     @Getter
-    private String teamEnemyMembersNotFound = "\n&aEnemy not found\n";
+    private String teamEnemyMembersNotFound = "&aEnemy not found";
+
+    @YamlKey("team.info.join-fee")
+    @Getter
+    private String teamInfoJoinFee = "&3Join Fee: &a%AMOUNT%";
 
     @YamlKey("team.info.pvp-enabled")
     @Getter
-    private String teamPvpStatusEnabled = "\n\n&3Friendly Fire: &a&oENABLED";
+    private String teamPvpStatusEnabled = "&3Friendly Fire: &a&oENABLED";
 
     @YamlKey("team.info.pvp-disabled")
     @Getter
-    private String teamPvpStatusDisabled = "\n\n&3Friendly Fire: &c&oDISABLED";
+    private String teamPvpStatusDisabled = "&3Friendly Fire: &c&oDISABLED";
 
     @YamlKey("team.info.home-set")
     @Getter
-    private String teamHomeSetTrue = "\n\n&3Home Set: &a&oTRUE";
+    private String teamHomeSetTrue = "&3Home Set: &a&oTRUE";
 
     @YamlKey("team.info.home-not-set")
     @Getter
-    private String teamHomeSetFalse = "\n\n&3Home Set: &c&oFALSE";
+    private String teamHomeSetFalse = "&3Home Set: &c&oFALSE";
+
+    @YamlKey("team.info.bank-amount")
+    @Getter
+    private String teamInfoBankAmount = "&3Bank Amount: &6%AMOUNT%";
 
     @YamlKey("team.info.footer")
     @Getter
-    private String teamInfoFooter = "\n&7-----";
+    private String teamInfoFooter = "&7-----";
 
     @YamlKey("team.info.not-in-team")
     @Getter
@@ -635,6 +688,10 @@ public class Messages {
     @Getter
     private String chatspyToggleOff = "&3Toggled Team Chat spy &c&lOFF&3.";
 
+    @YamlKey("team.allychat.incorrect-usage")
+    @Getter
+    private String allychatIncorrectUsage = "&6UltimateTeams team chat usage:&3\n/allychat <message>";
+
     @YamlComment("Team Managers")
     @YamlKey("team.manager.promote-self-error")
     @Getter
@@ -674,10 +731,65 @@ public class Messages {
     @Getter
     private String teamEchestNotExist = "&cTeam ender chest #%NUMBER% does not exist!";
 
-    @YamlComment("#Economy")
+
+    @YamlComment("Fee")
+    @YamlKey("team.fee.current")
+    @Getter
+    private String teamFeeCurrent = "[The fee to join your team is set to:](dark_aqua) [%AMOUNT%](gold)";
+
+    @YamlKey("team.fee.disable")
+    @Getter
+    private String teamFeeDisable = "[You have disabled the team fee!](dark_aqua)\n[new players will now join the team for free!](dark_aqua)";
+
+    @YamlKey("team.fee.success")
+    @Getter
+    private String teamFeeSet = "[You have successfully set the team fee to:](dark_aqua) [%AMOUNT%](gold)";
+
+    @YamlKey("team.fee.amount-too-big")
+    @Getter
+    private String teamFeeTooBig = "[The fee value exceeds the maximum limit, which is:](dark_aqua) [%AMOUNT%](gold)";
+
+    @YamlKey("team.fee.cant-join-not-enough-money")
+    @Getter
+    private String teamFeeCantJoin = "[You can't join](dark_aqua) [%TEAM%](gold) [Because you don't have enough money to pay the join fee. The join fee is:](dark_aqua) [%AMOUNT%](gold)";
+
+    @YamlKey("team.fee.fee-deposited")
+    @Getter
+    private String teamFeeDeposited = "[%PLAYER%](gold) [has deposited his join fee](dark_aqua) [(](dark_aqua)[%AMOUNT%](gold)[)](dark_aqua) [in the team bank](dark_aqua)";
+
+
+    @YamlComment("Invites")
+    @YamlKey("invites.invites-disabled")
+    @Getter
+    private String invitesDisabled = "[Invites successfully disabled!](green)\n [Players can't invite you in their teams anymore.](dark_aqua)";
+
+    @YamlKey("invites.invites-enabled")
+    @Getter
+    private String invitesEnabled = "[Invites successfully enabled!](green)\n [Players can now invite you in their teams.](dark_aqua)";
+
+
+    @YamlComment("Economy")
     @YamlKey("economy.not-enough-money")
     @Getter
     private String notEnoughMoney = "&3You don't have enough money for this action. Required balance is: &6%MONEY%";
+
+    @YamlKey("economy.invalid-amount")
+    @Getter
+    private String economyInvalidAmount = "[%MONEY%](gold) [is not a valid amount](dark_aqua)";
+
+    @YamlKey("economy.deposited")
+    @Getter
+    private String moneyDeposited = "[You have successfully deposited](dark_aqua) [%CURRENCY%%MONEY%](gold) [in the team bank](dark_aqua)";
+
+    @YamlKey("economy.withdraw.success")
+    @Getter
+    private String moneyWithdrawn = "[You have successfully withdrawn](dark_aqua) [%CURRENCY%%MONEY%](gold) [from the team bank](dark_aqua)";
+
+    @YamlComment("You can use %MONEY% to display the amount in this message.")
+    @YamlKey("economy.withdraw.not-enough-funds")
+    @Getter
+    private String moneyWithdrawNotEnoughFunds = "[The team bank does not have enough funds!](dark_aqua)";
+
 
     @YamlComment("General Plugin Messages")
     @YamlKey("general.no-colour-permission")

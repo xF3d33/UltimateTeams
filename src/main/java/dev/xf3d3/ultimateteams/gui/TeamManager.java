@@ -3,6 +3,7 @@ package dev.xf3d3.ultimateteams.gui;
 import de.themoep.inventorygui.DynamicGuiElement;
 import de.themoep.inventorygui.InventoryGui;
 import de.themoep.inventorygui.StaticGuiElement;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
@@ -14,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public class TeamManager {
-    private final FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
 
     private final UltimateTeams plugin;
     private final Player player;
@@ -78,10 +78,10 @@ public class TeamManager {
                         if (plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.HOME))) {
 
                             plugin.getTeamStorageUtil().deleteHome(player, team);
-                            player.sendMessage(Utils.Color(messagesConfig.getString("successfully-deleted-team-home")));
+                            player.sendMessage(MineDown.parse(plugin.getMessages().getSuccessfullyDeletedTeamHome()));
 
                             click.getGui().draw();
-                        } else player.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                        } else player.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
                     }
 
                     return true;
@@ -144,16 +144,16 @@ public class TeamManager {
                             if (team.isFriendlyFireAllowed()){
                                 team.setFriendlyFire(false);
 
-                                player.sendMessage(Utils.Color(messagesConfig.getString("disabled-friendly-fire")));
+                                player.sendMessage(MineDown.parse(plugin.getMessages().getDisabledFriendlyFire()));
                             } else {
                                 team.setFriendlyFire(true);
-                                player.sendMessage(Utils.Color(messagesConfig.getString("enabled-friendly-fire")));
+                                player.sendMessage(MineDown.parse(plugin.getMessages().getEnabledFriendlyFire()));
                             }
 
                             plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
                             click.getGui().draw();
 
-                        } else player.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                        } else player.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
                     }
 
                     return true;

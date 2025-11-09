@@ -1,5 +1,6 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.members;
 
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
@@ -11,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class TeamKickSubCommand {
 
-    FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
     private static final String TEAM_PLACEHOLDER = "%TEAM%";
     private static final String PLAYER_TO_KICK = "%KICKEDPLAYER%";
 
@@ -23,12 +23,12 @@ public class TeamKickSubCommand {
 
     public void teamKickSubCommand(CommandSender sender, OfflinePlayer offlinePlayer) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
             return;
         }
 
         if (!offlinePlayer.hasPlayedBefore()) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("could-not-find-specified-player").replace(PLAYER_TO_KICK, offlinePlayer.toString())));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getCouldNotFindSpecifiedPlayer().replace(PLAYER_TO_KICK, offlinePlayer.toString())));
             return;
         }
 
@@ -36,29 +36,27 @@ public class TeamKickSubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.KICK)))) {
-                        sender.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
                         return;
                     }
 
 
                     if (player.getName().equalsIgnoreCase(offlinePlayer.getName())) {
-                        player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-kick-yourself")));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getFailedCannotKickYourself()));
 
                         return;
                     }
 
                     if (!team.getMembers().containsKey(offlinePlayer.getUniqueId())) {
-                        String differentTeamMessage = Utils.Color(messagesConfig.getString("targeted-player-is-not-in-your-team")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
 
-                        player.sendMessage(differentTeamMessage);
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTargetedPlayerIsNotInYourTeam().replace(PLAYER_TO_KICK, offlinePlayer.getName())));
                     }
 
                     plugin.getTeamStorageUtil().kickPlayer(player, team, offlinePlayer);
 
-                    String playerKickedMessage = Utils.Color(messagesConfig.getString("team-member-kick-successful")).replace(PLAYER_TO_KICK, offlinePlayer.getName());
-                    player.sendMessage(playerKickedMessage);
+                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeamMemberKickSuccessful().replace(PLAYER_TO_KICK, offlinePlayer.getName())));
                 },
-                () -> player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
         );
     }
 }

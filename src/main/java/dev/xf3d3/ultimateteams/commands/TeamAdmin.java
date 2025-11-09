@@ -3,6 +3,7 @@ package dev.xf3d3.ultimateteams.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestRollbackSubCommand;
@@ -22,7 +23,6 @@ import java.util.logging.Level;
 @CommandAlias("teamadmin|ta")
 public class TeamAdmin extends BaseCommand {
 
-    private final FileConfiguration messagesConfig;
 
     private static final String PLAYER_TO_KICK = "%KICKEDPLAYER%";
 
@@ -35,7 +35,6 @@ public class TeamAdmin extends BaseCommand {
 
     public TeamAdmin(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
         
         // Initialize ender chest subcommands
         this.teamEnderChestSubCommand = new TeamEnderChestSubCommand(plugin);
@@ -64,15 +63,14 @@ public class TeamAdmin extends BaseCommand {
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.admin.reload")
     public void reloadSubcommand(CommandSender sender) {
-        sender.sendMessage(Utils.Color(messagesConfig.getString("plugin-reload-begin")));
+        sender.sendMessage(MineDown.parse(plugin.getMessages().getPluginReloadBegin()));
 
         plugin.runSync(task -> {
             plugin.loadConfigs();
-            plugin.msgFileManager.reloadMessagesConfig();
 
             TeamCommand.updateBannedTagsList();
 
-            sender.sendMessage(Utils.Color(messagesConfig.getString("plugin-reload-successful")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPluginReloadSuccessful()));
         });
     }
 
@@ -118,21 +116,18 @@ public class TeamAdmin extends BaseCommand {
                 team -> {
                     if (!plugin.getSettings().isEnableCrossServer()) {
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(null, team));
-                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamSuccessfullyDisbanded()));
 
                         return;
                     }
 
 
                     Bukkit.getOnlinePlayers().stream().findAny().ifPresentOrElse(
-                            randomPlayer -> {
-                                plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(randomPlayer, team));
-                                sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
-                            },
+                            randomPlayer -> plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(randomPlayer, team)),
                             () -> plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(null, team))
                     );
                 },
-                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-admin-disband-failure")))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamAdminDisbandFailure()))
         );
     }
 
@@ -144,8 +139,7 @@ public class TeamAdmin extends BaseCommand {
         Player player = user.getPlayer();
 
         if (plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).isPresent()) {
-            String joinMessage = Utils.Color(messagesConfig.getString("team-invite-invited-already-in-team"));
-            sender.sendMessage(joinMessage);
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteInvitedAlreadyInTeam()));
 
             return;
         }
@@ -154,17 +148,16 @@ public class TeamAdmin extends BaseCommand {
                 team -> {
                     plugin.getTeamStorageUtil().addTeamMember(team, player);
 
-                    String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace("%TEAM%", team.getName());
-                    sender.sendMessage(joinMessage);
+                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinSuccessful().replace("%TEAM%", team.getName())));
 
 
                     // Send message to team players
-                    team.sendTeamMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
+                    team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeamJoinBroadcastChat()
                             .replace("%PLAYER%", player.getName())
                             .replace("%TEAM%", Utils.Color(team.getName()))));
                 },
-                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-join-failed")).replace("%TEAM%", teamName))
-        );
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinFailed().replace("%TEAM%", teamName))
+        ));
     }
 
     @Subcommand("team transfer")
@@ -174,30 +167,30 @@ public class TeamAdmin extends BaseCommand {
     public void teamTransferSubCommand(CommandSender sender, @Values("@teams") String teamName, @Values("@onlineUsers") OfflinePlayer user) {
 
         if (!user.hasPlayedBefore() || user.getName() == null) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("player-not-found")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerNotFound()));
             return;
         }
 
         plugin.getTeamStorageUtil().findTeamByName(teamName).ifPresentOrElse(
                 team -> {
                     if (!team.getMembers().containsKey(user.getUniqueId())) {
-                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-ownership-transfer-failure-not-same-team")));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferFailureNotSameTeam()));
                         return;
                     }
 
                     plugin.getTeamStorageUtil().transferTeamOwner(team, user.getUniqueId());
 
 
-                    sender.sendMessage(Utils.Color(messagesConfig.getString("team-ownership-transfer-successful")
+                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferSuccessful()
                             .replace("%PLAYER%", user.getName())));
 
                     if (user.isOnline() && user.getPlayer() != null) {
-                        user.getPlayer().sendMessage(Utils.Color(messagesConfig.getString("team-ownership-transfer-new-owner")
+                        user.getPlayer().sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferNewOwner()
                                 .replace("%TEAM%", team.getName())));
                     }
 
                 },
-                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-not-found")))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamNotFound()))
         );
 
     }

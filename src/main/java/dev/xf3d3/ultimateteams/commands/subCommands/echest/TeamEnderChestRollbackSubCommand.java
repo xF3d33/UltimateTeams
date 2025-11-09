@@ -1,5 +1,6 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.echest;
 
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamEnderChestBackup;
@@ -17,11 +18,9 @@ import java.util.List;
 public class TeamEnderChestRollbackSubCommand {
     
     private final UltimateTeams plugin;
-    private final FileConfiguration messagesConfig;
     
     public TeamEnderChestRollbackSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
     
     /**
@@ -141,7 +140,7 @@ public class TeamEnderChestRollbackSubCommand {
         plugin.getTeamStorageUtil().findTeamByName(teamName).ifPresentOrElse(
                 team -> {
                     if (!team.hasEnderChest(chestNumber)) {
-                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-echest-not-exist")
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestNotExist()
                                 .replace("%CHEST%", String.valueOf(chestNumber))
                                 .replace("%NUMBER%", String.valueOf(chestNumber))));
                         return;
@@ -182,7 +181,7 @@ public class TeamEnderChestRollbackSubCommand {
         plugin.getTeamStorageUtil().findTeamByName(teamName).ifPresentOrElse(
                 team -> {
                     if (!team.hasEnderChest(chestNumber)) {
-                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-echest-not-exist")
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestNotExist()
                                 .replace("%CHEST%", String.valueOf(chestNumber))
                                 .replace("%NUMBER%", String.valueOf(chestNumber))));
                         return;

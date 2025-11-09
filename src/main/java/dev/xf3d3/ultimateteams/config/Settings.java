@@ -28,8 +28,13 @@ public class Settings {
 
     // Top-level settings
     @YamlComment("Do you want to use the GUI system? [Default value: true]")
-    @YamlKey("use-global-GUI-system")
+    @YamlKey("gui.enable")
     private boolean useGlobalGui = true;
+
+    @YamlComment("Should the plugin open the team list GUI instead of sending chat message when /team list is used? [Default value: false]")
+    @YamlKey("gui.use-gui-for-team-list")
+    @Getter
+    private boolean teamListUseGui = false;
 
     // Database settings
     @YamlComment("Type of database to use (SQLITE, H2, MYSQL, MARIADB, or POSTGRESQL). MARIADB is preferred over MYSQL. H2 is preferred over SQLITE")
@@ -335,15 +340,35 @@ public class Settings {
 
 
     // Economy
-    @YamlComment("Whether to enable economy (Vault is required)")
+    @YamlComment("Whether to enable economy (Vault is required). Changes might require to restart the server")
     @YamlKey("economy.enable")
     @Getter
     private boolean economyEnabled = false;
 
+    @YamlComment("Should players pay to create a team?")
+    @YamlKey("economy.team-create.enabled")
+    @Getter
+    private boolean teamCreateCostEnabled = false;
+
     @YamlComment("The cost to create a team")
-    @YamlKey("economy.team-create")
+    @YamlKey("economy.team-create.cost")
     @Getter
     private double teamCreateCost = 100.0;
+
+    @YamlComment("Should players be allowed to ask who joins a team a fee (that will be deposited in the team bank)?")
+    @YamlKey("economy.team-join-fee.enabled")
+    @Getter
+    private boolean teamJoinFeeEnabled = false;
+
+    @YamlComment("The default cost of the join fee")
+    @YamlKey("economy.team-join-fee.default")
+    @Getter
+    private double teamJoinFeeDefault = 100.0;
+
+    @YamlComment("The max cost of the join fee")
+    @YamlKey("economy.team-join-fee.max-fee")
+    @Getter
+    private double teamJoinFeeMax = 10000.0;
 
 
     // Update Checker

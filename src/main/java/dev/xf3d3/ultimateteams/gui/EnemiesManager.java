@@ -1,6 +1,7 @@
 package dev.xf3d3.ultimateteams.gui;
 
 import de.themoep.inventorygui.*;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
@@ -17,7 +18,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class EnemiesManager {
-    private final FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
 
     private final UltimateTeams plugin;
     private final Player player;
@@ -79,13 +79,13 @@ public class EnemiesManager {
                                     if (plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.RELATIONS))) {
                                         plugin.getTeamStorageUtil().removeTeamEnemy(team, enemy, player);
 
-                                        team.sendTeamMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-enemies").replace("%ENEMYTEAM%", enemy.getName())));
-                                        enemy.sendTeamMessage(Utils.Color(messagesConfig.getString("team-removed-from-other-enemies").replace("%TEAMOWNER%", team.getName())));
+                                        team.sendTeamMessage(MineDown.parse(plugin.getMessages().getRemovedTeamFromYourEnemies().replace("%ENEMYTEAM%", enemy.getName())));
+                                        enemy.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeamRemovedFromOtherEnemies().replace("%TEAMOWNER%", team.getName())));
 
                                         click.getGui().close();
                                         new EnemiesManager(plugin, player);
                                     } else {
-                                        player.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                                        player.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
                                     }
                                 }
 

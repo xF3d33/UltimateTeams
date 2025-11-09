@@ -1,6 +1,7 @@
 package dev.xf3d3.ultimateteams.utils;
 
 import com.google.common.collect.Sets;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamEnderChest;
@@ -23,7 +24,6 @@ public class TeamsStorage {
     @Getter
     private final Set<Team> teams = Sets.newConcurrentHashSet();
 
-    private final FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
     private final UltimateTeams plugin;
 
     public TeamsStorage(@NotNull UltimateTeams plugin) {
@@ -200,7 +200,7 @@ public class TeamsStorage {
                 .filter(online -> online.getUniqueId().equals(player.getUniqueId()))
                 .findFirst()
                 .ifPresentOrElse(onlineUser -> {
-                            onlineUser.sendMessage(Utils.Color(messagesConfig.getString("team-kicked-player-message")).replace("%TEAM%", team.getName()));
+                            onlineUser.sendMessage(MineDown.parse(plugin.getMessages().getTeamKickedPlayerMessage().replace("%TEAM%", team.getName())));
 
                             plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
                                 if (teamPlayer.getPreferences().isTeamChatTalking()) {

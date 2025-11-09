@@ -1,5 +1,6 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.echest;
 
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamEnderChest;
@@ -16,12 +17,10 @@ import java.util.Optional;
 
 public class TeamAdminEnderChestSubCommand {
     private final UltimateTeams plugin;
-    private final FileConfiguration messagesConfig;
     private final TeamEnderChestSubCommand teamEnderChestSubCommand;
     
     public TeamAdminEnderChestSubCommand(@NotNull UltimateTeams plugin, @NotNull TeamEnderChestSubCommand teamEnderChestSubCommand) {
         this.plugin = plugin;
-        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
         this.teamEnderChestSubCommand = teamEnderChestSubCommand;
     }
     
@@ -29,24 +28,18 @@ public class TeamAdminEnderChestSubCommand {
      * Add rows to existing chest or create new chest page
      * @param sender The command sender
      * @param teamName The name of the team
-     * @param rowsToAdd Number of rows to add (1-6)
+     * @param rowsOrType Number of rows to add (1-6)
      */
     public void addEnderChest(@NotNull CommandSender sender, @NotNull String teamName, @NotNull String rowsOrType) {
         if (!plugin.getSettings().isTeamEnderChestEnabled()) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
 
         // Find the team
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByName(teamName);
         if (teamOpt.isEmpty()) {
-            String message = messagesConfig.getString("team-not-found");
-            if (message != null) {
-                message = message.replace("%TEAM%", teamName);
-                sender.sendMessage(Utils.Color(message));
-            } else {
-                sender.sendMessage(Utils.Color("&cTeam not found: " + teamName));
-            }
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamNotFound()));
             return;
         }
         
@@ -92,20 +85,14 @@ public class TeamAdminEnderChestSubCommand {
 
                     Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
                     plugin.runAsync(task1 -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
-                    
-                    String message = messagesConfig.getString("team-echest-rows-added");
-                    if (message != null) {
-                        message = message.replace("%ROWS%", String.valueOf(rowsToAdd))
-                                .replace("%TOTAL%", String.valueOf(newRows))
-                                .replace("%SLOTS%", String.valueOf(lastChest.getSize()))
-                                .replace("%NUMBER%", String.valueOf(lastChest.getChestNumber()))
-                                .replace("%TEAM%", team.getName());
-                        sender.sendMessage(Utils.Color(message));
-                    } else {
-                        sender.sendMessage(Utils.Color("&aAdded " + rowsToAdd + " rows to chest #" + 
-                                lastChest.getChestNumber() + " (now " + newRows + " rows / " + 
-                                lastChest.getSize() + " slots) for team " + team.getName()));
-                    }
+
+                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestRowsAdded()
+                            .replace("%ROWS%", String.valueOf(rowsToAdd))
+                            .replace("%TOTAL%", String.valueOf(newRows))
+                            .replace("%SLOTS%", String.valueOf(lastChest.getSize()))
+                            .replace("%NUMBER%", String.valueOf(lastChest.getChestNumber()))
+                            .replace("%TEAM%", team.getName())
+                    ));
                     return;
                 } else {
                     // No chests exist (shouldn't happen with default chest)
@@ -134,20 +121,15 @@ public class TeamAdminEnderChestSubCommand {
 
         Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
         plugin.runAsync(task1 -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
-        
+
         String chestType = rows == 6 ? "double chest" : "single chest";
-        String message = messagesConfig.getString("team-echest-page-added");
-        if (message != null) {
-            message = message.replace("%NUMBER%", String.valueOf(chestNumber))
-                    .replace("%TYPE%", chestType)
-                    .replace("%ROWS%", String.valueOf(rows))
-                    .replace("%SLOTS%", String.valueOf(chest.getSize()))
-                    .replace("%TEAM%", team.getName());
-            sender.sendMessage(Utils.Color(message));
-        } else {
-            sender.sendMessage(Utils.Color("&aAdded " + chestType + " page #" + chestNumber + 
-                    " (" + rows + " rows / " + chest.getSize() + " slots) to team " + team.getName()));
-        }
+        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestPageAdded()
+                .replace("%NUMBER%", String.valueOf(chestNumber))
+                .replace("%TYPE%", chestType)
+                .replace("%ROWS%", String.valueOf(rows))
+                .replace("%SLOTS%", String.valueOf(chest.getSize()))
+                .replace("%TEAM%", team.getName())
+        ));
     }
     
     /**
@@ -158,20 +140,17 @@ public class TeamAdminEnderChestSubCommand {
      */
     public void removeEnderChest(@NotNull CommandSender sender, @NotNull String teamName, int chestNumber) {
         if (!plugin.getSettings().isTeamEnderChestEnabled()) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
 
         // Find the team
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByName(teamName);
         if (teamOpt.isEmpty()) {
-            String message = messagesConfig.getString("team-not-found");
-            if (message != null) {
-                message = message.replace("%TEAM%", teamName);
-                sender.sendMessage(Utils.Color(message));
-            } else {
-                sender.sendMessage(Utils.Color("&cTeam not found: " + teamName));
-            }
+
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamNotFound()
+                    .replace("%TEAM%", teamName)
+            ));
             return;
         }
         
@@ -179,13 +158,10 @@ public class TeamAdminEnderChestSubCommand {
         
         // Check if chest exists
         if (!team.hasEnderChest(chestNumber)) {
-            String message = messagesConfig.getString("team-echest-not-exist");
-            if (message != null) {
-                message = message.replace("%NUMBER%", String.valueOf(chestNumber));
-                sender.sendMessage(Utils.Color(message));
-            } else {
-                sender.sendMessage(Utils.Color("&cTeam ender chest #" + chestNumber + " does not exist!"));
-            }
+
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestNotExist()
+                    .replace("%NUMBER%", String.valueOf(chestNumber))
+            ));
             return;
         }
         
@@ -194,16 +170,11 @@ public class TeamAdminEnderChestSubCommand {
 
         Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
         plugin.runAsync(task1 -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
-        
-        String message = messagesConfig.getString("team-echest-removed");
-        if (message != null) {
-            message = message.replace("%NUMBER%", String.valueOf(chestNumber))
-                    .replace("%TEAM%", team.getName());
-            sender.sendMessage(Utils.Color(message));
-        } else {
-            sender.sendMessage(Utils.Color("&aRemoved ender chest #" + chestNumber + 
-                    " from team " + team.getName()));
-        }
+
+        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestRemoved()
+                .replace("%NUMBER%", String.valueOf(chestNumber))
+                .replace("%TEAM%", team.getName())
+        ));
     }
     
     /**
@@ -213,20 +184,14 @@ public class TeamAdminEnderChestSubCommand {
      */
     public void listEnderChests(@NotNull CommandSender sender, @NotNull String teamName) {
         if (!plugin.getSettings().isTeamEnderChestEnabled()) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
 
         // Find the team
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByName(teamName);
         if (teamOpt.isEmpty()) {
-            String message = messagesConfig.getString("team-not-found");
-            if (message != null) {
-                message = message.replace("%TEAM%", teamName);
-                sender.sendMessage(Utils.Color(message));
-            } else {
-                sender.sendMessage(Utils.Color("&cTeam not found: " + teamName));
-            }
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamNotFound()));
             return;
         }
         
@@ -254,25 +219,19 @@ public class TeamAdminEnderChestSubCommand {
      */
     public void seeEnderChest(@NotNull CommandSender sender, @NotNull String teamName, int chestNumber) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getSettings().isTeamEnderChestEnabled()) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
         
         // Find the team
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByName(teamName);
         if (teamOpt.isEmpty()) {
-            String message = messagesConfig.getString("team-not-found");
-            if (message != null) {
-                message = message.replace("%TEAM%", teamName);
-                sender.sendMessage(Utils.Color(message));
-            } else {
-                sender.sendMessage(Utils.Color("&cTeam not found: " + teamName));
-            }
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamNotFound()));
             return;
         }
         
@@ -280,13 +239,10 @@ public class TeamAdminEnderChestSubCommand {
         
         // Check if the chest exists
         if (!team.hasEnderChest(chestNumber)) {
-            String message = messagesConfig.getString("team-echest-not-exist");
-            if (message != null) {
-                message = message.replace("%NUMBER%", String.valueOf(chestNumber));
-                sender.sendMessage(Utils.Color(message));
-            } else {
-                sender.sendMessage(Utils.Color("&cTeam ender chest #" + chestNumber + " does not exist!"));
-            }
+
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestNotExist()
+                    .replace("%NUMBER%", String.valueOf(chestNumber))
+            ));
             return;
         }
         
@@ -319,20 +275,14 @@ public class TeamAdminEnderChestSubCommand {
      */
     public void backupAllChests(@NotNull CommandSender sender, @NotNull String teamName) {
         if (!plugin.getSettings().isTeamEnderChestEnabled()) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
 
         // Find the team
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByName(teamName);
         if (teamOpt.isEmpty()) {
-            String message = messagesConfig.getString("team-not-found");
-            if (message != null) {
-                message = message.replace("%TEAM%", teamName);
-                sender.sendMessage(Utils.Color(message));
-            } else {
-                sender.sendMessage(Utils.Color("&cTeam not found: " + teamName));
-            }
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamNotFound()));
             return;
         }
         
@@ -359,20 +309,14 @@ public class TeamAdminEnderChestSubCommand {
      */
     public void removeRows(@NotNull CommandSender sender, @NotNull String teamName, int chestNumber, int rowsToRemove) {
         if (!plugin.getSettings().isTeamEnderChestEnabled()) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
 
         // Find the team
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByName(teamName);
         if (teamOpt.isEmpty()) {
-            String message = messagesConfig.getString("team-not-found");
-            if (message != null) {
-                message = message.replace("%TEAM%", teamName);
-                sender.sendMessage(Utils.Color(message));
-            } else {
-                sender.sendMessage(Utils.Color("&cTeam not found: " + teamName));
-            }
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamNotFound()));
             return;
         }
         
@@ -380,14 +324,11 @@ public class TeamAdminEnderChestSubCommand {
         
         // Check if chest exists
         if (!team.hasEnderChest(chestNumber)) {
-            String message = messagesConfig.getString("team-echest-not-exist");
-            if (message != null) {
-                message = message.replace("%NUMBER%", String.valueOf(chestNumber))
-                        .replace("%CHEST%", String.valueOf(chestNumber));
-                sender.sendMessage(Utils.Color(message));
-            } else {
-                sender.sendMessage(Utils.Color("&cTeam ender chest #" + chestNumber + " does not exist!"));
-            }
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestNotExist()
+                    .replace("%NUMBER%", String.valueOf(chestNumber))
+                    .replace("%CHEST%", String.valueOf(chestNumber))
+            ));
+
             return;
         }
         
