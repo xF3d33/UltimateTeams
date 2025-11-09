@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.8.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    kotlin("jvm") version "2.2.20"
+    id("com.gradleup.shadow") version "9.2.2"
     id("java")
 }
 
@@ -39,11 +39,11 @@ dependencies {
     // Kotlin
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.2.20")
 
-    compileOnly("org.projectlombok:lombok:1.18.40")
-    annotationProcessor("org.projectlombok:lombok:1.18.40")
+    compileOnly("org.projectlombok:lombok:1.18.42")
+    annotationProcessor("org.projectlombok:lombok:1.18.42")
 
-    testCompileOnly("org.projectlombok:lombok:1.18.40")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.40")
+    testCompileOnly("org.projectlombok:lombok:1.18.42")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
 
     // Folia and Spigot
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
@@ -59,23 +59,23 @@ dependencies {
     // Libs
     implementation("co.aikar:acf-bukkit:0.5.1-SNAPSHOT")
     implementation("com.google.code.gson:gson:2.13.2")
-    implementation("dev.dejvokep:boosted-yaml:1.3.1")
+    implementation("dev.dejvokep:boosted-yaml:1.3.7")
 
-    compileOnly("net.luckperms:api:5.4")
+    compileOnly("net.luckperms:api:5.5")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
     // Database
-    compileOnly("org.xerial:sqlite-jdbc:3.46.1.0")
-    compileOnly("com.mysql:mysql-connector-j:9.2.0")
+    compileOnly("org.xerial:sqlite-jdbc:3.51.0.0")
+    compileOnly("com.mysql:mysql-connector-j:9.5.0")
     compileOnly("com.zaxxer:HikariCP:7.0.2")
-    compileOnly("com.h2database:h2:2.3.232")
-    compileOnly("org.postgresql:postgresql:42.7.3")
+    compileOnly("com.h2database:h2:2.4.240")
+    compileOnly("org.postgresql:postgresql:42.7.8")
 
-    compileOnly("redis.clients:jedis:5.2.0")
+    compileOnly("redis.clients:jedis:7.0.0")
 
     implementation("net.william278:annotaml:2.0.7")
     implementation("net.william278:DesertWell:2.0.4")
-    compileOnly("net.william278.huskhomes:huskhomes-bukkit:4.7")
+    compileOnly("net.william278.huskhomes:huskhomes-bukkit:4.9.9")
 }
 
 tasks {
