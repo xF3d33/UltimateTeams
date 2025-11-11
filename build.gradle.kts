@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm") version "2.2.20"
     id("com.gradleup.shadow") version "9.2.2"
     id("java")
     id("maven-publish")
@@ -104,5 +104,19 @@ tasks {
         relocate("dev.dejvokep", "dev.xf3d3.ultimateteams.libraries.boostedyaml")
         relocate("net.william278.desertwell", "dev.xf3d3.ultimateteams.libraries.william278.desertwell")
         relocate("net.william278.annotaml", "dev.xf3d3.ultimateteams.libraries.william278.annotaml")
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+        }
     }
 }
