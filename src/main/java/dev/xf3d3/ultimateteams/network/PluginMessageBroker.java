@@ -16,16 +16,7 @@ import java.util.logging.Level;
  * broker implementation
  */
 public class PluginMessageBroker extends Broker {
-
-    /**
-     * The name of BungeeCord's provided plugin channel.
-     *
-     * @implNote Technically, the effective identifier of this channel is {@code bungeecord:main},  but Spigot remaps
-     * {@code BungeeCord} automatically to the new one (<a href="https://wiki.vg/Plugin_channels#bungeecord:main">source</a>).
-     * Spigot's <a href="https://www.spigotmc.org/wiki/bukkit-bungee-plugin-messaging-channel/">official documentation</a>
-     * still instructs usage of {@code BungeeCord} as the name to use, however. It's all a bit inconsistent, so just in case
-     * it's best to leave it how it is for to maintain backwards compatibility.
-     */
+    
     public static final String BUNGEE_CHANNEL_ID = "BungeeCord";
 
     public PluginMessageBroker(@NotNull UltimateTeams plugin) {
