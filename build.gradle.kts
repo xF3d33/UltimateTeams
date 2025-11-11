@@ -25,6 +25,11 @@ repositories {
 }
 
 dependencies {
+    api("com.zaxxer:HikariCP:7.0.2")
+    api("net.william278:annotaml:2.0.7")
+    api("net.william278:DesertWell:2.0.4")
+    api("com.google.code.gson:gson:2.13.2")
+
     // Kotlin
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.2.20")
 
@@ -47,7 +52,6 @@ dependencies {
 
     // Libs
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
-    implementation("com.google.code.gson:gson:2.13.2")
     implementation("dev.dejvokep:boosted-yaml:1.3.1")
 
     implementation("de.themoep:minedown-adventure:1.7.5")
@@ -58,14 +62,11 @@ dependencies {
     // Database
     compileOnly("org.xerial:sqlite-jdbc:3.46.1.0")
     compileOnly("com.mysql:mysql-connector-j:9.2.0")
-    compileOnly("com.zaxxer:HikariCP:7.0.2")
     compileOnly("com.h2database:h2:2.3.232")
     compileOnly("org.postgresql:postgresql:42.7.3")
 
     compileOnly("redis.clients:jedis:5.2.0")
 
-    implementation("net.william278:annotaml:2.0.7")
-    implementation("net.william278:DesertWell:2.0.4")
     compileOnly("net.william278.huskhomes:huskhomes-bukkit:4.7")
 }
 

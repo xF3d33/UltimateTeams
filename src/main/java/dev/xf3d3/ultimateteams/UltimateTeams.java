@@ -6,7 +6,6 @@ import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.api.UltimateTeamsAPI;
-import dev.xf3d3.ultimateteams.api.UltimateTeamsAPIImpl;
 import dev.xf3d3.ultimateteams.commands.TeamAdmin;
 import dev.xf3d3.ultimateteams.commands.TeamCommand;
 import dev.xf3d3.ultimateteams.commands.chat.TeamAllyChatCommand;
@@ -55,7 +54,6 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonUtils, PluginMessageListener {
     private static UltimateTeams instance;
-    private UltimateTeamsAPI api;
 
     @Getter @Setter
     public boolean loaded = false;
@@ -110,8 +108,6 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         this.teamInviteUtil = new TeamInviteUtil(this);
         this.utils = new Utils(this);
         this.updateChecker = new UpdateCheck(this);
-
-        this.api = new UltimateTeamsAPIImpl(this);
 
         // Load settings and locales
         initialize("plugin config & locale files", (plugin) -> {
@@ -271,6 +267,9 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
             initialize("economy", (plugin) -> this.economyHook = new VaultHook(this));
         }
 
+        // Register the API
+        UltimateTeamsAPI.register(this);
+
         // Start auto invite clear task
         if (getSettings().enableAutoInviteWipe()) {
             runSyncRepeating(() -> {
@@ -415,10 +414,6 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     @NotNull
     public Version getPluginVersion() {
         return Version.fromString(getDescription().getVersion());
-    }
-
-    public static UltimateTeamsAPI getAPI() {
-        return instance.api;
     }
 
     public void sendConsole(String text) {
