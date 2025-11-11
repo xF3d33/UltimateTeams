@@ -76,7 +76,7 @@ tasks {
 
     shadowJar {
         archiveFileName.set("${rootProject.name}-${rootProject.version}.jar")
-        archiveClassifier.set("main")
+        //archiveClassifier.set("main")
 
         exclude("com/google/errorprone/annotations/**")
 
@@ -103,8 +103,11 @@ tasks {
 }
 
 tasks.withType<Javadoc>().configureEach {
-    (options as StandardJavadocDocletOptions).apply {
-        addStringOption("Xdoclint:none", "-quiet")
+    options.encoding = "UTF-8" // You can also put the encoding here
+    if (options is StandardJavadocDocletOptions) {
+        // You need to add these as two separate options
+        (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none")
+        (options as StandardJavadocDocletOptions).addStringOption("-quiet")
     }
 }
 
@@ -121,8 +124,9 @@ java {
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
-            artifact(tasks.named("shadowJar"))
             artifact(tasks.named("sourcesJar"))
+            from(components["java"])
+
             groupId = project.group.toString()
             artifactId = project.name
             version = project.version.toString()
@@ -139,5 +143,5 @@ tasks.withType<PublishToMavenLocal> {
 }
 
 tasks.named<Jar>("jar") {
-    enabled = false
+    archiveClassifier.set("api")
 }
