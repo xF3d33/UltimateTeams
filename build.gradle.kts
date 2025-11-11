@@ -124,7 +124,7 @@ java {
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
-            artifact(tasks.named("sourcesJar"))
+            //artifact(tasks.named("sourcesJar"))
             from(components["java"])
 
             groupId = project.group.toString()

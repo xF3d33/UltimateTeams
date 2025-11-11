@@ -16,7 +16,7 @@ import java.util.logging.Level;
  * broker implementation
  */
 public class PluginMessageBroker extends Broker {
-    
+
     public static final String BUNGEE_CHANNEL_ID = "BungeeCord";
 
     public PluginMessageBroker(@NotNull UltimateTeams plugin) {
