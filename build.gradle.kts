@@ -111,6 +111,9 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
     }
+
+    withJavadocJar()
+    withSourcesJar()
 }
 
 tasks.register<Jar>("sourcesJar") {
@@ -139,4 +142,8 @@ tasks.named("publishMavenJavaPublicationToMavenLocal") {
 tasks.withType<PublishToMavenLocal> {
     dependsOn(tasks.named("shadowJar"))
     dependsOn(tasks.named("sourcesJar"))
+}
+
+tasks.named<Jar>("jar") {
+    enabled = false
 }
