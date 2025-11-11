@@ -134,11 +134,6 @@ tasks.named("publishMavenJavaPublicationToMavenLocal") {
     dependsOn("sourcesJar")
 }
 
-tasks.withType<PublishToMavenLocal> {
-    dependsOn(tasks.named("shadowJar"))
-    dependsOn(tasks.named("sourcesJar"))
-}
-
 tasks.named<Jar>("jar") {
     enabled = false
 }
