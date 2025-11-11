@@ -24,18 +24,6 @@ repositories {
     maven ("https://repo.minebench.de/")
 }
 
-tasks {
-    javadoc {
-        options.encoding = "UTF-8"
-    }
-    compileJava {
-        options.encoding = "UTF-8"
-    }
-    compileTestJava {
-        options.encoding = "UTF-8"
-    }
-}
-
 dependencies {
     // Kotlin
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.2.20")
@@ -105,6 +93,19 @@ tasks {
         relocate("net.william278.desertwell", "dev.xf3d3.ultimateteams.libraries.william278.desertwell")
         relocate("net.william278.annotaml", "dev.xf3d3.ultimateteams.libraries.william278.annotaml")
     }
+
+    compileJava {
+        options.encoding = "UTF-8"
+    }
+    compileTestJava {
+        options.encoding = "UTF-8"
+    }
+}
+
+tasks.withType<Javadoc>().configureEach {
+    (options as StandardJavadocDocletOptions).apply {
+        addStringOption("Xdoclint:none", "-quiet")
+    }
 }
 
 java {
@@ -131,7 +132,10 @@ publishing {
 
 tasks.named("publishMavenJavaPublicationToMavenLocal") {
     dependsOn("shadowJar")
-    dependsOn("sourcesJar")
+}
+
+tasks.withType<PublishToMavenLocal> {
+    dependsOn(tasks.named("shadowJar"))
 }
 
 tasks.named<Jar>("jar") {
