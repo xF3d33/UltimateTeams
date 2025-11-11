@@ -130,3 +130,13 @@ publishing {
         }
     }
 }
+
+tasks.named("publishMavenJavaPublicationToMavenLocal") {
+    dependsOn("shadowJar")
+    dependsOn("sourcesJar")
+}
+
+tasks.withType<PublishToMavenLocal> {
+    dependsOn(tasks.named("shadowJar"))
+    dependsOn(tasks.named("sourcesJar"))
+}
