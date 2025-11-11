@@ -118,9 +118,6 @@ tasks.register<Jar>("sourcesJar") {
     from(sourceSets.main.get().allSource)
 }
 
-tasks.withType<Javadoc> {
-    enabled = false
-}
 
 publishing {
     publications {
