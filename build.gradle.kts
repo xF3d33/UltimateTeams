@@ -5,7 +5,7 @@ plugins {
     id("maven-publish")
 }
 
-group = "com.github.xF3d33"
+group = "dev.xF3d3"
 version = "4.7.3"
 
 repositories {
