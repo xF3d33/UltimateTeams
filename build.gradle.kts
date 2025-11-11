@@ -128,18 +128,10 @@ publishing {
             from(components["java"])
 
             groupId = project.group.toString()
-            artifactId = project.name
+            artifactId = rootProject.name
             version = project.version.toString()
         }
     }
-}
-
-tasks.named("publishMavenJavaPublicationToMavenLocal") {
-    dependsOn("shadowJar")
-}
-
-tasks.withType<PublishToMavenLocal> {
-    dependsOn(tasks.named("shadowJar"))
 }
 
 tasks.named<Jar>("jar") {
