@@ -118,9 +118,8 @@ tasks.register<Jar>("sourcesJar") {
     from(sourceSets.main.get().allSource)
 }
 
-tasks.register<Jar>("javadocJar") {
-    archiveClassifier.set("javadoc")
-    from(tasks.named("javadoc"))
+tasks.withType<Javadoc> {
+    enabled = false
 }
 
 publishing {
