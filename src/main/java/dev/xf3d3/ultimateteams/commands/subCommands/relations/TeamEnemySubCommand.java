@@ -3,6 +3,7 @@ package dev.xf3d3.ultimateteams.commands.subCommands.relations;
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamEnemyAddEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamEnemyRemoveEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.TeamsStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;
@@ -60,6 +61,8 @@ public class TeamEnemySubCommand {
                         return;
                     }
 
+                    if (new TeamEnemyAddEvent(player, team, otherTeam, otherTeam.getOwner()).callEvent()) return;
+
 
                     plugin.getTeamStorageUtil().addTeamEnemy(team, otherTeam, player);
                     //fireTeamAllyAddEvent(player, team, allyTeamOwner, team);
@@ -98,6 +101,8 @@ public class TeamEnemySubCommand {
                     final Team otherTeam = optionalOtherTeam.get();
                     if (team.getRelations(plugin).containsKey(otherTeam) && team.getRelations(plugin).get(otherTeam).equals(Team.Relation.ENEMY)) {
 
+                        if (new TeamEnemyRemoveEvent(player, team, otherTeam, otherTeam.getOwner()).callEvent()) return;
+
                         plugin.getTeamStorageUtil().removeTeamEnemy(team, otherTeam, player);
 
 
@@ -110,14 +115,5 @@ public class TeamEnemySubCommand {
                 },
                 () -> player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
         );
-    }
-
-    private void fireTeamEnemyRemoveEvent(TeamsStorage storageUtil, Player player, Player enemyTeamOwner, Team enemyTeam) {
-        //TeamEnemyRemoveEvent teamEnemyRemoveEvent = new TeamEnemyRemoveEvent(player, storageUtil.findTeamByMember(player), enemyTeam, enemyTeamOwner);
-        //Bukkit.getPluginManager().callEvent(teamEnemyRemoveEvent);
-    }
-    private void fireTeamEnemyAddEvent(Player player, Team team, Player enemyTeamOwner, Team enemyTeam) {
-        TeamEnemyAddEvent teamEnemyAddEvent = new TeamEnemyAddEvent(player, team, enemyTeam, enemyTeamOwner);
-        Bukkit.getPluginManager().callEvent(teamEnemyAddEvent);
     }
 }

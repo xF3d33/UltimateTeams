@@ -1,22 +1,27 @@
 package dev.xf3d3.ultimateteams.api.events;
 
 import dev.xf3d3.ultimateteams.models.Team;
+import lombok.Getter;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamFriendlyFireAttackEvent extends Event {
+public class TeamFriendlyFireEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
-    private final Player createdBy;
+
+    @Getter
     private final Player attackingPlayer;
+    @Getter
     private final Player victimPlayer;
+    @Getter
     private final Team attackingTeam;
+    @Getter
     private final Team victimTeam;
 
-    public TeamFriendlyFireAttackEvent(Player createdBy, Player attackingPlayer, Player victimPlayer, Team attackingTeam, Team victimTeam) {
-        this.createdBy = createdBy;
+    public TeamFriendlyFireEvent(@NotNull Player attackingPlayer, @NotNull Player victimPlayer, @NotNull Team attackingTeam, @NotNull Team victimTeam) {
         this.attackingPlayer = attackingPlayer;
         this.victimPlayer = victimPlayer;
         this.attackingTeam = attackingTeam;
@@ -29,23 +34,5 @@ public class TeamFriendlyFireAttackEvent extends Event {
         return HANDLERS;
     }
 
-    public Player getCreatedBy() {
-        return createdBy;
-    }
-
-    public Player getAttackingPlayer() {
-        return attackingPlayer;
-    }
-
-    public Player getVictimPlayer() {
-        return victimPlayer;
-    }
-
-    public Team getAttackingClan() {
-        return attackingTeam;
-    }
-
-    public Team getVictimClan() {
-        return victimTeam;
-    }
+    public static HandlerList getHandlerList() { return HANDLERS; }
 }

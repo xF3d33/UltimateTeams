@@ -10,25 +10,32 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class TeamTransferOwnershipEvent extends Event implements Cancellable {
+public class TeamMemberLeaveEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private boolean isCancelled = false;
 
     @Getter
-    private final UUID oldOwner;
+    private final UUID oldMember;
     @Getter
-    private final UUID newOwner;
+    private final Team team;
     @Getter
-    private final Team Team;
+    private final LeaveReason leaveReason;
 
-    public static HandlerList getHandlerList() {
+
+    public TeamMemberLeaveEvent(UUID oldMember, Team team, LeaveReason leaveReason) {
+        this.oldMember = oldMember;
+        this.team = team;
+        this.leaveReason = leaveReason;
+    }
+
+    @Override
+    @NotNull
+    public HandlerList getHandlers() {
         return HANDLERS;
     }
 
-    public TeamTransferOwnershipEvent(UUID oldOwner, UUID newOwner, Team Team) {
-        this.oldOwner = oldOwner;
-        this.newOwner = newOwner;
-        this.Team = Team;
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
     }
 
     @Override
@@ -41,10 +48,8 @@ public class TeamTransferOwnershipEvent extends Event implements Cancellable {
         this.isCancelled = b;
     }
 
-    @Override
-    @NotNull
-    public HandlerList getHandlers() {
-        return HANDLERS;
+    public enum LeaveReason {
+        MEMBER_LEFT,
+        EVICTED
     }
-
 }

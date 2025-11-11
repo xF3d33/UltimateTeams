@@ -2,23 +2,15 @@ package dev.xf3d3.ultimateteams.listeners;
 
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.api.events.TeamFriendlyFireAttackEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamFriendlyFireEvent;
 import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 
@@ -96,6 +88,8 @@ public class PlayerDamageEvent implements Listener {
         if (attackerTeam.equals(victimTeam) && !attackerTeam.isFriendlyFire()) {
             e.setCancelled(true);
             attackingPlayer.sendMessage(MineDown.parse(plugin.getMessages().getFriendlyFireIsDisabled()));
+
+            new TeamFriendlyFireEvent(attackingPlayer, victim, attackerTeam, victimTeam).callEvent();
             return;
         }
 
@@ -179,9 +173,4 @@ public class PlayerDamageEvent implements Listener {
         Bukkit.broadcast("tracked: " + e.getDamager().getLocation() + " uuid " + attackingPlayer.getName(), "suca");
 
     }*/
-
-    private void fireClanFriendlyFireAttackEvent(Player createdBy, Player attackingPlayer, Player victimPlayer, Team attackingTeam, Team victimTeam){
-        TeamFriendlyFireAttackEvent teamFriendlyFireAttackEvent = new TeamFriendlyFireAttackEvent(createdBy, attackingPlayer, victimPlayer, attackingTeam, victimTeam);
-        Bukkit.getPluginManager().callEvent(teamFriendlyFireAttackEvent);
-    }
 }

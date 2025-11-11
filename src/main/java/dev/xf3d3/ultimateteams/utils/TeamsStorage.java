@@ -3,6 +3,7 @@ package dev.xf3d3.ultimateteams.utils;
 import com.google.common.collect.Sets;
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamCreateEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamEnderChest;
 import dev.xf3d3.ultimateteams.network.Message;
@@ -82,6 +83,8 @@ public class TeamsStorage {
                     .target(Message.TARGET_ALL, Message.TargetType.SERVER)
                     .build()
                     .send(broker, player));
+
+            plugin.runSync(task2 -> new TeamCreateEvent(player, team).callEvent());
         });
     }
 
@@ -156,6 +159,7 @@ public class TeamsStorage {
 
         // Update the team
         plugin.runAsync(task -> updateTeamData(player, team));
+
     }
 
     public void removeTeamEnemy(Team team, Team otherTeam, Player player) {

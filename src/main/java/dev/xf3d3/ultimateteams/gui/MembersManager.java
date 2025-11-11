@@ -3,6 +3,7 @@ package dev.xf3d3.ultimateteams.gui;
 import de.themoep.inventorygui.*;
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamMemberLeaveEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
@@ -80,6 +81,8 @@ public class MembersManager {
 
                                             return true;
                                         }
+
+                                        if (new TeamMemberLeaveEvent(memberUUID, team, TeamMemberLeaveEvent.LeaveReason.EVICTED).callEvent()) return true;
 
                                         plugin.getTeamStorageUtil().kickPlayer(player, team, offlineMember);
 

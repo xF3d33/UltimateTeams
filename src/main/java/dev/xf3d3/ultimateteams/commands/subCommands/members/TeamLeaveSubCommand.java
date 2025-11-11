@@ -2,6 +2,8 @@ package dev.xf3d3.ultimateteams.commands.subCommands.members;
 
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamMemberJoinEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamMemberLeaveEvent;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,6 +30,8 @@ public class TeamLeaveSubCommand {
 
             plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                     team -> {
+                        if (new TeamMemberLeaveEvent(player.getUniqueId(), team, TeamMemberLeaveEvent.LeaveReason.MEMBER_LEFT).callEvent()) return;
+
                         team.removeMember(player.getUniqueId());
                         plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
                            if (teamPlayer.getPreferences().isTeamChatTalking()) {

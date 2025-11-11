@@ -2,16 +2,12 @@ package dev.xf3d3.ultimateteams.commands.subCommands.members;
 
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamMemberJoinEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -184,6 +180,7 @@ public class TeamInviteSubCommand {
                                 ));
                             }
 
+                            if (new TeamMemberJoinEvent(player, team, TeamMemberJoinEvent.JoinReason.ACCEPT_INVITE).callEvent()) return;
 
                             plugin.getTeamStorageUtil().addTeamMember(team, player);
                             plugin.getTeamInviteUtil().acceptInvite(invite, player);

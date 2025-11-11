@@ -1,47 +1,51 @@
 package dev.xf3d3.ultimateteams.api.events;
 
 import dev.xf3d3.ultimateteams.models.Team;
+import lombok.Getter;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamAllyRemoveEvent extends Event {
+import java.util.UUID;
+
+public class TeamAllyRemoveEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final Player createdBy;
+    private boolean isCancelled = false;
+
+    @Getter
+    private final Player user;
+    @Getter
     private final Team team;
-    private final Player exAllyClanCreatedBy;
+    @Getter
+    private final UUID exAllyTeamOwner;
+    @Getter
     private final Team exAllyTeam;
 
 
 
-    public TeamAllyRemoveEvent(Player createdBy, Team team, Team exAllyTeam, Player exAllyClanCreatedBy) {
-        this.createdBy = createdBy;
+    public TeamAllyRemoveEvent(@NotNull Player teamOwner, @NotNull Team team, @NotNull Team exAllyTeam, @NotNull UUID exAllyTeamOwner) {
+        this.user = teamOwner;
         this.team = team;
-        this.exAllyClanCreatedBy = exAllyClanCreatedBy;
+        this.exAllyTeamOwner = exAllyTeamOwner;
         this.exAllyTeam = exAllyTeam;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return this.isCancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean b) {
+        this.isCancelled = b;
     }
 
     @Override
     @NotNull
     public HandlerList getHandlers() {
         return HANDLERS;
-    }
-
-    public Player getCreatedBy() {
-        return createdBy;
-    }
-
-    public Team getClan() {
-        return team;
-    }
-
-    public Player getExAllyClanCreatedBy() {
-        return exAllyClanCreatedBy;
-    }
-
-    public Team getExAllyClan() {
-        return exAllyTeam;
     }
 
     public static HandlerList getHandlerList() {

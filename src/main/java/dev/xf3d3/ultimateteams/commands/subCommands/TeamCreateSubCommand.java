@@ -3,6 +3,7 @@ package dev.xf3d3.ultimateteams.commands.subCommands;
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamCreateEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamPreCreateEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.TeamsStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;
@@ -89,16 +90,13 @@ public class TeamCreateSubCommand {
             return;
         }
 
+        TeamPreCreateEvent event = new TeamPreCreateEvent(player, name);
 
-        storageUtil.createTeam(player, name);
+        if (event.callEvent()) return;
+
+        storageUtil.createTeam(player, event.getName());
 
         player.sendMessage(MineDown.parse(plugin.getMessages().getTeamCreatedSuccessfully().replace(TEAM_PLACEHOLDER, Utils.Color(name))));
 
-        //fireTeamCreateEvent(player, team);
-    }
-
-    private void fireTeamCreateEvent(Player player, Team team) {
-        TeamCreateEvent teamCreateEvent = new TeamCreateEvent(player, team);
-        Bukkit.getPluginManager().callEvent(teamCreateEvent);
     }
 }

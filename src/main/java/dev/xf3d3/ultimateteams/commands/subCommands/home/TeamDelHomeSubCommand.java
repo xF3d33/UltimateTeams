@@ -2,6 +2,7 @@ package dev.xf3d3.ultimateteams.commands.subCommands.home;
 
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamHomeCreateEvent;
 import dev.xf3d3.ultimateteams.api.events.TeamHomeDeleteEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
@@ -40,7 +41,7 @@ public class TeamDelHomeSubCommand {
 
 
                     if (plugin.getTeamStorageUtil().isHomeSet(team)) {
-                        fireTeamHomeDeleteEvent(player, team);
+                        if (new TeamHomeDeleteEvent(player, team).callEvent()) return;
 
                         plugin.getTeamStorageUtil().deleteHome(player, team);
                         player.sendMessage(MineDown.parse(plugin.getMessages().getSuccessfullyDeletedTeamHome()));
@@ -52,8 +53,4 @@ public class TeamDelHomeSubCommand {
         );
     }
 
-    private void fireTeamHomeDeleteEvent(Player player, Team team) {
-        TeamHomeDeleteEvent teamHomeDeleteEvent = new TeamHomeDeleteEvent(player, team);
-        Bukkit.getPluginManager().callEvent(teamHomeDeleteEvent);
-    }
 }

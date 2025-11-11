@@ -8,27 +8,26 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
+public class TeamBankWithdrawEvent extends Event implements Cancellable {
 
-public class TeamTransferOwnershipEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private boolean isCancelled = false;
 
     @Getter
-    private final UUID oldOwner;
+    private final Player createdBy;
     @Getter
-    private final UUID newOwner;
+    private final Team playerTeam;
     @Getter
-    private final Team Team;
+    private final double previousBalance;
+    @Getter
+    private final double newBalance;
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
 
-    public TeamTransferOwnershipEvent(UUID oldOwner, UUID newOwner, Team Team) {
-        this.oldOwner = oldOwner;
-        this.newOwner = newOwner;
-        this.Team = Team;
+    public TeamBankWithdrawEvent(@NotNull Player createdBy, @NotNull Team playerTeam, double previousBalance, double newBalance) {
+        this.createdBy = createdBy;
+        this.playerTeam = playerTeam;
+        this.previousBalance = previousBalance;
+        this.newBalance = newBalance;
     }
 
     @Override
@@ -47,4 +46,7 @@ public class TeamTransferOwnershipEvent extends Event implements Cancellable {
         return HANDLERS;
     }
 
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 }

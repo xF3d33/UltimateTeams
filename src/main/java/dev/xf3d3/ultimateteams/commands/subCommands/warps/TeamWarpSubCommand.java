@@ -2,6 +2,7 @@ package dev.xf3d3.ultimateteams.commands.subCommands.warps;
 
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamTeleportEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamWarp;
 import dev.xf3d3.ultimateteams.utils.Utils;
@@ -69,6 +70,8 @@ public class TeamWarpSubCommand {
 
         team.getTeamWarp(name).ifPresentOrElse(
                 warp -> {
+                    if (new TeamTeleportEvent(player, team, warp.getLocation()).callEvent()) return;
+
                     plugin.getUtils().teleportPlayer(player, warp.getLocation(), warp.getServer(), Utils.TeleportType.WARP, name);
                     MineDown.parse(plugin.getMessages().getTeamWarpTeleportedSuccessful().replaceAll("%WARP_NAME%", warp.getName()));
                 },

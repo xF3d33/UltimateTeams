@@ -2,6 +2,7 @@ package dev.xf3d3.ultimateteams.commands.subCommands.members;
 
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamMemberLeaveEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.OfflinePlayer;
@@ -51,6 +52,8 @@ public class TeamKickSubCommand {
 
                         player.sendMessage(MineDown.parse(plugin.getMessages().getTargetedPlayerIsNotInYourTeam().replace(PLAYER_TO_KICK, offlinePlayer.getName())));
                     }
+
+                    if (new TeamMemberLeaveEvent(player.getUniqueId(), team, TeamMemberLeaveEvent.LeaveReason.EVICTED).callEvent()) return;
 
                     plugin.getTeamStorageUtil().kickPlayer(player, team, offlinePlayer);
 

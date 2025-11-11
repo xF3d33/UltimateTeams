@@ -2,6 +2,8 @@ package dev.xf3d3.ultimateteams.commands.subCommands.warps;
 
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamWarpDeleteEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamWarpSetEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.command.CommandSender;
@@ -38,6 +40,8 @@ public class TeamDelWarpSubCommand {
 
                     team.getTeamWarp(name).ifPresentOrElse(
                             warp -> {
+                                if (new TeamWarpDeleteEvent(player, team, warp).callEvent())  return;
+
                                 team.removeTeamWarp(name);
                                 plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 

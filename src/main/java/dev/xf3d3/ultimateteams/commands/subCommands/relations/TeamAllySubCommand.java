@@ -3,6 +3,9 @@ package dev.xf3d3.ultimateteams.commands.subCommands.relations;
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamAllyAddEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamAllyRemoveEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamEnemyAddEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamEnemyRemoveEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.TeamsStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;
@@ -65,6 +68,8 @@ public class TeamAllySubCommand {
                         return;
                     }
 
+                    if (new TeamAllyAddEvent(player, team, otherTeam, otherTeam.getOwner()).callEvent()) return;
+
 
                     plugin.getTeamStorageUtil().addTeamAlly(team, otherTeam, player);
                     //fireTeamAllyAddEvent(player, team, allyTeamOwner, team);
@@ -104,6 +109,8 @@ public class TeamAllySubCommand {
                     final Team otherTeam = optionalOtherTeam.get();
                     if (team.getRelations(plugin).containsKey(otherTeam) && team.getRelations(plugin).get(otherTeam).equals(Team.Relation.ALLY)) {
 
+                        if (new TeamAllyRemoveEvent(player, team, otherTeam, otherTeam.getOwner()).callEvent()) return;
+
                         plugin.getTeamStorageUtil().removeTeamAlly(team, otherTeam, player);
 
 
@@ -116,15 +123,5 @@ public class TeamAllySubCommand {
                 },
                 () -> player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
         );
-    }
-
-    private void fireTeamAllyRemoveEvent(TeamsStorage storageUtil, Player player, Player allyTeamOwner, Team allyTeam) {
-        //TeamAllyRemoveEvent teamAllyRemoveEvent = new TeamAllyRemoveEvent(player, storageUtil.findTeamByOwner(player), allyTeam, allyTeamOwner);
-        //Bukkit.getPluginManager().callEvent(teamAllyRemoveEvent);
-    }
-
-    private void fireTeamAllyAddEvent(Player player, Team team, Player allyTeamOwner, Team allyTeam) {
-        TeamAllyAddEvent teamAllyAddEvent = new TeamAllyAddEvent(player, team, allyTeam, allyTeamOwner);
-        Bukkit.getPluginManager().callEvent(teamAllyAddEvent);
     }
 }

@@ -2,6 +2,9 @@ package dev.xf3d3.ultimateteams.commands.subCommands.economy;
 
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamBankDepositEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamBankWithdrawEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamEnemyAddEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -49,6 +52,8 @@ public class TeamBankSubCommand {
                         ));
                         return;
                     }
+
+                    if (new TeamBankDepositEvent(player, team, team.getBalance(), team.getBalance() + amount).callEvent()) return;
 
                     if (plugin.getEconomyHook().takeMoney(player, amount)) {
                         String currencyName = amount > 1 ? plugin.getEconomyHook().getCurrencyNameSingular() : plugin.getEconomyHook().getCurrencyNamePlural();
@@ -100,6 +105,7 @@ public class TeamBankSubCommand {
                         return;
                     };
 
+                    if (new TeamBankWithdrawEvent(player, team, team.getBalance(), team.getBalance() - amount).callEvent()) return;
 
                     if (team.subBalance(amount)) {
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));

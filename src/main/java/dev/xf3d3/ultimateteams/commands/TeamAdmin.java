@@ -5,6 +5,8 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamMemberJoinEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamTransferOwnershipEvent;
 import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestRollbackSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand;
@@ -146,6 +148,8 @@ public class TeamAdmin extends BaseCommand {
 
         plugin.getTeamStorageUtil().findTeamByName(teamName).ifPresentOrElse(
                 team -> {
+                    if (new TeamMemberJoinEvent(player, team, TeamMemberJoinEvent.JoinReason.ADMIN_ACTION).callEvent()) return;
+
                     plugin.getTeamStorageUtil().addTeamMember(team, player);
 
                     sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinSuccessful().replace("%TEAM%", team.getName())));
@@ -177,6 +181,8 @@ public class TeamAdmin extends BaseCommand {
                         sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferFailureNotSameTeam()));
                         return;
                     }
+
+                    if (new TeamTransferOwnershipEvent(team.getOwner(), user.getUniqueId(), team).callEvent()) return;
 
                     plugin.getTeamStorageUtil().transferTeamOwner(team, user.getUniqueId());
 

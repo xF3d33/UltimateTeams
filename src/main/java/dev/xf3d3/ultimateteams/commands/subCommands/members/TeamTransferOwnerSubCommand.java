@@ -3,6 +3,8 @@ package dev.xf3d3.ultimateteams.commands.subCommands.members;
 import co.aikar.commands.annotation.Values;
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamMemberLeaveEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamTransferOwnershipEvent;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -51,6 +53,8 @@ public class TeamTransferOwnerSubCommand {
                         player.sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferFailureNotSameTeam()));
                         return;
                     }
+
+                    if (new TeamTransferOwnershipEvent(team.getOwner(), player.getUniqueId(), team).callEvent()) return;
 
                     plugin.getTeamStorageUtil().transferTeamOwner(team, newTeamOwner.getUniqueId());
 

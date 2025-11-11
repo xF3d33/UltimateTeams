@@ -1,22 +1,24 @@
 package dev.xf3d3.ultimateteams.api.events;
 
 import dev.xf3d3.ultimateteams.models.Team;
+import lombok.Getter;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 public class TeamCreateEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final Player createdBy;
+
+    @Getter
+    private final Player user;
+    @Getter
     private final Team team;
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
 
-    public TeamCreateEvent(Player createdBy, Team teamName) {
-        this.createdBy = createdBy;
+    public TeamCreateEvent(@NotNull Player user, @NotNull Team teamName) {
+        this.user = user;
         this.team = teamName;
     }
 
@@ -26,12 +28,7 @@ public class TeamCreateEvent extends Event {
         return HANDLERS;
     }
 
-    public Player getCreatedBy() {
-        return createdBy;
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
     }
-
-    public Team getClan() {
-        return team;
-    }
-
 }

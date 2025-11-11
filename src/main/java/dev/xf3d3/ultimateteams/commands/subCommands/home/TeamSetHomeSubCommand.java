@@ -42,13 +42,10 @@ public class TeamSetHomeSubCommand {
                     }
 
                     Location location = player.getLocation();
-                    fireTeamHomeSetEvent(player, team, location);
-
-                    if (plugin.getSettings().debugModeEnabled()) {
-                        plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aFired TeamHomeSetEvent"));
-                    }
-
                     final TeamHome home = TeamHome.of(location, plugin.getSettings().getServerName());
+
+                    if (new TeamHomeCreateEvent(player, team, home).callEvent()) return;
+
                     team.setHome(home);
 
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
@@ -56,10 +53,5 @@ public class TeamSetHomeSubCommand {
                 },
                 () -> player.sendMessage(MineDown.parse(plugin.getMessages().getFailedNotInTeam()))
         );
-    }
-
-    private void fireTeamHomeSetEvent(Player player, Team team, Location homeLocation) {
-        TeamHomeCreateEvent teamHomeCreateEvent = new TeamHomeCreateEvent(player, team, homeLocation);
-        Bukkit.getPluginManager().callEvent(teamHomeCreateEvent);
     }
 }

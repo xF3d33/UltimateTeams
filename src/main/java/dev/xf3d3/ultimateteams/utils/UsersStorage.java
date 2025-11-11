@@ -2,7 +2,6 @@ package dev.xf3d3.ultimateteams.utils;
 
 import com.google.common.collect.Maps;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.api.events.TeamChatSpyToggledEvent;
 import dev.xf3d3.ultimateteams.models.Preferences;
 import dev.xf3d3.ultimateteams.models.TeamPlayer;
 import dev.xf3d3.ultimateteams.models.User;
@@ -11,7 +10,6 @@ import dev.xf3d3.ultimateteams.network.Message;
 import dev.xf3d3.ultimateteams.network.Payload;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.geysermc.floodgate.api.player.FloodgatePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +18,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class UsersStorage {
@@ -219,8 +216,4 @@ public class UsersStorage {
         return usermap;
     }
 
-    private void fireClanChatSpyToggledEvent(Player player, TeamPlayer teamPlayer, boolean chatSpyToggledState) {
-        TeamChatSpyToggledEvent teamChatSpyToggledEvent = new TeamChatSpyToggledEvent(player, teamPlayer, chatSpyToggledState);
-        Bukkit.getPluginManager().callEvent(teamChatSpyToggledEvent);
-    }
 }

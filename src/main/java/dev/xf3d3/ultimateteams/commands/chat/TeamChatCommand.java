@@ -4,19 +4,14 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.api.events.TeamChatMessageSendEvent;
-import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.network.Message;
 import dev.xf3d3.ultimateteams.network.Payload;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
@@ -117,8 +112,4 @@ public class TeamChatCommand extends BaseCommand {
         );*/
     }
 
-    private void fireTeamChatMessageSendEvent(Player player, Team team, String prefix, String message, List<UUID> recipients) {
-        TeamChatMessageSendEvent teamChatMessageSendEvent = new TeamChatMessageSendEvent(player, team, prefix, message, recipients);
-        Bukkit.getPluginManager().callEvent(teamChatMessageSendEvent);
-    }
 }

@@ -2,6 +2,7 @@ package dev.xf3d3.ultimateteams.commands.subCommands.warps;
 
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamWarpSetEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamWarp;
 import dev.xf3d3.ultimateteams.utils.Utils;
@@ -55,6 +56,8 @@ public class TeamSetWarpSubCommand {
                         }
 
                         final TeamWarp warp = TeamWarp.of(name, player.getLocation(), plugin.getSettings().getServerName());
+
+                        if (new TeamWarpSetEvent(player, team, warp).callEvent())  return;
 
                         team.addTeamWarp(warp);
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
