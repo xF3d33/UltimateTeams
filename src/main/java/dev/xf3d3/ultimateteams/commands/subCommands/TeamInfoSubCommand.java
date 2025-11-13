@@ -6,12 +6,12 @@ import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -156,6 +156,10 @@ public class TeamInfoSubCommand {
                         .replace("%AMOUNT%", String.valueOf(team.getJoin_fee()))
                 )).append("\n");
             }
+        }
+
+        if (plugin.getSettings().isEnableMotd()) {
+            teamInfo.append(Objects.requireNonNullElse(Utils.Color(team.getMotd()), plugin.getMessages().getTeamMotdNotSet())).append("\n");
         }
 
         if (team.isFriendlyFire()) {

@@ -3,14 +3,14 @@ package dev.xf3d3.ultimateteams.models;
 import com.google.gson.annotations.Expose;
 import lombok.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Base64;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import org.bukkit.util.io.BukkitObjectInputStream;
-import org.bukkit.util.io.BukkitObjectOutputStream;
+import java.util.Base64;
 
 /**
  * Represents a team's ender chest with serializable inventory contents

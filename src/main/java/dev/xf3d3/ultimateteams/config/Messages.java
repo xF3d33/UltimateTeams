@@ -365,6 +365,34 @@ public class Messages {
     @Getter
     private String teamTagCannotContainColours = "&3Sorry, the team prefix cannot contain '&' or '#' characters.";
 
+
+    @YamlComment("Team MOTD Messages")
+    @YamlKey("team.motd.cannot-contain-colours")
+    @Getter
+    private String teamMotdCannotContainColours = "&3Sorry, the team MOTD cannot contain '&' or '#' characters.";
+
+    @YamlKey("team.motd.change-successful")
+    @Getter
+    private String teamMotdChangeSuccessful = "&3Successfully changed team MOTD to: %MOTD%&r&3!";
+
+    @YamlKey("team.motd.disabled")
+    @Getter
+    private String teamMotdDisabledSuccessful = "&3Successfully disabled the team MOTD.";
+
+    @YamlKey("team.motd.not-set")
+    @Getter
+    private String teamMotdNotSet = "&3Team MOTD not set.";
+
+    @YamlKey("team.motd.too-long")
+    @Getter
+    private String teamMotdTooLong = "&3Team MOTD too long - maximum length is &6%CHARMAX% &3characters.";
+
+    @YamlKey("team.motd.too-short")
+    @Getter
+    private String teamMotdTooShort = "&3Team MOTD too short - minimum length is &6%CHARMIN% &3characters.";
+
+
+
     @YamlComment("Team List Messages")
     @YamlKey("team.list.no-teams")
     @Getter
@@ -434,6 +462,10 @@ public class Messages {
     @YamlKey("team.info.join-fee")
     @Getter
     private String teamInfoJoinFee = "&3Join Fee: &a%AMOUNT%";
+
+    @YamlKey("team.info.join-fee")
+    @Getter
+    private String teamInfoMotd = "&3MOTD: &a%MOTD%";
 
     @YamlKey("team.info.pvp-enabled")
     @Getter

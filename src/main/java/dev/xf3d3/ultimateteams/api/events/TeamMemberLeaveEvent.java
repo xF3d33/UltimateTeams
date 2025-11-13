@@ -2,7 +2,6 @@ package dev.xf3d3.ultimateteams.api.events;
 
 import dev.xf3d3.ultimateteams.models.Team;
 import lombok.Getter;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

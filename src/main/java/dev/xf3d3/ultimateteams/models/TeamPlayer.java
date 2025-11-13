@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Level;
 
 @SuppressWarnings("unused")
 public class TeamPlayer {
@@ -34,21 +33,13 @@ public class TeamPlayer {
         final List<Integer> warps = plugin.getUtils().getNumberPermission(player, "ultimateteams.max_warps.");
 
         if (warps.isEmpty()) {
-            if (plugin.getSettings().debugModeEnabled())
-                plugin.log(Level.INFO, "Max Warps (default - permission empty)" + defaultMaxWarps);
-
             return defaultMaxWarps;
-        }
-        if (stackWarps) {
-            if (plugin.getSettings().debugModeEnabled())
-                plugin.log(Level.INFO, "Max Warps (stacked)" + defaultMaxWarps + warps.stream().reduce(0, Integer::sum));
 
+        } else if (stackWarps) {
             return defaultMaxWarps + warps.stream().reduce(0, Integer::sum);
-        } else {
-            if (plugin.getSettings().debugModeEnabled())
-                plugin.log(Level.INFO, "Max Warps (permission)" + warps.get(0));
 
-            return warps.get(0);
+        } else {
+            return warps.getFirst();
         }
     }
 
@@ -56,21 +47,13 @@ public class TeamPlayer {
         final List<Integer> membersPerm = plugin.getUtils().getNumberPermission(player, "ultimateteams.max_members.");
 
         if (membersPerm.isEmpty()) {
-            if (plugin.getSettings().debugModeEnabled())
-                plugin.log(Level.INFO, "Max Members (default - permission empty)" + defaultMaxMembers);
-
             return defaultMaxMembers;
-        }
-        if (stackMembers) {
-            if (plugin.getSettings().debugModeEnabled())
-                plugin.log(Level.INFO, "Max Members (stacked)" + defaultMaxMembers + membersPerm.stream().reduce(0, Integer::sum));
 
+        } else if (stackMembers) {
             return defaultMaxMembers + membersPerm.stream().reduce(0, Integer::sum);
-        } else {
-            if (plugin.getSettings().debugModeEnabled())
-                plugin.log(Level.INFO, "Max Members (permission)" + membersPerm.get(0));
 
-            return membersPerm.get(0);
+        } else {
+            return membersPerm.getFirst();
         }
     }
 

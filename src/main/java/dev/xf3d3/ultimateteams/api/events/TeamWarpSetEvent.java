@@ -1,7 +1,6 @@
 package dev.xf3d3.ultimateteams.api.events;
 
 import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.models.TeamHome;
 import dev.xf3d3.ultimateteams.models.TeamWarp;
 import lombok.Getter;
 import org.bukkit.entity.Player;

@@ -1,7 +1,6 @@
 package dev.xf3d3.ultimateteams.config;
 
 import dev.xf3d3.ultimateteams.database.Database;
-import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.network.Broker;
 import lombok.Getter;
 import net.william278.annotaml.YamlComment;
@@ -310,6 +309,33 @@ public class Settings {
     @YamlKey("team.tag.brackets-closing")
     private String bracketsClosing = "&f]";
 
+    // Team MOTD
+    @YamlComment("Should players be allowed to set a MOTD for their team?")
+    @YamlKey("team.motd.enable")
+    @Getter
+    private boolean enableMotd = true;
+
+    @YamlComment("Should players be be sent the team MOTD when they join the team?")
+    @YamlKey("team.motd.send-on-join")
+    @Getter
+    private boolean sendMotdOnJoin = true;
+
+    @YamlKey("team.motd.allow-colors")
+    @Getter
+    private boolean motdAllowColors = false;
+
+    @YamlKey("team.motd.colors-require-perm")
+    @YamlComment("If enabled, players will need the ultimateteams.team.motd.usecolors permission to use color codes")
+    @Getter
+    private boolean motdColorsRequirePerm = false;
+
+    @YamlKey("team.motd.length.min")
+    @Getter
+    private int motdMinLength = 5;
+
+    @YamlKey("team.motd.length.max")
+    @Getter
+    private int motdMaxLength = 30;
 
     // Team Echest
     @YamlComment("Enable the team enderchest system. [Default value: true]\nThis is not compatible with cross-server (yet).")

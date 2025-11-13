@@ -2,14 +2,10 @@ package dev.xf3d3.ultimateteams.commands.subCommands;
 
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.api.events.TeamCreateEvent;
 import dev.xf3d3.ultimateteams.api.events.TeamPreCreateEvent;
-import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.TeamsStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

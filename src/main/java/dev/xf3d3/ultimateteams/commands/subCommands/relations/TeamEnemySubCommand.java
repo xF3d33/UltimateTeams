@@ -5,11 +5,7 @@ import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamEnemyAddEvent;
 import dev.xf3d3.ultimateteams.api.events.TeamEnemyRemoveEvent;
 import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.utils.TeamsStorage;
-import dev.xf3d3.ultimateteams.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

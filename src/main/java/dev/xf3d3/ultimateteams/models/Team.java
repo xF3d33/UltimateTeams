@@ -29,14 +29,16 @@ public class Team {
     private String name;
 
     @Expose
+    @Builder.Default
     @Getter
     @Setter
-    private double balance;
+    private double balance = 0;
 
     @Expose
+    @Builder.Default
     @Getter
     @Setter
-    private double join_fee;
+    private double join_fee = 0;
 
     @Expose
     @Builder.Default
@@ -45,19 +47,25 @@ public class Team {
     @Setter
     private String prefix = null;
 
+    @Expose
+    @Builder.Default
+    @Getter
+    @Setter
+    private String motd = null;
+
     @Getter
     @Expose
     @Builder.Default
-    private Map<String, TeamWarp> warps = Maps.newHashMap();
+    private Map<String, TeamWarp> warps = Maps.newConcurrentMap();
 
     @Expose
     @Getter
     @Builder.Default
-    private Map<UUID, Integer> members = Maps.newHashMap();
+    private Map<UUID, Integer> members = Maps.newConcurrentMap();
 
     @Expose
     @Builder.Default
-    private Map<Integer, Relation> relations = Maps.newHashMap();
+    private Map<Integer, Relation> relations = Maps.newConcurrentMap();
 
     @Expose
     @Builder.Default
@@ -225,9 +233,7 @@ public class Team {
 
     public enum Relation {
         ALLY,
-
         NEUTRAL,
-
         ENEMY;
 
         /**
@@ -255,7 +261,8 @@ public class Team {
         PROMOTE,
         FEE,
         WITHDRAW,
-        DEPOSIT;
+        DEPOSIT,
+        MOTD;
 
         /**
          * Parse a {@link Permission} from a string name

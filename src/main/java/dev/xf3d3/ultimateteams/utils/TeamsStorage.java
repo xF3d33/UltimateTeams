@@ -11,7 +11,6 @@ import dev.xf3d3.ultimateteams.network.Payload;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -109,14 +108,12 @@ public class TeamsStorage {
         removeTeam(team);
 
         // Propagate the town deletion to all servers
-        if (player != null) {
-            plugin.getMessageBroker().ifPresent(broker -> Message.builder()
-                    .type(Message.Type.TEAM_DELETE)
-                    .payload(Payload.integer(team.getId()))
-                    .target(Message.TARGET_ALL, Message.TargetType.SERVER)
-                    .build()
-                    .send(broker, player));
-        }
+        plugin.getMessageBroker().ifPresent(broker -> Message.builder()
+                .type(Message.Type.TEAM_DELETE)
+                .payload(Payload.integer(team.getId()))
+                .target(Message.TARGET_ALL, Message.TargetType.SERVER)
+                .build()
+                .send(broker, player));
     }
 
     public boolean isInTeam(Player player) {
@@ -151,6 +148,10 @@ public class TeamsStorage {
     public void addTeamMember(Team team, Player player) {
         team.addMember(player.getUniqueId(), null);
         plugin.runAsync(task -> updateTeamData(player, team));
+
+        if (plugin.getSettings().isEnableMotd() && plugin.getSettings().isSendMotdOnJoin() && team.getMotd() != null) {
+            player.sendMessage(Utils.Color(team.getMotd()));
+        }
     }
 
     public void addTeamEnemy(Team team, Team otherTeam, Player player) {

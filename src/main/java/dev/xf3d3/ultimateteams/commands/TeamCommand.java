@@ -433,4 +433,18 @@ public class TeamCommand extends BaseCommand {
     public void onTeamFeeDisableCommand(@NotNull CommandSender sender) {
         new TeamFeeSubCommand(plugin).teamDisableFeeSubCommand(sender);
     }
+
+    @Subcommand("motd set")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.team.motd.set")
+    public void onTeamSetMotdCommand(@NotNull CommandSender sender, String[] args) {
+        new TeamMotdSubCommand(plugin).teamSetMotdSubCommand(sender, args);
+    }
+
+    @Subcommand("motd disable")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.team.motd.disable")
+    public void onTeamDisableMotdCommand(@NotNull CommandSender sender) {
+        new TeamMotdSubCommand(plugin).teamRemoveMotdSubCommand(sender);
+    }
 }

@@ -15,11 +15,8 @@ import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.logging.Level;
 
 @SuppressWarnings("unused")
 @CommandAlias("teamadmin|ta")
@@ -56,7 +53,7 @@ public class TeamAdmin extends BaseCommand {
         sender.sendMessage(Utils.Color("&3Author: &6" + plugin.getDescription().getAuthors()));
         sender.sendMessage(Utils.Color("&3Contributors: &6" + plugin.getDescription().getContributors()));
         sender.sendMessage(Utils.Color("&3Description: &6" + plugin.getDescription().getDescription()));
-        sender.sendMessage(Utils.Color("&3Website: "));
+        sender.sendMessage(Utils.Color("&3Website: https://ultimateteams.gitbook.io/ultimateteams-docs"));
         sender.sendMessage(Utils.Color("&6" + plugin.getDescription().getWebsite()));
         sender.sendMessage(Utils.Color("&3~~~~~~~~~~ &6&nUltimateTeams&r &3~~~~~~~~~~"));
     }
@@ -80,7 +77,7 @@ public class TeamAdmin extends BaseCommand {
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.admin.migrate")
     public void migrateSubcommand(CommandSender sender) {
-        sender.sendMessage("Visit: https://github.com/xF3d33/UltimateTeams/blob/main/HowToMigrate.md for a guida on how to migrate");
+        sender.sendMessage("Visit: https://ultimateteams.gitbook.io/ultimateteams-docs/setup/legacy-migration for a guida on how to migrate");
     }
 
     @Subcommand("migrate set")

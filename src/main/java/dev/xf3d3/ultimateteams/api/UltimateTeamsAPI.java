@@ -5,7 +5,6 @@ import dev.xf3d3.ultimateteams.config.Messages;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamPlayer;
 import dev.xf3d3.ultimateteams.models.User;
-import net.william278.huskhomes.api.BaseHuskHomesAPI;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;

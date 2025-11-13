@@ -1,6 +1,9 @@
 package dev.xf3d3.ultimateteams.gui;
 
-import de.themoep.inventorygui.*;
+import de.themoep.inventorygui.GuiElementGroup;
+import de.themoep.inventorygui.GuiPageElement;
+import de.themoep.inventorygui.InventoryGui;
+import de.themoep.inventorygui.StaticGuiElement;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
@@ -12,10 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TeamList {
@@ -155,6 +155,10 @@ public class TeamList {
                         .replace("%AMOUNT%", String.valueOf(team.getJoin_fee()))
                 ));
             }
+        }
+
+        if (plugin.getSettings().isEnableMotd()) {
+            lore.add(Objects.requireNonNullElse(Utils.Color(team.getMotd()), plugin.getMessages().getTeamMotdNotSet()));
         }
 
         if (team.isFriendlyFire()) {

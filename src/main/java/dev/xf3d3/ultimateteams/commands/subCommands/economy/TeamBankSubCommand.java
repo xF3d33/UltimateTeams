@@ -4,7 +4,6 @@ import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamBankDepositEvent;
 import dev.xf3d3.ultimateteams.api.events.TeamBankWithdrawEvent;
-import dev.xf3d3.ultimateteams.api.events.TeamEnemyAddEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
