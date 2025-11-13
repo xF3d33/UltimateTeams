@@ -34,8 +34,10 @@ public class TeamLeaveSubCommand {
 
                         team.removeMember(player.getUniqueId());
                         plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
-                           if (teamPlayer.getPreferences().isTeamChatTalking()) {
+                           if (teamPlayer.getPreferences().isTeamChatTalking() || teamPlayer.getPreferences().isAllyChatTalking()) {
                                teamPlayer.getPreferences().setTeamChatTalking(false);
+                               teamPlayer.getPreferences().setAllyChatTalking(false);
+
                                plugin.getDatabase().updatePlayer(teamPlayer);
                            }
                         });

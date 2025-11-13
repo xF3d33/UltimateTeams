@@ -6,12 +6,14 @@ import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.network.Message;
 import dev.xf3d3.ultimateteams.network.Payload;
+import dev.xf3d3.ultimateteams.utils.UsersStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
@@ -41,9 +43,17 @@ public class TeamChatCommand extends BaseCommand {
             return;
         }
 
-        // Check args
+        // Enable/Disable team chat for every message
         if (args.length < 1) {
-            if (plugin.getUsersStorageUtil().getChatPlayers().containsKey(player.getUniqueId())) {
+            //boolean chatTalking = plugin.getUsersStorageUtil().getChatPlayers().entrySet().stream().anyMatch(user -> user.getKey().equals(player.getUniqueId()) && user.getValue() == UsersStorage.ChatType.TEAM_CHAT);
+            boolean chatTalking = UsersStorage.ChatType.TEAM_CHAT.equals(
+                    plugin.getUsersStorageUtil()
+                            .getChatPlayers()
+                            .get(player.getUniqueId())
+            );
+
+            // disable chat
+            if (chatTalking) {
                 plugin.getUsersStorageUtil().getChatPlayers().remove(player.getUniqueId());
                 player.sendMessage(MineDown.parse(plugin.getMessages().getChatToggleOff()));
 
@@ -51,8 +61,10 @@ public class TeamChatCommand extends BaseCommand {
                     teamPlayer.getPreferences().setTeamChatTalking(false);
                     plugin.getDatabase().updatePlayer(teamPlayer);
                 });
+
+            // enable chat
             } else {
-                plugin.getUsersStorageUtil().getChatPlayers().put(player.getUniqueId(), true);
+                plugin.getUsersStorageUtil().getChatPlayers().put(player.getUniqueId(), UsersStorage.ChatType.TEAM_CHAT);
                 player.sendMessage(MineDown.parse(plugin.getMessages().getChatToggleOn()));
 
                 plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
@@ -99,17 +111,6 @@ public class TeamChatCommand extends BaseCommand {
                 },
                 () -> player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
         );
-
-
-        /*List<UUID> playerTeamMembers = team.getMembers().keySet().stream().toList();
-
-        fireTeamChatMessageSendEvent(
-                player,
-                team,
-                plugin.getSettings().getTeamChatPrefix(),
-                messageString.toString(),
-                playerTeamMembers
-        );*/
     }
 
 }

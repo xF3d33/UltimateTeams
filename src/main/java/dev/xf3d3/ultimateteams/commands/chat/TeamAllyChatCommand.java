@@ -7,6 +7,7 @@ import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.network.Message;
 import dev.xf3d3.ultimateteams.network.Payload;
+import dev.xf3d3.ultimateteams.utils.UsersStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -46,9 +47,36 @@ public class TeamAllyChatCommand extends BaseCommand {
             return;
         }
 
-        // Check args
+        // Enable/Disable ally  chat for every message
         if (args.length < 1) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getAllychatIncorrectUsage()));
+            //boolean chatTalking = plugin.getUsersStorageUtil().getChatPlayers().entrySet().stream().anyMatch(user -> user.getKey().equals(player.getUniqueId()) && user.getValue() == UsersStorage.ChatType.TEAM_CHAT);
+            boolean chatTalking = UsersStorage.ChatType.ALLY_CHAT.equals(
+                    plugin.getUsersStorageUtil()
+                            .getChatPlayers()
+                            .get(player.getUniqueId())
+            );
+
+            // disable chat
+            if (chatTalking) {
+                plugin.getUsersStorageUtil().getChatPlayers().remove(player.getUniqueId());
+                player.sendMessage(MineDown.parse(plugin.getMessages().getAllyChatToggleOff()));
+
+                plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
+                    teamPlayer.getPreferences().setAllyChatTalking(false);
+                    plugin.getDatabase().updatePlayer(teamPlayer);
+                });
+
+                // enable chat
+            } else {
+                plugin.getUsersStorageUtil().getChatPlayers().put(player.getUniqueId(), UsersStorage.ChatType.ALLY_CHAT);
+                player.sendMessage(MineDown.parse(plugin.getMessages().getAllyChatToggleOn()));
+
+                plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
+                    teamPlayer.getPreferences().setAllyChatTalking(true);
+                    plugin.getDatabase().updatePlayer(teamPlayer);
+                });
+            }
+
             return;
         }
         

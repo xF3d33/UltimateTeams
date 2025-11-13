@@ -19,6 +19,12 @@ public class Preferences {
     @Setter
     @Getter
     @Expose
+    @SerializedName("ally_chat_talking")
+    private boolean allyChatTalking;
+
+    @Setter
+    @Getter
+    @Expose
     @SerializedName("team_chat_spying")
     private boolean teamChatSpying;
 
@@ -44,12 +50,14 @@ public class Preferences {
         return new Preferences(
                 false,
                 false,
+                false,
                 true
         );
     }
 
-    private Preferences(boolean teamChatTalking, boolean teamChatSpying, boolean invitationsStatus) {
+    private Preferences(boolean teamChatTalking, boolean allyChatTalking, boolean teamChatSpying, boolean invitationsStatus) {
         this.teamChatTalking = teamChatTalking;
+        this.allyChatTalking = allyChatTalking;
         this.teamChatSpying = teamChatSpying;
         this.acceptInvitations = invitationsStatus;
     }

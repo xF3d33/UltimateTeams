@@ -207,8 +207,10 @@ public class TeamsStorage {
                             onlineUser.sendMessage(MineDown.parse(plugin.getMessages().getTeamKickedPlayerMessage().replace("%TEAM%", team.getName())));
 
                             plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
-                                if (teamPlayer.getPreferences().isTeamChatTalking()) {
+                                if (teamPlayer.getPreferences().isTeamChatTalking() || teamPlayer.getPreferences().isAllyChatTalking()) {
                                     teamPlayer.getPreferences().setTeamChatTalking(false);
+                                    teamPlayer.getPreferences().setAllyChatTalking(false);
+
                                     plugin.getDatabase().updatePlayer(teamPlayer);
                                 }
                             });

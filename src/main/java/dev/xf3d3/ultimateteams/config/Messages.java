@@ -692,6 +692,14 @@ public class Messages {
     @Getter
     private String allychatIncorrectUsage = "&6UltimateTeams team chat usage:&3\n/allychat <message>";
 
+    @YamlKey("team.allychat.toggle-on")
+    @Getter
+    private String allyChatToggleOn = "&3Toggled Ally Chat &a&lON&3.";
+
+    @YamlKey("team.allychat.toggle-off")
+    @Getter
+    private String allyChatToggleOff = "&3Toggled Ally Chat &c&lOFF&3.";
+
     @YamlComment("Team Managers")
     @YamlKey("team.manager.promote-self-error")
     @Getter

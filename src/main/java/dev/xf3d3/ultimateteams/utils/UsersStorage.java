@@ -30,7 +30,7 @@ public class UsersStorage {
     @Getter
     private final ConcurrentMap<UUID, Player> onlineUserMap = Maps.newConcurrentMap();
     @Getter
-    private final ConcurrentMap<UUID, Boolean> chatPlayers = Maps.newConcurrentMap();
+    private final ConcurrentMap<UUID, ChatType> chatPlayers = Maps.newConcurrentMap();
 
 
     public UsersStorage(@NotNull UltimateTeams plugin) {
@@ -214,6 +214,11 @@ public class UsersStorage {
 
     public Map<UUID, TeamPlayer> getUsermap() {
         return usermap;
+    }
+
+    public enum ChatType {
+        TEAM_CHAT,
+        ALLY_CHAT;
     }
 
 }
