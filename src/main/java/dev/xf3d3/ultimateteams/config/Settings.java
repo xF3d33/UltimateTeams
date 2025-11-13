@@ -160,6 +160,15 @@ public class Settings {
     @Getter
     private int teamNameMaxLength = 10;
 
+    @YamlKey("team.name.regex.enable")
+    @YamlComment("If enabled, the team name will need to additionally pass the regex in order to be used. Advanced users only.")
+    @Getter
+    private boolean teamNameUseRegex = false;
+
+    @YamlKey("team.name.regex.value")
+    @Getter
+    private String teamNameRegex = "[a-zA-Z]+";
+
 
     // Team join
     @YamlComment("Do you want a message to be sent to team players when a player joins a team? [Default value: true]")
@@ -290,6 +299,15 @@ public class Settings {
     @YamlKey("team.tag.max-length")
     private int maxCharacterLimit = 8;
 
+    @YamlKey("team.tag.regex.enable")
+    @YamlComment("If enabled, the team prefix will need to additionally pass the regex in order to be used. Advanced users only.")
+    @Getter
+    private boolean teamPrefixUseRegex = false;
+
+    @YamlKey("team.tag.regex.value")
+    @Getter
+    private String teamPrefixRegex = "[a-zA-Z]+";
+
     @YamlComment("Set below names that are not allowed to be used in prefixes or names. [They are NOT casesensitive]")
     @YamlKey("team.tag.disallowed-tags")
     private List<String> disallowedTags = List.of("Gamers", "Rise", "Up");
@@ -336,6 +354,15 @@ public class Settings {
     @YamlKey("team.motd.length.max")
     @Getter
     private int motdMaxLength = 30;
+
+    @YamlKey("team.motd.regex.enable")
+    @YamlComment("If enabled, the MOTD will need to pass the regex in order to be used. Advanced users only.")
+    @Getter
+    private boolean motdUseRegex = false;
+
+    @YamlKey("team.motd.regex.value")
+    @Getter
+    private String motdRegex = "[a-zA-Z]+";
 
     // Team Echest
     @YamlComment("Enable the team enderchest system. [Default value: true]\nThis is not compatible with cross-server (yet).")

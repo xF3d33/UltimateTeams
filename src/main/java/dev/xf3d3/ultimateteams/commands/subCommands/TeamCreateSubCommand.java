@@ -10,12 +10,15 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class TeamCreateSubCommand {
     private final UltimateTeams plugin;
 
     private final TeamsStorage storageUtil;
     private static final String TEAM_PLACEHOLDER = "%TEAM%";
+
+    public static Pattern teamNameRegex;
 
     int MIN_CHAR_LIMIT;
     int MAX_CHAR_LIMIT;
@@ -27,12 +30,20 @@ public class TeamCreateSubCommand {
 
         this.MIN_CHAR_LIMIT = plugin.getSettings().getTeamNameMinLength();
         this.MAX_CHAR_LIMIT = plugin.getSettings().getTeamNameMaxLength();
+
+        if (teamNameRegex == null) teamNameRegex = Pattern.compile(plugin.getSettings().getTeamNameRegex());
     }
 
     public void createTeamSubCommand(CommandSender sender, String name, List<String> bannedTags) {
 
         if (!(sender instanceof final Player player)) {
             sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            return;
+        }
+
+        if (plugin.getSettings().isTeamNameUseRegex() && !teamNameRegex.matcher(name).matches()) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameIsBanned()));
+
             return;
         }
 

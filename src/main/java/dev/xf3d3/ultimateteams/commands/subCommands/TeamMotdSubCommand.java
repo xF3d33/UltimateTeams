@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class TeamMotdSubCommand {
 
@@ -17,10 +18,14 @@ public class TeamMotdSubCommand {
 
     private final UltimateTeams plugin;
 
+    public static Pattern motdRegex;
+
     public TeamMotdSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
         this.MAX_CHAR_LIMIT = plugin.getSettings().getMotdMaxLength();
         this.MIN_CHAR_LIMIT = plugin.getSettings().getMotdMinLength();
+
+        if (motdRegex == null) motdRegex = Pattern.compile(plugin.getSettings().getMotdRegex());
     }
 
     public void teamSetMotdSubCommand(CommandSender sender, String[] args) {
@@ -29,8 +34,21 @@ public class TeamMotdSubCommand {
             return;
         }
 
+        if (!plugin.getSettings().isEnableMotd()) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+
+            return;
+        }
+
         final String motd = String.join(" ", args);
-        
+
+        if (plugin.getSettings().isMotdUseRegex() && !motdRegex.matcher(motd).matches()) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamMotdNotValid()));
+
+            return;
+        }
+
+
         if (!plugin.getSettings().isMotdAllowColors() && (motd.contains("&") || motd.contains("#"))) {
 
             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamMotdCannotContainColours()));
@@ -75,6 +93,11 @@ public class TeamMotdSubCommand {
             return;
         }
 
+        if (!plugin.getSettings().isEnableMotd()) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+
+            return;
+        }
 
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {

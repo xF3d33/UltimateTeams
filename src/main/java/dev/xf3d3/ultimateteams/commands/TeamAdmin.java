@@ -7,6 +7,9 @@ import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamMemberJoinEvent;
 import dev.xf3d3.ultimateteams.api.events.TeamTransferOwnershipEvent;
+import dev.xf3d3.ultimateteams.commands.subCommands.TeamCreateSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.TeamMotdSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.TeamPrefixSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestRollbackSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand;
@@ -17,6 +20,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 @CommandAlias("teamadmin|ta")
@@ -68,6 +73,9 @@ public class TeamAdmin extends BaseCommand {
             plugin.loadConfigs();
 
             TeamCommand.updateBannedTagsList();
+            TeamMotdSubCommand.motdRegex = Pattern.compile(plugin.getSettings().getMotdRegex());
+            TeamCreateSubCommand.teamNameRegex = Pattern.compile(plugin.getSettings().getTeamNameRegex());
+            TeamPrefixSubCommand.teamPrefixRegex = Pattern.compile(plugin.getSettings().getTeamPrefixRegex());
 
             sender.sendMessage(MineDown.parse(plugin.getMessages().getPluginReloadSuccessful()));
         });

@@ -9,11 +9,14 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class TeamPrefixSubCommand {
 
     private final int MIN_CHAR_LIMIT;
     private final int MAX_CHAR_LIMIT;
+
+    public static Pattern teamPrefixRegex;
 
     private final UltimateTeams plugin;
 
@@ -21,11 +24,19 @@ public class TeamPrefixSubCommand {
         this.plugin = plugin;
         this.MAX_CHAR_LIMIT = plugin.getSettings().getTeamTagsMaxCharLimit();
         this.MIN_CHAR_LIMIT = plugin.getSettings().getTeamTagsMinCharLimit();
+
+        if (teamPrefixRegex == null) teamPrefixRegex = Pattern.compile(plugin.getSettings().getTeamPrefixRegex());
     }
 
     public void teamPrefixSubCommand(CommandSender sender, String prefix, List<String> bannedTags) {
         if (!(sender instanceof final Player player)) {
             sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            return;
+        }
+
+        if (plugin.getSettings().isTeamPrefixUseRegex() && !teamPrefixRegex.matcher(prefix).matches()) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInvalidPrefix()));
+
             return;
         }
 

@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static dev.xf3d3.ultimateteams.commands.subCommands.TeamCreateSubCommand.teamNameRegex;
+
 public class TeamRenameSubCommand {
 
     private final int MIN_CHAR_LIMIT;
@@ -24,40 +26,46 @@ public class TeamRenameSubCommand {
         this.MAX_CHAR_LIMIT = plugin.getSettings().getTeamNameMaxLength();
     }
 
-    public void renameTeamSubCommand(CommandSender sender, String newname, List<String> bannedTags) {
+    public void renameTeamSubCommand(CommandSender sender, String newName, List<String> bannedTags) {
         if (!(sender instanceof final Player player)) {
             sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
             return;
         }
 
-        if (newname.contains(" ")) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameContainsSpace().replace(TEAM_PLACEHOLDER, newname)));
+        if (plugin.getSettings().isTeamNameUseRegex() && !teamNameRegex.matcher(newName).matches()) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameIsBanned()));
+
             return;
         }
 
-        if (bannedTags.stream().map(String::toLowerCase).toList().contains(newname.toLowerCase())) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameIsBanned().replace(TEAM_PLACEHOLDER, newname)));
+        if (newName.contains(" ")) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameContainsSpace().replace(TEAM_PLACEHOLDER, newName)));
             return;
         }
 
-        if (plugin.getTeamStorageUtil().getTeamsName().stream().map(String::toLowerCase).toList().contains(newname.toLowerCase())) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameAlreadyTaken().replace(TEAM_PLACEHOLDER, newname)));
+        if (bannedTags.stream().map(String::toLowerCase).toList().contains(newName.toLowerCase())) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameIsBanned().replace(TEAM_PLACEHOLDER, newName)));
             return;
         }
 
-        if (!plugin.getSettings().isTeamCreateAllowColorCodes() && (newname.contains("&") || newname.contains("#"))) {
+        if (plugin.getTeamStorageUtil().getTeamsName().stream().map(String::toLowerCase).toList().contains(newName.toLowerCase())) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameAlreadyTaken().replace(TEAM_PLACEHOLDER, newName)));
+            return;
+        }
+
+        if (!plugin.getSettings().isTeamCreateAllowColorCodes() && (newName.contains("&") || newName.contains("#"))) {
 
             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameCannotContainColours()));
             return;
         }
 
-        if (plugin.getSettings().isTeamCreateRequirePermColorCodes() && !player.hasPermission("ultimateteams.team.create.usecolors") && (newname.contains("&") || newname.contains("#"))) {
+        if (plugin.getSettings().isTeamCreateRequirePermColorCodes() && !player.hasPermission("ultimateteams.team.create.usecolors") && (newName.contains("&") || newName.contains("#"))) {
 
             player.sendMessage(MineDown.parse(plugin.getMessages().getUseColoursMissingPermission()));
             return;
         }
 
-        final int nameLength = Utils.removeColors(newname).length();
+        final int nameLength = Utils.removeColors(newName).length();
         if (nameLength < MIN_CHAR_LIMIT) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameTooShort().replace("%CHARMIN%", Integer.toString(MIN_CHAR_LIMIT))));
 
@@ -76,10 +84,10 @@ public class TeamRenameSubCommand {
                         return;
                     }
 
-                    team.setName(newname);
+                    team.setName(newName);
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameChangeSuccessful().replace("%TEAM%", newname)));
+                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameChangeSuccessful().replace("%TEAM%", newName)));
                 },
                 () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
         );

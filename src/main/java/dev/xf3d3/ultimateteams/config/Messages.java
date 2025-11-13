@@ -375,6 +375,10 @@ public class Messages {
     @Getter
     private String teamMotdChangeSuccessful = "&3Successfully changed team MOTD to: %MOTD%&r&3!";
 
+    @YamlKey("team.motd.not-valid")
+    @Getter
+    private String teamMotdNotValid = "&3The team MOTD contains invalid characters!";
+
     @YamlKey("team.motd.disabled")
     @Getter
     private String teamMotdDisabledSuccessful = "&3Successfully disabled the team MOTD.";
