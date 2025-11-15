@@ -467,7 +467,7 @@ public class Messages {
     @Getter
     private String teamInfoJoinFee = "&3Join Fee: &a%AMOUNT%";
 
-    @YamlKey("team.info.join-fee")
+    @YamlKey("team.info.motd")
     @Getter
     private String teamInfoMotd = "&3MOTD: &a%MOTD%";
 

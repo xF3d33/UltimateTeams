@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "dev.xF3d3"
-version = "4.7.5"
+version = "4.7.6"
 
 repositories {
     mavenLocal()
@@ -25,10 +25,10 @@ repositories {
 }
 
 dependencies {
-    api("com.zaxxer:HikariCP:7.0.2")
-    api("net.william278:annotaml:2.0.7")
-    api("net.william278:DesertWell:2.0.4")
-    api("com.google.code.gson:gson:2.13.2")
+    compileOnly("com.zaxxer:HikariCP:7.0.2")
+    implementation("net.william278:annotaml:2.0.7")
+    implementation("net.william278:DesertWell:2.0.4")
+    implementation("com.google.code.gson:gson:2.13.2")
 
     // Kotlin
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.2.20")
