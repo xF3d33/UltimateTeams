@@ -62,7 +62,7 @@ public class TeamAllySubCommand {
                         return;
                     }
 
-                    if (new TeamAllyAddEvent(player, team, otherTeam, otherTeam.getOwner()).callEvent()) return;
+                    if (!(new TeamAllyAddEvent(player, team, otherTeam, otherTeam.getOwner())).callEvent()) return;
 
 
                     plugin.getTeamStorageUtil().addTeamAlly(team, otherTeam, player);
@@ -103,7 +103,7 @@ public class TeamAllySubCommand {
                     final Team otherTeam = optionalOtherTeam.get();
                     if (team.getRelations(plugin).containsKey(otherTeam) && team.getRelations(plugin).get(otherTeam).equals(Team.Relation.ALLY)) {
 
-                        if (new TeamAllyRemoveEvent(player, team, otherTeam, otherTeam.getOwner()).callEvent()) return;
+                        if (!(new TeamAllyRemoveEvent(player, team, otherTeam, otherTeam.getOwner()).callEvent())) return;
 
                         plugin.getTeamStorageUtil().removeTeamAlly(team, otherTeam, player);
 

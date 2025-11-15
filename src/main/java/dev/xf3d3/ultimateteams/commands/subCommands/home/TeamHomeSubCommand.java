@@ -54,18 +54,18 @@ public class TeamHomeSubCommand {
                             } else {
                                 homeCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
 
-                                if (new TeamTeleportEvent(player, team, home.getLocation()).callEvent()) return;
+                                if (!(new TeamTeleportEvent(player, team, home.getLocation()).callEvent())) return;
                                 tpHome(player, home);
                             }
                         } else {
-                            if (new TeamTeleportEvent(player, team, home.getLocation()).callEvent()) return;
+                            if (!(new TeamTeleportEvent(player, team, home.getLocation()).callEvent())) return;
                             tpHome(player, home);
                             homeCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
                         }
                         return;
                     }
 
-                    if (new TeamTeleportEvent(player, team, home.getLocation()).callEvent()) return;
+                    if (!(new TeamTeleportEvent(player, team, home.getLocation()).callEvent())) return;
                     tpHome(player, home);
                 },
                 () -> player.sendMessage(MineDown.parse(plugin.getMessages().getFailedTpNotInTeam()))

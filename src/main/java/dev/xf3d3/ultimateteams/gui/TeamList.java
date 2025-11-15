@@ -158,7 +158,7 @@ public class TeamList {
         }
 
         if (plugin.getSettings().isEnableMotd()) {
-            lore.add(Objects.requireNonNullElse(Utils.Color(team.getMotd()), plugin.getMessages().getTeamMotdNotSet()));
+            lore.add(plugin.getMessages().getTeamInfoMotd().replace("%MOTD%", Objects.requireNonNullElse(Utils.Color(team.getMotd()), plugin.getMessages().getTeamMotdNotSet())));
         }
 
         if (team.isFriendlyFire()) {

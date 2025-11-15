@@ -37,7 +37,7 @@ public class TeamDelHomeSubCommand {
 
 
                     if (plugin.getTeamStorageUtil().isHomeSet(team)) {
-                        if (new TeamHomeDeleteEvent(player, team).callEvent()) return;
+                        if (!(new TeamHomeDeleteEvent(player, team).callEvent())) return;
 
                         plugin.getTeamStorageUtil().deleteHome(player, team);
                         player.sendMessage(MineDown.parse(plugin.getMessages().getSuccessfullyDeletedTeamHome()));

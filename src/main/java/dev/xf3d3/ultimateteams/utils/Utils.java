@@ -112,6 +112,8 @@ public class Utils {
      * @return Returns a string of text with color/effects applied
      */
     public static String Color(String message) {
+        if (message == null) return null;
+
         Pattern HEX_PATTERN = Pattern.compile("#([A-Fa-f0-9]{6})");
         Matcher matcher = HEX_PATTERN.matcher(message);
         StringBuilder buffer = new StringBuilder();

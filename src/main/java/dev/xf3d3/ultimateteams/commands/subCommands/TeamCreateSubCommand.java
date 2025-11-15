@@ -99,7 +99,7 @@ public class TeamCreateSubCommand {
 
         TeamPreCreateEvent event = new TeamPreCreateEvent(player, name);
 
-        if (event.callEvent()) return;
+        if (!event.callEvent()) return;
 
         storageUtil.createTeam(player, event.getName());
 

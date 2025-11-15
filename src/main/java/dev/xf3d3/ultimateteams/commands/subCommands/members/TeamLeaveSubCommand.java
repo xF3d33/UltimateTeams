@@ -28,7 +28,7 @@ public class TeamLeaveSubCommand {
 
             plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                     team -> {
-                        if (new TeamMemberLeaveEvent(player.getUniqueId(), team, TeamMemberLeaveEvent.LeaveReason.MEMBER_LEFT).callEvent()) return;
+                        if (!(new TeamMemberLeaveEvent(player.getUniqueId(), team, TeamMemberLeaveEvent.LeaveReason.MEMBER_LEFT).callEvent())) return;
 
                         team.removeMember(player.getUniqueId());
                         plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {

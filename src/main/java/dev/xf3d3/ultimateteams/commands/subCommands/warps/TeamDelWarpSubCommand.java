@@ -37,7 +37,7 @@ public class TeamDelWarpSubCommand {
 
                     team.getTeamWarp(name).ifPresentOrElse(
                             warp -> {
-                                if (new TeamWarpDeleteEvent(player, team, warp).callEvent())  return;
+                                if (!(new TeamWarpDeleteEvent(player, team, warp).callEvent()))  return;
 
                                 team.removeTeamWarp(name);
                                 plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));

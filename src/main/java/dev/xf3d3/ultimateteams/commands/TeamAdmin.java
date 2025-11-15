@@ -153,7 +153,7 @@ public class TeamAdmin extends BaseCommand {
 
         plugin.getTeamStorageUtil().findTeamByName(teamName).ifPresentOrElse(
                 team -> {
-                    if (new TeamMemberJoinEvent(player, team, TeamMemberJoinEvent.JoinReason.ADMIN_ACTION).callEvent()) return;
+                    if (!(new TeamMemberJoinEvent(player, team, TeamMemberJoinEvent.JoinReason.ADMIN_ACTION).callEvent())) return;
 
                     plugin.getTeamStorageUtil().addTeamMember(team, player);
 
@@ -187,7 +187,7 @@ public class TeamAdmin extends BaseCommand {
                         return;
                     }
 
-                    if (new TeamTransferOwnershipEvent(team.getOwner(), user.getUniqueId(), team).callEvent()) return;
+                    if (!(new TeamTransferOwnershipEvent(team.getOwner(), user.getUniqueId(), team).callEvent())) return;
 
                     plugin.getTeamStorageUtil().transferTeamOwner(team, user.getUniqueId());
 

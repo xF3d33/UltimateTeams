@@ -57,7 +57,7 @@ public class TeamEnemySubCommand {
                         return;
                     }
 
-                    if (new TeamEnemyAddEvent(player, team, otherTeam, otherTeam.getOwner()).callEvent()) return;
+                    if (!(new TeamEnemyAddEvent(player, team, otherTeam, otherTeam.getOwner()).callEvent())) return;
 
 
                     plugin.getTeamStorageUtil().addTeamEnemy(team, otherTeam, player);
@@ -97,7 +97,7 @@ public class TeamEnemySubCommand {
                     final Team otherTeam = optionalOtherTeam.get();
                     if (team.getRelations(plugin).containsKey(otherTeam) && team.getRelations(plugin).get(otherTeam).equals(Team.Relation.ENEMY)) {
 
-                        if (new TeamEnemyRemoveEvent(player, team, otherTeam, otherTeam.getOwner()).callEvent()) return;
+                        if (!(new TeamEnemyRemoveEvent(player, team, otherTeam, otherTeam.getOwner()).callEvent())) return;
 
                         plugin.getTeamStorageUtil().removeTeamEnemy(team, otherTeam, player);
 

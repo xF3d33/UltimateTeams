@@ -52,7 +52,7 @@ public class TeamBankSubCommand {
                         return;
                     }
 
-                    if (new TeamBankDepositEvent(player, team, team.getBalance(), team.getBalance() + amount).callEvent()) return;
+                    if (!(new TeamBankDepositEvent(player, team, team.getBalance(), team.getBalance() + amount).callEvent())) return;
 
                     if (plugin.getEconomyHook().takeMoney(player, amount)) {
                         String currencyName = amount > 1 ? plugin.getEconomyHook().getCurrencyNameSingular() : plugin.getEconomyHook().getCurrencyNamePlural();
@@ -104,7 +104,7 @@ public class TeamBankSubCommand {
                         return;
                     };
 
-                    if (new TeamBankWithdrawEvent(player, team, team.getBalance(), team.getBalance() - amount).callEvent()) return;
+                    if (!(new TeamBankWithdrawEvent(player, team, team.getBalance(), team.getBalance() - amount).callEvent())) return;
 
                     if (team.subBalance(amount)) {
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));

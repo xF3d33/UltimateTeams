@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class PapiExpansion extends PlaceholderExpansion {
@@ -133,7 +134,7 @@ public class PapiExpansion extends PlaceholderExpansion {
 
             case "team_motd":
                 return optionalTeam
-                        .map(Team::getMotd)
+                        .map(team -> Objects.requireNonNullElse(team.getMotd(), plugin.getMessages().getTeamMotdNotSet()))
                         .orElse(getNotInTeamPlaceholder());
 
             case "team_fee":

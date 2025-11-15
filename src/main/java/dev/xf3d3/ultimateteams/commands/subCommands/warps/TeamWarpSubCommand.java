@@ -68,7 +68,7 @@ public class TeamWarpSubCommand {
 
         team.getTeamWarp(name).ifPresentOrElse(
                 warp -> {
-                    if (new TeamTeleportEvent(player, team, warp.getLocation()).callEvent()) return;
+                    if (!(new TeamTeleportEvent(player, team, warp.getLocation()).callEvent())) return;
 
                     plugin.getUtils().teleportPlayer(player, warp.getLocation(), warp.getServer(), Utils.TeleportType.WARP, name);
                     MineDown.parse(plugin.getMessages().getTeamWarpTeleportedSuccessful().replaceAll("%WARP_NAME%", warp.getName()));

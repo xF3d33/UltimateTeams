@@ -159,7 +159,7 @@ public class TeamInfoSubCommand {
         }
 
         if (plugin.getSettings().isEnableMotd()) {
-            teamInfo.append(Objects.requireNonNullElse(Utils.Color(team.getMotd()), plugin.getMessages().getTeamMotdNotSet())).append("\n");
+            teamInfo.append(plugin.getMessages().getTeamInfoMotd().replace("%MOTD%", Objects.requireNonNullElse(Utils.Color(team.getMotd()), plugin.getMessages().getTeamMotdNotSet()))).append("\n");
         }
 
         if (team.isFriendlyFire()) {

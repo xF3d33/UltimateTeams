@@ -28,7 +28,7 @@ public class TeamDisbandConfirmSubCommand {
 
         plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
                 team -> {
-                    if (new TeamDisbandEvent(player, team).callEvent()) return;
+                    if (!(new TeamDisbandEvent(player, team).callEvent())) return;
 
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(player, team));
                     player.sendMessage(MineDown.parse(plugin.getMessages().getTeamSuccessfullyDisbanded()));

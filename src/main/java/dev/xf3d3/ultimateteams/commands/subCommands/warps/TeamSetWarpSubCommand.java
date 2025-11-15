@@ -55,7 +55,7 @@ public class TeamSetWarpSubCommand {
 
                         final TeamWarp warp = TeamWarp.of(name, player.getLocation(), plugin.getSettings().getServerName());
 
-                        if (new TeamWarpSetEvent(player, team, warp).callEvent())  return;
+                        if (!(new TeamWarpSetEvent(player, team, warp).callEvent()))  return;
 
                         team.addTeamWarp(warp);
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));

@@ -51,7 +51,7 @@ public class TeamTransferOwnerSubCommand {
                         return;
                     }
 
-                    if (new TeamTransferOwnershipEvent(team.getOwner(), player.getUniqueId(), team).callEvent()) return;
+                    if (!(new TeamTransferOwnershipEvent(team.getOwner(), player.getUniqueId(), team).callEvent())) return;
 
                     plugin.getTeamStorageUtil().transferTeamOwner(team, newTeamOwner.getUniqueId());
 

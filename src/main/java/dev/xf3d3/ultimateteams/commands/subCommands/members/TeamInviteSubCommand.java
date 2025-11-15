@@ -180,7 +180,7 @@ public class TeamInviteSubCommand {
                                 ));
                             }
 
-                            if (new TeamMemberJoinEvent(player, team, TeamMemberJoinEvent.JoinReason.ACCEPT_INVITE).callEvent()) return;
+                            if (!(new TeamMemberJoinEvent(player, team, TeamMemberJoinEvent.JoinReason.ACCEPT_INVITE).callEvent())) return;
 
                             plugin.getTeamStorageUtil().addTeamMember(team, player);
                             plugin.getTeamInviteUtil().acceptInvite(invite, player);

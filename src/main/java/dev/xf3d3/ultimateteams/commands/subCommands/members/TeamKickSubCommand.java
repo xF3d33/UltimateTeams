@@ -51,7 +51,7 @@ public class TeamKickSubCommand {
                         player.sendMessage(MineDown.parse(plugin.getMessages().getTargetedPlayerIsNotInYourTeam().replace(PLAYER_TO_KICK, offlinePlayer.getName())));
                     }
 
-                    if (new TeamMemberLeaveEvent(player.getUniqueId(), team, TeamMemberLeaveEvent.LeaveReason.EVICTED).callEvent()) return;
+                    if (!(new TeamMemberLeaveEvent(player.getUniqueId(), team, TeamMemberLeaveEvent.LeaveReason.EVICTED).callEvent())) return;
 
                     plugin.getTeamStorageUtil().kickPlayer(player, team, offlinePlayer);
 

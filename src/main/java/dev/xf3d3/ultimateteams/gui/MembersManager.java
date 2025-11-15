@@ -81,7 +81,7 @@ public class MembersManager {
                                             return true;
                                         }
 
-                                        if (new TeamMemberLeaveEvent(memberUUID, team, TeamMemberLeaveEvent.LeaveReason.EVICTED).callEvent()) return true;
+                                        if (!(new TeamMemberLeaveEvent(memberUUID, team, TeamMemberLeaveEvent.LeaveReason.EVICTED).callEvent())) return true;
 
                                         plugin.getTeamStorageUtil().kickPlayer(player, team, offlineMember);
 

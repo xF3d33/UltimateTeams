@@ -39,7 +39,9 @@ public class TeamSetHomeSubCommand {
                     Location location = player.getLocation();
                     final TeamHome home = TeamHome.of(location, plugin.getSettings().getServerName());
 
-                    if (new TeamHomeCreateEvent(player, team, home).callEvent()) return;
+                    if (!(new TeamHomeCreateEvent(player, team, home).callEvent())) {
+                        return;
+                    };
 
                     team.setHome(home);
 
