@@ -11,6 +11,13 @@ UltimateTeams does offer the ability to disable friendly fire within your team a
 [bStats (800+ servers, 2000+ players)](https://bstats.org/plugin/bukkit/UltimateTeams/18842)
 <br>&nbsp;<br>
 
+
+# In need of a Reports Plugin?
+
+Check my other plugin, UltimateReports
+https://modrinth.com/plugin/ultimate-reports
+<br>&nbsp;<br>
+
 ## [Check the Images Gallery!](https://modrinth.com/plugin/ultimate-teams/gallery)
 
 
