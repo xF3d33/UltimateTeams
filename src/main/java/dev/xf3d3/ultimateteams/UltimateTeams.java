@@ -69,7 +69,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     @Nullable private Broker broker;
 
     private FoliaLib foliaLib;
-    private BukkitCommandManager manager;
+    private PaperCommandManager manager;
     private TeamsStorage teamsStorage;
     private UsersStorage usersStorage;
     private TeamInviteUtil teamInviteUtil;

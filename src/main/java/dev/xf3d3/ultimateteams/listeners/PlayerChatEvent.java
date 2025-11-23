@@ -62,7 +62,7 @@ public class PlayerChatEvent implements Listener {
                             .replace("%PLAYER%", player.getName()));
 
                     Component newMessage = Component
-                            .text(prefix + " " + "&d" + player.getName() + ":&r" + " ")
+                            .text(Utils.Color(prefix + " " + "&d" + player.getName() + ":&r" + " "))
                             .append(message);
 
 
@@ -80,7 +80,7 @@ public class PlayerChatEvent implements Listener {
                                 .forEach(p -> p.sendMessage(spyMessage));
                     }
 
-                    String msg = PlainTextComponentSerializer.plainText().serialize(message);
+                    String msg = PlainTextComponentSerializer.plainText().serialize(newMessage);
 
                     // Send globally via a message
                     plugin.getMessageBroker().ifPresent(broker -> Message.builder()
@@ -111,7 +111,7 @@ public class PlayerChatEvent implements Listener {
                             .replace("%PLAYER%", player.getName()));
 
                     Component newMessage = Component
-                            .text(prefix + " " + "&d" + player.getName() + ":&r" + " ")
+                            .text(Utils.Color(prefix + " " + "&d" + player.getName() + ":&r" + " "))
                             .append(message);
 
 
@@ -135,7 +135,7 @@ public class PlayerChatEvent implements Listener {
                                 .forEach(p -> p.sendMessage(spyMessage));
                     }
 
-                    String msg = PlainTextComponentSerializer.plainText().serialize(message);
+                    String msg = PlainTextComponentSerializer.plainText().serialize(newMessage);
                     // Send globally via a message
                     plugin.getMessageBroker().ifPresent(broker -> Message.builder()
                             .type(Message.Type.TEAM_ALLY_CHAT_MESSAGE)
