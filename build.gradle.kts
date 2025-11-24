@@ -77,7 +77,6 @@ tasks {
 
     shadowJar {
         archiveFileName.set("${rootProject.name}-${rootProject.version}.jar")
-        //archiveClassifier.set("main")
 
         exclude("com/google/errorprone/annotations/**")
 
@@ -125,7 +124,6 @@ java {
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
-            //artifact(tasks.named("sourcesJar"))
             from(components["java"])
 
             groupId = project.group.toString()
