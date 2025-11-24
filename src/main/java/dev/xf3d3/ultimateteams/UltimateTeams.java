@@ -168,8 +168,13 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         // Load the teams
         initialize("teams", (plugin) -> runAsync(task -> teamsStorage.loadTeams()));
 
-        // Initialize backup manager for ender chests
-        initialize("ender chest backup manager", (plugin) -> this.backupManager = new EnderChestBackupManager(this));
+        // Initialize backup manager for ender chests (only if enabled)
+        if (getSettings().isTeamEnderChestEnabled()) {
+            initialize("ender chest backup manager", (plugin) -> this.backupManager = new EnderChestBackupManager(this));
+        } else {
+            //sendConsole("&6UltimateTeams: &3Team ender chests system disabled in config");
+            log(Level.INFO, "Team ender chests system disabled in config");
+        }
 
         // Initialize HuskHomes hook
         if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && getSettings().HuskHomesHook()) {
