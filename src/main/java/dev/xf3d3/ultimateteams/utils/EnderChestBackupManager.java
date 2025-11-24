@@ -84,8 +84,10 @@ public class EnderChestBackupManager {
                 saveBackups();
                 plugin.getLogger().info("Automatic ender chest backups completed.");
             } catch (Exception e) {
-              plugin.getLogger().severe("Error during automatic ender chest backup: " + e.getMessage());
-              e.printStackTrace();
+                plugin.getLogger().log(java.util.logging.Level.SEVERE, 
+                    "Error during automatic ender chest backup: {0}", e.getMessage());
+                plugin.getLogger().log(java.util.logging.Level.SEVERE, 
+                    "Stack trace:", e);
             }
             
             // Schedule the next backup after the interval (only if still running)
@@ -272,11 +274,12 @@ public class EnderChestBackupManager {
             Map<String, List<TeamEnderChestBackup>> loaded = gson.fromJson(reader, type);
             if (loaded != null) {
                 backups.putAll(loaded);
-                plugin.getLogger().info("Loaded " + backups.size() + " ender chest backup entries.");
-
+                plugin.getLogger().log(java.util.logging.Level.INFO, 
+                    "Loaded {0} ender chest backup entries.", backups.size());
             }
         } catch (IOException e) {
-          plugin.getLogger().severe("Failed to load ender chest backups: " + e.getMessage());
+            plugin.getLogger().log(java.util.logging.Level.SEVERE, 
+                "Failed to load ender chest backups: {0}", e.getMessage());
         }
     }
     
@@ -294,7 +297,8 @@ public class EnderChestBackupManager {
                 gson.toJson(backups, writer);
             }
         } catch (IOException e) {
-          plugin.getLogger().severe("Failed to save ender chest backups: " + e.getMessage());
+            plugin.getLogger().log(java.util.logging.Level.SEVERE, 
+                "Failed to save ender chest backups: {0}", e.getMessage());
         }
     }
 }
