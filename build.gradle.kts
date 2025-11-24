@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.2.20"
+    kotlin("jvm") version "2.2.21"
     id("com.gradleup.shadow") version "9.2.2"
     id("java")
     id("maven-publish")
@@ -31,20 +31,20 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.2")
 
     // Kotlin
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.2.20")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.2.21")
 
-    compileOnly("org.projectlombok:lombok:1.18.40")
-    annotationProcessor("org.projectlombok:lombok:1.18.40")
+    compileOnly("org.projectlombok:lombok:1.18.42")
+    annotationProcessor("org.projectlombok:lombok:1.18.42")
 
-    testCompileOnly("org.projectlombok:lombok:1.18.40")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.40")
+    testCompileOnly("org.projectlombok:lombok:1.18.42")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
 
     // Folia and Spigot
     compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.6")
-    compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
+    compileOnly("me.clip:placeholderapi:2.11.7")
+    compileOnly("org.geysermc.floodgate:api:2.2.5-SNAPSHOT")
     implementation("org.bstats:bstats-bukkit:3.1.0")
-    implementation("de.themoep:inventorygui:1.6.5-SNAPSHOT")
+    implementation("de.themoep:inventorygui:1.6.6-SNAPSHOT")
     
     // PaperLib
     implementation("io.papermc:paperlib:1.0.8")
@@ -52,22 +52,22 @@ dependencies {
 
     // Libs
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
-    implementation("dev.dejvokep:boosted-yaml:1.3.1")
+    implementation("dev.dejvokep:boosted-yaml:1.3.7")
 
-    implementation("de.themoep:minedown-adventure:1.7.5")
+    implementation("de.themoep:minedown-adventure:1.7.6-SNAPSHOT")
 
-    compileOnly("net.luckperms:api:5.4")
+    compileOnly("net.luckperms:api:5.5")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
     // Database
-    compileOnly("org.xerial:sqlite-jdbc:3.46.1.0")
-    compileOnly("com.mysql:mysql-connector-j:9.2.0")
-    compileOnly("com.h2database:h2:2.3.232")
-    compileOnly("org.postgresql:postgresql:42.7.3")
+    compileOnly("org.xerial:sqlite-jdbc:3.51.0.0")
+    compileOnly("com.mysql:mysql-connector-j:9.5.0")
+    compileOnly("com.h2database:h2:2.4.240")
+    compileOnly("org.postgresql:postgresql:42.7.8")
 
-    compileOnly("redis.clients:jedis:5.2.0")
+    compileOnly("redis.clients:jedis:7.1.0")
 
-    compileOnly("net.william278.huskhomes:huskhomes-bukkit:4.7")
+    compileOnly("net.william278.huskhomes:huskhomes-bukkit:4.9.9")
 }
 
 tasks {
