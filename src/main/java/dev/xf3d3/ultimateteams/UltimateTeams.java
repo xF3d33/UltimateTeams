@@ -1,16 +1,18 @@
 package dev.xf3d3.ultimateteams;
 
 import co.aikar.commands.BukkitCommandManager;
+import co.aikar.commands.PaperCommandManager;
 import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.impl.PlatformScheduler;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.api.UltimateTeamsAPI;
-import dev.xf3d3.ultimateteams.api.UltimateTeamsAPIImpl;
 import dev.xf3d3.ultimateteams.commands.TeamAdmin;
 import dev.xf3d3.ultimateteams.commands.TeamCommand;
 import dev.xf3d3.ultimateteams.commands.chat.TeamAllyChatCommand;
 import dev.xf3d3.ultimateteams.commands.chat.TeamChatCommand;
 import dev.xf3d3.ultimateteams.commands.chat.TeamChatSpyCommand;
-import dev.xf3d3.ultimateteams.config.MessagesFileManager;
+import dev.xf3d3.ultimateteams.commands.subCommands.members.TeamInvites;
+import dev.xf3d3.ultimateteams.config.Messages;
 import dev.xf3d3.ultimateteams.config.Settings;
 import dev.xf3d3.ultimateteams.config.TeamsGui;
 import dev.xf3d3.ultimateteams.database.*;
@@ -55,7 +57,6 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonUtils, PluginMessageListener {
     private static UltimateTeams instance;
-    private UltimateTeamsAPI api;
 
     @Getter @Setter
     public boolean loaded = false;
@@ -64,13 +65,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     private final PluginDescriptionFile pluginInfo = getDescription();
     private final String pluginVersion = pluginInfo.getVersion();
 
-    public MessagesFileManager msgFileManager;
-
     @Getter private Database database;
     @Nullable private Broker broker;
 
     private FoliaLib foliaLib;
-    private BukkitCommandManager manager;
+    private PaperCommandManager manager;
     private TeamsStorage teamsStorage;
     private UsersStorage usersStorage;
     private TeamInviteUtil teamInviteUtil;
@@ -81,7 +80,9 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     @Getter private Utils utils;
     @Getter private Settings settings;
     @Getter private TeamsGui teamsGui;
+    @Getter private Messages  messages;
     @Getter @Nullable private VaultHook economyHook;
+    @Getter private EnderChestBackupManager backupManager;
 
     // HashMaps
     private final ConcurrentHashMap<String, Player> bedrockPlayers = new ConcurrentHashMap<>();
@@ -104,15 +105,12 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     @Override
     public void onEnable() {
         this.foliaLib = new FoliaLib(this);
-        this.manager = new BukkitCommandManager(this);
-        this.msgFileManager = new MessagesFileManager(this);
+        this.manager = new PaperCommandManager(this);
         this.teamsStorage = new TeamsStorage(this);
         this.usersStorage = new UsersStorage(this);
         this.teamInviteUtil = new TeamInviteUtil(this);
         this.utils = new Utils(this);
         this.updateChecker = new UpdateCheck(this);
-
-        this.api = new UltimateTeamsAPIImpl(this);
 
         // Load settings and locales
         initialize("plugin config & locale files", (plugin) -> {
@@ -149,11 +147,14 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
 
         // Register commands
         initialize("commands", (plugin) -> {
+            manager.enableUnstableAPI("help");
+
             this.manager.registerCommand(new TeamCommand(this));
             this.manager.registerCommand(new TeamChatSpyCommand(this));
             this.manager.registerCommand(new TeamChatCommand(this));
             this.manager.registerCommand(new TeamAllyChatCommand(this));
             this.manager.registerCommand(new TeamAdmin(this));
+            this.manager.registerCommand(new TeamInvites(this));
         });
 
         // Register events
@@ -166,6 +167,9 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
 
         // Load the teams
         initialize("teams", (plugin) -> runAsync(task -> teamsStorage.loadTeams()));
+
+        // Initialize backup manager for ender chests
+        initialize("ender chest backup manager", (plugin) -> this.backupManager = new EnderChestBackupManager(this));
 
         // Initialize HuskHomes hook
         if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && getSettings().HuskHomesHook()) {
@@ -206,6 +210,12 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
                         .map(Utils::removeColors)
                         .collect(Collectors.toSet())
                 )
+                .orElse(Collections.emptySet())
+        );
+        this.manager.getCommandCompletions().registerAsyncCompletion("teamChests", c -> getTeamStorageUtil().findTeamByMember(c.getPlayer().getUniqueId())
+                .map(team -> team.getEnderChests().keySet().stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.toSet()))
                 .orElse(Collections.emptySet())
         );
         this.manager.getCommandCompletions().registerAsyncCompletion("teamPermissions", c -> getTeamStorageUtil().findTeamByMember(c.getPlayer().getUniqueId())
@@ -260,12 +270,15 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
             initialize("economy", (plugin) -> this.economyHook = new VaultHook(this));
         }
 
+        // Register the API
+        UltimateTeamsAPI.register(this);
+
         // Start auto invite clear task
         if (getSettings().enableAutoInviteWipe()) {
             runSyncRepeating(() -> {
                 teamInviteUtil.emptyInviteList();
                 if (getSettings().enableAutoInviteWipeLog()){
-                    sendConsole(msgFileManager.getMessagesConfig().getString("auto-invite-wipe-complete"));
+                    Bukkit.getConsoleSender().sendMessage(MineDown.parse(this.getMessages().getAutoInviteWipeComplete()));
                 }
             }, 12000);
         }
@@ -277,6 +290,14 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         if (getSettings().doCheckForUpdates()) {
             updateChecker.checkForUpdates();
         }
+
+        // Plugin enabled message
+        sendConsole("-------------------------------------------");
+        sendConsole("&6UltimateTeams: &3Plugin by: &b&lxF3d3");
+        sendConsole("&6UltimateTeams: &3Contributors: &b&ldei0 (TeamEnderChest)");
+        sendConsole("&6UltimateTeams: &3Version: &d&l" + pluginVersion);
+        sendConsole("&6UltimateTeams: &aSuccessfully enabled!");
+        sendConsole("-------------------------------------------");
     }
 
     @Override
@@ -284,6 +305,12 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         // Plugin shutdown logic
         sendConsole("-------------------------------------------");
         sendConsole("&6UltimateTeams: &3Plugin by: &b&lxF3d3");
+        sendConsole("&6UltimateTeams: &3Contributors: &b&ldei0 (TeamEnderChest)");
+
+        // Shutdown backup manager
+        if (backupManager != null) {
+            backupManager.shutdown();
+        }
 
         // Cancel plugin tasks and close the database connection
         getScheduler().cancelAllTasks();
@@ -304,6 +331,10 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         this.teamsGui = teamsGui;
     }
 
+    public void setMessages(@NotNull Messages messages) {
+        this.messages = messages;
+    }
+
      /**
      * Reloads the {@link Settings} from its config file
      *
@@ -318,6 +349,9 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
             // Load Gui File
             setGuiFile(Annotaml.create(new File(getDataFolder(), "teamgui.yml"), TeamsGui.class).get());
 
+            // Load messages
+            setMessages(Annotaml.create(new File(getDataFolder(), "messages.yml"), Messages.class).get());
+
             return true;
         } catch (IOException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             log(Level.SEVERE, "Failed to reload UltimateTeams config or messages file", e);
@@ -329,17 +363,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         try {
             Class.forName("me.clip.placeholderapi.PlaceholderAPIPlugin");
 
-            if (getSettings().debugModeEnabled()) {
-                sendConsole("&6UltimateTeams-Debug: &aFound PlaceholderAPI main class at:");
-                sendConsole("&6UltimateTeams-Debug: &dme.clip.placeholderapi.PlaceholderAPIPlugin");
-            }
             return true;
-
         } catch (ClassNotFoundException e) {
-            if (getSettings().debugModeEnabled()) {
-                sendConsole("&6UltimateTeams-Debug: &aCould not find PlaceholderAPI main class at:");
-                sendConsole("&6UltimateTeams-Debug: &dme.clip.placeholderapi.PlaceholderAPIPlugin");
-            }
             return false;
         }
     }
@@ -369,7 +394,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     }
 
     @Override
-    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte[] message) {
+    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
         if (broker != null && broker instanceof PluginMessageBroker pluginMessenger
                 && getSettings().getBrokerType() == Broker.Type.PLUGIN_MESSAGE) {
             pluginMessenger.onReceive(channel, player, message);
@@ -392,10 +417,6 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     @NotNull
     public Version getPluginVersion() {
         return Version.fromString(getDescription().getVersion());
-    }
-
-    public static UltimateTeamsAPI getAPI() {
-        return instance.api;
     }
 
     public void sendConsole(String text) {

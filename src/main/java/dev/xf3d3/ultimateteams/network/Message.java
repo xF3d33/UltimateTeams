@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a message sent by a {@link Broker} cross-server. See {@link #builder()} for
@@ -50,8 +51,11 @@ public class Message {
         return new Builder();
     }
 
-    public void send(@NotNull Broker broker, @NotNull Player sender) {
-        this.sender = sender.getName();
+    public void send(@NotNull Broker broker, @Nullable Player sender) {
+        if (sender == null) {
+            this.sender = "null";
+        } else this.sender = sender.getName();
+
         this.sourceServer = broker.getServer();
         broker.send(this, sender);
     }

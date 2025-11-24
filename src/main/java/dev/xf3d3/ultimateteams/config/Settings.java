@@ -1,7 +1,6 @@
 package dev.xf3d3.ultimateteams.config;
 
 import dev.xf3d3.ultimateteams.database.Database;
-import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.network.Broker;
 import lombok.Getter;
 import net.william278.annotaml.YamlComment;
@@ -28,8 +27,13 @@ public class Settings {
 
     // Top-level settings
     @YamlComment("Do you want to use the GUI system? [Default value: true]")
-    @YamlKey("use-global-GUI-system")
+    @YamlKey("gui.enable")
     private boolean useGlobalGui = true;
+
+    @YamlComment("Should the plugin open the team list GUI instead of sending chat message when /team list is used? [Default value: false]")
+    @YamlKey("gui.use-gui-for-team-list")
+    @Getter
+    private boolean teamListUseGui = false;
 
     // Database settings
     @YamlComment("Type of database to use (SQLITE, H2, MYSQL, MARIADB, or POSTGRESQL). MARIADB is preferred over MYSQL. H2 is preferred over SQLITE")
@@ -95,7 +99,7 @@ public class Settings {
     @Getter
     private String clusterId = "main";
 
-    @YamlComment("Type of network message broker to ues for data synchronization (PLUGIN_MESSAGE or REDIS). REDIS is preferred over PLUGIN_MESSAGE.")
+    @YamlComment("Type of network message broker to ues for data synchronization (PLUGIN_MESSAGE or REDIS). Always use REDIS if possible.")
     @YamlKey("cross-server.broker")
     @Getter
     private Broker.Type brokerType = Broker.Type.PLUGIN_MESSAGE;
@@ -155,6 +159,15 @@ public class Settings {
     @YamlKey("team.name.max-length")
     @Getter
     private int teamNameMaxLength = 10;
+
+    @YamlKey("team.name.regex.enable")
+    @YamlComment("If enabled, the team name will need to additionally pass the regex in order to be used. Advanced users only.")
+    @Getter
+    private boolean teamNameUseRegex = false;
+
+    @YamlKey("team.name.regex.value")
+    @Getter
+    private String teamNameRegex = "[a-zA-Z]+";
 
 
     // Team join
@@ -271,7 +284,7 @@ public class Settings {
     @YamlComment("Whether to allow color codes (& and #) in the teams tag")
     @YamlKey("team.tag.allow-color-codes")
     @Getter
-    private boolean teamTagAllowColorCodes = false;
+    private boolean teamTagAllowColorCodes = true;
 
     @YamlComment("If enabled, players need the ultimateteams.team.tag.usecolors permission to use color codes")
     @YamlKey("team.tag.require-perm-for-color-codes")
@@ -285,6 +298,15 @@ public class Settings {
     @YamlComment("Set the minimum length of the team prefix. [Default value: 8]")
     @YamlKey("team.tag.max-length")
     private int maxCharacterLimit = 8;
+
+    @YamlKey("team.tag.regex.enable")
+    @YamlComment("If enabled, the team prefix will need to additionally pass the regex in order to be used. Advanced users only.")
+    @Getter
+    private boolean teamPrefixUseRegex = false;
+
+    @YamlKey("team.tag.regex.value")
+    @Getter
+    private String teamPrefixRegex = "[a-zA-Z]+";
 
     @YamlComment("Set below names that are not allowed to be used in prefixes or names. [They are NOT casesensitive]")
     @YamlKey("team.tag.disallowed-tags")
@@ -305,6 +327,59 @@ public class Settings {
     @YamlKey("team.tag.brackets-closing")
     private String bracketsClosing = "&f]";
 
+    // Team MOTD
+    @YamlComment("Should players be allowed to set a MOTD for their team?")
+    @YamlKey("team.motd.enable")
+    @Getter
+    private boolean enableMotd = true;
+
+    @YamlComment("Should players be be sent the team MOTD when they join the team?")
+    @YamlKey("team.motd.send-on-join")
+    @Getter
+    private boolean sendMotdOnJoin = true;
+
+    @YamlKey("team.motd.allow-colors")
+    @Getter
+    private boolean motdAllowColors = false;
+
+    @YamlKey("team.motd.colors-require-perm")
+    @YamlComment("If enabled, players will need the ultimateteams.team.motd.usecolors permission to use color codes")
+    @Getter
+    private boolean motdColorsRequirePerm = false;
+
+    @YamlKey("team.motd.length.min")
+    @Getter
+    private int motdMinLength = 5;
+
+    @YamlKey("team.motd.length.max")
+    @Getter
+    private int motdMaxLength = 30;
+
+    @YamlKey("team.motd.regex.enable")
+    @YamlComment("If enabled, the MOTD will need to pass the regex in order to be used. Advanced users only.")
+    @Getter
+    private boolean motdUseRegex = false;
+
+    @YamlKey("team.motd.regex.value")
+    @Getter
+    private String motdRegex = "[a-zA-Z]+";
+
+    // Team Echest
+    @YamlComment("Enable the team enderchest system. [Default value: true]\nThis is not compatible with cross-server (yet).")
+    @YamlKey("team.echest.enabled")
+    @Getter
+    private boolean teamEnderChestEnabled = true;
+
+    @YamlComment("How many rows will the default enderchest have? [Default value: 3]\nValue can go from 1 to 6, being 3 a normal chest and 6 a double chest")
+    @YamlKey("team.echest.rows")
+    @Getter
+    private int teamEnderChestRows = 3;
+
+    @YamlComment("ONLY FOR SERVERS WHO JUST UPDATED TO A VERSION THAT SUPPORTS THIS FEATURE!\nShould the plugin add an enderchest to each team on startup? [Default value: false]\nSince teams created before this version didn't have enderchests, add one.\nAFTER A FULL STARTUP DISABLE THIS AND RESTART THE SERVER!")
+    @YamlKey("team.echest.migrate")
+    @Getter
+    private boolean teamEnderChestMigrate = false;
+
 
     // Chat Spy
     @YamlComment("Do you want players with the perm 'ultimateteams.chat.spy' be able to spy on all team chat messages? [Default value: true]")
@@ -318,15 +393,36 @@ public class Settings {
 
 
     // Economy
-    @YamlComment("Whether to enable economy (Vault is required)")
+    @YamlComment("Whether to enable economy (Vault is required). Changes might require to restart the server")
     @YamlKey("economy.enable")
     @Getter
     private boolean economyEnabled = false;
 
+    @YamlComment("Should players pay to create a team?")
+    @YamlKey("economy.team-create.enabled")
+    @Getter
+    private boolean teamCreateCostEnabled = false;
+
     @YamlComment("The cost to create a team")
-    @YamlKey("economy.team-create")
+    @YamlKey("economy.team-create.cost")
     @Getter
     private double teamCreateCost = 100.0;
+
+    @YamlComment("Should players be allowed to ask who joins a team a fee (that will be deposited in the team bank)?")
+    @YamlKey("economy.team-join-fee.enabled")
+    @Getter
+    private boolean teamJoinFeeEnabled = false;
+
+    @YamlComment("The default cost of the join fee")
+    @YamlKey("economy.team-join-fee.default")
+    @Getter
+    private double teamJoinFeeDefault = 100.0;
+
+    @YamlComment("The max cost of the join fee")
+    @YamlKey("economy.team-join-fee.max-fee")
+    @Getter
+    private double teamJoinFeeMax = 10000.0;
+
 
     // Update Checker
     @YamlComment("Do you want to enable in game plugin update notifications? (Permission:'ultimateteams.update'). [Default value: true]")

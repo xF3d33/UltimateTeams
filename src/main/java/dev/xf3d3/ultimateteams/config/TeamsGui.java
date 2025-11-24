@@ -328,7 +328,6 @@ public class TeamsGui {
             "&r&8&lRIGHT CLICK &r&7to delete the team from your enemies (you must be the team owner)"
     );
 
-
     @SuppressWarnings("unused")
     private TeamsGui() {
     }

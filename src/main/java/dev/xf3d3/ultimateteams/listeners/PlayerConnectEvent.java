@@ -2,6 +2,7 @@ package dev.xf3d3.ultimateteams.listeners;
 
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.User;
+import dev.xf3d3.ultimateteams.utils.UsersStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -63,19 +64,29 @@ public class PlayerConnectEvent implements Listener {
 
 
     private void handleJavaPlayer(Player player) {
-        plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAccept(teamPlayer ->
-                teamPlayer.getPreferences().getTeleportTarget().ifPresent(position -> {
+        plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAccept(teamPlayer -> {
 
-                    Location location = new Location(
-                            Bukkit.getWorld(position.getWorld()),
-                            position.getX(), position.getY(), position.getZ(),
-                            position.getYaw(), position.getPitch()
-                    );
+            if (teamPlayer.getPreferences().isTeamChatTalking()) {
+                plugin.getUsersStorageUtil().getChatPlayers().put(player.getUniqueId(), UsersStorage.ChatType.TEAM_CHAT);
+            }
 
-                    plugin.getUtils().teleportPlayer(player, location, plugin.getSettings().getServerName(), Utils.TeleportType.SERVER, null);
-                    teamPlayer.getPreferences().clearTeleportTarget();
-                    plugin.getUsersStorageUtil().updatePlayer(teamPlayer);
-                }
-        ));
+            if (teamPlayer.getPreferences().isAllyChatTalking()) {
+                plugin.getUsersStorageUtil().getChatPlayers().put(player.getUniqueId(), UsersStorage.ChatType.ALLY_CHAT);
+            }
+
+            // Check if player needs to be teleported
+            teamPlayer.getPreferences().getTeleportTarget().ifPresent(position -> {
+                        Location location = new Location(
+                                Bukkit.getWorld(position.getWorld()),
+                                position.getX(), position.getY(), position.getZ(),
+                                position.getYaw(), position.getPitch()
+                        );
+
+                        plugin.getUtils().teleportPlayer(player, location, plugin.getSettings().getServerName(), Utils.TeleportType.SERVER, null);
+                        teamPlayer.getPreferences().clearTeleportTarget();
+                        plugin.getUsersStorageUtil().updatePlayer(teamPlayer);
+                    }
+            );
+        });
     }
 }

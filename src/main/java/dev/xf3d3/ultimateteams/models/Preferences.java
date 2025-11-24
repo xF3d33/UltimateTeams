@@ -19,8 +19,20 @@ public class Preferences {
     @Setter
     @Getter
     @Expose
+    @SerializedName("ally_chat_talking")
+    private boolean allyChatTalking;
+
+    @Setter
+    @Getter
+    @Expose
     @SerializedName("team_chat_spying")
     private boolean teamChatSpying;
+
+    @Setter
+    @Getter
+    @Expose
+    @SerializedName("invitations_status")
+    private boolean acceptInvitations = true;
 
     @Expose
     @SerializedName("teleport_target")
@@ -37,13 +49,17 @@ public class Preferences {
     public static Preferences getDefaults() {
         return new Preferences(
                 false,
-                false
+                false,
+                false,
+                true
         );
     }
 
-    private Preferences(boolean teamChatTalking, boolean teamChatSpying) {
+    private Preferences(boolean teamChatTalking, boolean allyChatTalking, boolean teamChatSpying, boolean invitationsStatus) {
         this.teamChatTalking = teamChatTalking;
+        this.allyChatTalking = allyChatTalking;
         this.teamChatSpying = teamChatSpying;
+        this.acceptInvitations = invitationsStatus;
     }
 
     @SuppressWarnings("unused")

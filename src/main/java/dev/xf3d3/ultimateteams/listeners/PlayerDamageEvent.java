@@ -1,20 +1,26 @@
 package dev.xf3d3.ultimateteams.listeners;
 
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.api.events.TeamFriendlyFireAttackEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamFriendlyFireEvent;
 import dev.xf3d3.ultimateteams.models.Team;
-import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class PlayerDamageEvent implements Listener {
-    FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
+
+    private final Map<Block, UUID> explodingAnchors = new ConcurrentHashMap<>();
 
     private final UltimateTeams plugin;
 
@@ -54,6 +60,18 @@ public class PlayerDamageEvent implements Listener {
             }
         }
 
+        // --- Ender Crystal explosion ---
+        else if (e.getDamager() instanceof EnderCrystal crystal) {
+            if (crystal.hasMetadata("exploder")) {
+                UUID uuid = UUID.fromString(crystal.getMetadata("exploder").get(0).asString());
+                attackingPlayer = Bukkit.getPlayer(uuid);
+
+                System.out.println("b");
+
+                crystal.removeMetadata("exploder", plugin);
+            }
+        }
+
         if (attackingPlayer == null) return;
 
         // ignore if attacker and victim are the same player
@@ -67,18 +85,92 @@ public class PlayerDamageEvent implements Listener {
             return;
         }
 
-        if (attackerTeam.equals(victimTeam) && attackerTeam.isFriendlyFire()) {
+        if (attackerTeam.equals(victimTeam) && !attackerTeam.isFriendlyFire()) {
+            e.setCancelled(true);
+            attackingPlayer.sendMessage(MineDown.parse(plugin.getMessages().getFriendlyFireIsDisabled()));
+
+            new TeamFriendlyFireEvent(attackingPlayer, victim, attackerTeam, victimTeam).callEvent();
             return;
         }
 
         if (attackerTeam.areRelationsBilateral(victimTeam, Team.Relation.ALLY)) {
             e.setCancelled(true);
-            attackingPlayer.sendMessage(Utils.Color(messagesConfig.getString("friendly-fire-is-disabled-for-allies")));
+            attackingPlayer.sendMessage(MineDown.parse(plugin.getMessages().getFriendlyFireIsDisabledForAllies()));
         }
     }
 
-    private void fireClanFriendlyFireAttackEvent(Player createdBy, Player attackingPlayer, Player victimPlayer, Team attackingTeam, Team victimTeam){
-        TeamFriendlyFireAttackEvent teamFriendlyFireAttackEvent = new TeamFriendlyFireAttackEvent(createdBy, attackingPlayer, victimPlayer, attackingTeam, victimTeam);
-        Bukkit.getPluginManager().callEvent(teamFriendlyFireAttackEvent);
+
+    // track crystal hits
+    @EventHandler
+    public void onCrystalHit(EntityDamageByEntityEvent e) {
+        if (!(e.getEntity() instanceof EnderCrystal crystal)) return;
+
+        Player player = null;
+
+        if (e.getDamager() instanceof Player p) player = p;
+        else if (e.getDamager() instanceof Projectile proj && proj.getShooter() instanceof Player p2) player = p2;
+
+        if (player != null) {
+            // Tag the crystal with the player who caused damage
+            crystal.setMetadata("exploder", new FixedMetadataValue(plugin, player.getUniqueId().toString()));
+
+            System.out.println("a");
+        }
     }
+
+/*
+    // track respawn anchors
+    @EventHandler
+    public void onAnchorInteract(PlayerInteractEvent e) {
+        if (e.getClickedBlock() == null) return;
+        Block block = e.getClickedBlock();
+
+        if (block.getType() != Material.RESPAWN_ANCHOR) return;
+        Action action = e.getAction();
+
+        if (action == Action.RIGHT_CLICK_BLOCK) {
+            block.setMetadata("exploder", new FixedMetadataValue(plugin, e.getPlayer().getUniqueId().toString()));
+
+            Bukkit.broadcast("set: " + block.getLocation() + " uuid " + e.getPlayer().getName(), "suca");
+        }
+    }
+
+    // handle respawn anchors
+    @EventHandler
+    public void onAnchorExplode(EntityExplodeEvent e) {
+        for (Block block : e.blockList()) {
+            if (block.getType() != Material.RESPAWN_ANCHOR) continue;
+            if (!block.hasMetadata("exploder")) continue;
+
+            UUID uuid = UUID.fromString(block.getMetadata("exploder").get(0).asString());
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                // Store temporarily so EntityDamageByEntityEvent can read it
+                explodingAnchors.put(block, uuid);
+
+                Bukkit.broadcast("exploded: " + block.getLocation() + " uuid " + uuid, "suca");
+            }
+
+            // Clean up metadata
+            block.removeMetadata("exploder", plugin);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerBlockDamage(EntityDamageByBlockEvent e) {
+        System.out.println(e.getDamager() + " aaaa " + e.getDamager().hasMetadata("exploder") + " aaa " + (e.getEntity() instanceof Player));
+
+        if (e.getDamager() == null) return;
+        if (!e.getDamager().hasMetadata("exploder")) return;
+        if (!(e.getEntity() instanceof final Player victim)) return;
+
+        Bukkit.broadcast("trigger", "suca");
+
+
+        UUID uuid = UUID.fromString(e.getDamager().getMetadata("exploder").get(0).asString());
+        Player attackingPlayer = Bukkit.getPlayer(uuid);
+
+        Bukkit.broadcast("tracked: " + e.getDamager().getLocation() + " uuid " + attackingPlayer.getName(), "suca");
+
+    }*/
 }

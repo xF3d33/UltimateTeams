@@ -1,0 +1,105 @@
+name: "Bug Report"
+description: "Create a report to help us improve the plugin."
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Note: Search to see if an issue already exists for the bug you are reporting.
+
+        If you have any large stack traces / errors, Please use https://mclo.gs/
+  - type: input
+    attributes:
+      label: Spark link
+      description: If you are reporting issues regarding performance, please send your spark profiler output link. while the profiler is running, if you know the cause of the problem try to use the related plugin commands
+      placeholder: Output of /spark profiler --timeout 300
+    validations:
+      required: false
+  - type: input
+    id: plugin_version
+    attributes:
+      label: Plugin Version
+      description: Type /version plugin-name in-game. Latest is not a version.
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Server Version
+      description: What server version are you on?
+      options:
+        - "1.16.5"
+        - "1.17.1"
+        - "1.18.2"
+        - "1.19.4"
+        - "1.20"
+        - "1.20.1"
+        - "1.20.2"
+        - "1.20.3"
+        - "1.20.4"
+        - "1.20.5"
+        - "1.20.6"
+        - "1.21"
+        - "1.21.1"
+        - "1.21.2"
+        - "1.21.3"
+        - "1.21.4"
+        - "1.21.5"
+        - "1.21.6"
+        - "1.21.7"
+        - "1.21.8"
+        - "1.21.9"
+        - "1.21.10"
+        - "My version isn't listed and i will provide it below"
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Server Platform
+      description: What server platform are you using? Spigot is no longer supported since version 4.7.1.
+      options:
+        - Spigot
+        - Paper
+        - Purpur
+        - Folia
+        - My platform isn''t listed and i will provide it below.
+    validations:
+      required: true
+  - type: textarea
+    id: bug
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Go to '...'
+        2. Change value in config.yml '...'
+        3. Run command '...'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
+    validations:
+      required: false
+  - type: checkboxes
+    attributes:
+      label: Agreements
+      description: Please agree to the following.
+      options:
+        - label: I have searched for and ensured there isn't already an issue regarding this.
+          required: true
+        - label: I ticked all the boxes without actually reading them
+          required: false
+        - label: My version of Minecraft is supported by the version of UltimateTeams i'm using.
+          required: true

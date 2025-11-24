@@ -1,12 +1,13 @@
 package dev.xf3d3.ultimateteams.gui;
 
 import de.themoep.inventorygui.*;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamMemberLeaveEvent;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class MembersManager {
-    private final FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
 
     private final UltimateTeams plugin;
     private final Player player;
@@ -76,20 +76,21 @@ public class MembersManager {
                                 if (click.getType().isRightClick()) {
                                     if (plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.KICK))) {
                                         if (player.getName().equalsIgnoreCase(offlineMember.getName())) {
-                                            player.sendMessage(Utils.Color(messagesConfig.getString("failed-cannot-kick-yourself")));
+                                            player.sendMessage(MineDown.parse(plugin.getMessages().getFailedCannotKickYourself()));
 
                                             return true;
                                         }
 
+                                        if (!(new TeamMemberLeaveEvent(memberUUID, team, TeamMemberLeaveEvent.LeaveReason.EVICTED).callEvent())) return true;
+
                                         plugin.getTeamStorageUtil().kickPlayer(player, team, offlineMember);
 
-                                        String playerKickedMessage = Utils.Color(messagesConfig.getString("team-member-kick-successful")).replace("%KICKEDPLAYER%", Objects.requireNonNullElse(offlineMember.getName(), "Player Not Found"));
-                                        player.sendMessage(playerKickedMessage);
+                                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamMemberKickSuccessful().replace("%KICKEDPLAYER%", Objects.requireNonNullElse(offlineMember.getName(), "Player Not Found"))));
 
                                         click.getGui().close();
                                         new MembersManager(plugin, player);
                                     } else {
-                                        player.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                                        player.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
                                     }
                                 }
 

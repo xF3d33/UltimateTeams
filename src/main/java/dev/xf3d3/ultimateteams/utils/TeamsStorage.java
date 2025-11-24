@@ -1,14 +1,16 @@
 package dev.xf3d3.ultimateteams.utils;
 
 import com.google.common.collect.Sets;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamCreateEvent;
 import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.models.TeamEnderChest;
 import dev.xf3d3.ultimateteams.network.Message;
 import dev.xf3d3.ultimateteams.network.Payload;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +24,6 @@ public class TeamsStorage {
     @Getter
     private final Set<Team> teams = Sets.newConcurrentHashSet();
 
-    private final FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
     private final UltimateTeams plugin;
 
     public TeamsStorage(@NotNull UltimateTeams plugin) {
@@ -31,8 +32,24 @@ public class TeamsStorage {
 
     public void loadTeams() {
         teams.addAll(plugin.getDatabase().getAllTeams());
-        plugin.sendConsole(Utils.Color("&eLoaded " + teams.size() + " teams!"));
 
+        if (plugin.getSettings().isTeamEnderChestMigrate()) {
+            teams.forEach(team -> {
+               if (team.getEnderChestCount() < 1) {
+                   TeamEnderChest defaultChest = TeamEnderChest.builder()
+                           .chestNumber(1)
+                           .rows(plugin.getSettings().getTeamEnderChestRows())
+                           .serializedContents("")
+                           .build();
+
+                   team.setEnderChest(defaultChest);
+                   plugin.getTeamStorageUtil().updateTeamData(null, team);
+               }
+
+            });
+        }
+
+        plugin.sendConsole(Utils.Color("&eLoaded " + teams.size() + " teams!"));
         plugin.setLoaded(true);
     }
 
@@ -65,10 +82,12 @@ public class TeamsStorage {
                     .target(Message.TARGET_ALL, Message.TargetType.SERVER)
                     .build()
                     .send(broker, player));
+
+            plugin.runSync(task2 -> new TeamCreateEvent(player, team).callEvent());
         });
     }
 
-    public void updateTeamData(@NotNull Player actor, @NotNull Team team) {
+    public void updateTeamData(@Nullable Player actor, @NotNull Team team) {
         // update team in the cache
         updateTeamLocal(team);
 
@@ -89,14 +108,12 @@ public class TeamsStorage {
         removeTeam(team);
 
         // Propagate the town deletion to all servers
-        if (player != null) {
-            plugin.getMessageBroker().ifPresent(broker -> Message.builder()
-                    .type(Message.Type.TEAM_DELETE)
-                    .payload(Payload.integer(team.getId()))
-                    .target(Message.TARGET_ALL, Message.TargetType.SERVER)
-                    .build()
-                    .send(broker, player));
-        }
+        plugin.getMessageBroker().ifPresent(broker -> Message.builder()
+                .type(Message.Type.TEAM_DELETE)
+                .payload(Payload.integer(team.getId()))
+                .target(Message.TARGET_ALL, Message.TargetType.SERVER)
+                .build()
+                .send(broker, player));
     }
 
     public boolean isInTeam(Player player) {
@@ -131,6 +148,10 @@ public class TeamsStorage {
     public void addTeamMember(Team team, Player player) {
         team.addMember(player.getUniqueId(), null);
         plugin.runAsync(task -> updateTeamData(player, team));
+
+        if (plugin.getSettings().isEnableMotd() && plugin.getSettings().isSendMotdOnJoin() && team.getMotd() != null) {
+            player.sendMessage(Utils.Color(team.getMotd()));
+        }
     }
 
     public void addTeamEnemy(Team team, Team otherTeam, Player player) {
@@ -139,6 +160,7 @@ public class TeamsStorage {
 
         // Update the team
         plugin.runAsync(task -> updateTeamData(player, team));
+
     }
 
     public void removeTeamEnemy(Team team, Team otherTeam, Player player) {
@@ -183,11 +205,13 @@ public class TeamsStorage {
                 .filter(online -> online.getUniqueId().equals(player.getUniqueId()))
                 .findFirst()
                 .ifPresentOrElse(onlineUser -> {
-                            onlineUser.sendMessage(Utils.Color(messagesConfig.getString("team-kicked-player-message")).replace("%TEAM%", team.getName()));
+                            onlineUser.sendMessage(MineDown.parse(plugin.getMessages().getTeamKickedPlayerMessage().replace("%TEAM%", team.getName())));
 
                             plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
-                                if (teamPlayer.getPreferences().isTeamChatTalking()) {
+                                if (teamPlayer.getPreferences().isTeamChatTalking() || teamPlayer.getPreferences().isAllyChatTalking()) {
                                     teamPlayer.getPreferences().setTeamChatTalking(false);
+                                    teamPlayer.getPreferences().setAllyChatTalking(false);
+
                                     plugin.getDatabase().updatePlayer(teamPlayer);
                                 }
                             });
@@ -205,8 +229,8 @@ public class TeamsStorage {
         team.getMembers().put(team.getOwner(), 1);
         team.getMembers().put(newOwnerUUID, 3);
 
-        Player randomPlayer = Bukkit.getOnlinePlayers().stream().findFirst().orElse(null);
-        if (randomPlayer == null) return;
+        Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
+        plugin.runAsync(task1 -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
 
         plugin.runAsync(task -> {
             updateTeamData(randomPlayer, team);

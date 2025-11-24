@@ -1,11 +1,16 @@
 package dev.xf3d3.ultimateteams.commands;
 
 import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.commands.subCommands.*;
 import dev.xf3d3.ultimateteams.commands.subCommands.disband.TeamDisbandConfirmSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.disband.TeamDisbandSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.economy.TeamBankSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.economy.TeamFeeSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.home.TeamDelHomeSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.home.TeamHomeSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.home.TeamSetHomeSubCommand;
@@ -17,11 +22,9 @@ import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamSetWarpSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamWarpSubCommand;
 import dev.xf3d3.ultimateteams.gui.TeamList;
 import dev.xf3d3.ultimateteams.gui.TeamManager;
-import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,13 +34,11 @@ import java.util.List;
 @CommandAlias("team")
 @CommandPermission("ultimateteams.player")
 public class TeamCommand extends BaseCommand {
-    private final FileConfiguration messagesConfig;
     private static List<String> bannedTags;
     private final UltimateTeams plugin;
 
     public TeamCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
     }
 
     public static void updateBannedTagsList() {
@@ -48,23 +49,38 @@ public class TeamCommand extends BaseCommand {
     @CommandCompletion("@nothing")
     public void onTeamCommand(@NotNull CommandSender sender) {
         if (sender instanceof ConsoleCommandSender) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
 
             return;
         }
 
         if (sender instanceof final Player player) {
             if (plugin.getSettings().useGlobalGui()) {
-                new TeamList(plugin, player);
+                // Check if player is in a team
+                if (plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).isPresent()) {
+                    // Player is in a team, open team manager
+                    new TeamManager(plugin, player);
+                } else {
+                    // Player is not in a team, open team list
+                    new TeamList(plugin, player);
+                }
                 return;
             }
 
-            for (int i = 1; i <= 19; i++) {
+            plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
+
+            /*for (int i = 1; i <= 19; i++) {
                 String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
 
-                sender.sendMessage(Utils.Color(message));
-            }
+                sender.sendMessage(Utils.Color(plugin.getMessages().getTeamCommandIncorrectUsage()));
+            }*/
         }
+    }
+
+    @HelpCommand
+    @Subcommand("help")
+    public void doHelp(CommandSender sender, CommandHelp help) {
+        plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
     }
 
     // TEAM GUI
@@ -73,7 +89,7 @@ public class TeamCommand extends BaseCommand {
     @CommandPermission("ultimateteams.team.gui")
     public void onTeamGUICommand(@NotNull CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("player-only-command")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
 
             return;
         }
@@ -81,7 +97,7 @@ public class TeamCommand extends BaseCommand {
         if (plugin.getTeamStorageUtil().isInTeam(player)) {
             new TeamManager(plugin, player);
         } else {
-            player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()));
         }
     }
 
@@ -110,8 +126,13 @@ public class TeamCommand extends BaseCommand {
     @CommandCompletion("@warps @nothing")
     @Syntax("<name>")
     @CommandPermission("ultimateteams.team.warp")
-    public void onTeamWarpCommand(@NotNull CommandSender sender, @Values("@warps") String name) {
-        new TeamWarpSubCommand(plugin).WarpCommand(sender, name);
+    public void onTeamWarpCommand(@NotNull CommandSender sender, @Optional @Values("@warps") String name) {
+        if (name != null) {
+            new TeamWarpSubCommand(plugin).WarpCommand(sender, name);
+            return;
+        }
+
+        new TeamWarpSubCommand(plugin).showWarpsMenu(sender);
     }
 
     @Subcommand("setwarp")
@@ -153,6 +174,15 @@ public class TeamCommand extends BaseCommand {
     @Syntax("<playername>")
     @CommandPermission("ultimateteams.team.invite.send")
     public void onTeamInviteSendCommand(@NotNull CommandSender sender, @Values("@onlineUsers") String invitee) {
+        new TeamInviteSubCommand(plugin).teamInviteSendSubCommand(sender, invitee);
+    }
+
+    @Subcommand("invite")
+    @CommandCompletion("@onlineUsers @nothing")
+    @Syntax("<playername>")
+    @CommandPermission("ultimateteams.team.invite.send")
+    public void onTeamInviteCommand(@NotNull CommandSender sender, @Values("@onlineUsers") String invitee) {
+        // Simplified invite command - same as /team invite send
         new TeamInviteSubCommand(plugin).teamInviteSendSubCommand(sender, invitee);
     }
 
@@ -208,11 +238,7 @@ public class TeamCommand extends BaseCommand {
     // TEAM ENEMIES
     @Subcommand("enemy")
     public void onTeamEnemyCommand(@NotNull CommandSender sender) {
-        for (int i = 1; i <= 19; i++) {
-            String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
-
-            sender.sendMessage(Utils.Color(message));
-        }
+        plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
     }
 
     @Subcommand("enemy add")
@@ -235,11 +261,7 @@ public class TeamCommand extends BaseCommand {
     // TEAM ALLIES
     @Subcommand("ally")
     public void onTeamAllyCommand(@NotNull CommandSender sender) {
-        for (int i = 1; i <= 19; i++) {
-            String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
-
-            sender.sendMessage(Utils.Color(message));
-        }
+        plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
     }
 
     @Subcommand("ally add")
@@ -283,6 +305,12 @@ public class TeamCommand extends BaseCommand {
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.team.list")
     public void onTeamListCommand(@NotNull CommandSender sender) {
+        if (plugin.getSettings().isTeamListUseGui() && (sender instanceof final Player player)) {
+            new TeamList(plugin, player);
+
+            return;
+        }
+
         new TeamListSubCommand(plugin).teamListSubCommand(sender);
     }
 
@@ -334,11 +362,7 @@ public class TeamCommand extends BaseCommand {
     // TEAM PERMISSIONS
     @Subcommand("permissions")
     public void onTeamPermissionsCommand(@NotNull CommandSender sender) {
-        for (int i = 1; i <= 19; i++) {
-            String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
-
-            sender.sendMessage(Utils.Color(message));
-        }
+        plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
     }
 
     @Subcommand("permissions add")
@@ -355,5 +379,72 @@ public class TeamCommand extends BaseCommand {
     @CommandPermission("ultimateteams.team.permissions.remove")
     public void onTeamPermissionsRemoveCommand(@NotNull CommandSender sender, @Values("@teamPermissions") String permission) {
         new TeamPermissionsSubCommand(plugin).teamPermissionsRemoveSubCommand(sender, permission);
+    }
+
+    // TEAM ENDER CHEST
+    @Subcommand("echest")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.team.echest")
+    public void onTeamEnderChestCommand(@NotNull CommandSender sender) {
+        new TeamEnderChestSubCommand(plugin).openEnderChest(sender, 1);
+    }
+
+    @Subcommand("echest")
+    @CommandCompletion("@teamChests @nothing")
+    @CommandPermission("ultimateteams.team.echest")
+    public void onTeamEnderChestNumberCommand(@NotNull CommandSender sender, int chestNumber) {
+        new TeamEnderChestSubCommand(plugin).openEnderChest(sender, chestNumber);
+    }
+
+    // TEAM BANK
+    @Subcommand("deposit")
+    @CommandCompletion("1000|10000")
+    @CommandPermission("ultimateteams.team.deposit")
+    public void onTeamDepositCommand(@NotNull CommandSender sender, double amount) {
+        new TeamBankSubCommand(plugin).teamBankDepositSubCommand(sender, amount);
+    }
+
+    @Subcommand("withdraw")
+    @CommandCompletion("1000|10000")
+    @CommandPermission("ultimateteams.team.withdraw")
+    public void onTeamWithdrawCommand(@NotNull CommandSender sender, double amount) {
+        new TeamBankSubCommand(plugin).teamBankWithdrawSubCommand(sender, amount);
+    }
+
+
+    // TEAM FEE
+    @Subcommand("fee")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.team.fee.see")
+    public void onTeamFeeCommand(@NotNull CommandSender sender) {
+        new TeamFeeSubCommand(plugin).teamFeeSeeSubCommand(sender);
+    }
+
+    @Subcommand("fee set")
+    @CommandCompletion("<amount> @nothing")
+    @CommandPermission("ultimateteams.team.fee.set")
+    public void onTeamFeeSetCommand(@NotNull CommandSender sender, double amount) {
+        new TeamFeeSubCommand(plugin).teamSetFeeSubCommand(sender, amount);
+    }
+
+    @Subcommand("fee disable")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.team.fee.disable")
+    public void onTeamFeeDisableCommand(@NotNull CommandSender sender) {
+        new TeamFeeSubCommand(plugin).teamDisableFeeSubCommand(sender);
+    }
+
+    @Subcommand("motd set")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.team.motd.set")
+    public void onTeamSetMotdCommand(@NotNull CommandSender sender, String[] args) {
+        new TeamMotdSubCommand(plugin).teamSetMotdSubCommand(sender, args);
+    }
+
+    @Subcommand("motd disable")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.team.motd.disable")
+    public void onTeamDisableMotdCommand(@NotNull CommandSender sender) {
+        new TeamMotdSubCommand(plugin).teamRemoveMotdSubCommand(sender);
     }
 }

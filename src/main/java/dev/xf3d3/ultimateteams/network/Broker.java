@@ -66,7 +66,7 @@ public abstract class Broker implements MessageHandler {
      * @param message the message to send
      * @param sender  the sender of the message
      */
-    protected abstract void send(@NotNull Message message, @NotNull Player sender);
+    protected abstract void send(@NotNull Message message, @Nullable Player sender);
 
     /**
      * Terminate the broker

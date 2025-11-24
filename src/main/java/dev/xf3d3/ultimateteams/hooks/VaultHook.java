@@ -26,6 +26,10 @@ public class VaultHook {
         return economyAPI.has(player, amount);
     }
 
+    public String getCurrencyNameSingular() { return economyAPI.currencyNameSingular(); }
+
+    public String getCurrencyNamePlural() { return economyAPI.currencyNamePlural(); }
+
     public boolean takeMoney(@NotNull Player player, @NotNull Double amount) {
         return economyAPI.withdrawPlayer(player, amount).transactionSuccess();
     }

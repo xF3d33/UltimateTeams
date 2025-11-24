@@ -1,21 +1,22 @@
 package dev.xf3d3.ultimateteams.gui;
 
 import de.themoep.inventorygui.*;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AlliesManager {
-    private final FileConfiguration messagesConfig = UltimateTeams.getPlugin().msgFileManager.getMessagesConfig();
 
     private final UltimateTeams plugin;
     private final Player player;
@@ -77,13 +78,13 @@ public class AlliesManager {
                                     if (plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.RELATIONS))) {
                                         plugin.getTeamStorageUtil().removeTeamAlly(team, allie, player);
 
-                                        team.sendTeamMessage(Utils.Color(messagesConfig.getString("removed-team-from-your-allies").replace("%ALLYTEAM%", allie.getName())));
-                                        allie.sendTeamMessage(Utils.Color(messagesConfig.getString("team-removed-from-other-allies").replace("%TEAM%", team.getName())));
+                                        team.sendTeamMessage(MineDown.parse(plugin.getMessages().getRemovedTeamFromYourAllies().replace("%ALLYTEAM%", allie.getName())));
+                                        allie.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeamRemovedFromOtherAllies().replace("%TEAM%", team.getName())));
 
                                         click.getGui().close();
                                         new AlliesManager(plugin, player);
                                     } else {
-                                        player.sendMessage(Utils.Color(messagesConfig.getString("no-permission")));
+                                        player.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
                                     }
                                 }
 

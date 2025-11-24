@@ -20,6 +20,7 @@ public class HuskHomesHook {
     public HuskHomesHook(@NotNull UltimateTeams plugin) {
         this.huskHomesAPI = HuskHomesAPI.getInstance();
         this.plugin = plugin;
+
         sendMessages();
     }
 
@@ -38,7 +39,6 @@ public class HuskHomesHook {
                     .toTimedTeleport()
                     .execute();
         } catch (TeleportationException e) {
-            plugin.log(Level.SEVERE, "Error while trying to teleport a player using HuskHomes", e);
             e.displayMessage(onlineUser);
         }
     }

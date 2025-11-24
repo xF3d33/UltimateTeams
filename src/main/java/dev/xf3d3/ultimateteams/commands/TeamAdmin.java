@@ -3,32 +3,46 @@ package dev.xf3d3.ultimateteams.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.api.events.TeamMemberJoinEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamTransferOwnershipEvent;
+import dev.xf3d3.ultimateteams.commands.subCommands.TeamCreateSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.TeamMotdSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.TeamPrefixSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestRollbackSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand;
 import dev.xf3d3.ultimateteams.migrator.Migrator;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 @CommandAlias("teamadmin|ta")
 public class TeamAdmin extends BaseCommand {
 
-    private final FileConfiguration messagesConfig;
 
     private static final String PLAYER_TO_KICK = "%KICKEDPLAYER%";
 
     private final UltimateTeams plugin;
     private Migrator migrator;
+    
+    // Ender chest subcommand instances (shared for real-time sync between admin and players)
+    private final TeamEnderChestSubCommand teamEnderChestSubCommand;
+    private final TeamAdminEnderChestSubCommand teamAdminEnderChestSubCommand;
 
     public TeamAdmin(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
+        
+        // Initialize ender chest subcommands
+        this.teamEnderChestSubCommand = new TeamEnderChestSubCommand(plugin);
+        this.teamAdminEnderChestSubCommand = new TeamAdminEnderChestSubCommand(plugin, teamEnderChestSubCommand);
     }
 
 
@@ -42,8 +56,9 @@ public class TeamAdmin extends BaseCommand {
         sender.sendMessage(Utils.Color("&3Database Type: &6" + plugin.getSettings().getDatabaseType().getDisplayName()));
         plugin.getMessageBroker().ifPresent(broker -> sender.sendMessage(Utils.Color("&3Broker Type: &6" + plugin.getSettings().getBrokerType().getDisplayName())));
         sender.sendMessage(Utils.Color("&3Author: &6" + plugin.getDescription().getAuthors()));
+        sender.sendMessage(Utils.Color("&3Contributors: &6" + plugin.getDescription().getContributors()));
         sender.sendMessage(Utils.Color("&3Description: &6" + plugin.getDescription().getDescription()));
-        sender.sendMessage(Utils.Color("&3Website: "));
+        sender.sendMessage(Utils.Color("&3Website: https://ultimateteams.gitbook.io/ultimateteams-docs"));
         sender.sendMessage(Utils.Color("&6" + plugin.getDescription().getWebsite()));
         sender.sendMessage(Utils.Color("&3~~~~~~~~~~ &6&nUltimateTeams&r &3~~~~~~~~~~"));
     }
@@ -52,15 +67,17 @@ public class TeamAdmin extends BaseCommand {
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.admin.reload")
     public void reloadSubcommand(CommandSender sender) {
-        sender.sendMessage(Utils.Color(messagesConfig.getString("plugin-reload-begin")));
+        sender.sendMessage(MineDown.parse(plugin.getMessages().getPluginReloadBegin()));
 
         plugin.runSync(task -> {
             plugin.loadConfigs();
-            plugin.msgFileManager.reloadMessagesConfig();
 
             TeamCommand.updateBannedTagsList();
+            TeamMotdSubCommand.motdRegex = Pattern.compile(plugin.getSettings().getMotdRegex());
+            TeamCreateSubCommand.teamNameRegex = Pattern.compile(plugin.getSettings().getTeamNameRegex());
+            TeamPrefixSubCommand.teamPrefixRegex = Pattern.compile(plugin.getSettings().getTeamPrefixRegex());
 
-            sender.sendMessage(Utils.Color(messagesConfig.getString("plugin-reload-successful")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPluginReloadSuccessful()));
         });
     }
 
@@ -68,14 +85,17 @@ public class TeamAdmin extends BaseCommand {
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.admin.migrate")
     public void migrateSubcommand(CommandSender sender) {
-        sender.sendMessage("Visit: https://github.com/xF3d33/UltimateTeams/blob/main/HowToMigrate.md for a guida on how to migrate");
+        sender.sendMessage("Visit: https://ultimateteams.gitbook.io/ultimateteams-docs/setup/legacy-migration for a guida on how to migrate");
     }
 
     @Subcommand("migrate set")
     @CommandCompletion("<parameter> <value>")
     @CommandPermission("ultimateteams.admin.migrate")
     public void migrateSetSubcommand(CommandSender sender, String parameter, String value) {
-        migrator = new Migrator(plugin);
+
+        if (migrator == null)
+            migrator = new Migrator(plugin);
+
         migrator.setParameter(parameter, value);
 
         sender.sendMessage(Utils.Color(String.format("Parameter %s set to %s", parameter, value)));
@@ -103,21 +123,18 @@ public class TeamAdmin extends BaseCommand {
                 team -> {
                     if (!plugin.getSettings().isEnableCrossServer()) {
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(null, team));
-                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamSuccessfullyDisbanded()));
 
                         return;
                     }
 
 
                     Bukkit.getOnlinePlayers().stream().findAny().ifPresentOrElse(
-                            randomPlayer -> {
-                                plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(randomPlayer, team));
-                                sender.sendMessage(Utils.Color(messagesConfig.getString("team-successfully-disbanded")));
-                            },
-                            () -> plugin.log(Level.WARNING, "No players online to send message to other servers")
+                            randomPlayer -> plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(randomPlayer, team)),
+                            () -> plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(null, team))
                     );
                 },
-                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-admin-disband-failure")))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamAdminDisbandFailure()))
         );
     }
 
@@ -129,27 +146,27 @@ public class TeamAdmin extends BaseCommand {
         Player player = user.getPlayer();
 
         if (plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).isPresent()) {
-            String joinMessage = Utils.Color(messagesConfig.getString("team-invite-invited-already-in-team"));
-            sender.sendMessage(joinMessage);
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteInvitedAlreadyInTeam()));
 
             return;
         }
 
         plugin.getTeamStorageUtil().findTeamByName(teamName).ifPresentOrElse(
                 team -> {
+                    if (!(new TeamMemberJoinEvent(player, team, TeamMemberJoinEvent.JoinReason.ADMIN_ACTION).callEvent())) return;
+
                     plugin.getTeamStorageUtil().addTeamMember(team, player);
 
-                    String joinMessage = Utils.Color(messagesConfig.getString("team-join-successful")).replace("%TEAM%", team.getName());
-                    sender.sendMessage(joinMessage);
+                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinSuccessful().replace("%TEAM%", team.getName())));
 
 
                     // Send message to team players
-                    team.sendTeamMessage(Utils.Color(messagesConfig.getString("team-join-broadcast-chat")
+                    team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeamJoinBroadcastChat()
                             .replace("%PLAYER%", player.getName())
                             .replace("%TEAM%", Utils.Color(team.getName()))));
                 },
-                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-join-failed")).replace("%TEAM%", teamName))
-        );
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinFailed().replace("%TEAM%", teamName))
+        ));
     }
 
     @Subcommand("team transfer")
@@ -159,32 +176,115 @@ public class TeamAdmin extends BaseCommand {
     public void teamTransferSubCommand(CommandSender sender, @Values("@teams") String teamName, @Values("@onlineUsers") OfflinePlayer user) {
 
         if (!user.hasPlayedBefore() || user.getName() == null) {
-            sender.sendMessage(Utils.Color(messagesConfig.getString("player-not-found")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerNotFound()));
             return;
         }
 
         plugin.getTeamStorageUtil().findTeamByName(teamName).ifPresentOrElse(
                 team -> {
                     if (!team.getMembers().containsKey(user.getUniqueId())) {
-                        sender.sendMessage(Utils.Color(messagesConfig.getString("team-ownership-transfer-failure-not-same-team")));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferFailureNotSameTeam()));
                         return;
                     }
+
+                    if (!(new TeamTransferOwnershipEvent(team.getOwner(), user.getUniqueId(), team).callEvent())) return;
 
                     plugin.getTeamStorageUtil().transferTeamOwner(team, user.getUniqueId());
 
 
-                    sender.sendMessage(Utils.Color(messagesConfig.getString("team-ownership-transfer-successful")
+                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferSuccessful()
                             .replace("%PLAYER%", user.getName())));
 
                     if (user.isOnline() && user.getPlayer() != null) {
-                        user.getPlayer().sendMessage(Utils.Color(messagesConfig.getString("team-ownership-transfer-new-owner")
+                        user.getPlayer().sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferNewOwner()
                                 .replace("%TEAM%", team.getName())));
                     }
 
                 },
-                () -> sender.sendMessage(Utils.Color(messagesConfig.getString("team-not-found")))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamNotFound()))
         );
 
+    }
+
+    // TEAM ENDER CHEST ADMIN COMMANDS
+    @Subcommand("echest add")
+    @CommandCompletion("@teams 1-6|chest|doublechest @nothing")
+    @CommandPermission("ultimateteams.admin.echest.add")
+    @Syntax("<team-name> <rows|chest|doublechest>")
+    public void addEnderChestSubCommand(CommandSender sender, @Values("@teams") String teamName, String rowsOrType) {
+        teamAdminEnderChestSubCommand.addEnderChest(sender, teamName, rowsOrType);
+    }
+
+    @Subcommand("echest remove")
+    @CommandCompletion("@teams <chest-number> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.remove")
+    @Syntax("<team-name> <chest-number>")
+    public void removeEnderChestSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber) {
+        teamAdminEnderChestSubCommand.removeEnderChest(sender, teamName, chestNumber);
+    }
+
+    @Subcommand("echest list")
+    @CommandCompletion("@teams @nothing")
+    @CommandPermission("ultimateteams.admin.echest.list")
+    @Syntax("<team-name>")
+    public void listEnderChestsSubCommand(CommandSender sender, @Values("@teams") String teamName) {
+        teamAdminEnderChestSubCommand.listEnderChests(sender, teamName);
+    }
+
+    @Subcommand("echest see")
+    @CommandCompletion("@teams <chest-number> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.see")
+    @Syntax("<team-name> <chest-number>")
+    public void seeEnderChestSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber) {
+        teamAdminEnderChestSubCommand.seeEnderChest(sender, teamName, chestNumber);
+    }
+
+    @Subcommand("echest backups")
+    @CommandCompletion("@teams <chest-number> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.rollback")
+    @Syntax("<team-name> <chest-number>")
+    public void echestBackupsSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber) {
+        new TeamEnderChestRollbackSubCommand(plugin).listBackupsAdmin(sender, teamName, chestNumber);
+    }
+
+    @Subcommand("echest rollback")
+    @CommandCompletion("@teams <chest-number> <backup#> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.rollback")
+    @Syntax("<team-name> <chest-number> <backup-number>")
+    public void echestRollbackSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber, int backupNumber) {
+        new TeamEnderChestRollbackSubCommand(plugin).rollbackChestAdmin(sender, teamName, chestNumber, backupNumber, false);
+    }
+
+    @Subcommand("echest forcerollback")
+    @CommandCompletion("@teams <chest-number> <backup#> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.rollback")
+    @Syntax("<team-name> <chest-number> <backup-number>")
+    public void echestForceRollbackSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber, int backupNumber) {
+        new TeamEnderChestRollbackSubCommand(plugin).rollbackChestAdmin(sender, teamName, chestNumber, backupNumber, true);
+    }
+
+    @Subcommand("echest backupall")
+    @CommandCompletion("@teams @nothing")
+    @CommandPermission("ultimateteams.admin.echest.backup")
+    @Syntax("<team-name>")
+    public void echestAllBackupSubCommand(CommandSender sender, @Values("@teams") String teamName) {
+        teamAdminEnderChestSubCommand.backupAllChests(sender, teamName);
+    }
+
+    @Subcommand("echest removerow")
+    @CommandCompletion("@teams <chest-number> <rows> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.remove")
+    @Syntax("<team-name> <chest-number> <rows-to-remove>")
+    public void removeRowSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber, int rowsToRemove) {
+        teamAdminEnderChestSubCommand.removeRows(sender, teamName, chestNumber, rowsToRemove);
+    }
+
+    @Subcommand("echest removechest")
+    @CommandCompletion("@teams <chest-number> @nothing")
+    @CommandPermission("ultimateteams.admin.echest.remove")
+    @Syntax("<team-name> <chest-number>")
+    public void removeChestSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber) {
+        teamAdminEnderChestSubCommand.removeEnderChest(sender, teamName, chestNumber);
     }
 
 }

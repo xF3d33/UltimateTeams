@@ -2,32 +2,27 @@ package dev.xf3d3.ultimateteams.commands.chat;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
-import dev.xf3d3.ultimateteams.api.events.TeamChatMessageSendEvent;
-import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.network.Message;
 import dev.xf3d3.ultimateteams.network.Payload;
+import dev.xf3d3.ultimateteams.utils.UsersStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
 @CommandAlias("tc|teamchat|tchat")
 public class TeamChatCommand extends BaseCommand {
-    private final FileConfiguration messagesConfig;
     private final Logger logger;
     private final UltimateTeams plugin;
 
     public TeamChatCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
         this.logger = plugin.getLogger();
     }
 
@@ -37,29 +32,39 @@ public class TeamChatCommand extends BaseCommand {
     @CommandPermission("ultimateteams.teamchat")
     public void onCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof final Player player)){
-            logger.warning(Utils.Color(messagesConfig.getString("player-only-command")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
             return;
         }
 
         // Check if enabled
         if (!plugin.getSettings().teamChatEnabled()) {
-            player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
 
-        // Check args
+        // Enable/Disable team chat for every message
         if (args.length < 1) {
-            if (plugin.getUsersStorageUtil().getChatPlayers().containsKey(player.getUniqueId())) {
+            //boolean chatTalking = plugin.getUsersStorageUtil().getChatPlayers().entrySet().stream().anyMatch(user -> user.getKey().equals(player.getUniqueId()) && user.getValue() == UsersStorage.ChatType.TEAM_CHAT);
+            boolean chatTalking = UsersStorage.ChatType.TEAM_CHAT.equals(
+                    plugin.getUsersStorageUtil()
+                            .getChatPlayers()
+                            .get(player.getUniqueId())
+            );
+
+            // disable chat
+            if (chatTalking) {
                 plugin.getUsersStorageUtil().getChatPlayers().remove(player.getUniqueId());
-                player.sendMessage(Utils.Color(messagesConfig.getString("chat-toggle-off")));
+                player.sendMessage(MineDown.parse(plugin.getMessages().getChatToggleOff()));
 
                 plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
                     teamPlayer.getPreferences().setTeamChatTalking(false);
                     plugin.getDatabase().updatePlayer(teamPlayer);
                 });
+
+            // enable chat
             } else {
-                plugin.getUsersStorageUtil().getChatPlayers().put(player.getUniqueId(), true);
-                player.sendMessage(Utils.Color(messagesConfig.getString("chat-toggle-on")));
+                plugin.getUsersStorageUtil().getChatPlayers().put(player.getUniqueId(), UsersStorage.ChatType.TEAM_CHAT);
+                player.sendMessage(MineDown.parse(plugin.getMessages().getChatToggleOn()));
 
                 plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
                     teamPlayer.getPreferences().setTeamChatTalking(true);
@@ -87,9 +92,12 @@ public class TeamChatCommand extends BaseCommand {
                     // Send message to team members
                     team.sendTeamMessage(Utils.Color(msg));
 
-                    // Send spy message
+                    // Send spy message directly to players with permission (hidden from Discord)
                     if (plugin.getSettings().teamChatSpyEnabled()) {
-                        Bukkit.broadcast(Utils.Color(chatSpyPrefix + " " + msg), "ultimateteams.chat.spy");
+                        String spyMessage = Utils.Color(chatSpyPrefix + " " + msg);
+                        Bukkit.getOnlinePlayers().stream()
+                                .filter(p -> p.hasPermission("ultimateteams.chat.spy"))
+                                .forEach(p -> p.sendMessage(spyMessage));
                     }
 
                     // Send globally via a message
@@ -100,23 +108,8 @@ public class TeamChatCommand extends BaseCommand {
                             .build()
                             .send(broker, player));
                 },
-                () -> player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
         );
-
-
-        /*List<UUID> playerTeamMembers = team.getMembers().keySet().stream().toList();
-
-        fireTeamChatMessageSendEvent(
-                player,
-                team,
-                plugin.getSettings().getTeamChatPrefix(),
-                messageString.toString(),
-                playerTeamMembers
-        );*/
     }
 
-    private void fireTeamChatMessageSendEvent(Player player, Team team, String prefix, String message, List<UUID> recipients) {
-        TeamChatMessageSendEvent teamChatMessageSendEvent = new TeamChatMessageSendEvent(player, team, prefix, message, recipients);
-        Bukkit.getPluginManager().callEvent(teamChatMessageSendEvent);
-    }
 }

@@ -2,14 +2,15 @@ package dev.xf3d3.ultimateteams.commands.chat;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.network.Message;
 import dev.xf3d3.ultimateteams.network.Payload;
+import dev.xf3d3.ultimateteams.utils.UsersStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,13 +22,11 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 @CommandAlias("ac|allychat|achat")
 public class TeamAllyChatCommand extends BaseCommand {
-    private final FileConfiguration messagesConfig;
     private final Logger logger;
     private final UltimateTeams plugin;
 
     public TeamAllyChatCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.messagesConfig = plugin.msgFileManager.getMessagesConfig();
         this.logger = plugin.getLogger();
     }
 
@@ -37,22 +36,46 @@ public class TeamAllyChatCommand extends BaseCommand {
     @CommandPermission("ultimateteams.allychat")
     public void onCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof final Player player)){
-            logger.warning(Utils.Color(messagesConfig.getString("player-only-command")));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
             return;
         }
 
         // Check if enabled
         if (!plugin.getSettings().teamAllyChatEnabled()){
-            player.sendMessage(Utils.Color(messagesConfig.getString("function-disabled")));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
 
-        // Check args
+        // Enable/Disable ally  chat for every message
         if (args.length < 1) {
-            player.sendMessage(Utils.Color(
-                    "&6UltimateTeams team chat usage:&3" +
-                            "\n/allychat <message>"
-            ));
+            //boolean chatTalking = plugin.getUsersStorageUtil().getChatPlayers().entrySet().stream().anyMatch(user -> user.getKey().equals(player.getUniqueId()) && user.getValue() == UsersStorage.ChatType.TEAM_CHAT);
+            boolean chatTalking = UsersStorage.ChatType.ALLY_CHAT.equals(
+                    plugin.getUsersStorageUtil()
+                            .getChatPlayers()
+                            .get(player.getUniqueId())
+            );
+
+            // disable chat
+            if (chatTalking) {
+                plugin.getUsersStorageUtil().getChatPlayers().remove(player.getUniqueId());
+                player.sendMessage(MineDown.parse(plugin.getMessages().getAllyChatToggleOff()));
+
+                plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
+                    teamPlayer.getPreferences().setAllyChatTalking(false);
+                    plugin.getDatabase().updatePlayer(teamPlayer);
+                });
+
+                // enable chat
+            } else {
+                plugin.getUsersStorageUtil().getChatPlayers().put(player.getUniqueId(), UsersStorage.ChatType.ALLY_CHAT);
+                player.sendMessage(MineDown.parse(plugin.getMessages().getAllyChatToggleOn()));
+
+                plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
+                    teamPlayer.getPreferences().setAllyChatTalking(true);
+                    plugin.getDatabase().updatePlayer(teamPlayer);
+                });
+            }
+
             return;
         }
         
@@ -99,7 +122,7 @@ public class TeamAllyChatCommand extends BaseCommand {
                             .build()
                             .send(broker, player));
                 },
-                () -> player.sendMessage(Utils.Color(messagesConfig.getString("not-in-team")))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
         );
     }
 }

@@ -1,6 +1,9 @@
 package dev.xf3d3.ultimateteams.gui;
 
-import de.themoep.inventorygui.*;
+import de.themoep.inventorygui.GuiElementGroup;
+import de.themoep.inventorygui.GuiPageElement;
+import de.themoep.inventorygui.InventoryGui;
+import de.themoep.inventorygui.StaticGuiElement;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
@@ -12,10 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TeamList {
@@ -106,17 +106,17 @@ public class TeamList {
         // Members
         if (!team.getMembers().isEmpty()) {
 
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("members")));
             for (UUID teamMember : teamMembers) {
                 String offlinePlayer = Bukkit.getOfflinePlayer(teamMember).getName();
 
-                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("members")));
                 lore.add(offlinePlayer != null ? ("&r" +  offlinePlayer) : "&rplayer not found");
             }
 
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("managers")));
             for (UUID teamMember : teamManagers) {
                 String offlinePlayer = Bukkit.getOfflinePlayer(teamMember).getName();
 
-                lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("managers")));
                 lore.add(offlinePlayer != null ? ("&r" +  offlinePlayer) : "&rplayer not found");
             }
         }
@@ -144,6 +144,23 @@ public class TeamList {
 
         lore.add(" ");
         lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("prefix") + (team.getPrefix() != null ? team.getPrefix() : "")));
+
+        if (plugin.getSettings().isEconomyEnabled()) {
+            lore.add(Utils.Color(plugin.getMessages().getTeamInfoBankAmount()
+                    .replace("%AMOUNT%", String.format("%.2f", team.getBalance()))
+            ));
+
+            if (plugin.getSettings().isTeamJoinFeeEnabled()) {
+                lore.add(Utils.Color(plugin.getMessages().getTeamInfoJoinFee()
+                        .replace("%AMOUNT%", String.valueOf(team.getJoin_fee()))
+                ));
+            }
+        }
+
+        if (plugin.getSettings().isEnableMotd()) {
+            lore.add(plugin.getMessages().getTeamInfoMotd().replace("%MOTD%", Objects.requireNonNullElse(Utils.Color(team.getMotd()), plugin.getMessages().getTeamMotdNotSet())));
+        }
+
         if (team.isFriendlyFire()) {
             lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("pvp") + " &cTRUE"));
         } else {
@@ -168,7 +185,6 @@ public class TeamList {
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 
         if (skullMeta != null) {
-
             skullMeta.setOwningPlayer(owner);
             skull.setItemMeta(skullMeta);
         }
