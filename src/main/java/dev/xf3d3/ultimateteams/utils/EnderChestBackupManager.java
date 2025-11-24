@@ -3,12 +3,11 @@ package dev.xf3d3.ultimateteams.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamEnderChest;
 import dev.xf3d3.ultimateteams.models.TeamEnderChestBackup;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -28,10 +27,11 @@ public class EnderChestBackupManager {
     private final File backupsFile;
     private final Gson gson;
     private final Map<String, List<TeamEnderChestBackup>> backups; // Key: "teamId-chestNumber"
-    private BukkitTask backupTask;
+    private volatile WrappedTask backupTask;
+    private volatile boolean running = true;
     
     private static final int BACKUP_INTERVAL_MINUTES = 30;
-    private static final int BACKUP_INTERVAL_TICKS = BACKUP_INTERVAL_MINUTES * 60 * 20; // 30 minutes in ticks
+    private static final long BACKUP_INTERVAL_TICKS = BACKUP_INTERVAL_MINUTES * 60 * 20; // 30 minutes in ticks
     private static final int MAX_BACKUPS_PER_CHEST = 10; // Keep last 10 backups (5 hours worth)
     
     public EnderChestBackupManager(@NotNull UltimateTeams plugin) {
@@ -51,22 +51,63 @@ public class EnderChestBackupManager {
      * Start the automatic backup task
      */
     private void startAutoBackup() {
+        running = true;
         if (backupTask != null) {
             backupTask.cancel();
         }
         
-        backupTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            plugin.getLogger().info("Creating automatic ender chest backups...");
-            backupAllChests();
-            saveBackups();
-            plugin.getLogger().info("Automatic ender chest backups completed.");
-        }, BACKUP_INTERVAL_TICKS, BACKUP_INTERVAL_TICKS);
+        // Schedule the first backup immediately
+        scheduleNextBackup();
+    }
+    
+    /**
+     * Schedule the next backup task
+     */
+    private void scheduleNextBackup() {
+        if (!running) {
+            return;
+        }
+        
+        // Schedule the backup task asynchronously
+        plugin.getScheduler().runAsync(task -> {
+            // Store task reference for cancellation
+            backupTask = task;
+            
+            // Double-check running flag after task starts
+            if (!running) {
+                return;
+            }
+            
+            try {
+                plugin.getLogger().info("Creating automatic ender chest backups...");
+                backupAllChests();
+                saveBackups();
+                plugin.getLogger().info("Automatic ender chest backups completed.");
+            } catch (Exception e) {
+                plugin.getLogger().log(java.util.logging.Level.SEVERE, 
+                    "Error during automatic ender chest backup: {0}", e.getMessage());
+                plugin.getLogger().log(java.util.logging.Level.SEVERE, 
+                    "Stack trace:", e);
+            }
+            
+            // Schedule the next backup after the interval (only if still running)
+            if (running) {
+                // Use runLater to schedule the next backup on the main thread, then call scheduleNextBackup
+                // This ensures proper thread context and prevents stack overflow
+                plugin.getScheduler().runLater(() -> {
+                    if (running) {
+                        scheduleNextBackup();
+                    }
+                }, BACKUP_INTERVAL_TICKS);
+            }
+        });
     }
     
     /**
      * Stop the automatic backup task
      */
     public void shutdown() {
+        running = false;
         if (backupTask != null) {
             backupTask.cancel();
             backupTask = null;
@@ -233,10 +274,12 @@ public class EnderChestBackupManager {
             Map<String, List<TeamEnderChestBackup>> loaded = gson.fromJson(reader, type);
             if (loaded != null) {
                 backups.putAll(loaded);
-                plugin.getLogger().info("Loaded " + backups.size() + " ender chest backup entries.");
+                plugin.getLogger().log(java.util.logging.Level.INFO, 
+                    "Loaded {0} ender chest backup entries.", backups.size());
             }
         } catch (IOException e) {
-            plugin.getLogger().severe("Failed to load ender chest backups: " + e.getMessage());
+            plugin.getLogger().log(java.util.logging.Level.SEVERE, 
+                "Failed to load ender chest backups: {0}", e.getMessage());
         }
     }
     
@@ -254,7 +297,8 @@ public class EnderChestBackupManager {
                 gson.toJson(backups, writer);
             }
         } catch (IOException e) {
-            plugin.getLogger().severe("Failed to save ender chest backups: " + e.getMessage());
+            plugin.getLogger().log(java.util.logging.Level.SEVERE, 
+                "Failed to save ender chest backups: {0}", e.getMessage());
         }
     }
 }
