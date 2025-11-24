@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "dev.xF3d3"
-version = "4.7.7"
+version = "4.8"
 
 repositories {
     mavenLocal()
@@ -54,7 +54,7 @@ dependencies {
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     implementation("dev.dejvokep:boosted-yaml:1.3.7")
 
-    implementation("de.themoep:minedown-adventure:1.7.6-SNAPSHOT")
+    implementation("de.themoep:minedown-adventure:1.7.5")
 
     compileOnly("net.luckperms:api:5.5")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")

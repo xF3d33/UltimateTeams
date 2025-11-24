@@ -69,7 +69,7 @@ public class EnderChestBackupManager {
         }
         
         // Schedule the backup task asynchronously
-        plugin.getScheduler().runAsync(task -> {
+        plugin.runAsync(task -> {
             // Store task reference for cancellation
             backupTask = task;
             

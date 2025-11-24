@@ -88,7 +88,7 @@ public class Team {
     @Expose
     @Getter
     @Builder.Default
-    private Map<Integer, TeamEnderChest> enderChests = Maps.newHashMap();
+    private Map<Integer, TeamEnderChest> enderChests = Maps.newConcurrentMap();
 
     @NotNull
     @ApiStatus.Internal

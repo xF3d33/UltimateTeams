@@ -165,7 +165,7 @@ public class PostgreSqlDatabase extends Database {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     INSERT INTO %user_table% (uuid, username, isBedrock, bedrockUUID, preferences)
-                    VALUES (?, ?, ?, ?, ?);
+                    VALUES (?, ?, ?, ?, ?) ON CONFLICT (uuid) DO NOTHING;
                     """))) {
 
                 statement.setString(1, String.valueOf(teamplayer.getJavaUUID()));

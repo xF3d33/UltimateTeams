@@ -90,10 +90,11 @@ public class PlayerDamageEvent implements Listener {
             attackingPlayer.sendMessage(MineDown.parse(plugin.getMessages().getFriendlyFireIsDisabled()));
 
             new TeamFriendlyFireEvent(attackingPlayer, victim, attackerTeam, victimTeam).callEvent();
+
             return;
         }
 
-        if (attackerTeam.areRelationsBilateral(victimTeam, Team.Relation.ALLY)) {
+        if (!attackerTeam.equals(victimTeam) && attackerTeam.areRelationsBilateral(victimTeam, Team.Relation.ALLY)) {
             e.setCancelled(true);
             attackingPlayer.sendMessage(MineDown.parse(plugin.getMessages().getFriendlyFireIsDisabledForAllies()));
         }

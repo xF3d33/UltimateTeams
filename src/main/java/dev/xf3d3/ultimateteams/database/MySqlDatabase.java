@@ -169,7 +169,7 @@ public class MySqlDatabase extends Database {
     public void createPlayer(@NotNull TeamPlayer teamplayer) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    INSERT INTO `%user_table%` (`uuid`, `username`, `isBedrock`, `bedrockUUID`, `preferences`)
+                    INSERT IGNORE INTO `%user_table%` (`uuid`, `username`, `isBedrock`, `bedrockUUID`, `preferences`)
                     VALUES (?, ?, ?, ?, ?)
                     """))) {
 

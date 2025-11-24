@@ -283,7 +283,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
             runSyncRepeating(() -> {
                 teamInviteUtil.emptyInviteList();
                 if (getSettings().enableAutoInviteWipeLog()){
-                    Bukkit.getConsoleSender().sendMessage(MineDown.parse(this.getMessages().getAutoInviteWipeComplete()));
+                    Bukkit.getConsoleSender().sendMessage(MineDown.parse(getMessages().getAutoInviteWipeComplete()));
                 }
             }, 12000);
         }

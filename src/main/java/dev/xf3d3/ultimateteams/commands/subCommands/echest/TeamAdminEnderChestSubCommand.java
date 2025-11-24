@@ -244,18 +244,9 @@ public class TeamAdminEnderChestSubCommand {
             ));
             return;
         }
-        
-        TeamEnderChest chest = team.getEnderChest(chestNumber).get();
-        
-        // Use the shared inventory system from TeamEnderChestSubCommand
-        // This ensures admins see real-time changes alongside players
-        Inventory sharedInventory = teamEnderChestSubCommand.getOrCreateSharedInventory(team, chest, chestNumber);
-        
-        // Track this admin viewer using the same system as regular players
-        teamEnderChestSubCommand.trackAdminViewer(player.getUniqueId(), team.getId(), chestNumber);
-        
-        // Open the shared inventory
-        player.openInventory(sharedInventory);
+
+        teamEnderChestSubCommand.openDirectEnderChest(player, team, chestNumber);
+
         
         sender.sendMessage(Utils.Color("&c[ADMIN] &aOpened team ender chest #" + chestNumber + 
                 " for team &6" + team.getName() + "&a (Real-time View)"));

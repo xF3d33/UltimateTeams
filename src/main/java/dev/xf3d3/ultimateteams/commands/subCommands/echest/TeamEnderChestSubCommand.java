@@ -1,6 +1,7 @@
 package dev.xf3d3.ultimateteams.commands.subCommands.echest;
 
 import com.google.common.collect.Maps;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
@@ -34,8 +35,10 @@ public class TeamEnderChestSubCommand implements Listener {
     private static final Map<String, Set<UUID>> inventoryViewers = Maps.newConcurrentMap();
     
     // Track pending saves to prevent concurrent database writes (key: teamId-chestNumber)
-    private static final Map<String, Integer> pendingSaveTasks = Maps.newConcurrentMap();
+    private static final Map<String, WrappedTask> pendingSaveTasks = Maps.newConcurrentMap();
     private static final long SAVE_DELAY_TICKS = 20L; // 1 second delay before saving
+
+    private static final Object INVENTORY_LOCK = new Object();
     
     public TeamEnderChestSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
@@ -55,7 +58,7 @@ public class TeamEnderChestSubCommand implements Listener {
      * Get or create a shared inventory for a team chest
      * Made public to allow admin commands to use the same shared inventory system
      */
-    public Inventory getOrCreateSharedInventory(@NotNull Team team, @NotNull TeamEnderChest chest, int chestNumber) {
+    private Inventory getOrCreateSharedInventory(@NotNull Team team, @NotNull TeamEnderChest chest, int chestNumber) {
         String key = getInventoryKey(team.getId(), chestNumber);
         
         Inventory inventory = sharedInventories.get(key);
@@ -81,19 +84,37 @@ public class TeamEnderChestSubCommand implements Listener {
         
         return inventory;
     }
-    
-    /**
-     * Track an admin viewer for a team chest
-     * This allows admins to see the same real-time inventory as players
-     */
-    public void trackAdminViewer(@NotNull UUID adminUUID, int teamId, int chestNumber) {
-        String key = getInventoryKey(teamId, chestNumber);
-        activeViews.put(adminUUID, new TeamChestView(teamId, chestNumber));
-        inventoryViewers.computeIfAbsent(key, k -> new HashSet<>()).add(adminUUID);
-        
+
+    public void openDirectEnderChest(@NotNull Player viewer, @NotNull Team team, int chestNumber) {
+        if (!team.hasEnderChest(chestNumber)) {
+            viewer.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestNotExist()
+                    .replace("%NUMBER%", String.valueOf(chestNumber))));
+            return;
+        }
+
+        TeamEnderChest chest = team.getEnderChest(chestNumber).get();
+        String key = getInventoryKey(team.getId(), chestNumber);
+        Inventory inventory;
+
+        // --- SYNCHRONIZED SECTION ---
+        synchronized (INVENTORY_LOCK) {
+            // Get or create the inventory
+            inventory = getOrCreateSharedInventory(team, chest, chestNumber);
+
+            // Track the viewer
+            activeViews.put(viewer.getUniqueId(), new TeamChestView(team.getId(), chestNumber));
+
+            // Add to viewer set
+            inventoryViewers.computeIfAbsent(key, k -> new HashSet<>()).add(viewer.getUniqueId());
+        }
+
+        // Open the inventory
+        viewer.openInventory(inventory);
+
+        // Debug logging
         if (plugin.getSettings().debugModeEnabled()) {
-            plugin.log(java.util.logging.Level.INFO, 
-                "Admin viewer added to chest " + key + " (total viewers: " + inventoryViewers.get(key).size() + ")");
+            plugin.log(java.util.logging.Level.INFO,
+                    "Player/Admin " + viewer.getName() + " opened chest #" + chestNumber + " for team " + team.getName());
         }
     }
     
@@ -106,40 +127,39 @@ public class TeamEnderChestSubCommand implements Listener {
         
         // Cancel any pending save task for this chest (synchronized to prevent race conditions)
         synchronized (pendingSaveTasks) {
-            Integer existingTaskId = pendingSaveTasks.get(key);
+            WrappedTask existingTaskId = pendingSaveTasks.get(key);
             if (existingTaskId != null) {
-                Bukkit.getScheduler().cancelTask(existingTaskId);
+
+                plugin.getScheduler().cancelTask(existingTaskId);
                 pendingSaveTasks.remove(key);
             }
-            
-            // Schedule a new save task with delay (debouncing)
-            int taskId = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+
+            WrappedTask task = plugin.getScheduler().runLater(() -> {
                 // Remove from pending tasks (synchronized)
                 synchronized (pendingSaveTasks) {
                     pendingSaveTasks.remove(key);
                 }
-                
-                // Perform the actual save asynchronously
-                plugin.runAsync(task -> {
-                    Optional<TeamEnderChest> chestOpt = team.getEnderChest(chestNumber);
-                    if (chestOpt.isPresent()) {
-                        TeamEnderChest chest = chestOpt.get();
-                        ItemStack[] contents = inventory.getContents();
-                        chest.setContents(contents);
 
-                        Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
-                        plugin.runAsync(task1 -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
-                        
-                        if (plugin.getSettings().debugModeEnabled()) {
-                            plugin.log(java.util.logging.Level.INFO, 
+                // Perform the actual save asynchronously
+                Optional<TeamEnderChest> chestOpt = team.getEnderChest(chestNumber);
+                if (chestOpt.isPresent()) {
+                    TeamEnderChest chest = chestOpt.get();
+                    ItemStack[] contents = inventory.getContents();
+                    chest.setContents(contents);
+
+                    Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
+                    plugin.runAsync(task2 -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
+
+                    if (plugin.getSettings().debugModeEnabled()) {
+                        plugin.log(java.util.logging.Level.INFO,
                                 "Auto-saved team ender chest #" + chestNumber + " for team " + team.getName());
-                        }
                     }
-                });
-            }, SAVE_DELAY_TICKS).getTaskId();
+                }
+            }, SAVE_DELAY_TICKS);
+
             
             // Track this pending save
-            pendingSaveTasks.put(key, taskId);
+            pendingSaveTasks.put(key, task);
         }
     }
 
@@ -147,11 +167,13 @@ public class TeamEnderChestSubCommand implements Listener {
     public void openEnderChest(@NotNull CommandSender sender, int chestNumber) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+
             return;
         }
 
         if (!plugin.getSettings().isTeamEnderChestEnabled()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+
             return;
         }
         
@@ -159,41 +181,17 @@ public class TeamEnderChestSubCommand implements Listener {
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId());
         if (teamOpt.isEmpty()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()));
+
             return;
         }
         
         Team team = teamOpt.get();
-        
-        // Check if the chest exists
-        if (!team.hasEnderChest(chestNumber)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestNotExist()
-                    .replace("%NUMBER%", String.valueOf(chestNumber))
-            ));
-            return;
-        }
-        
-        TeamEnderChest chest = team.getEnderChest(chestNumber).get();
-        
-        // Get or create the shared inventory
-        Inventory inventory = getOrCreateSharedInventory(team, chest, chestNumber);
-        
-        // Track this view
-        String key = getInventoryKey(team.getId(), chestNumber);
-        activeViews.put(player.getUniqueId(), new TeamChestView(team.getId(), chestNumber));
-        inventoryViewers.get(key).add(player.getUniqueId());
-        
-        // Open the inventory
-        player.openInventory(inventory);
+
+        openDirectEnderChest(player, team, chestNumber);
 
         sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestOpened()
                 .replace("%NUMBER%", String.valueOf(chestNumber))
         ));
-        
-        if (plugin.getSettings().debugModeEnabled()) {
-            plugin.log(java.util.logging.Level.INFO, 
-                "Player " + player.getName() + " opened shared chest #" + chestNumber + " for team " + team.getName() +
-                " (viewers: " + inventoryViewers.get(key).size() + ")");
-        }
     }
     
     @EventHandler(priority = EventPriority.MONITOR)
@@ -214,11 +212,10 @@ public class TeamEnderChestSubCommand implements Listener {
         
         // Schedule a save after the click is processed
         String key = getInventoryKey(holder.teamId, holder.chestNumber);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        plugin.getScheduler().runLater(() -> {
             Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeam(holder.teamId);
-            if (teamOpt.isPresent()) {
-                saveInventoryAsync(teamOpt.get(), holder.chestNumber, event.getInventory());
-            }
+
+            teamOpt.ifPresent(team -> saveInventoryAsync(team, holder.chestNumber, event.getInventory()));
         }, 1L); // 1 tick delay to ensure the inventory has been updated
     }
     
@@ -240,11 +237,10 @@ public class TeamEnderChestSubCommand implements Listener {
         
         // Schedule a save after the drag is processed
         String key = getInventoryKey(holder.teamId, holder.chestNumber);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        plugin.getScheduler().runLater(() -> {
             Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeam(holder.teamId);
-            if (teamOpt.isPresent()) {
-                saveInventoryAsync(teamOpt.get(), holder.chestNumber, event.getInventory());
-            }
+
+            teamOpt.ifPresent(team -> saveInventoryAsync(team, holder.chestNumber, event.getInventory()));
         }, 1L); // 1 tick delay to ensure the inventory has been updated
     }
     
@@ -255,7 +251,7 @@ public class TeamEnderChestSubCommand implements Listener {
         }
         
         UUID playerUUID = player.getUniqueId();
-        TeamChestView view = activeViews.get(playerUUID);
+        TeamChestView view = activeViews.remove(playerUUID);
         
         if (view == null) {
             return;
@@ -263,65 +259,65 @@ public class TeamEnderChestSubCommand implements Listener {
         
         // Check if this is a team chest inventory
         if (!(event.getInventory().getHolder() instanceof TeamChestHolder holder)) {
-            // Clean up tracking even if not a team chest
-            activeViews.remove(playerUUID);
             return;
         }
         
-        // Remove from tracking
-        activeViews.remove(playerUUID);
-        
         String key = getInventoryKey(view.teamId, view.chestNumber);
-        Set<UUID> viewers = inventoryViewers.get(key);
-        if (viewers != null) {
-            viewers.remove(playerUUID);
-            
-            // If no more viewers, save immediately and remove the shared inventory
-            if (viewers.isEmpty()) {
-                // Cancel any pending save task since we're doing an immediate save (synchronized)
-                synchronized (pendingSaveTasks) {
-                    Integer pendingTaskId = pendingSaveTasks.remove(key);
-                    if (pendingTaskId != null) {
-                        Bukkit.getScheduler().cancelTask(pendingTaskId);
-                    }
-                }
-                
-                // Find the team
-                Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeam(view.teamId);
-                if (teamOpt.isPresent()) {
-                    Team team = teamOpt.get();
-                    
-                    // Get the chest
-                    Optional<TeamEnderChest> chestOpt = team.getEnderChest(view.chestNumber);
-                    if (chestOpt.isPresent()) {
-                        TeamEnderChest chest = chestOpt.get();
-                        
-                        // Save the contents immediately (not debounced since chest is closing)
-                        ItemStack[] contents = event.getInventory().getContents();
-                        chest.setContents(contents);
-                        
-                        // Update the team in storage
-                        plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
-                        
-                        if (plugin.getSettings().debugModeEnabled()) {
-                            plugin.log(java.util.logging.Level.INFO, 
-                                "Saved and unloaded team ender chest #" + view.chestNumber + " for team " + team.getName());
+
+        synchronized (INVENTORY_LOCK) {
+            Set<UUID> viewers = inventoryViewers.get(key);
+            if (viewers != null) {
+                viewers.remove(playerUUID);
+
+                // If no more viewers, save immediately and remove the shared inventory
+                if (viewers.isEmpty()) {
+                    // Cancel any pending save task since we're doing an immediate save (synchronized)
+                    synchronized (pendingSaveTasks) {
+                        WrappedTask pendingTaskId = pendingSaveTasks.remove(key);
+
+                        if (pendingTaskId != null) {
+                            plugin.getScheduler().cancelTask(pendingTaskId);
                         }
                     }
-                }
-                
-                // Remove the shared inventory since no one is viewing it
-                sharedInventories.remove(key);
-                inventoryViewers.remove(key);
-                
-                if (plugin.getSettings().debugModeEnabled()) {
-                    plugin.log(java.util.logging.Level.INFO, 
-                        "Removed shared inventory " + key + " (no more viewers)");
-                }
-            } else {
-                if (plugin.getSettings().debugModeEnabled()) {
-                    plugin.log(java.util.logging.Level.INFO, 
-                        "Player " + player.getName() + " closed chest, " + viewers.size() + " viewer(s) remaining");
+
+                    // Find the team
+                    Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeam(view.teamId);
+                    if (teamOpt.isPresent()) {
+                        Team team = teamOpt.get();
+
+                        // Get the chest
+                        Optional<TeamEnderChest> chestOpt = team.getEnderChest(view.chestNumber);
+
+                        if (chestOpt.isPresent()) {
+                            TeamEnderChest chest = chestOpt.get();
+
+                            // Save the contents immediately (not debounced since chest is closing)
+                            ItemStack[] contents = event.getInventory().getContents();
+                            chest.setContents(contents);
+
+                            // Update the team in storage
+                            plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
+
+                            if (plugin.getSettings().debugModeEnabled()) {
+                                plugin.log(java.util.logging.Level.INFO,
+                                    "Saved and unloaded team ender chest #" + view.chestNumber + " for team " + team.getName());
+                            }
+                        }
+                    }
+
+                    // Remove the shared inventory since no one is viewing it
+                    sharedInventories.remove(key);
+                    inventoryViewers.remove(key);
+
+                    if (plugin.getSettings().debugModeEnabled()) {
+                        plugin.log(java.util.logging.Level.INFO,
+                            "Removed shared inventory " + key + " (no more viewers)");
+                    }
+                } else {
+                    if (plugin.getSettings().debugModeEnabled()) {
+                        plugin.log(java.util.logging.Level.INFO,
+                            "Player " + player.getName() + " closed chest, " + viewers.size() + " viewer(s) remaining");
+                    }
                 }
             }
         }
@@ -341,7 +337,7 @@ public class TeamEnderChestSubCommand implements Listener {
         @Override
             public @NotNull Inventory getInventory() {
                 // This method is required by the interface but not used in our implementation
-                throw new UnsupportedOperationException("Not implemented");
+                return null;
             }
         }
 }
