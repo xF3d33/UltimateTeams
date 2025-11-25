@@ -65,9 +65,6 @@ public class PlayerDamageEvent implements Listener {
             if (crystal.hasMetadata("exploder")) {
                 UUID uuid = UUID.fromString(crystal.getMetadata("exploder").get(0).asString());
                 attackingPlayer = Bukkit.getPlayer(uuid);
-
-                System.out.println("b");
-
                 crystal.removeMetadata("exploder", plugin);
             }
         }
@@ -114,8 +111,6 @@ public class PlayerDamageEvent implements Listener {
         if (player != null) {
             // Tag the crystal with the player who caused damage
             crystal.setMetadata("exploder", new FixedMetadataValue(plugin, player.getUniqueId().toString()));
-
-            System.out.println("a");
         }
     }
 
