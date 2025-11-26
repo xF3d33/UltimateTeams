@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 public class Utils {
     private final UltimateTeams plugin;
+    private static final Pattern HEX_PATTERN = Pattern.compile("#([A-Fa-f0-9]{6})");
 
     public Utils(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
@@ -114,7 +115,7 @@ public class Utils {
     public static String Color(String message) {
         if (message == null) return null;
 
-        Pattern HEX_PATTERN = Pattern.compile("#([A-Fa-f0-9]{6})");
+
         Matcher matcher = HEX_PATTERN.matcher(message);
         StringBuilder buffer = new StringBuilder();
 
@@ -150,7 +151,7 @@ public class Utils {
         // Remove alternate color codes (e.g., &a, &l)
         message = message.replaceAll("&[0-9A-FK-ORa-fk-or]", "");
 
-        // Optionally remove literal hex strings like #A1B2C3
+        // literal hex strings like #A1B2C3
         message = message.replaceAll("#[A-Fa-f0-9]{6}", "");
 
         return message;
