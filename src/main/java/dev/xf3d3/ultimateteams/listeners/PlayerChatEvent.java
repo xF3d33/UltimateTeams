@@ -27,7 +27,7 @@ public class PlayerChatEvent implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         boolean teamChatTalking = UsersStorage.ChatType.TEAM_CHAT.equals(
