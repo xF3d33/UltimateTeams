@@ -97,7 +97,7 @@ public class UsersStorage {
         // Fast path: player already loaded
         TeamPlayer existing = usermap.get(uuid);
         if (existing != null) {
-            return CompletableFuture.completedFuture(existing);
+            return plugin.supplyAsync(() -> existing);
         }
 
         // Check if player is already being loaded by another thread

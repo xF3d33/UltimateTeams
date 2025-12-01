@@ -247,11 +247,12 @@ public class TeamsStorage {
             if (newOwnerName != null) {
                 if (newOwnerPlayer != null) {
                     // New owner is on same server - send message directly
+                    // (Broker ignores same-server messages, so we must send directly)
                     plugin.runSync(task2 -> newOwnerPlayer.sendMessage(
                             MineDown.parse(plugin.getMessages().getTeamOwnershipTransferNewOwner()
                                     .replace("%TEAM%", team.getName()))));
                 } else {
-                    // New owner is on different server - send cross-server player-targeted message
+                    // New owner is on different server - send via broker if cross-server is enabled
                     plugin.getMessageBroker().ifPresent(broker -> {
                         Message.builder()
                                 .type(Message.Type.TEAM_TRANSFERRED)
