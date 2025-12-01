@@ -146,16 +146,17 @@ public interface MessageHandler {
     }
 
 
-    default void handleTeamAction(@NotNull Message message) {
+    default void handleTeamAction(@NotNull Message message, @Nullable Player receiver) {
         message.getPayload().getInteger().flatMap(id -> getPlugin().getTeamStorageUtil().getTeams().stream()
                 .filter(team -> team.getId() == id).findFirst()).ifPresent(team -> {
                     if (message.getType() == Message.Type.TEAM_TRANSFERRED) {
-                        final Player owner = Bukkit.getPlayer(team.getOwner());
-
-                        if (owner != null) {
-                            owner.sendMessage(MineDown.parse(getPlugin().getMessages().getTeamOwnershipTransferNewOwner()
+                        // Only send notification via player-targeted messages
+                        // Server-targeted messages are for team data updates only (handled by TEAM_UPDATE)
+                        if (receiver != null) {
+                            receiver.sendMessage(MineDown.parse(getPlugin().getMessages().getTeamOwnershipTransferNewOwner()
                                     .replace("%TEAM%", team.getName())));
                         }
+                        // Server-targeted messages don't send notifications to avoid duplicates
                     }
             //team.sendTeamMessage(Utils.Color(msg));
         });

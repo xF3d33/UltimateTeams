@@ -55,16 +55,11 @@ public class TeamTransferOwnerSubCommand {
 
                     plugin.getTeamStorageUtil().transferTeamOwner(team, newTeamOwner.getUniqueId());
 
-                    String OLD_OWNER_PLACEHOLDER = "%OLDOWNER%";
-                    String NEW_Team_NAME = "%Team%";
-
                     player.sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferSuccessful()
                             .replace(PLAYER_PLACEHOLDER, newTeamOwner.getName())));
 
-                    if (newTeamOwner.isOnline() && newTeamOwner.getPlayer() != null) {
-                        newTeamOwner.getPlayer().sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferNewOwner()
-                                .replace(OLD_OWNER_PLACEHOLDER, player.getName()).replace(NEW_Team_NAME, team.getName())));
-                    }
+                    // Message to new owner is sent via cross-server message in transferTeamOwner
+                    // This prevents duplicates when new owner is on same server
                 },
                 () -> player.sendMessage(MineDown.parse(plugin.getMessages().getFailedNotInTeam()))
         );
