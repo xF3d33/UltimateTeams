@@ -22,13 +22,15 @@ import java.util.stream.Stream;
 
 public class UsersStorage {
 
-    private final Map<UUID, TeamPlayer> usermap = new ConcurrentHashMap<>();
-    // Track in-flight player loading operations to prevent duplicate creation
-    private final ConcurrentHashMap<UUID, CompletableFuture<TeamPlayer>> loadingPlayers = new ConcurrentHashMap<>();
     private final UltimateTeams plugin;
 
+    private final ConcurrentMap<UUID, TeamPlayer> usermap = Maps.newConcurrentMap();
+
+    // Track in-flight player loading operations to prevent duplicate creation
+    private final ConcurrentMap<UUID, CompletableFuture<TeamPlayer>> loadingPlayers = Maps.newConcurrentMap();
+
     @Getter
-    private final Map<String, List<User>> globalUserList = Maps.newConcurrentMap();
+    private final ConcurrentMap<String, List<User>> globalUserList = Maps.newConcurrentMap();
     @Getter
     private final ConcurrentMap<UUID, Player> onlineUserMap = Maps.newConcurrentMap();
     @Getter
@@ -94,15 +96,18 @@ public class UsersStorage {
     }
 
     public CompletableFuture<TeamPlayer> getPlayer(UUID uuid) {
+
         // Fast path: player already loaded
         TeamPlayer existing = usermap.get(uuid);
         if (existing != null) {
-            return plugin.supplyAsync(() -> existing);
+
+            return CompletableFuture.completedFuture(existing);
         }
 
         // Check if player is already being loaded by another thread
         CompletableFuture<TeamPlayer> inFlight = loadingPlayers.get(uuid);
         if (inFlight != null) {
+
             return inFlight;
         }
 
@@ -111,6 +116,7 @@ public class UsersStorage {
         CompletableFuture<TeamPlayer> future = plugin.supplyAsync(() -> {
             try {
                 return plugin.getDatabase().getPlayer(uuid).map(teamPlayer -> {
+
                     usermap.put(teamPlayer.getJavaUUID(), teamPlayer);
                     return teamPlayer;
                 }).orElseGet(() -> {
@@ -120,10 +126,12 @@ public class UsersStorage {
 
                     TeamPlayer teamPlayer = new TeamPlayer(uuid, name, false, null, Preferences.getDefaults());
                     plugin.getDatabase().createPlayer(teamPlayer);
+
                     usermap.put(uuid, teamPlayer);
                     return teamPlayer;
                 });
             } finally {
+
                 // Remove from loading map when done (success or failure)
                 loadingPlayers.remove(uuid);
             }
@@ -132,6 +140,7 @@ public class UsersStorage {
         // Store the future atomically - if another thread already started loading, use that instead
         CompletableFuture<TeamPlayer> existingFuture = loadingPlayers.putIfAbsent(uuid, future);
         if (existingFuture != null) {
+
             // Another thread started loading first, use that future instead
             return existingFuture;
         }
@@ -148,7 +157,7 @@ public class UsersStorage {
             .orElseGet(() -> {
                 UUID bedrockPlayerUUID = floodgatePlayer.getJavaUniqueId();
                 String lastPlayerName = floodgatePlayer.getUsername();
-                TeamPlayer teamPlayer = new TeamPlayer(floodgatePlayer.getJavaUniqueId(), lastPlayerName, true, floodgatePlayer.getCorrectUniqueId().toString(), null);
+                TeamPlayer teamPlayer = new TeamPlayer(floodgatePlayer.getJavaUniqueId(), lastPlayerName, true, floodgatePlayer.getCorrectUniqueId().toString(), Preferences.getDefaults());
 
                 plugin.getDatabase().createPlayer(teamPlayer);
                 return usermap.put(bedrockPlayerUUID, teamPlayer);

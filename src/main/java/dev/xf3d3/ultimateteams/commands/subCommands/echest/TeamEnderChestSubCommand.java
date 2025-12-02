@@ -56,7 +56,6 @@ public class TeamEnderChestSubCommand implements Listener {
     
     /**
      * Get or create a shared inventory for a team chest
-     * Made public to allow admin commands to use the same shared inventory system
      */
     private Inventory getOrCreateSharedInventory(@NotNull Team team, @NotNull TeamEnderChest chest, int chestNumber) {
         String key = getInventoryKey(team.getId(), chestNumber);
@@ -201,7 +200,7 @@ public class TeamEnderChestSubCommand implements Listener {
         }
         
         // Check if this is a team chest inventory
-        if (!(event.getInventory().getHolder() instanceof TeamChestHolder holder)) {
+        if (!(event.getInventory().getHolder() instanceof TeamChestHolder(int teamId, int chestNumber))) {
             return;
         }
         
@@ -211,11 +210,11 @@ public class TeamEnderChestSubCommand implements Listener {
         }
         
         // Schedule a save after the click is processed
-        String key = getInventoryKey(holder.teamId, holder.chestNumber);
+        String key = getInventoryKey(teamId, chestNumber);
         plugin.getScheduler().runLater(() -> {
-            Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeam(holder.teamId);
+            Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeam(teamId);
 
-            teamOpt.ifPresent(team -> saveInventoryAsync(team, holder.chestNumber, event.getInventory()));
+            teamOpt.ifPresent(team -> saveInventoryAsync(team, chestNumber, event.getInventory()));
         }, 1L); // 1 tick delay to ensure the inventory has been updated
     }
     

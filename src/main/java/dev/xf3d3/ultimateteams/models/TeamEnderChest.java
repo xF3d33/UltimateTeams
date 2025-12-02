@@ -61,6 +61,7 @@ public class TeamEnderChest {
             dataOutput.close();
             return Base64.getEncoder().encodeToString(outputStream.toByteArray());
         } catch (Exception e) {
+
             e.printStackTrace();
             return "";
         }

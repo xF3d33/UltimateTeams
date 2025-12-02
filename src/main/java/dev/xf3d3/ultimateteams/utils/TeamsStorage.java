@@ -242,26 +242,31 @@ public class TeamsStorage {
         plugin.runAsync(task -> {
             // Update team data once (database + cache + TEAM_UPDATE message)
             updateTeamData(randomPlayer, team);
-            
+
+            if (newOwnerName == null) {
+
+                return;
+            }
+
             // Send message to new owner
-            if (newOwnerName != null) {
-                if (newOwnerPlayer != null) {
-                    // New owner is on same server - send message directly
-                    // (Broker ignores same-server messages, so we must send directly)
-                    plugin.runSync(task2 -> newOwnerPlayer.sendMessage(
-                            MineDown.parse(plugin.getMessages().getTeamOwnershipTransferNewOwner()
-                                    .replace("%TEAM%", team.getName()))));
-                } else {
-                    // New owner is on different server - send via broker if cross-server is enabled
-                    plugin.getMessageBroker().ifPresent(broker -> {
-                        Message.builder()
-                                .type(Message.Type.TEAM_TRANSFERRED)
-                                .payload(Payload.integer(team.getId()))
-                                .target(newOwnerName, Message.TargetType.PLAYER)
-                                .build()
-                                .send(broker, randomPlayer);
-                    });
-                }
+            if (newOwnerPlayer != null) {
+
+                // New owner is on same server - send message directly
+                // (Broker ignores same-server messages, so we must send directly)
+                newOwnerPlayer.sendMessage(
+                        MineDown.parse(plugin.getMessages().getTeamOwnershipTransferNewOwner()
+                                .replace("%TEAM%", team.getName()))
+                );
+            } else {
+                // New owner is on different server - send via broker if cross-server is enabled
+                plugin.getMessageBroker().ifPresent(broker -> {
+                    Message.builder()
+                            .type(Message.Type.TEAM_TRANSFERRED)
+                            .payload(Payload.integer(team.getId()))
+                            .target(newOwnerName, Message.TargetType.PLAYER)
+                            .build()
+                            .send(broker, randomPlayer);
+                });
             }
             
             // Note: Team data updates are handled by TEAM_UPDATE message sent in updateTeamData()
