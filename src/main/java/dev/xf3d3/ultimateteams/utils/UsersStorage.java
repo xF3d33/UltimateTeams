@@ -23,6 +23,8 @@ import java.util.stream.Stream;
 public class UsersStorage {
 
     private final Map<UUID, TeamPlayer> usermap = new ConcurrentHashMap<>();
+    // Track in-flight player loading operations to prevent duplicate creation
+    private final ConcurrentHashMap<UUID, CompletableFuture<TeamPlayer>> loadingPlayers = new ConcurrentHashMap<>();
     private final UltimateTeams plugin;
 
     @Getter
@@ -92,27 +94,49 @@ public class UsersStorage {
     }
 
     public CompletableFuture<TeamPlayer> getPlayer(UUID uuid) {
-        if (usermap.containsKey(uuid)) {
-            return CompletableFuture.completedFuture(usermap.get(uuid));
+        // Fast path: player already loaded
+        TeamPlayer existing = usermap.get(uuid);
+        if (existing != null) {
+            return plugin.supplyAsync(() -> existing);
         }
 
+        // Check if player is already being loaded by another thread
+        CompletableFuture<TeamPlayer> inFlight = loadingPlayers.get(uuid);
+        if (inFlight != null) {
+            return inFlight;
+        }
+
+        // Create new loading operation atomically
         final String name = Bukkit.getOfflinePlayer(uuid).getName();
+        CompletableFuture<TeamPlayer> future = plugin.supplyAsync(() -> {
+            try {
+                return plugin.getDatabase().getPlayer(uuid).map(teamPlayer -> {
+                    usermap.put(teamPlayer.getJavaUUID(), teamPlayer);
+                    return teamPlayer;
+                }).orElseGet(() -> {
+                    if (name == null) {
+                        throw new IllegalArgumentException("Player " + uuid + " not found");
+                    }
 
-        return plugin.supplyAsync(() -> plugin.getDatabase().getPlayer(uuid).map(teamPlayer -> {
-            usermap.put(teamPlayer.getJavaUUID(), teamPlayer);
-
-            return teamPlayer;
-        }).orElseGet(() -> {
-            if (name == null) {
-                throw new IllegalArgumentException("Player " + uuid + " not found");
+                    TeamPlayer teamPlayer = new TeamPlayer(uuid, name, false, null, Preferences.getDefaults());
+                    plugin.getDatabase().createPlayer(teamPlayer);
+                    usermap.put(uuid, teamPlayer);
+                    return teamPlayer;
+                });
+            } finally {
+                // Remove from loading map when done (success or failure)
+                loadingPlayers.remove(uuid);
             }
+        });
 
-            TeamPlayer teamPlayer = new TeamPlayer(uuid, name, false, null, Preferences.getDefaults());
-            plugin.getDatabase().createPlayer(teamPlayer);
-            usermap.put(uuid, teamPlayer);
+        // Store the future atomically - if another thread already started loading, use that instead
+        CompletableFuture<TeamPlayer> existingFuture = loadingPlayers.putIfAbsent(uuid, future);
+        if (existingFuture != null) {
+            // Another thread started loading first, use that future instead
+            return existingFuture;
+        }
 
-            return teamPlayer;
-        }));
+        return future;
     }
 
     public CompletableFuture<TeamPlayer> getBedrockPlayer(Player player){

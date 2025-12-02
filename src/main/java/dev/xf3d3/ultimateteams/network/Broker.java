@@ -31,7 +31,7 @@ public abstract class Broker implements MessageHandler {
             case TEAM_DELETE -> handleTeamDelete(message);
             case TEAM_UPDATE -> handleTeamUpdate(message);
             /*case TEAM_TRANSFERRED, TEAM_RENAMED -> handleTeamAction(message);*/
-            case TEAM_TRANSFERRED -> handleTeamAction(message);
+            case TEAM_TRANSFERRED -> handleTeamAction(message, receiver);
             case TEAM_EVICTED -> handleTeamUserAction(message, receiver);
 
             case TEAM_INVITE_REQUEST -> handleTeamInviteRequest(message, receiver);
