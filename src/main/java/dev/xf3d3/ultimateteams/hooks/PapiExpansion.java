@@ -82,6 +82,12 @@ public class PapiExpansion extends PlaceholderExpansion {
                         .map(Team::getName)
                         .orElse(getNotInTeamPlaceholder()));
 
+            case "team_name_raw":
+                return Utils.Color(optionalTeam
+                        .map(Team::getName)
+                        .map(Utils::removeColors)
+                        .orElse(getNotInTeamPlaceholder()));
+
             case "team_prefix", "teamprefix": {
                 String openBracket = plugin.getSettings().getPrefixBracketsOpening();
                 String closeBracket = plugin.getSettings().getPrefixBracketsClosing();
