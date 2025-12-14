@@ -123,7 +123,8 @@ public class H2Database extends Database {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     INSERT INTO `%user_table%` (`uuid`, `username`, `isBedrock`, `bedrockUUID`, `preferences`)
-                    VALUES (?, ?, ?, ?, ?) ON CONFLICT (uuid) DO NOTHING
+                    SELECT ?, ?, ?, ?, ?
+                    WHERE NOT EXISTS (SELECT 1 FROM `%user_table%` WHERE `uuid` = ?)
                     """))) {
 
                 statement.setString(1, String.valueOf(teamplayer.getJavaUUID()));
@@ -131,6 +132,8 @@ public class H2Database extends Database {
                 statement.setBoolean(3, teamplayer.isBedrockPlayer());
                 statement.setString(4, teamplayer.getBedrockUUID());
                 statement.setBytes(5, plugin.getGson().toJson(teamplayer.getPreferences()).getBytes(StandardCharsets.UTF_8));
+
+                statement.setString(6, String.valueOf(teamplayer.getJavaUUID()));
 
                 statement.executeUpdate();
             }
