@@ -6,6 +6,7 @@ import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.models.TeamInvite;
 import dev.xf3d3.ultimateteams.models.User;
 import dev.xf3d3.ultimateteams.utils.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -105,11 +106,12 @@ public interface MessageHandler {
     default void handleTeamChatMessage(@NotNull Message message) {
         message.getPayload().getString().ifPresent(text -> getPlugin().getTeamStorageUtil().findTeamByMember(Bukkit.getOfflinePlayer(message.getSender()).getUniqueId())
                         .ifPresent(team -> {
-                            team.sendTeamMessage(Utils.Color(text));
+
+                            team.sendTeamMessage(MineDown.parse(text));
 
                             // Send spy message directly to players with permission (hidden from Discord)
                             if (getPlugin().getSettings().teamChatSpyEnabled()) {
-                                String spyMessage = Utils.Color(getPlugin().getSettings().getTeamChatSpyPrefix() + " " + text);
+                                Component spyMessage = MineDown.parse(getPlugin().getSettings().getTeamChatSpyPrefix() + " " + text);
                                 Bukkit.getOnlinePlayers().stream()
                                         .filter(p -> p.hasPermission("ultimateteams.chat.spy"))
                                         .forEach(p -> p.sendMessage(spyMessage));
@@ -128,16 +130,16 @@ public interface MessageHandler {
                             .collect(Collectors.toSet());
 
                     // Send message to team members
-                    team.sendTeamMessage(Utils.Color(text));
+                    team.sendTeamMessage(MineDown.parse(text));
 
                     // Send message to allied team Members
                     allies.forEach(
-                            alliedTeam -> alliedTeam.sendTeamMessage(Utils.Color(text))
+                            alliedTeam -> alliedTeam.sendTeamMessage(MineDown.parse(text))
                     );
 
                     // Send spy message directly to players with permission (hidden from Discord)
                     if (getPlugin().getSettings().teamChatSpyEnabled()) {
-                        String spyMessage = Utils.Color(getPlugin().getSettings().getTeamChatSpyPrefix() + " " + text);
+                        Component spyMessage = MineDown.parse(getPlugin().getSettings().getTeamChatSpyPrefix() + " " + text);
                         Bukkit.getOnlinePlayers().stream()
                                 .filter(p -> p.hasPermission("ultimateteams.chat.spy"))
                                 .forEach(p -> p.sendMessage(spyMessage));

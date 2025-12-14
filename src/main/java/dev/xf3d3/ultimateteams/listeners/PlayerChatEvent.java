@@ -8,6 +8,7 @@ import dev.xf3d3.ultimateteams.utils.UsersStorage;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -56,13 +57,14 @@ public class PlayerChatEvent implements Listener {
     private void sendToTeamChat(Player player, Component message) {
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
-                    String chatSpyPrefix = Utils.Color(plugin.getSettings().getTeamChatSpyPrefix());
-                    final String prefix = Utils.Color(plugin.getSettings().getTeamChatPrefix()
+                    final String prefixStr = Utils.Color(plugin.getSettings().getTeamChatPrefix()
                             .replace("%TEAM%", team.getName())
                             .replace("%PLAYER%", player.getName()));
 
-                    Component newMessage = Component
-                            .text(Utils.Color(prefix + " " + "&d" + player.getName() + ":&r" + " "))
+                    Component prefixComponent = LegacyComponentSerializer.legacySection().deserialize(prefixStr);
+
+                    Component newMessage = prefixComponent
+                            .append(Component.text(" "))
                             .append(message);
 
 
@@ -71,8 +73,10 @@ public class PlayerChatEvent implements Listener {
 
                     // Send spy message directly to players with permission (hidden from Discord)
                     if (plugin.getSettings().teamChatSpyEnabled()) {
-                        Component spyMessage = Component
-                                .text(chatSpyPrefix)
+                        String spyPrefixStr = Utils.Color(plugin.getSettings().getTeamChatSpyPrefix());
+
+                        Component spyMessage = LegacyComponentSerializer.legacySection().deserialize(spyPrefixStr)
+                                .append(Component.text(" " + player.getName() + ": "))
                                 .append(message);
 
                         Bukkit.getOnlinePlayers().stream()
@@ -80,7 +84,7 @@ public class PlayerChatEvent implements Listener {
                                 .forEach(p -> p.sendMessage(spyMessage));
                     }
 
-                    String msg = PlainTextComponentSerializer.plainText().serialize(newMessage);
+                    String msg = LegacyComponentSerializer.legacySection().serialize(newMessage);
 
                     // Send globally via a message
                     plugin.getMessageBroker().ifPresent(broker -> Message.builder()
@@ -105,13 +109,14 @@ public class PlayerChatEvent implements Listener {
                             .filter(otherTeam -> team.areRelationsBilateral(otherTeam, Team.Relation.ALLY))
                             .collect(Collectors.toSet());
 
-                    String chatSpyPrefix = Utils.Color(plugin.getSettings().getTeamChatSpyPrefix());
-                    final String prefix = Utils.Color(plugin.getSettings().getTeamAllyChatPrefix()
+                    final String prefixStr = Utils.Color(plugin.getSettings().getTeamAllyChatPrefix()
                             .replace("%TEAM%", team.getName())
                             .replace("%PLAYER%", player.getName()));
 
-                    Component newMessage = Component
-                            .text(Utils.Color(prefix + " " + "&d" + player.getName() + ":&r" + " "))
+                    Component prefixComponent = LegacyComponentSerializer.legacySection().deserialize(prefixStr);
+
+                    Component newMessage = prefixComponent
+                            .append(Component.text(" "))
                             .append(message);
 
 
@@ -126,8 +131,10 @@ public class PlayerChatEvent implements Listener {
 
                     // Send spy message directly to players with permission (hidden from Discord)
                     if (plugin.getSettings().teamChatSpyEnabled()) {
-                        Component spyMessage = Component
-                                .text(chatSpyPrefix)
+                        String spyPrefixStr = Utils.Color(plugin.getSettings().getTeamChatSpyPrefix());
+
+                        Component spyMessage = LegacyComponentSerializer.legacySection().deserialize(spyPrefixStr)
+                                .append(Component.text(" [Ally] " + player.getName() + ": "))
                                 .append(message);
 
                         Bukkit.getOnlinePlayers().stream()
@@ -135,7 +142,7 @@ public class PlayerChatEvent implements Listener {
                                 .forEach(p -> p.sendMessage(spyMessage));
                     }
 
-                    String msg = PlainTextComponentSerializer.plainText().serialize(newMessage);
+                    String msg = LegacyComponentSerializer.legacySection().serialize(newMessage);
                     // Send globally via a message
                     plugin.getMessageBroker().ifPresent(broker -> Message.builder()
                             .type(Message.Type.TEAM_ALLY_CHAT_MESSAGE)
