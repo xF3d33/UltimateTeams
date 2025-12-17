@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "dev.xF3d3"
-version = "4.8.4"
+version = "4.8.5"
 
 repositories {
     mavenLocal()
@@ -40,7 +40,7 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
 
     // Folia and Spigot
-    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.7")
     compileOnly("org.geysermc.floodgate:api:2.2.5-SNAPSHOT")
     implementation("org.bstats:bstats-bukkit:3.1.0")

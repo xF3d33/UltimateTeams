@@ -4,12 +4,10 @@ import com.google.gson.annotations.Expose;
 import lombok.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
-import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 
 /**
@@ -40,33 +38,25 @@ public class TeamEnderChest {
     public int getSize() {
         return rows * 9;
     }
-    
+
     /**
-     * Serialize inventory contents to Base64 string
+     * Serialize inventory contents to Base64 string (YAML Format)
      * @param contents The ItemStack array to serialize
      * @return Base64 encoded string
      */
     @NotNull
     public static String serializeContents(@NotNull ItemStack[] contents) {
         try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
-            
-            dataOutput.writeInt(contents.length);
-            
-            for (ItemStack item : contents) {
-                dataOutput.writeObject(item);
-            }
-            
-            dataOutput.close();
-            return Base64.getEncoder().encodeToString(outputStream.toByteArray());
+
+            byte[] bytes = ItemStack.serializeItemsAsBytes(contents);
+            return Base64.getEncoder().encodeToString(bytes);
         } catch (Exception e) {
 
-            e.printStackTrace();
+            System.err.println("UltimateTeams: Error while serializing contents of a team echest");
             return "";
         }
     }
-    
+
     /**
      * Deserialize Base64 string to ItemStack array
      * @param data The Base64 encoded string
@@ -78,22 +68,35 @@ public class TeamEnderChest {
         if (data == null || data.isEmpty()) {
             return new ItemStack[size];
         }
-        
+
+        // Try NEW Format
+        try {
+            byte[] bytes = Base64.getDecoder().decode(data);
+
+            return ItemStack.deserializeItemsFromBytes(bytes);
+        } catch (Exception ignored) {
+            // proceed to legacy fallback
+        }
+
+        // Fallback to LEGACY Format (BukkitObjectInputStream)
+        // This is required to read existing 1.21.4 data
         try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(data));
             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
-            
+
             int length = dataInput.readInt();
             ItemStack[] contents = new ItemStack[length];
-            
+
             for (int i = 0; i < length; i++) {
                 contents[i] = (ItemStack) dataInput.readObject();
             }
-            
             dataInput.close();
+
             return contents;
         } catch (Exception e) {
-            e.printStackTrace();
+
+            // log when 1.21.5 tries to read 1.21.4 data
+            System.err.println("UltimateTeams: Failed to deserialize legacy ender chest. If you are on 1.21.5, this data may be unreadable without downgrading. Contact the developer for help.");
             return new ItemStack[size];
         }
     }

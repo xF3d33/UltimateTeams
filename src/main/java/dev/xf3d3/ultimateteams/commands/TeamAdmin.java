@@ -13,6 +13,7 @@ import dev.xf3d3.ultimateteams.commands.subCommands.TeamPrefixSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestRollbackSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand;
+import dev.xf3d3.ultimateteams.migrator.EchestsMigrator;
 import dev.xf3d3.ultimateteams.migrator.Migrator;
 import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.Bukkit;
@@ -60,6 +61,7 @@ public class TeamAdmin extends BaseCommand {
         sender.sendMessage(Utils.Color("&3Description: &6" + plugin.getDescription().getDescription()));
         sender.sendMessage(Utils.Color("&3Website: https://ultimateteams.gitbook.io/ultimateteams-docs"));
         sender.sendMessage(Utils.Color("&6" + plugin.getDescription().getWebsite()));
+        sender.sendMessage(Utils.Color("&3Discord: &6 https://discord.gg/qASBT4YcZE"));
         sender.sendMessage(Utils.Color("&3~~~~~~~~~~ &6&nUltimateTeams&r &3~~~~~~~~~~"));
     }
 
@@ -285,6 +287,23 @@ public class TeamAdmin extends BaseCommand {
     @Syntax("<team-name> <chest-number>")
     public void removeChestSubCommand(CommandSender sender, @Values("@teams") String teamName, int chestNumber) {
         teamAdminEnderChestSubCommand.removeEnderChest(sender, teamName, chestNumber);
+    }
+
+
+    @Subcommand("echest migrate")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.admin.echest.migrate")
+    public void migrateChestSubCommand(CommandSender sender) {
+
+        sender.sendMessage(MineDown.parse("Use [/ta echest migrate start](bold) to start the migrator. This will migrate all the enderchest to the new format"));
+    }
+
+    @Subcommand("echest migrate start")
+    @CommandCompletion("@nothing")
+    @CommandPermission("ultimateteams.admin.echest.migrate")
+    public void migrateStartChestSubCommand(CommandSender sender) {
+
+        new EchestsMigrator(plugin, sender);
     }
 
 }

@@ -1,6 +1,5 @@
 package dev.xf3d3.ultimateteams;
 
-import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.PaperCommandManager;
 import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.impl.PlatformScheduler;

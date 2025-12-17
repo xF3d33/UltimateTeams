@@ -10,8 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.logging.Level;
-
 public class HuskHomesHook {
 
     private final HuskHomesAPI huskHomesAPI;

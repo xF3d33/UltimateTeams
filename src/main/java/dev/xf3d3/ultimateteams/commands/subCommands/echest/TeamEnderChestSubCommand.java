@@ -36,7 +36,7 @@ public class TeamEnderChestSubCommand implements Listener {
     
     // Track pending saves to prevent concurrent database writes (key: teamId-chestNumber)
     private static final Map<String, WrappedTask> pendingSaveTasks = Maps.newConcurrentMap();
-    private static final long SAVE_DELAY_TICKS = 20L; // 1 second delay before saving
+    private static final long SAVE_DELAY_TICKS = 20L; // 1s delay before saving
 
     private static final Object INVENTORY_LOCK = new Object();
     
@@ -64,7 +64,7 @@ public class TeamEnderChestSubCommand implements Listener {
         if (inventory == null) {
             // Create new shared inventory
             String title = "Team Chest #" + chestNumber;
-            inventory = Bukkit.createInventory(new TeamChestHolder(team.getId(), chestNumber), chest.getSize(), title);
+            inventory = Bukkit.createInventory(new TeamChestHolder(team.getId(), chestNumber), chest.getSize(), MineDown.parse(title));
             
             // Load the contents from database
             ItemStack[] contents = chest.getContents();
@@ -91,6 +91,7 @@ public class TeamEnderChestSubCommand implements Listener {
             return;
         }
 
+        assert team.getEnderChest(chestNumber).isPresent();
         TeamEnderChest chest = team.getEnderChest(chestNumber).get();
         String key = getInventoryKey(team.getId(), chestNumber);
         Inventory inventory;
@@ -225,7 +226,7 @@ public class TeamEnderChestSubCommand implements Listener {
         }
         
         // Check if this is a team chest inventory
-        if (!(event.getInventory().getHolder() instanceof TeamChestHolder holder)) {
+        if (!(event.getInventory().getHolder() instanceof TeamChestHolder(int teamId, int chestNumber))) {
             return;
         }
         
@@ -235,11 +236,11 @@ public class TeamEnderChestSubCommand implements Listener {
         }
         
         // Schedule a save after the drag is processed
-        String key = getInventoryKey(holder.teamId, holder.chestNumber);
+        String key = getInventoryKey(teamId, chestNumber);
         plugin.getScheduler().runLater(() -> {
-            Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeam(holder.teamId);
+            Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeam(teamId);
 
-            teamOpt.ifPresent(team -> saveInventoryAsync(team, holder.chestNumber, event.getInventory()));
+            teamOpt.ifPresent(team -> saveInventoryAsync(team, chestNumber, event.getInventory()));
         }, 1L); // 1 tick delay to ensure the inventory has been updated
     }
     

@@ -1,7 +1,7 @@
 name: UltimateTeams
-version: "4.8.4"
+version: "4.8.5"
 main: dev.xf3d3.ultimateteams.UltimateTeams
-api-version: 1.19
+api-version: 1.21
 prefix: UltimateTeams
 website: "https://modrinth.com/plugin/ultimate-teams"
 authors: [ xF3d3 ]
