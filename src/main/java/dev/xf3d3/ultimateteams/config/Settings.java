@@ -365,7 +365,7 @@ public class Settings {
     private String motdRegex = "[a-zA-Z]+";
 
     // Team Echest
-    @YamlComment("Enable the team enderchest system. [Default value: true]\nThis is not compatible with cross-server (yet).")
+    @YamlComment("Enable the team enderchest system. [Default value: true]\nThis is not compatible with cross-server (yet).\nIf you are currently on 1.21.4 or below, and you want to update your server remember to migrate the team enderchests (guide in the docs)")
     @YamlKey("team.echest.enabled")
     @Getter
     private boolean teamEnderChestEnabled = true;

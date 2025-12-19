@@ -51,7 +51,9 @@ public class PapiExpansion extends PlaceholderExpansion {
     }
 
     @Override
-    public String onRequest(OfflinePlayer player, String params) {
+    public String onRequest(OfflinePlayer player, @NotNull String params) {
+        if (player == null) return null;
+
         Optional<Team> optionalTeam = plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId());
 
         if (params.startsWith("team_balance_")) {
