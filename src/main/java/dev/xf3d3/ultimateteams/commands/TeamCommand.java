@@ -78,6 +78,7 @@ public class TeamCommand extends BaseCommand {
     }
 
     @HelpCommand
+    @CatchUnknown
     @Subcommand("help")
     public void doHelp(CommandSender sender, CommandHelp help) {
         plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
@@ -106,7 +107,13 @@ public class TeamCommand extends BaseCommand {
     @CommandCompletion("<name> @nothing")
     @Syntax("<name>")
     @CommandPermission("ultimateteams.team.create")
-    public void onTeamCreateCommand(@NotNull CommandSender sender, String name) {
+    public void onTeamCreateCommand(@NotNull CommandSender sender, @Optional String name) {
+        if (name == null) {
+
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamCreateIncorrectUsage()));
+            return;
+        }
+
         new TeamCreateSubCommand(plugin).createTeamSubCommand(sender, name, bannedTags);
     }
 
