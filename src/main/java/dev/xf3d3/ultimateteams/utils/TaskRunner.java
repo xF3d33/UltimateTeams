@@ -45,8 +45,8 @@ public interface TaskRunner {
         return taskId;
     } */
 
-    default void runLater(@NotNull Runnable runnable, long delay) {
-        getScheduler().runLater(runnable, delay * 20);
+    default WrappedTask runLater(@NotNull Runnable runnable, long delay) {
+        return getScheduler().runLater(runnable, delay * 20);
     }
 
     default void runSync(@NotNull Consumer<WrappedTask> runnable) {

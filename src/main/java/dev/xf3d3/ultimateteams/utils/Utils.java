@@ -1,8 +1,11 @@
 package dev.xf3d3.ultimateteams.utils;
 
+import com.google.common.collect.Maps;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Position;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -12,9 +15,8 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -22,6 +24,9 @@ import java.util.stream.Collectors;
 public class Utils {
     private final UltimateTeams plugin;
     private static final Pattern HEX_PATTERN = Pattern.compile("#([A-Fa-f0-9]{6})");
+
+    @Getter
+    private final Map<UUID, WrappedTask> pendingTeleport = Maps.newConcurrentMap();
 
     public Utils(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
@@ -54,13 +59,14 @@ public class Utils {
         if ((plugin.getSettings().getTeamHomeTpDelay() > 0) && teleportType.equals(TeleportType.HOME)) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamHomeCooldownStart().replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeamHomeTpDelay()))));
 
-            plugin.runLater(() -> {
+            final WrappedTask task = plugin.runLater(() -> {
                 // Run on the appropriate thread scheduler for this platform
                 plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
                 player.sendMessage(MineDown.parse(plugin.getMessages().getSuccessfullyTeleportedToHome()));
             }, plugin.getSettings().getTeamHomeTpDelay());
 
+            pendingTeleport.put(player.getUniqueId(), task);
             return;
         }
 
@@ -68,13 +74,14 @@ public class Utils {
         if ((plugin.getSettings().getTeamWarpTpDelay() > 0) && teleportType.equals(TeleportType.WARP)) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpCooldownStart().replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeamWarpTpDelay()))));
 
-            plugin.runLater(() -> {
+            final WrappedTask task = plugin.runLater(() -> {
                 // Run on the appropriate thread scheduler for this platform
                 plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpTeleportedSuccessful().replaceAll("%WARP_NAME%", String.valueOf(warpName))));
 
             }, plugin.getSettings().getTeamWarpTpDelay());
 
+            pendingTeleport.put(player.getUniqueId(), task);
             return;
         }
 
