@@ -256,7 +256,7 @@ public class Settings {
 
     @YamlComment("Below is the prefix for the team chat messages. (Placeholders: %TEAM% %PLAYER%)")
     @YamlKey("team.chat.prefix")
-    private String teamChatPrefix = "&6[&3TC&6]&r";
+    private String teamChatPrefix = "&6[&3TC&6]&r %TEAM% %PLAYER%:";
 
 
     // Team Allies
@@ -438,6 +438,11 @@ public class Settings {
     @YamlComment("Do you want the plugin to send a message in console when it does the auto-wipe of the invites list? [Default value: true]")
     @YamlKey("general.run-auto-invite-wipe-task-log")
     private boolean autoInviteWipeTaskLog = true;
+
+    @YamlComment("Do you want the plugin to send a message in console when it does the team echests backup? [Default value: true]")
+    @YamlKey("general.echest-backup-log")
+    @Getter
+    private boolean echestBackupTaskLog = true;
 
     @YamlComment("Do you want to see a lot of debug messages in console when most actions are performed? [Default value: false]")
     @YamlKey("general.developer-debug-mode")
