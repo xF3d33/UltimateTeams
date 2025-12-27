@@ -5,7 +5,9 @@ import com.tcoded.folialib.wrapper.task.WrappedTask;
 import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Position;
+import dev.xf3d3.ultimateteams.models.TeamPlayer;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -15,7 +17,9 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -87,6 +91,19 @@ public class Utils {
 
         // Run on the appropriate thread scheduler for this platform
         plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+    }
+
+    public void sendSpyMessage(@NotNull Component message) {
+
+        plugin.runSync(task -> plugin.getUsersStorageUtil().getUsermap().values().stream().filter(user -> user.getPreferences().isTeamChatSpying()).forEach(teamPlayer -> {
+            final Player player = Bukkit.getPlayer(teamPlayer.getJavaUUID());
+
+            if (player == null) return;
+            if (!player.hasPermission("ultimateteams.chat.spy")) return;
+
+            player.sendMessage(message);
+        }));
+
     }
 
     public List<Integer> getNumberPermission(@NotNull Player player, @NotNull String permissionPrefix) {

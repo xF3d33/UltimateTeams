@@ -78,9 +78,9 @@ public class TeamChatCommand extends BaseCommand {
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
                     String chatSpyPrefix = plugin.getSettings().getTeamChatSpyPrefix();
+
                     StringBuilder messageString = new StringBuilder();
                     messageString.append(plugin.getSettings().getTeamChatPrefix()).append(" ");
-                    messageString.append("&d").append(player.getName()).append(":&r").append(" ");
                     for (String arg : args) {
                         messageString.append(arg).append(" ");
                     }
@@ -90,14 +90,11 @@ public class TeamChatCommand extends BaseCommand {
                             .replace("%PLAYER%", player.getName());
 
                     // Send message to team members
-                    team.sendTeamMessage(Utils.Color(msg));
+                    team.sendTeamMessage(MineDown.parse(msg));
 
                     // Send spy message directly to players with permission (hidden from Discord)
                     if (plugin.getSettings().teamChatSpyEnabled()) {
-                        String spyMessage = Utils.Color(chatSpyPrefix + " " + msg);
-                        Bukkit.getOnlinePlayers().stream()
-                                .filter(p -> p.hasPermission("ultimateteams.chat.spy"))
-                                .forEach(p -> p.sendMessage(spyMessage));
+                        plugin.getUtils().sendSpyMessage(MineDown.parse(chatSpyPrefix + " " + msg));
                     }
 
                     // Send globally via a message

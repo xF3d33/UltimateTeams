@@ -78,9 +78,7 @@ public class PlayerChatEvent implements Listener {
                                 .append(Component.text(" " + player.getName() + ": "))
                                 .append(message);
 
-                        Bukkit.getOnlinePlayers().stream()
-                                .filter(p -> p.hasPermission("ultimateteams.chat.spy"))
-                                .forEach(p -> p.sendMessage(spyMessage));
+                        plugin.getUtils().sendSpyMessage(spyMessage);
                     }
 
                     String msg = LegacyComponentSerializer.legacySection().serialize(newMessage);
@@ -136,9 +134,7 @@ public class PlayerChatEvent implements Listener {
                                 .append(Component.text(" [Ally] " + player.getName() + ": "))
                                 .append(message);
 
-                        Bukkit.getOnlinePlayers().stream()
-                                .filter(p -> p.hasPermission("ultimateteams.chat.spy"))
-                                .forEach(p -> p.sendMessage(spyMessage));
+                        plugin.getUtils().sendSpyMessage(spyMessage);
                     }
 
                     String msg = LegacyComponentSerializer.legacySection().serialize(newMessage);

@@ -37,18 +37,20 @@ public class TeamAllyChatCommand extends BaseCommand {
     public void onCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof final Player player)){
             sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+
             return;
         }
 
         // Check if enabled
         if (!plugin.getSettings().teamAllyChatEnabled()){
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+
             return;
         }
 
         // Enable/Disable ally  chat for every message
         if (args.length < 1) {
-            //boolean chatTalking = plugin.getUsersStorageUtil().getChatPlayers().entrySet().stream().anyMatch(user -> user.getKey().equals(player.getUniqueId()) && user.getValue() == UsersStorage.ChatType.TEAM_CHAT);
+
             boolean chatTalking = UsersStorage.ChatType.ALLY_CHAT.equals(
                     plugin.getUsersStorageUtil()
                             .getChatPlayers()
@@ -61,6 +63,7 @@ public class TeamAllyChatCommand extends BaseCommand {
                 player.sendMessage(MineDown.parse(plugin.getMessages().getAllyChatToggleOff()));
 
                 plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
+
                     teamPlayer.getPreferences().setAllyChatTalking(false);
                     plugin.getDatabase().updatePlayer(teamPlayer);
                 });
@@ -71,6 +74,7 @@ public class TeamAllyChatCommand extends BaseCommand {
                 player.sendMessage(MineDown.parse(plugin.getMessages().getAllyChatToggleOn()));
 
                 plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
+
                     teamPlayer.getPreferences().setAllyChatTalking(true);
                     plugin.getDatabase().updatePlayer(teamPlayer);
                 });
@@ -90,9 +94,9 @@ public class TeamAllyChatCommand extends BaseCommand {
                             .collect(Collectors.toSet());
 
                     String chatSpyPrefix = plugin.getSettings().getTeamChatSpyPrefix();
+
                     StringBuilder messageString = new StringBuilder();
                     messageString.append(plugin.getSettings().getTeamAllyChatPrefix()).append(" ");
-                    messageString.append("&d").append(player.getName()).append(":&r").append(" ");
                     for (String arg : args) {
                         messageString.append(arg).append(" ");
                     }
@@ -102,16 +106,16 @@ public class TeamAllyChatCommand extends BaseCommand {
                             .replace("%PLAYER%", player.getName());
 
                     // Send message to team members
-                    team.sendTeamMessage(Utils.Color(msg));
+                    team.sendTeamMessage(MineDown.parse(msg));
 
                     // Send message to allied team Members
                     allies.forEach(
-                            alliedTeam -> alliedTeam.sendTeamMessage(Utils.Color(msg))
+                            alliedTeam -> alliedTeam.sendTeamMessage(MineDown.parse(msg))
                     );
 
                     // Send spy message
                     if (plugin.getSettings().teamChatSpyEnabled()) {
-                        Bukkit.broadcast(Utils.Color(chatSpyPrefix + " " + msg), "ultimateteams.chat.spy");
+                        plugin.getUtils().sendSpyMessage(MineDown.parse(chatSpyPrefix + " " + msg));
                     }
 
                     // Send globally via a message

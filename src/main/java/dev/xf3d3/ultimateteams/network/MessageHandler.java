@@ -112,9 +112,7 @@ public interface MessageHandler {
                             // Send spy message directly to players with permission (hidden from Discord)
                             if (getPlugin().getSettings().teamChatSpyEnabled()) {
                                 Component spyMessage = MineDown.parse(getPlugin().getSettings().getTeamChatSpyPrefix() + " " + text);
-                                Bukkit.getOnlinePlayers().stream()
-                                        .filter(p -> p.hasPermission("ultimateteams.chat.spy"))
-                                        .forEach(p -> p.sendMessage(spyMessage));
+                                getPlugin().getUtils().sendSpyMessage(spyMessage);
                             }
                         }));
     }
@@ -140,9 +138,7 @@ public interface MessageHandler {
                     // Send spy message directly to players with permission (hidden from Discord)
                     if (getPlugin().getSettings().teamChatSpyEnabled()) {
                         Component spyMessage = MineDown.parse(getPlugin().getSettings().getTeamChatSpyPrefix() + " " + text);
-                        Bukkit.getOnlinePlayers().stream()
-                                .filter(p -> p.hasPermission("ultimateteams.chat.spy"))
-                                .forEach(p -> p.sendMessage(spyMessage));
+                        getPlugin().getUtils().sendSpyMessage(spyMessage);
                     }
                 }));
     }
@@ -160,7 +156,6 @@ public interface MessageHandler {
                         }
                         // Server-targeted messages don't send notifications to avoid duplicates
                     }
-            //team.sendTeamMessage(Utils.Color(msg));
         });
     }
 

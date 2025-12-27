@@ -83,22 +83,10 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     @Getter @Nullable private VaultHook economyHook;
     @Getter private EnderChestBackupManager backupManager;
 
-    // HashMaps
-    private final ConcurrentHashMap<String, Player> bedrockPlayers = new ConcurrentHashMap<>();
 
     @Override
     public void onLoad() {
         instance = this;
-    }
-
-    private void initialize(@NotNull String name, @NotNull ThrowingConsumer<UltimateTeams> runner) {
-        log(Level.INFO, "Initializing " + name + "...");
-        try {
-            runner.accept(this);
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to initialize " + name, e);
-        }
-        log(Level.INFO, "Successfully initialized " + name);
     }
 
     @Override
@@ -133,9 +121,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         // Initialize message broker
         if (getSettings().isEnableCrossServer()) {
             initialize(getSettings().getBrokerType() + " broker", (plugin) -> {
-                final Broker.Type brokerType = getSettings().getBrokerType();
 
-                this.broker = switch (brokerType) {
+                this.broker = switch (getSettings().getBrokerType()) {
                     case PLUGIN_MESSAGE -> new PluginMessageBroker(this);
                     case REDIS -> new RedisBroker(this);
                 };
@@ -337,6 +324,16 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
 
     public void setMessages(@NotNull Messages messages) {
         this.messages = messages;
+    }
+
+    private void initialize(@NotNull String name, @NotNull ThrowingConsumer<UltimateTeams> runner) {
+        log(Level.INFO, "Initializing " + name + "...");
+        try {
+            runner.accept(this);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to initialize " + name, e);
+        }
+        log(Level.INFO, "Successfully initialized " + name);
     }
 
      /**
