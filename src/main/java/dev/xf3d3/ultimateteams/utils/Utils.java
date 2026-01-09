@@ -66,6 +66,7 @@ public class Utils {
             final WrappedTask task = plugin.runLater(() -> {
                 // Run on the appropriate thread scheduler for this platform
                 plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                this.getPendingTeleport().remove(player.getUniqueId());
 
                 player.sendMessage(MineDown.parse(plugin.getMessages().getSuccessfullyTeleportedToHome()));
             }, plugin.getSettings().getTeamHomeTpDelay());
@@ -81,6 +82,8 @@ public class Utils {
             final WrappedTask task = plugin.runLater(() -> {
                 // Run on the appropriate thread scheduler for this platform
                 plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                this.getPendingTeleport().remove(player.getUniqueId());
+
                 player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpTeleportedSuccessful().replaceAll("%WARP_NAME%", String.valueOf(warpName))));
 
             }, plugin.getSettings().getTeamWarpTpDelay());

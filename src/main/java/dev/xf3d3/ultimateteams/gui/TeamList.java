@@ -110,14 +110,14 @@ public class TeamList {
             for (UUID teamMember : teamMembers) {
                 String offlinePlayer = Bukkit.getOfflinePlayer(teamMember).getName();
 
-                lore.add(offlinePlayer != null ? ("&r" +  offlinePlayer) : "&rplayer not found");
+                lore.add(Utils.Color(offlinePlayer != null ? ("&r&f" +  offlinePlayer) : "&rplayer not found"));
             }
 
             lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("managers")));
             for (UUID teamMember : teamManagers) {
                 String offlinePlayer = Bukkit.getOfflinePlayer(teamMember).getName();
 
-                lore.add(offlinePlayer != null ? ("&r" +  offlinePlayer) : "&rplayer not found");
+                lore.add(Utils.Color(offlinePlayer != null ? ("&r&f" +  offlinePlayer) : "&rplayer not found"));
             }
         }
 
@@ -125,25 +125,25 @@ public class TeamList {
         if (!allies.isEmpty()) {
 
             lore.add(" ");
-            lore.add(Utils.Color(Utils.Color(plugin.getTeamsGui().getLoreMap().get("allies"))));
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("allies")));
 
             allies.keySet().forEach(
-                    t -> lore.add("&r" + t.getName())
+                    t -> lore.add(Utils.Color("&r" + t.getName()))
             );
 
         }
 
         if (!enemies.isEmpty()) {
             lore.add(" ");
-            lore.add(Utils.Color(Utils.Color(plugin.getTeamsGui().getLoreMap().get("enemies"))));
+            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("enemies")));
 
             enemies.keySet().forEach(
-                    t -> lore.add("&r" + t.getName())
+                    t -> lore.add(Utils.Color("&r" + t.getName()))
             );
         }
 
         lore.add(" ");
-        lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("prefix") + (team.getPrefix() != null ? team.getPrefix() : "")));
+        lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("prefix") + "&r&f" + (team.getPrefix() != null ? team.getPrefix() : "")));
 
         if (plugin.getSettings().isEconomyEnabled()) {
             lore.add(Utils.Color(plugin.getMessages().getTeamInfoBankAmount()
@@ -158,7 +158,7 @@ public class TeamList {
         }
 
         if (plugin.getSettings().isEnableMotd()) {
-            lore.add(plugin.getMessages().getTeamInfoMotd().replace("%MOTD%", Objects.requireNonNullElse(Utils.Color(team.getMotd()), plugin.getMessages().getTeamMotdNotSet())));
+            lore.add(Utils.Color(plugin.getMessages().getTeamInfoMotd().replace("%MOTD%", Objects.requireNonNullElse(Utils.Color(team.getMotd()), plugin.getMessages().getTeamMotdNotSet()))));
         }
 
         if (team.isFriendlyFire()) {

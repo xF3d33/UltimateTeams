@@ -140,6 +140,11 @@ public class Settings {
     private String notInTeamPlaceholder = "Not in a team";
 
 
+    @YamlComment("Should the plugin cancel teleports if the player moves or is damaged during the tp delay? [Changes require restart]")
+    @YamlKey("team.cancel-tp")
+    @Getter
+    private boolean teamCancelTp = true;
+
     @YamlComment("Whether to allow color codes (& and #) in the teams name")
     @YamlKey("team.name.allow-color-codes")
     @Getter

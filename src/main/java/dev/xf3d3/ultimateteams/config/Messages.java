@@ -691,6 +691,14 @@ public class Messages {
     @Getter
     private String successfullyTeleportedToHome = "&3You teleported to your team's home.";
 
+    @YamlKey("team.home.teleport-moved")
+    @Getter
+    private String teleportCancelledMoved = "&3The teleport has been cancelled because you moved!";
+
+    @YamlKey("team.home.teleport-damage")
+    @Getter
+    private String teleportCancelledDamage = "&3The teleport has been cancelled because you took damage!";
+
     @YamlKey("team.home.no-home-set")
     @Getter
     private String failedNoHomeSet = "&3Your team does not have a home set!";

@@ -1,6 +1,8 @@
 package dev.xf3d3.ultimateteams.listeners;
 
+import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import dev.xf3d3.ultimateteams.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,8 +29,10 @@ public class PlayerTeleportHelper implements Listener {
                 || event.getFrom().getBlockY() != event.getTo().getBlockY()
                 || event.getFrom().getBlockZ() != event.getTo().getBlockZ()) {
 
-            // TODO: send message to player
+
+            event.getPlayer().sendMessage(MineDown.parse(plugin.getMessages().getTeleportCancelledMoved()));
             plugin.getUtils().getPendingTeleport().get(event.getPlayer().getUniqueId()).cancel();
+            plugin.getUtils().getPendingTeleport().remove(event.getPlayer().getUniqueId());
         }
     }
 
@@ -37,8 +41,9 @@ public class PlayerTeleportHelper implements Listener {
         if (event.getEntity() instanceof Player player
                 && plugin.getUtils().getPendingTeleport().containsKey(player.getUniqueId())) {
 
-            // TODO: send message to player
+            event.getEntity().sendMessage(MineDown.parse(plugin.getMessages().getTeleportCancelledMoved()));
             plugin.getUtils().getPendingTeleport().get(player.getUniqueId()).cancel();
+            plugin.getUtils().getPendingTeleport().remove(player.getUniqueId());
         }
     }
 
@@ -47,13 +52,14 @@ public class PlayerTeleportHelper implements Listener {
         if (!plugin.getUtils().getPendingTeleport().containsKey(event.getPlayer().getUniqueId())) return;
 
         plugin.getUtils().getPendingTeleport().get(event.getPlayer().getUniqueId()).cancel();
+        plugin.getUtils().getPendingTeleport().remove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         if (!plugin.getUtils().getPendingTeleport().containsKey(event.getPlayer().getUniqueId())) return;
 
-        // TODO: send message to player
         plugin.getUtils().getPendingTeleport().get(event.getPlayer().getUniqueId()).cancel();
+        plugin.getUtils().getPendingTeleport().remove(event.getPlayer().getUniqueId());
     }
 }
