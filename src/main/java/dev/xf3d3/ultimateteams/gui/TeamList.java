@@ -110,14 +110,14 @@ public class TeamList {
             for (UUID teamMember : teamMembers) {
                 String offlinePlayer = Bukkit.getOfflinePlayer(teamMember).getName();
 
-                lore.add(Utils.Color(offlinePlayer != null ? ("&r&f" +  offlinePlayer) : "&rplayer not found"));
+                lore.add(Utils.Color(offlinePlayer != null ? (plugin.getTeamsGui().getLoreMap().get("members-color") +  offlinePlayer) : (plugin.getTeamsGui().getLoreMap().get("members-color") + "&rplayer not found" )));
             }
 
             lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("managers")));
             for (UUID teamMember : teamManagers) {
                 String offlinePlayer = Bukkit.getOfflinePlayer(teamMember).getName();
 
-                lore.add(Utils.Color(offlinePlayer != null ? ("&r&f" +  offlinePlayer) : "&rplayer not found"));
+                lore.add(Utils.Color(offlinePlayer != null ? (plugin.getTeamsGui().getLoreMap().get("managers-color") +  offlinePlayer) : (plugin.getTeamsGui().getLoreMap().get("managers-color") + "&rplayer not found" )));
             }
         }
 
@@ -128,7 +128,7 @@ public class TeamList {
             lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("allies")));
 
             allies.keySet().forEach(
-                    t -> lore.add(Utils.Color("&r" + t.getName()))
+                    t -> lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("allies-color") + t.getName()))
             );
 
         }
@@ -138,7 +138,7 @@ public class TeamList {
             lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("enemies")));
 
             enemies.keySet().forEach(
-                    t -> lore.add(Utils.Color("&r" + t.getName()))
+                    t -> lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("enemies-color") + t.getName()))
             );
         }
 

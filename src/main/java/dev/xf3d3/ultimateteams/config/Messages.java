@@ -192,11 +192,13 @@ public class Messages {
     private String teamInviteDenyFail = "&3Failed to deny the invite.";
 
     @YamlKey("team.invite.received-message")
+    @YamlComment("You can remove the join fee line if you have it disabled")
     @Getter
     private List<String> teamInviteInvitedMessage = List.of(
             "&7&m                                                    &r",
             "[Team Invitation](gold bold)",
             "[You've been invited to join](yellow) [%TEAM%](gold) [by](yellow) [%INVITER%](gold)",
+            "[Join fee:](yellow) [%FEE%](gold)[%CURRENCY_NAME%](green)",
             "",
             "[[✔ ACCEPT]](green bold run_command=/team invite accept hover=[Click to accept the invitation](green)) [[✔ DECLINE]](red bold run_command=/team invite deny hover=[Click to deny the invitation](red))",
             "&7&m                                                    &r"

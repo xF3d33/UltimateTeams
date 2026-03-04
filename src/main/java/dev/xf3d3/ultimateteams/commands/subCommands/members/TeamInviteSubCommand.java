@@ -84,6 +84,8 @@ public class TeamInviteSubCommand {
                                         .ifPresent(invitedPlayer -> invitedPlayer.sendMessage(MineDown.parse(String.join("\n", plugin.getMessages().getTeamInviteInvitedMessage())
                                                 .replace("%TEAM%", team.getName())
                                                 .replace("%INVITER%", player.getName())
+                                                .replace("%FEE%", String.valueOf(team.getJoin_fee()))
+                                                .replace("%CURRENCY_NAME%", plugin.getEconomyHook() != null ? plugin.getEconomyHook().getCurrencyNamePlural() : "$")
                                         )));
                             } else {
                                 player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteFailed().replace(INVITED_PLAYER, inviteeName)));
