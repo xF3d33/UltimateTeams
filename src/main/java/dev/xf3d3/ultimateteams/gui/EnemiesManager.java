@@ -29,13 +29,13 @@ public class EnemiesManager {
     }
 
     private void open() {
-        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.getTeamsGui().getEnemiesManagerGuiName()), plugin.getTeamsGui().getTeamsManagerEnemiesguiSetup().toArray(new String[0]));
+        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getEnemiesManagerGuiName())), plugin.getTeamsGui().getTeamsManagerEnemiesguiSetup().toArray(new String[0]));
 
         // Previous page
-        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.getTeamsGui().getPreviousPage()));
+        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.replacePlaceholders(player, plugin.getTeamsGui().getPreviousPage())));
 
         // Next page
-        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getNextPageMaterial()), GuiPageElement.PageAction.NEXT, plugin.getTeamsGui().getNextPage()));
+        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getNextPageMaterial()), GuiPageElement.PageAction.NEXT, plugin.replacePlaceholders(player, plugin.getTeamsGui().getNextPage())));
 
         // Back
         gui.addElement(
@@ -48,7 +48,7 @@ public class EnemiesManager {
 
                             return true;
                         },
-                        plugin.getTeamsGui().getBackButtonName()
+                        plugin.replacePlaceholders(player, plugin.getTeamsGui().getBackButtonName())
                 ));
 
 
@@ -90,7 +90,7 @@ public class EnemiesManager {
 
                                 return true;
                             },
-                            plugin.getTeamsGui().getEnemiesManagerGuiText()
+                            plugin.replacePlaceholders(player, plugin.getTeamsGui().getEnemiesManagerGuiText())
                                     .stream()
                                     .map(s -> s.replaceAll("%NAME%", enemy.getName()))
                                     .toArray(String[]::new)

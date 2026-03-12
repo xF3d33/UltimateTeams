@@ -29,13 +29,13 @@ public class AlliesManager {
     }
 
     private void open() {
-        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.getTeamsGui().getAlliesManagerGuiName()), plugin.getTeamsGui().getTeamsManagerAlliesguiSetup().toArray(new String[0]));
+        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getAlliesManagerGuiName())), plugin.getTeamsGui().getTeamsManagerAlliesguiSetup().toArray(new String[0]));
 
         // Previous page
-        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.getTeamsGui().getPreviousPage()));
+        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.replacePlaceholders(player, plugin.replacePlaceholders(player, plugin.getTeamsGui().getPreviousPage()))));
 
         // Next page
-        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getNextPageMaterial()), GuiPageElement.PageAction.NEXT, plugin.getTeamsGui().getNextPage()));
+        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getNextPageMaterial()), GuiPageElement.PageAction.NEXT, plugin.replacePlaceholders(player, plugin.getTeamsGui().getNextPage())));
 
         // Back
         gui.addElement(
@@ -48,9 +48,8 @@ public class AlliesManager {
 
                             return true;
                         },
-                        plugin.getTeamsGui().getBackButtonName()
+                        plugin.replacePlaceholders(player, plugin.getTeamsGui().getBackButtonName())
                 ));
-
 
 
         GuiElementGroup group = new GuiElementGroup('g');
@@ -90,7 +89,7 @@ public class AlliesManager {
 
                                 return true;
                             },
-                            plugin.getTeamsGui().getAlliesManagerGuiText()
+                            plugin.replacePlaceholders(player, plugin.getTeamsGui().getAlliesManagerGuiText())
                                     .stream()
                                     .map(s -> s.replaceAll("%NAME%", allie.getName()))
                                     .toArray(String[]::new)

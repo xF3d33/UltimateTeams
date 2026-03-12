@@ -25,13 +25,13 @@ public class WarpsManager {
     }
 
     private void open() {
-        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.getTeamsGui().getWarpsManagerGuiName()), plugin.getTeamsGui().getTeamsManagerWarpsguiSetup().toArray(new String[0]));
+        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getWarpsManagerGuiName())), plugin.getTeamsGui().getTeamsManagerWarpsguiSetup().toArray(new String[0]));
 
         // Previous page
-        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.getTeamsGui().getPreviousPage()));
+        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.replacePlaceholders(player, plugin.getTeamsGui().getPreviousPage())));
 
         // Next page
-        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getNextPageMaterial()), GuiPageElement.PageAction.NEXT, plugin.getTeamsGui().getNextPage()));
+        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getNextPageMaterial()), GuiPageElement.PageAction.NEXT, plugin.replacePlaceholders(player, plugin.getTeamsGui().getNextPage())));
 
         // Back
         gui.addElement(
@@ -44,7 +44,7 @@ public class WarpsManager {
 
                             return true;
                         },
-                        plugin.getTeamsGui().getBackButtonName()
+                        plugin.replacePlaceholders(player, plugin.getTeamsGui().getBackButtonName())
                 ));
 
 
@@ -87,7 +87,7 @@ public class WarpsManager {
 
                                 return true;
                             },
-                            plugin.getTeamsGui().getWarpsManagerGuiWarpsText()
+                            plugin.replacePlaceholders(player, plugin.getTeamsGui().getWarpsManagerGuiWarpsText())
                                     .stream()
                                     .map(s -> s.replaceAll("%WARP%", warp.getName()))
                                     .toArray(String[]::new)

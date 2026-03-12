@@ -30,14 +30,14 @@ public class TeamList {
     }
 
     private void open() {
-        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.getTeamsGui().getTeamsListGuiName()), plugin.getTeamsGui().getTeamsListguiSetup().toArray(new String[0]));
+        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsListGuiName())), plugin.getTeamsGui().getTeamsListguiSetup().toArray(new String[0]));
 
 
         // Previous page
-        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.getTeamsGui().getPreviousPage()));
+        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.replacePlaceholders(player, plugin.getTeamsGui().getPreviousPage())));
 
         // Next page
-        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getNextPageMaterial()), GuiPageElement.PageAction.NEXT, plugin.getTeamsGui().getNextPage()));
+        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getNextPageMaterial()), GuiPageElement.PageAction.NEXT, plugin.replacePlaceholders(player, plugin.getTeamsGui().getNextPage())));
 
         // Close
         gui.addElement(
@@ -48,7 +48,7 @@ public class TeamList {
                             click.getGui().close();
                             return true;
                         },
-                        plugin.getTeamsGui().getCloseButtonName()
+                        plugin.replacePlaceholders(player, plugin.getTeamsGui().getCloseButtonName())
                 ));
 
 
@@ -56,9 +56,9 @@ public class TeamList {
         // Teams
         GuiElementGroup group = new GuiElementGroup('g');
         for (Team team : plugin.getTeamStorageUtil().getTeams()) {
-            OfflinePlayer teamOwnerPlayer = Bukkit.getOfflinePlayer(team.getOwner());
+            OfflinePlayer player = Bukkit.getOfflinePlayer(team.getOwner());
 
-            group.addElement((new StaticGuiElement('e', createPlayerSkull(teamOwnerPlayer), getTeamInfo(plugin, team).toArray(new String[0]))));
+            group.addElement((new StaticGuiElement('e', createPlayerSkull(player), getTeamInfo(plugin, team).toArray(new String[0]))));
 
         }
         gui.addElement(group);
@@ -67,7 +67,7 @@ public class TeamList {
     }
 
     public static ArrayList<String> getTeamInfo(UltimateTeams plugin, Team team) {
-        OfflinePlayer teamOwnerPlayer = Bukkit.getOfflinePlayer(team.getOwner());
+        OfflinePlayer player = Bukkit.getOfflinePlayer(team.getOwner());
 
         final Map<Team, Team.Relation> relations = team.getRelations(plugin);
 
@@ -91,33 +91,33 @@ public class TeamList {
 
         ArrayList<String> lore = new ArrayList<>();
 
-        lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("header")));
+        lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("header"))));
 
         // Team name
-        lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("team-name") + Utils.Color(team.getName())));
+        lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("team-name") + team.getName())));
 
         // Owner
-        if (teamOwnerPlayer.isOnline()) {
-            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("owner-online") + teamOwnerPlayer.getName()));
+        if (player.isOnline()) {
+            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("owner-online") + player.getName())));
         } else {
-            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("owner-offline") + teamOwnerPlayer.getName()));
+            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("owner-offline") + player.getName())));
         }
 
         // Members
         if (!team.getMembers().isEmpty()) {
 
-            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("members")));
+            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("members"))));
             for (UUID teamMember : teamMembers) {
                 String offlinePlayer = Bukkit.getOfflinePlayer(teamMember).getName();
 
-                lore.add(Utils.Color(offlinePlayer != null ? (plugin.getTeamsGui().getLoreMap().get("members-color") +  offlinePlayer) : (plugin.getTeamsGui().getLoreMap().get("members-color") + "&rplayer not found" )));
+                lore.add(Utils.Color(plugin.replacePlaceholders(player, offlinePlayer != null ? (plugin.getTeamsGui().getLoreMap().get("members-color") +  offlinePlayer) : (plugin.getTeamsGui().getLoreMap().get("members-color") + "&rplayer not found" ))));
             }
 
-            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("managers")));
+            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("managers"))));
             for (UUID teamMember : teamManagers) {
                 String offlinePlayer = Bukkit.getOfflinePlayer(teamMember).getName();
 
-                lore.add(Utils.Color(offlinePlayer != null ? (plugin.getTeamsGui().getLoreMap().get("managers-color") +  offlinePlayer) : (plugin.getTeamsGui().getLoreMap().get("managers-color") + "&rplayer not found" )));
+                lore.add(Utils.Color(plugin.replacePlaceholders(player, offlinePlayer != null ? (plugin.getTeamsGui().getLoreMap().get("managers-color") +  offlinePlayer) : (plugin.getTeamsGui().getLoreMap().get("managers-color") + "&rplayer not found" ))));
             }
         }
 
@@ -125,57 +125,57 @@ public class TeamList {
         if (!allies.isEmpty()) {
 
             lore.add(" ");
-            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("allies")));
+            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("allies"))));
 
             allies.keySet().forEach(
-                    t -> lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("allies-color") + t.getName()))
+                    t -> lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("allies-color") + t.getName())))
             );
 
         }
 
         if (!enemies.isEmpty()) {
             lore.add(" ");
-            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("enemies")));
+            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("enemies"))));
 
             enemies.keySet().forEach(
-                    t -> lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("enemies-color") + t.getName()))
+                    t -> lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("enemies-color") + t.getName())))
             );
         }
 
         lore.add(" ");
-        lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("prefix") + "&r&f" + (team.getPrefix() != null ? team.getPrefix() : "")));
+        lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("prefix") + "&r&f" + (team.getPrefix() != null ? team.getPrefix() : ""))));
 
         if (plugin.getSettings().isEconomyEnabled()) {
-            lore.add(Utils.Color(plugin.getMessages().getTeamInfoBankAmount()
-                    .replace("%AMOUNT%", String.format("%.2f", team.getBalance()))
+            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getMessages().getTeamInfoBankAmount()
+                    .replace("%AMOUNT%", String.format("%.2f", team.getBalance())))
             ));
 
             if (plugin.getSettings().isTeamJoinFeeEnabled()) {
-                lore.add(Utils.Color(plugin.getMessages().getTeamInfoJoinFee()
+                lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getMessages().getTeamInfoMotd().replace("%MOTD%", plugin.getMessages().getTeamInfoJoinFee()
                         .replace("%AMOUNT%", String.valueOf(team.getJoin_fee()))
-                ));
+                ))));
             }
         }
 
         if (plugin.getSettings().isEnableMotd()) {
-            lore.add(Utils.Color(plugin.getMessages().getTeamInfoMotd().replace("%MOTD%", Objects.requireNonNullElse(Utils.Color(team.getMotd()), plugin.getMessages().getTeamMotdNotSet()))));
+            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getMessages().getTeamInfoMotd().replace("%MOTD%", Objects.requireNonNullElse(Utils.Color(team.getMotd()), plugin.getMessages().getTeamMotdNotSet())))));
         }
 
         if (team.isFriendlyFire()) {
-            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("pvp") + " &cTRUE"));
+            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("pvp") + " &cTRUE")));
         } else {
-            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("pvp") + " &cFALSE"));
+            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("pvp") + " &cFALSE")));
         }
 
         if (plugin.getTeamStorageUtil().isHomeSet(team)) {
-            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("home") + " &cTRUE"));
+            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("home") + " &cTRUE")));
         } else {
-            lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("home") + " &cFALSE"));
+            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("home") + " &cFALSE")));
         }
 
-        lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("footer-1")));
-        lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("action")));
-        lore.add(Utils.Color(plugin.getTeamsGui().getLoreMap().get("footer-2")));
+        lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("footer-1"))));
+        lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("action"))));
+        lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getLoreMap().get("footer-2"))));
 
         return lore;
     }
