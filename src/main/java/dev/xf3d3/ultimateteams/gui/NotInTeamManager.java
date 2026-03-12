@@ -55,7 +55,7 @@ public class NotInTeamManager {
 
                     return true;
                 },
-                plugin.getTeamsGui().getNotInTeamGuiCreateTeamText().toArray(new String[0])
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getNotInTeamGuiCreateTeamText()).toArray(new String[0])
         ));
 
         // TEAM LIST
@@ -70,7 +70,7 @@ public class NotInTeamManager {
 
                     return true;
                 },
-                plugin.getTeamsGui().getTeamListButtonText().toArray(new String[0])
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamListButtonText()).toArray(new String[0])
         ));
 
         gui.show(player);

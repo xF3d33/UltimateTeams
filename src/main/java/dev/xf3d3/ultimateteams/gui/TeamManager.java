@@ -211,7 +211,7 @@ public class TeamManager {
 
                     return true;
                 },
-                plugin.getTeamsGui().getTeamListButtonText().toArray(new String[0])
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamListButtonText()).toArray(new String[0])
         ));
 
         gui.show(player);
