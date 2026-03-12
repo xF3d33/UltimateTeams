@@ -2,7 +2,6 @@ package dev.xf3d3.ultimateteams.gui;
 
 import de.themoep.inventorygui.InventoryGui;
 import de.themoep.inventorygui.StaticGuiElement;
-import de.themoep.minedown.adventure.MineDown;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.models.Team;
 import dev.xf3d3.ultimateteams.utils.Utils;
@@ -51,7 +50,7 @@ public class NotInTeamManager {
                 click -> {
                     if (click.getType().isLeftClick()) {
                         click.getGui().close();
-                        player.sendMessage(MineDown.parse("/team create <name>"));
+                        player.performCommand("team create");
                     }
 
                     return true;
