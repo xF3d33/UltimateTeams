@@ -65,6 +65,50 @@ public class TeamsGui {
     @Getter
     private Material closeButtonMaterial = Material.BARRIER;
 
+    // Team List
+    @YamlComment("The Material of team list button")
+    @YamlKey("gui.team-list-button.material")
+    @Getter
+    private Material teamListButtonMaterial = Material.CREEPER_BANNER_PATTERN;
+
+    @YamlComment("Team list item name and lore (you can add more lines)")
+    @YamlKey("gui.team-list-button.text")
+    @Getter
+    private List<String> teamListButtonText = List.of(
+            "&3&lTEAMS LIST",
+            " ",
+            "&r&8&lLEFT CLICK &r&7to open the teams list"
+    );
+
+    // Not In Team
+    @YamlComment("Modify this to change the slot of the items. each character is an item.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
+    @YamlKey("not-in-team.layout")
+    @Getter
+    private List<String> notInTeamGuiSetup = List.of(
+            "         ",
+            "   + i   ",
+            "         "
+    );
+
+    @YamlComment("what name would you like the not in team gui to have?")
+    @YamlKey("not-in-team.name")
+    @Getter
+    private String notInTeamGuiName = "&3You are not in a team";
+
+    @YamlComment("Create team item material (according to the server's version)")
+    @YamlKey("not-in-team.create-team.material")
+    @Getter
+    private Material notInTeamGuiCreateTeamMaterial = Material.GREEN_BANNER;
+
+    @YamlComment("Create team item name and lore (you can add more lines)")
+    @YamlKey("not-in-team.create-team.text")
+    @Getter
+    private List<String> notInTeamGuiCreateTeamText = List.of(
+            "&a&lCREATE A TEAM",
+            " ",
+            "&r&8&lLEFT CLICK &r&7to create a team"
+    );
+
     @YamlComment("Modify this to change the slot of the items.\neach character is an item, and the 'g' are the slots for the teams.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
     @YamlKey("team-list.layout")
     @Getter

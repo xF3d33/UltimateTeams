@@ -199,6 +199,21 @@ public class TeamManager {
                 plugin.getTeamsGui().getTeamsManagerGuiEnemiesText().toArray(new String[0])
         ));
 
+        // TEAM LIST
+        gui.addElement(new StaticGuiElement('i',
+                new ItemStack(plugin.getTeamsGui().getTeamListButtonMaterial()),
+                1, // Display a number as the item count
+                click -> {
+                    if (click.getType().isLeftClick()) {
+                        click.getGui().close();
+                        new TeamList(plugin, player);
+                    }
+
+                    return true;
+                },
+                plugin.getTeamsGui().getTeamListButtonText().toArray(new String[0])
+        ));
+
         gui.show(player);
     }
 }

@@ -20,6 +20,7 @@ import dev.xf3d3.ultimateteams.commands.subCommands.relations.TeamEnemySubComman
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamDelWarpSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamSetWarpSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamWarpSubCommand;
+import dev.xf3d3.ultimateteams.gui.NotInTeamManager;
 import dev.xf3d3.ultimateteams.gui.TeamList;
 import dev.xf3d3.ultimateteams.gui.TeamManager;
 import org.bukkit.OfflinePlayer;
@@ -62,7 +63,7 @@ public class TeamCommand extends BaseCommand {
                     new TeamManager(plugin, player);
                 } else {
                     // Player is not in a team, open team list
-                    new TeamList(plugin, player);
+                    new NotInTeamManager(plugin, player);
                 }
                 return;
             }
@@ -98,7 +99,7 @@ public class TeamCommand extends BaseCommand {
         if (plugin.getTeamStorageUtil().isInTeam(player)) {
             new TeamManager(plugin, player);
         } else {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()));
+            new NotInTeamManager(plugin, player);
         }
     }
 
