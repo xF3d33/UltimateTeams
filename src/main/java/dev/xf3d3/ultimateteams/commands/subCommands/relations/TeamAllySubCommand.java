@@ -32,6 +32,11 @@ public class TeamAllySubCommand {
             return;
         }
 
+        if (!plugin.getSettings().teamAlliesEnabled()) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            return;
+        }
+
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
                     // Check permission
@@ -84,6 +89,10 @@ public class TeamAllySubCommand {
             return;
         }
 
+        if (!plugin.getSettings().teamAlliesEnabled()) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            return;
+        }
 
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {

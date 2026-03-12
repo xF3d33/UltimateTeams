@@ -168,7 +168,7 @@ public class TeamManager {
         }
 
         // TEAM ALLIES
-        gui.addElement(new StaticGuiElement('e',
+        StaticGuiElement allies = new StaticGuiElement('e',
                 new ItemStack(plugin.getTeamsGui().getTeamsManagerGuiAlliesMaterial()),
                 1, // Display a number as the item count
                 click -> {
@@ -181,10 +181,14 @@ public class TeamManager {
                     return true;
                 },
                 plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiAlliesText()).toArray(new String[0])
-        ));
+        );
+
+        if (plugin.getSettings().teamAlliesEnabled()) {
+            gui.addElement(allies);
+        }
 
         // TEAM ENEMIES
-        gui.addElement(new StaticGuiElement('h',
+        StaticGuiElement enemies = new StaticGuiElement('h',
                 new ItemStack(plugin.getTeamsGui().getTeamsManagerGuiEnemiesMaterial()),
                 1, // Display a number as the item count
                 click -> {
@@ -197,7 +201,11 @@ public class TeamManager {
                     return true;
                 },
                 plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiEnemiesText()).toArray(new String[0])
-        ));
+        );
+        
+        if (plugin.getSettings().teamEnemiesEnabled()) {
+            gui.addElement(enemies);
+        }
 
         // TEAM LIST
         gui.addElement(new StaticGuiElement('i',

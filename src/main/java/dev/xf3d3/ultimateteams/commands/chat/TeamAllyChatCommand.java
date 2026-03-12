@@ -41,6 +41,12 @@ public class TeamAllyChatCommand extends BaseCommand {
             return;
         }
 
+        // Check if ally enabled
+        if (!plugin.getSettings().teamAlliesEnabled()) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            return;
+        }
+
         // Check if enabled
         if (!plugin.getSettings().teamAllyChatEnabled()){
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));

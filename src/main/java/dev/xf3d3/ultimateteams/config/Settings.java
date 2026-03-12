@@ -265,6 +265,10 @@ public class Settings {
 
 
     // Team Allies
+    @YamlComment("Enable the team ally system. [Default value: true]")
+    @YamlKey("team.allies.enabled")
+    private boolean teamAlliesEnabled = true;
+
     @YamlComment("Set the maximum amount of allied teams that can a team can have. [Default value: 4]")
     @YamlKey("team.allies.max-allies")
     private int maxAllies = 4;
@@ -280,6 +284,11 @@ public class Settings {
 
 
     // Team Enemies
+    @YamlComment("Enable the team enemy system. [Default value: true]")
+    @YamlKey("team.enemies.enabled")
+    @Getter
+    private boolean teamEnemiesEnabled = true;
+
     @YamlComment("Set the maximum amount of enemies teams that can a team can have. [Default value: 2")
     @YamlKey("team.enemies.max-enemies")
     private int maxEnemies = 2;
@@ -635,8 +644,16 @@ public class Settings {
         return teamChatSpyPrefix;
     }
 
+    public boolean teamAlliesEnabled() {
+        return teamAlliesEnabled;
+    }
+
     public int getMaxTeamAllies() {
         return maxAllies;
+    }
+
+    public boolean teamEnemiesEnabled() {
+        return teamEnemiesEnabled;
     }
 
     public int getMaxTeamEnemies() {
