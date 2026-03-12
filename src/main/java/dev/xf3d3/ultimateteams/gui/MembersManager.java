@@ -31,13 +31,13 @@ public class MembersManager {
     }
 
     private void open() {
-        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.getTeamsGui().getMembersManagerGuiName()), plugin.getTeamsGui().getTeamsManagerMembersguiSetup().toArray(new String[0]));
+        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getMembersManagerGuiName())), plugin.getTeamsGui().getTeamsManagerMembersguiSetup().toArray(new String[0]));
 
         // Previous page
-        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.getTeamsGui().getPreviousPage()));
+        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.replacePlaceholders(player, plugin.getTeamsGui().getPreviousPage())));
 
         // Next page
-        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getNextPageMaterial()), GuiPageElement.PageAction.NEXT, plugin.getTeamsGui().getNextPage()));
+        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getNextPageMaterial()), GuiPageElement.PageAction.NEXT, plugin.replacePlaceholders(player, plugin.getTeamsGui().getNextPage())));
 
         // Back
         gui.addElement(
@@ -50,7 +50,7 @@ public class MembersManager {
 
                             return true;
                         },
-                        plugin.getTeamsGui().getBackButtonName()
+                        plugin.replacePlaceholders(player, plugin.getTeamsGui().getBackButtonName())
                 ));
 
 
@@ -96,7 +96,7 @@ public class MembersManager {
 
                                 return true;
                             },
-                            plugin.getTeamsGui().getMembersManagerGuiText()
+                            plugin.replacePlaceholders(player, plugin.getTeamsGui().getMembersManagerGuiText())
                                     .stream()
                                     .map(s -> s.replaceAll("%NAME%", Objects.requireNonNullElse(offlineMember.getName(), "Player Not Found")))
                                     .toArray(String[]::new)

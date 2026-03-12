@@ -26,12 +26,14 @@ import dev.xf3d3.ultimateteams.utils.*;
 import dev.xf3d3.ultimateteams.utils.gson.GsonUtils;
 import lombok.Getter;
 import lombok.Setter;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.william278.annotaml.Annotaml;
 import net.william278.desertwell.util.ThrowingConsumer;
 import net.william278.desertwell.util.Version;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,6 +47,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -452,5 +455,23 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     @NotNull
     public PlatformScheduler getScheduler() {
         return foliaLib.getScheduler();
+    }
+
+    public String replacePlaceholders(OfflinePlayer player, String text) {
+        if (text == null) return "";
+        if (isPlaceholderAPIEnabled()) {
+            return PlaceholderAPI.setPlaceholders(player, text);
+        } else {
+            return text;
+        }
+    }
+
+    public List<String> replacePlaceholders(OfflinePlayer player, List<String> text) {
+        if (text == null) return Collections.emptyList();
+        if (isPlaceholderAPIEnabled()) {
+            return text.stream().map(line -> PlaceholderAPI.setPlaceholders(player, line)).collect(Collectors.toList());
+        } else {
+            return text;
+        }
     }
 }
