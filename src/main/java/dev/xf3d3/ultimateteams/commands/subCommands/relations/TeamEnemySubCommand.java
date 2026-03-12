@@ -26,6 +26,11 @@ public class TeamEnemySubCommand {
             return;
         }
 
+        if (!plugin.getSettings().teamEnemiesEnabled()) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            return;
+        }
+
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
                     // Check permission
@@ -76,6 +81,11 @@ public class TeamEnemySubCommand {
     public void teamEnemySubRemoveCommand(CommandSender sender, String teamName) {
         if (!(sender instanceof final Player player)) {
             sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            return;
+        }
+
+        if (!plugin.getSettings().teamEnemiesEnabled()) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
 

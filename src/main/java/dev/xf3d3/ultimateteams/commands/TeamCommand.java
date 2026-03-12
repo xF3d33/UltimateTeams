@@ -241,10 +241,13 @@ public class TeamCommand extends BaseCommand {
     }
 
 
-
     // TEAM ENEMIES
     @Subcommand("enemy")
     public void onTeamEnemyCommand(@NotNull CommandSender sender) {
+        if (!plugin.getSettings().teamEnemiesEnabled()) {
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            return;
+        }
         plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
     }
 
@@ -268,6 +271,10 @@ public class TeamCommand extends BaseCommand {
     // TEAM ALLIES
     @Subcommand("ally")
     public void onTeamAllyCommand(@NotNull CommandSender sender) {
+        if (!plugin.getSettings().teamAlliesEnabled()) {
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            return;
+        }
         plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
     }
 
