@@ -19,14 +19,14 @@ public class TeamListSubCommand {
             StringBuilder teamsString = new StringBuilder();
 
             if (plugin.getTeamStorageUtil().getTeams().isEmpty()) {
-                sender.sendMessage(MineDown.parse(plugin.getMessages().getNoTeamsToList()));
+                sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getList().getNoTeams()));
             } else {
-                teamsString.append(Utils.Color(plugin.getMessages().getTeamsListHeader() + "\n"));
+                teamsString.append(Utils.Color(plugin.getMessages().getTeam().getList().getHeader() + "\n"));
 
                 plugin.getTeamStorageUtil().getTeams().forEach(team -> teamsString.append(Utils.Color(team.getName() + "&r\n")));
 
                 teamsString.append(" ");
-                teamsString.append(Utils.Color(plugin.getMessages().getTeamsListFooter()));
+                teamsString.append(Utils.Color(plugin.getMessages().getTeam().getList().getFooter()));
 
                 sender.sendMessage(teamsString.toString());
             }

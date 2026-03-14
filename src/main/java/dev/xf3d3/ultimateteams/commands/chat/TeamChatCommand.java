@@ -32,13 +32,13 @@ public class TeamChatCommand extends BaseCommand {
     @CommandPermission("ultimateteams.teamchat")
     public void onCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof final Player player)){
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         // Check if enabled
         if (!plugin.getSettings().getTeam().getChat().isEnabled()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
             return;
         }
 
@@ -54,7 +54,7 @@ public class TeamChatCommand extends BaseCommand {
             // disable chat
             if (chatTalking) {
                 plugin.getUsersStorageUtil().getChatPlayers().remove(player.getUniqueId());
-                player.sendMessage(MineDown.parse(plugin.getMessages().getChatToggleOff()));
+                player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getChat().getToggleOff()));
 
                 plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
                     teamPlayer.getPreferences().setTeamChatTalking(false);
@@ -64,7 +64,7 @@ public class TeamChatCommand extends BaseCommand {
             // enable chat
             } else {
                 plugin.getUsersStorageUtil().getChatPlayers().put(player.getUniqueId(), UsersStorage.ChatType.TEAM_CHAT);
-                player.sendMessage(MineDown.parse(plugin.getMessages().getChatToggleOn()));
+                player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getChat().getToggleOn()));
 
                 plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
                     teamPlayer.getPreferences().setTeamChatTalking(true);
@@ -105,7 +105,7 @@ public class TeamChatCommand extends BaseCommand {
                             .build()
                             .send(broker, player));
                 },
-                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 

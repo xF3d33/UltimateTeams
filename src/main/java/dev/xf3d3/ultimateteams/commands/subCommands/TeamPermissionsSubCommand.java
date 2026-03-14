@@ -18,12 +18,12 @@ public class TeamPermissionsSubCommand {
 
     public void teamPermissionsAddSubCommand(CommandSender sender, String permission) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamMustBeOwner()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getMustBeOwner()));
             return;
         }
 
@@ -32,27 +32,27 @@ public class TeamPermissionsSubCommand {
                 team -> {
                     final Optional<Team.Permission> perm = Team.Permission.parse(permission);
                     if (perm.isEmpty()) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getPermissionNotFound().replace("%PERM%", permission)));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPermission().getNotFound().replace("%PERM%", permission)));
                         return;
                     }
 
                     team.addPermission(perm.get());
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamPermissionAddedSuccessful().replace("%PERM%", String.valueOf(perm.get()))));
+                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPermission().getAddedSuccessful().replace("%PERM%", String.valueOf(perm.get()))));
                 },
-                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 
     public void teamPermissionsRemoveSubCommand(CommandSender sender, String permission) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamMustBeOwner()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getMustBeOwner()));
             return;
         }
 
@@ -61,16 +61,16 @@ public class TeamPermissionsSubCommand {
                 team -> {
                     final Optional<Team.Permission> perm = Team.Permission.parse(permission);
                     if (perm.isEmpty()) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getPermissionNotFound().replace("%PERM%", permission)));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPermission().getNotFound().replace("%PERM%", permission)));
                         return;
                     }
 
                     team.removePermission(perm.get());
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamPermissionRemovedSuccessful().replace("%PERM%", String.valueOf(perm.get()))));
+                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPermission().getRemovedSuccessful().replace("%PERM%", String.valueOf(perm.get()))));
                 },
-                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 }

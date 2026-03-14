@@ -19,12 +19,12 @@ public class TeamBankSubCommand {
 
     public void teamBankDepositSubCommand(CommandSender sender, double amount) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (plugin.getEconomyHook() == null) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
 
             return;
         }
@@ -33,12 +33,12 @@ public class TeamBankSubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.DEPOSIT)))) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                         return;
                     }
 
                     if (!plugin.getEconomyHook().hasMoney(player, amount)) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getNotEnoughMoney()
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getEconomy().getNotEnoughMoney()
                                 .replace("%MONEY%", String.valueOf(amount))
                         ));
 
@@ -46,7 +46,7 @@ public class TeamBankSubCommand {
                     }
 
                     if (amount <= 0) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getEconomyInvalidAmount()
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getEconomy().getInvalidAmount()
                                 .replace("%MONEY%", String.valueOf(amount))
                         ));
                         return;
@@ -60,24 +60,24 @@ public class TeamBankSubCommand {
                         team.addBalance(amount);
 
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getMoneyDeposited()
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getEconomy().getDeposited()
                                 .replace("%MONEY%", String.valueOf(amount))
                                 .replace("%CURRENCY%", currencyName)
                         ));
                     }
                 },
-                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 
     public void teamBankWithdrawSubCommand(CommandSender sender, double amount) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (plugin.getEconomyHook() == null) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
 
             return;
         }
@@ -86,19 +86,19 @@ public class TeamBankSubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.WITHDRAW)))) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                         return;
                     }
 
                     if (amount <= 0) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getEconomyInvalidAmount()
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getEconomy().getInvalidAmount()
                                 .replace("%MONEY%", String.valueOf(amount))
                         ));
                         return;
                     }
 
                     if (amount > team.getBalance()) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getMoneyWithdrawNotEnoughFunds()
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getEconomy().getWithdraw().getNotEnoughFunds()
                                 .replace("%MONEY%", String.valueOf(amount))
                         ));
                         return;
@@ -112,13 +112,13 @@ public class TeamBankSubCommand {
                         String currencyName = amount > 1 ? plugin.getEconomyHook().getCurrencyNameSingular() : plugin.getEconomyHook().getCurrencyNamePlural();
                         plugin.getEconomyHook().giveMoney(player, amount);
 
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getMoneyWithdrawn()
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getEconomy().getWithdraw().getSuccess()
                                 .replace("%MONEY%", String.valueOf(amount))
                                 .replace("%CURRENCY%", currencyName)
                         ));
                     }
                 },
-                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 }

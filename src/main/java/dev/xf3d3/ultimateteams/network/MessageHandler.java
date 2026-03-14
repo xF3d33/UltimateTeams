@@ -90,7 +90,7 @@ public interface MessageHandler {
             final Player inviter = Bukkit.getPlayer(invite.getInviter());
 
             if (inviter != null)  {
-                inviter.sendMessage(MineDown.parse(getPlugin().getMessages().getTeamInviteDeniedInviter()
+                inviter.sendMessage(MineDown.parse(getPlugin().getMessages().getTeam().getInvite().getDeniedInviter()
                         .replace("%PLAYER%", Objects.requireNonNullElse(Bukkit.getOfflinePlayer(invite.getInvitee()).getName(), "?"))));
             }
 
@@ -98,7 +98,7 @@ public interface MessageHandler {
         }
 
         // Send message to team members
-        team.get().sendTeamMessage(MineDown.parse(getPlugin().getMessages().getTeamJoinBroadcastChat()
+        team.get().sendTeamMessage(MineDown.parse(getPlugin().getMessages().getTeam().getJoin().getBroadcastChat()
                 .replace(PLAYER_PLACEHOLDER, Objects.requireNonNullElse(Bukkit.getOfflinePlayer(invite.getInvitee()).getName(), "?"))
                 .replace(TEAM_PLACEHOLDER, Utils.Color(team.get().getName()))));
     }
@@ -151,7 +151,7 @@ public interface MessageHandler {
                         // Only send notification via player-targeted messages
                         // Server-targeted messages are for team data updates only (handled by TEAM_UPDATE)
                         if (receiver != null) {
-                            receiver.sendMessage(MineDown.parse(getPlugin().getMessages().getTeamOwnershipTransferNewOwner()
+                            receiver.sendMessage(MineDown.parse(getPlugin().getMessages().getTeam().getTransfer().getNewOwnerMessage()
                                     .replace("%TEAM%", team.getName())));
                         }
                         // Server-targeted messages don't send notifications to avoid duplicates
@@ -164,7 +164,7 @@ public interface MessageHandler {
             return;
         }
 
-        receiver.sendMessage(MineDown.parse(getPlugin().getMessages().getTeamKickedPlayerMessage()
+        receiver.sendMessage(MineDown.parse(getPlugin().getMessages().getTeam().getKick().getKickedPlayerMessage()
                 .replace("%TEAM%", getPlugin().getTeamStorageUtil().findTeamByMember(receiver.getUniqueId()).map(Team::getName).orElse("?"))));
 
         getPlugin().getUsersStorageUtil().getPlayer(receiver.getUniqueId()).thenAccept(teamPlayer -> {

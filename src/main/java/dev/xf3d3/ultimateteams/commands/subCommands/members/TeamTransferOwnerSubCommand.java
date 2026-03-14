@@ -20,7 +20,7 @@ public class TeamTransferOwnerSubCommand {
 
     public void transferTeamOwnerSubCommand(CommandSender sender, @Values("teamPlayers") String memberName) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
@@ -28,17 +28,17 @@ public class TeamTransferOwnerSubCommand {
         final OfflinePlayer newTeamOwner = Bukkit.getOfflinePlayer(memberName);
 
         if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamMustBeOwner()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getMustBeOwner()));
             return;
         }
 
         if (newTeamOwner.getName() == null) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getPlayerNotFound()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerNotFound()));
             return;
         }
 
         if (player.getUniqueId().equals(newTeamOwner.getUniqueId())) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferFailedCannotTransferToSelf()
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getTransfer().getFailedCannotTransferToSelf()
                     .replace(PLAYER_PLACEHOLDER, player.getName())));
 
             return;
@@ -47,7 +47,7 @@ public class TeamTransferOwnerSubCommand {
         plugin.getTeamStorageUtil().findTeamByOwner(player.getUniqueId()).ifPresentOrElse(
                 team -> {
                     if (!team.getMembers().containsKey(newTeamOwner.getUniqueId())) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferFailureNotSameTeam()));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getTransfer().getFailureNotSameTeam()));
                         return;
                     }
 
@@ -55,13 +55,13 @@ public class TeamTransferOwnerSubCommand {
 
                     plugin.getTeamStorageUtil().transferTeamOwner(team, newTeamOwner.getUniqueId());
 
-                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferSuccessful()
+                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getTransfer().getSuccessful()
                             .replace(PLAYER_PLACEHOLDER, newTeamOwner.getName())));
 
                     // Message to new owner is sent via cross-server message in transferTeamOwner
                     // This prevents duplicates when new owner is on same server
                 },
-                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getFailedNotInTeam()))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPvp().getFailedNotInTeam()))
         );
 
     }

@@ -77,13 +77,13 @@ public class AlliesManager {
                                     if (plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.RELATIONS))) {
                                         plugin.getTeamStorageUtil().removeTeamAlly(team, allie, player);
 
-                                        team.sendTeamMessage(MineDown.parse(plugin.getMessages().getRemovedTeamFromYourAllies().replace("%ALLYTEAM%", allie.getName())));
-                                        allie.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeamRemovedFromOtherAllies().replace("%TEAM%", team.getName())));
+                                        team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeam().getAlly().getRemovedSuccessful().replace("%ALLYTEAM%", allie.getName())));
+                                        allie.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeam().getAlly().getRemovedOtherNotification().replace("%TEAM%", team.getName())));
 
                                         click.getGui().close();
                                         new AlliesManager(plugin, player);
                                     } else {
-                                        player.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                                        player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                                     }
                                 }
 

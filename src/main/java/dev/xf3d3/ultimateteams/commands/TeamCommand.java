@@ -50,7 +50,7 @@ public class TeamCommand extends BaseCommand {
     @CommandCompletion("@nothing")
     public void onTeamCommand(@NotNull CommandSender sender) {
         if (sender instanceof ConsoleCommandSender) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
 
             return;
         }
@@ -68,12 +68,12 @@ public class TeamCommand extends BaseCommand {
                 return;
             }
 
-            plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
+            plugin.getMessages().getCommands().getTeamHelp().forEach(line -> sender.sendMessage(MineDown.parse(line)));
 
             /*for (int i = 1; i <= 19; i++) {
                 String message = messagesConfig.getString(String.format("team-command-incorrect-usage.line-%s", i));
 
-                sender.sendMessage(Utils.Color(plugin.getMessages().getTeamCommandIncorrectUsage()));
+                sender.sendMessage(Utils.Color(plugin.getMessages().getCommands().getTeamHelp()));
             }*/
         }
     }
@@ -82,7 +82,7 @@ public class TeamCommand extends BaseCommand {
     @CatchUnknown
     @Subcommand("help")
     public void doHelp(CommandSender sender, CommandHelp help) {
-        plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
+        plugin.getMessages().getCommands().getTeamHelp().forEach(line -> sender.sendMessage(MineDown.parse(line)));
     }
 
     // TEAM GUI
@@ -91,7 +91,7 @@ public class TeamCommand extends BaseCommand {
     @CommandPermission("ultimateteams.team.gui")
     public void onTeamGUICommand(@NotNull CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
 
             return;
         }
@@ -111,7 +111,7 @@ public class TeamCommand extends BaseCommand {
     public void onTeamCreateCommand(@NotNull CommandSender sender, @Optional String name) {
         if (name == null) {
 
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamCreateIncorrectUsage()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getIncorrectUsage()));
             return;
         }
 
@@ -247,11 +247,11 @@ public class TeamCommand extends BaseCommand {
     public void onTeamEnemyCommand(@NotNull CommandSender sender) {
         if (!plugin.getSettings().getTeam().getEnemies().isEnabled()) {
 
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
             return;
         }
 
-        plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
+        plugin.getMessages().getCommands().getTeamHelp().forEach(line -> sender.sendMessage(MineDown.parse(line)));
     }
 
     @Subcommand("enemy add")
@@ -276,11 +276,11 @@ public class TeamCommand extends BaseCommand {
     public void onTeamAllyCommand(@NotNull CommandSender sender) {
         if (!plugin.getSettings().getTeam().getAllies().isEnabled()) {
 
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
             return;
         }
 
-        plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
+        plugin.getMessages().getCommands().getTeamHelp().forEach(line -> sender.sendMessage(MineDown.parse(line)));
     }
 
     @Subcommand("ally add")
@@ -381,7 +381,7 @@ public class TeamCommand extends BaseCommand {
     // TEAM PERMISSIONS
     @Subcommand("permissions")
     public void onTeamPermissionsCommand(@NotNull CommandSender sender) {
-        plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
+        plugin.getMessages().getCommands().getTeamHelp().forEach(line -> sender.sendMessage(MineDown.parse(line)));
     }
 
     @Subcommand("permissions add")

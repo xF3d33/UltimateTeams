@@ -17,12 +17,12 @@ public class TeamDisbandConfirmSubCommand {
 
     public void disbandTeamSubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamMustBeOwner()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getMustBeOwner()));
             return;
         }
 
@@ -31,9 +31,9 @@ public class TeamDisbandConfirmSubCommand {
                     if (!(new TeamDisbandEvent(player, team).callEvent())) return;
 
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(player, team));
-                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeamSuccessfullyDisbanded()));
+                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getDisband().getSuccessful()));
                 },
-                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamDisbandFailure()))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getDisband().getFailure()))
         );
     }
 }

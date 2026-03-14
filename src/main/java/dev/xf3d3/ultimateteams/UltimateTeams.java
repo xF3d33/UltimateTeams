@@ -106,11 +106,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         this.updateChecker = new UpdateCheck(this);
 
         // Load settings and locales
-        initialize("plugin config & locale files", (plugin) -> {
-            if (!loadConfigs()) {
-                throw new IllegalStateException("Failed to load config files. Please check the console for errors");
-            }
-        });
+        initialize("plugin config & locale files", (plugin) -> loadConfigs());
 
         // Initialize the database
         initialize(getSettings().getDatabase().getType().getDisplayName() + " database connection", (plugin) -> {
@@ -279,7 +275,7 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
             runSyncRepeating(() -> {
                 teamInviteUtil.emptyInviteList();
                 if (getSettings().getGeneral().isRunAutoInviteWipeTaskLog()){
-                    Bukkit.getConsoleSender().sendMessage(MineDown.parse(getMessages().getAutoInviteWipeComplete()));
+                    Bukkit.getConsoleSender().sendMessage(MineDown.parse(getMessages().getGeneral().getInviteWipeComplete()));
                 }
             }, 12000);
         }
@@ -341,33 +337,28 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
      /**
      * Reloads the {@link Settings} from its config file
      *
-     * @return {@code true} if the reload was successful, {@code false} otherwise
      */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean loadConfigs() {
-        try {
-            // Load settings
-            setSettings(YamlConfigurations.update(
-                    getDataFolder().toPath().resolve("config.yml"),
-                    Settings.class,
-                    YAML_CONFIGURATION_PROPERTIES.header(Settings.CONFIG_HEADER).build()
-            ));
+    public void loadConfigs() {
+        // Load settings
+        setSettings(YamlConfigurations.update(
+                getDataFolder().toPath().resolve("config.yml"),
+                Settings.class,
+                YAML_CONFIGURATION_PROPERTIES.header(Settings.CONFIG_HEADER).build()
+        ));
 
-            // Load Gui File
-            setTeamsGui(YamlConfigurations.update(
-                    getDataFolder().toPath().resolve("teamgui.yml"),
-                    TeamsGui.class,
-                    YAML_CONFIGURATION_PROPERTIES.header(TeamsGui.GUI_HEADER).build()
-            ));
+        // Load Gui File
+        setTeamsGui(YamlConfigurations.update(
+                getDataFolder().toPath().resolve("teamgui.yml"),
+                TeamsGui.class,
+                YAML_CONFIGURATION_PROPERTIES.header(TeamsGui.GUI_HEADER).build()
+        ));
 
-            // Load messages
-            setMessages(Annotaml.create(new File(getDataFolder(), "messages.yml"), Messages.class).get());
-
-            return true;
-        } catch (IOException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            log(Level.SEVERE, "Failed to reload UltimateTeams config or messages file", e);
-        }
-        return false;
+        // Load messages
+        setMessages(YamlConfigurations.update(
+                getDataFolder().toPath().resolve("messages.yml"),
+                Messages.class,
+                YAML_CONFIGURATION_PROPERTIES.header(Messages.MESSAGES_HEADER).build()
+        ));
     }
 
     private boolean isPlaceholderAPIEnabled() {

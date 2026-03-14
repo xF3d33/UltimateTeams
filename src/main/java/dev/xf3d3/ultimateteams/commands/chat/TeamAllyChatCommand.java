@@ -36,21 +36,21 @@ public class TeamAllyChatCommand extends BaseCommand {
     @CommandPermission("ultimateteams.allychat")
     public void onCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof final Player player)){
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
 
             return;
         }
 
         // Check if ally enabled
         if (!plugin.getSettings().getTeam().getAllies().isEnabled()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
 
             return;
         }
 
         // Check if enabled
         if (!plugin.getSettings().getTeam().getAllies().getChat().isEnabled()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
 
             return;
         }
@@ -67,7 +67,7 @@ public class TeamAllyChatCommand extends BaseCommand {
             // disable chat
             if (chatTalking) {
                 plugin.getUsersStorageUtil().getChatPlayers().remove(player.getUniqueId());
-                player.sendMessage(MineDown.parse(plugin.getMessages().getAllyChatToggleOff()));
+                player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getAllychat().getToggleOff()));
 
                 plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
 
@@ -78,7 +78,7 @@ public class TeamAllyChatCommand extends BaseCommand {
                 // enable chat
             } else {
                 plugin.getUsersStorageUtil().getChatPlayers().put(player.getUniqueId(), UsersStorage.ChatType.ALLY_CHAT);
-                player.sendMessage(MineDown.parse(plugin.getMessages().getAllyChatToggleOn()));
+                player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getAllychat().getToggleOn()));
 
                 plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
 
@@ -133,7 +133,7 @@ public class TeamAllyChatCommand extends BaseCommand {
                             .build()
                             .send(broker, player));
                 },
-                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 }

@@ -77,10 +77,10 @@ public class TeamManager {
                         if (plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.HOME))) {
 
                             plugin.getTeamStorageUtil().deleteHome(player, team);
-                            player.sendMessage(MineDown.parse(plugin.getMessages().getSuccessfullyDeletedTeamHome()));
+                            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getHome().getDeleteSuccessful()));
 
                             click.getGui().draw();
-                        } else player.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        } else player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                     }
 
                     return true;
@@ -143,16 +143,16 @@ public class TeamManager {
                             if (team.isFriendlyFireAllowed()){
                                 team.setFriendlyFire(false);
 
-                                player.sendMessage(MineDown.parse(plugin.getMessages().getDisabledFriendlyFire()));
+                                player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPvp().getDisabled()));
                             } else {
                                 team.setFriendlyFire(true);
-                                player.sendMessage(MineDown.parse(plugin.getMessages().getEnabledFriendlyFire()));
+                                player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPvp().getEnabled()));
                             }
 
                             plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
                             click.getGui().draw();
 
-                        } else player.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        } else player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                     }
 
                     return true;

@@ -142,7 +142,7 @@ public class PapiExpansion extends PlaceholderExpansion {
 
             case "team_motd":
                 return optionalTeam
-                        .map(team -> Objects.requireNonNullElse(team.getMotd(), plugin.getMessages().getTeamMotdNotSet()))
+                        .map(team -> Objects.requireNonNullElse(team.getMotd(), plugin.getMessages().getTeam().getMotd().getNotSet()))
                         .orElse(getNotInTeamPlaceholder());
 
             case "team_fee":

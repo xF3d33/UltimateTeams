@@ -61,14 +61,14 @@ public class Utils {
 
         // if tp is Home and cooldown is enabled handle teleport
         if ((plugin.getSettings().getTeam().getHome().getTpDelay() > 0) && teleportType.equals(TeleportType.HOME)) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamHomeCooldownStart().replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeam().getHome().getTpDelay()))));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getHome().getCooldownStart().replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeam().getHome().getTpDelay()))));
 
             final WrappedTask task = plugin.runLater(() -> {
                 // Run on the appropriate thread scheduler for this platform
                 plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 this.getPendingTeleport().remove(player.getUniqueId());
 
-                player.sendMessage(MineDown.parse(plugin.getMessages().getSuccessfullyTeleportedToHome()));
+                player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getHome().getTeleportSuccessful()));
             }, plugin.getSettings().getTeam().getHome().getTpDelay());
 
             pendingTeleport.put(player.getUniqueId(), task);
@@ -77,14 +77,14 @@ public class Utils {
 
         // if tp is Warp and cooldown is enabled handle teleport
         if ((plugin.getSettings().getTeam().getWarp().getTpDelay() > 0) && teleportType.equals(TeleportType.WARP)) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpCooldownStart().replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeam().getWarp().getTpDelay()))));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getWarp().getCooldownStart().replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeam().getWarp().getTpDelay()))));
 
             final WrappedTask task = plugin.runLater(() -> {
                 // Run on the appropriate thread scheduler for this platform
                 plugin.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 this.getPendingTeleport().remove(player.getUniqueId());
 
-                player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpTeleportedSuccessful().replaceAll("%WARP_NAME%", String.valueOf(warpName))));
+                player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getWarp().getTeleportedSuccessful().replaceAll("%WARP_NAME%", String.valueOf(warpName))));
 
             }, plugin.getSettings().getTeam().getWarp().getTpDelay());
 

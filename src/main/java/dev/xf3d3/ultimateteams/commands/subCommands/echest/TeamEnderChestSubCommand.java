@@ -86,7 +86,7 @@ public class TeamEnderChestSubCommand implements Listener {
 
     public void openDirectEnderChest(@NotNull Player viewer, @NotNull Team team, int chestNumber) {
         if (!team.hasEnderChest(chestNumber)) {
-            viewer.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestNotExist()
+            viewer.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getEchest().getNotExist()
                     .replace("%NUMBER%", String.valueOf(chestNumber))));
             return;
         }
@@ -166,13 +166,13 @@ public class TeamEnderChestSubCommand implements Listener {
     
     public void openEnderChest(@NotNull CommandSender sender, int chestNumber) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
 
             return;
         }
 
         if (!plugin.getSettings().getTeam().getEchest().isEnabled()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
 
             return;
         }
@@ -180,7 +180,7 @@ public class TeamEnderChestSubCommand implements Listener {
         // Check if player is in a team
         Optional<Team> teamOpt = plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId());
         if (teamOpt.isEmpty()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()));
 
             return;
         }
@@ -189,7 +189,7 @@ public class TeamEnderChestSubCommand implements Listener {
 
         openDirectEnderChest(player, team, chestNumber);
 
-        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestOpened()
+        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getEchest().getOpened()
                 .replace("%NUMBER%", String.valueOf(chestNumber))
         ));
     }

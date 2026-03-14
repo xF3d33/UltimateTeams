@@ -138,7 +138,7 @@ public class TeamEnderChestRollbackSubCommand {
         plugin.getTeamStorageUtil().findTeamByName(teamName).ifPresentOrElse(
                 team -> {
                     if (!team.hasEnderChest(chestNumber)) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestNotExist()
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getEchest().getNotExist()
                                 .replace("%CHEST%", String.valueOf(chestNumber))
                                 .replace("%NUMBER%", String.valueOf(chestNumber))));
                         return;
@@ -179,7 +179,7 @@ public class TeamEnderChestRollbackSubCommand {
         plugin.getTeamStorageUtil().findTeamByName(teamName).ifPresentOrElse(
                 team -> {
                     if (!team.hasEnderChest(chestNumber)) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamEchestNotExist()
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getEchest().getNotExist()
                                 .replace("%CHEST%", String.valueOf(chestNumber))
                                 .replace("%NUMBER%", String.valueOf(chestNumber))));
                         return;

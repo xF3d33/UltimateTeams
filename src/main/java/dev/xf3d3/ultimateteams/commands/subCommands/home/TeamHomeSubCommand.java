@@ -24,13 +24,13 @@ public class TeamHomeSubCommand {
 
     public void tpTeamHomeSubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         // check if function is enabled
         if (!plugin.getSettings().getTeam().getHome().isEnabled()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
             return;
         }
 
@@ -40,7 +40,7 @@ public class TeamHomeSubCommand {
 
                     // check if home exists
                     if (home == null) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getFailedNoHomeSet()));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getHome().getNoHomeSet()));
                         return;
                     }
 
@@ -49,7 +49,7 @@ public class TeamHomeSubCommand {
                             if (homeCoolDownTimer.get(player.getUniqueId()) > System.currentTimeMillis()) {
                                 long timeLeft = (homeCoolDownTimer.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000;
 
-                                player.sendMessage(MineDown.parse(plugin.getMessages().getHomeCoolDownTimerWait()
+                                player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getHome().getCooldownWait()
                                         .replaceAll(TIME_LEFT, Long.toString(timeLeft))));
                             } else {
                                 homeCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeam().getHome().getCoolDown().getTime() * 1000L));
@@ -68,7 +68,7 @@ public class TeamHomeSubCommand {
                     if (!(new TeamTeleportEvent(player, team, home.getLocation()).callEvent())) return;
                     tpHome(player, home);
                 },
-                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getFailedTpNotInTeam()))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getHome().getFailedNotInTeam()))
         );
 
 

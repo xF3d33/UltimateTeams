@@ -18,18 +18,18 @@ public class TeamSetWarpSubCommand {
 
     public void setWarpCommand(CommandSender sender, String name) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
 
         if (!plugin.getSettings().getTeam().getWarp().isEnable()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
             return;
         }
 
         if (name.contains(" ")) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getIncorrectCommandUsage()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getIncorrectCommandUsage()));
 
             return;
         }
@@ -38,18 +38,18 @@ public class TeamSetWarpSubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.WARPS)))) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                         return;
                     }
 
                     plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAccept(teamPlayer -> {
                         if (team.getWarps().size() >= teamPlayer.getMaxWarps(player, plugin.getSettings().getTeam().getWarp().getLimit(), plugin.getSettings().getTeam().getWarp().isStackWarps())) {
-                            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpLimitReached()));
+                            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getWarp().getLimitReached()));
                             return;
                         }
 
                         if (team.getTeamWarp(name).isPresent()) {
-                            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpNameUsed()));
+                            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getWarp().getNameUsed()));
                             return;
                         }
 
@@ -60,10 +60,10 @@ public class TeamSetWarpSubCommand {
                         team.addTeamWarp(warp);
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpSuccessful().replaceAll("%WARP_NAME%", warp.getName())));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getWarp().getSuccessful().replaceAll("%WARP_NAME%", warp.getName())));
                     });
                 },
-                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 }

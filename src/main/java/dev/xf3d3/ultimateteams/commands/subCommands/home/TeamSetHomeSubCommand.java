@@ -19,12 +19,12 @@ public class TeamSetHomeSubCommand {
 
     public void setTeamHomeSubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getSettings().getTeam().getHome().isEnabled()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
             return;
         }
 
@@ -32,7 +32,7 @@ public class TeamSetHomeSubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.HOME)))) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                         return;
                     }
 
@@ -46,9 +46,9 @@ public class TeamSetHomeSubCommand {
                     team.setHome(home);
 
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
-                    player.sendMessage(MineDown.parse(plugin.getMessages().getSuccessfullySetTeamHome()));
+                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getHome().getSetSuccessful()));
                 },
-                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getFailedNotInTeam()))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPvp().getFailedNotInTeam()))
         );
     }
 }

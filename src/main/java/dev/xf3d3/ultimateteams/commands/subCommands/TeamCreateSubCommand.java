@@ -37,63 +37,63 @@ public class TeamCreateSubCommand {
     public void createTeamSubCommand(CommandSender sender, String name, List<String> bannedTags) {
 
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (plugin.getSettings().getTeam().getName().getRegex().isEnable() && !teamNameRegex.matcher(name).matches()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameIsBanned()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getNameBanned()));
 
             return;
         }
 
 
         if (name.contains(" ")) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameContainsSpace().replace(TEAM_PLACEHOLDER, name)));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getNameContainsSpace().replace(TEAM_PLACEHOLDER, name)));
             return;
         }
 
         if (bannedTags.stream().map(String::toLowerCase).toList().contains(name.toLowerCase())) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameIsBanned().replace(TEAM_PLACEHOLDER, name)));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getNameBanned().replace(TEAM_PLACEHOLDER, name)));
             return;
         }
 
         if (plugin.getTeamStorageUtil().getTeamsName().stream().map(String::toLowerCase).toList().contains(name.toLowerCase())) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameAlreadyTaken().replace(TEAM_PLACEHOLDER, name)));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getNameTaken().replace(TEAM_PLACEHOLDER, name)));
             return;
         }
 
         if (!plugin.getSettings().getTeam().getName().isAllowColorCodes() && (name.contains("&") || name.contains("#"))) {
 
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameCannotContainColours()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getNameCannotContainColours()));
             return;
         }
 
         if (plugin.getSettings().getTeam().getName().isRequirePermForColorCodes() && !player.hasPermission("ultimateteams.team.create.usecolors") && (name.contains("&") || name.contains("#"))) {
 
-            player.sendMessage(MineDown.parse(plugin.getMessages().getUseColoursMissingPermission()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoColourPermission()));
             return;
         }
 
         if (storageUtil.isInTeam(player)) {
 
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamCreationFailed().replace(TEAM_PLACEHOLDER, Utils.Color(name))));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getFailed().replace(TEAM_PLACEHOLDER, Utils.Color(name))));
             return;
         }
 
         final int nameLength = Utils.removeColors(name).length();
         if (nameLength < MIN_CHAR_LIMIT) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameTooShort().replace("%CHARMIN%", Integer.toString(MIN_CHAR_LIMIT))));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getNameTooShort().replace("%CHARMIN%", Integer.toString(MIN_CHAR_LIMIT))));
 
             return;
         } else if (nameLength > MAX_CHAR_LIMIT) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameTooLong().replace("%CHARMAX%", Integer.toString(MAX_CHAR_LIMIT))));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getNameTooLong().replace("%CHARMAX%", Integer.toString(MAX_CHAR_LIMIT))));
 
             return;
         }
 
         if (plugin.getEconomyHook() != null && !plugin.getEconomyHook().takeMoney(player, plugin.getSettings().getEconomy().getTeamCreate().getCost())) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getNotEnoughMoney().replace("%MONEY%", String.valueOf(plugin.getSettings().getEconomy().getTeamCreate().getCost()))));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getEconomy().getNotEnoughMoney().replace("%MONEY%", String.valueOf(plugin.getSettings().getEconomy().getTeamCreate().getCost()))));
             return;
         }
 
@@ -103,7 +103,7 @@ public class TeamCreateSubCommand {
 
         storageUtil.createTeam(player, event.getName());
 
-        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamCreatedSuccessfully().replace(TEAM_PLACEHOLDER, Utils.Color(name))));
+        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getSuccessful().replace(TEAM_PLACEHOLDER, Utils.Color(name))));
 
     }
 }

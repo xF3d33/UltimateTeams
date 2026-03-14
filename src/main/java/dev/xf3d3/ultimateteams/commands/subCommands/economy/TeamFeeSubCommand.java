@@ -17,12 +17,12 @@ public class TeamFeeSubCommand {
 
     public void teamFeeSeeSubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (plugin.getEconomyHook() == null) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
 
             return;
         }
@@ -31,26 +31,26 @@ public class TeamFeeSubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.FEE)))) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                         return;
                     }
 
-                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeamFeeCurrent()
+                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getFee().getCurrent()
                             .replace("%AMOUNT%", String.valueOf(team.getJoin_fee()))
                     ));
                 },
-                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 
     public void teamSetFeeSubCommand(CommandSender sender, double amount) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (plugin.getEconomyHook() == null || !plugin.getSettings().getEconomy().getTeamJoinFee().isEnabled()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
 
             return;
         }
@@ -59,12 +59,12 @@ public class TeamFeeSubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.FEE)))) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                         return;
                     }
 
                     if (amount <= 0) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getEconomyInvalidAmount()
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getEconomy().getInvalidAmount()
                                 .replace("%AMOUNT%", String.valueOf(team.getJoin_fee()))
                         ));
 
@@ -72,7 +72,7 @@ public class TeamFeeSubCommand {
                     }
 
                     if (amount > plugin.getSettings().getEconomy().getTeamJoinFee().getMaxFee()) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamFeeTooBig()
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getFee().getAmountTooBig()
                                 .replace("%AMOUNT%", String.valueOf(plugin.getSettings().getEconomy().getTeamJoinFee().getMaxFee()))
                         ));
 
@@ -82,22 +82,22 @@ public class TeamFeeSubCommand {
                     team.setJoin_fee(amount);
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeamFeeSet()
+                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getFee().getSuccess()
                             .replace("%AMOUNT%", String.valueOf(team.getJoin_fee()))
                     ));
                 },
-                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 
     public void teamDisableFeeSubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (plugin.getEconomyHook() == null) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
 
             return;
         }
@@ -106,7 +106,7 @@ public class TeamFeeSubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.FEE)))) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                         return;
                     }
 
@@ -114,9 +114,9 @@ public class TeamFeeSubCommand {
                     team.setJoin_fee(0);
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeamFeeDisable()));
+                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getFee().getDisable()));
                 },
-                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 }
