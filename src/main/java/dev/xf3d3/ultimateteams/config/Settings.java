@@ -1,682 +1,537 @@
 package dev.xf3d3.ultimateteams.config;
 
+import de.exlll.configlib.Comment;
+import de.exlll.configlib.Configuration;
 import dev.xf3d3.ultimateteams.database.Database;
 import dev.xf3d3.ultimateteams.network.Broker;
+import lombok.AccessLevel;
 import lombok.Getter;
-import net.william278.annotaml.YamlComment;
-import net.william278.annotaml.YamlFile;
-import net.william278.annotaml.YamlKey;
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
 /**
  * Plugin settings, read from config.yml
  */
-@SuppressWarnings("unused")
-@YamlFile(header = """
-        ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-        ┃     UltimateTeams Config     ┃
-        ┃      Developed by xF3d3      ┃
-        ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-        ┃
-        ┗╸ Information: https://modrinth.com/plugin/ultimate-teams""")
+@SuppressWarnings("FieldMayBeFinal")
+@Getter
+@Configuration
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Settings {
 
-    // Top-level settings
-    @YamlComment("Do you want to use the GUI system? [Default value: true]")
-    @YamlKey("gui.enable")
-    private boolean useGlobalGui = true;
+    public static final String CONFIG_HEADER = """
+            ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+            ┃     UltimateTeams Config     ┃
+            ┃      Developed by xF3d3      ┃
+            ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+            ┃
+            ┗╸ Information: https://modrinth.com/plugin/ultimate-teams""";
 
-    @YamlComment("Should the plugin open the team list GUI instead of sending chat message when /team list is used? [Default value: false]")
-    @YamlKey("gui.use-gui-for-team-list")
-    @Getter
-    private boolean teamListUseGui = false;
+    @Comment("Hook into luckperms to create contexts (e.g. is-in-team) [Default value: false]. Needs LuckPerms")
+    private boolean luckpermsHook = false;
 
-    // Database settings
-    @YamlComment("Type of database to use (SQLITE, H2, MYSQL, MARIADB, or POSTGRESQL). MARIADB is preferred over MYSQL. H2 is preferred over SQLITE")
-    @YamlKey("database.type")
-    private Database.Type databaseType = Database.Type.SQLITE;
-
-    @YamlComment("Specify credentials here if you are using MYSQL as your database type")
-    @YamlKey("database.mysql.credentials.host")
-    private String mySqlHost = "localhost";
-
-    @YamlKey("database.mysql.credentials.port")
-    private int mySqlPort = 3306;
-
-    @YamlKey("database.mysql.credentials.database")
-    private String mySqlDatabase = "ultimate_teams";
-
-    @YamlKey("database.mysql.credentials.username")
-    private String mySqlUsername = "root";
-
-    @YamlKey("database.mysql.credentials.password")
-    private String mySqlPassword = "pa55w0rd";
-
-    @YamlKey("database.mysql.credentials.parameters")
-    private String mySqlConnectionParameters = "?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8";
-
-    @YamlComment("MYSQL / MARIADB / POSTGRESQL database connection pool properties. Don't modify this unless you know what you're doing!")
-    @YamlKey("database.mysql.connection_pool.size")
-    private int mySqlConnectionPoolSize = 12;
-
-    @YamlKey("database.mysql.connection_pool.idle")
-    private int mySqlConnectionPoolIdle = 12;
-
-    @YamlKey("database.mysql.connection_pool.lifetime")
-    private long mySqlConnectionPoolLifetime = 1800000;
-
-    @YamlKey("database.mysql.connection_pool.keepalive")
-    private long mySqlConnectionPoolKeepAlive = 30000;
-
-    @YamlKey("database.mysql.connection_pool.timeout")
-    private long mySqlConnectionPoolTimeout = 20000;
-
-    @YamlComment("Names of tables to use on your database. Don't modify this unless you know what you're doing!")
-    @YamlKey("database.table_names")
-    private Map<String, String> tableNames = Map.of(
-        Database.Table.TEAM_DATA.name().toLowerCase(), Database.Table.TEAM_DATA.getDefaultName(),
-        Database.Table.USER_DATA.name().toLowerCase(), Database.Table.USER_DATA.getDefaultName()
-    );
-
-
-    // cross-server settings
-    @YamlComment("Whether enable cross-server mode. You must use MYSQL/MARIADB/POSTGRESQL to use cross-server")
-    @YamlKey("cross-server.enable")
-    @Getter
-    private boolean enableCrossServer = false;
-
-    @YamlComment("The name of the server as it appears on Bungee/Velocity (case-sensitive)")
-    @YamlKey("cross-server.server-name")
-    @Getter
-    private String serverName = "Survival";
-
-    @YamlComment("The cluster ID, for if you're networking multiple separate groups of UltimateTeams-enabled servers. Do not change unless you know what you're doing")
-    @YamlKey("cross-server.cluster-id")
-    @Getter
-    private String clusterId = "main";
-
-    @YamlComment("Type of network message broker to ues for data synchronization (PLUGIN_MESSAGE or REDIS). Always use REDIS if possible.")
-    @YamlKey("cross-server.broker")
-    @Getter
-    private Broker.Type brokerType = Broker.Type.PLUGIN_MESSAGE;
-
-    @YamlComment("Settings for if you're using REDIS as your message broker")
-    @YamlKey("cross-server.redis.host")
-    @Getter
-    private String redisHost = "localhost";
-
-    @YamlKey("cross-server.redis.port")
-    @Getter
-    private int redisPort = 6379;
-
-    @YamlKey("cross-server.redis.password")
-    @Getter
-    private String redisPassword = "";
-
-    @YamlKey("cross-server.redis.use-ssl")
-    @Getter
-    private boolean redisUseSSL = false;
-
-
-
-    @YamlComment("Hook into luckperms to create contexts (e.g. is-in-team) [Default value: false]. Needs LuckPerms")
-    @YamlKey("luckperms-hook")
-    private boolean luckpermshook = false;
-
-    @YamlComment("use HuskHomes to teleport players instead of built-in teleport handler [Default value: true]")
-    @YamlKey("use-huskhomes")
+    @Comment("use HuskHomes to teleport players instead of built-in teleport handler [Default value: true]")
     private boolean useHuskhomes = false;
 
-    @YamlComment("Hook into floodgate to handle bedrock players properly [Default value: false]. Needs FloodGate")
-    @YamlKey("floodgate-hook")
+    @Comment("Hook into floodgate to handle bedrock players properly [Default value: false]. Needs FloodGate")
     private boolean floodgateHook = false;
 
-    @YamlComment("When the placeholder would be blank, the text below will be shown instead (you can use color codes)")
-    @YamlKey("placeholder.not-in-a-team")
-    private String notInTeamPlaceholder = "Not in a team";
+    @Comment("GUI Settings")
+    private GuiSettings gui = new GuiSettings();
 
-
-    @YamlComment("Should the plugin cancel teleports if the player moves or is damaged during the tp delay? [Changes require restart]")
-    @YamlKey("team.cancel-tp")
     @Getter
-    private boolean teamCancelTp = true;
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class GuiSettings {
+        @Comment("Do you want to use the GUI system? [Default value: true]")
+        private boolean enable = true;
 
-    @YamlComment("Whether to allow color codes (& and #) in the teams name")
-    @YamlKey("team.name.allow-color-codes")
+        @Comment("Should the plugin open the team list GUI instead of sending chat message when /team list is used? [Default value: false]")
+        private boolean useGuiForTeamList = false;
+    }
+
+    @Comment("Database Settings")
+    private DatabaseSettings database = new DatabaseSettings();
+
     @Getter
-    private boolean teamCreateAllowColorCodes = false;
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class DatabaseSettings {
 
-    @YamlComment("If enabled, players need the ultimateteams.team.create.usecolors permission to use color codes")
-    @YamlKey("team.name.require-perm-for-color-codes")
+        @Comment("Type of database to use (SQLITE, H2, MYSQL, MARIADB, or POSTGRESQL). MARIADB is preferred over MYSQL. H2 is preferred over SQLITE")
+        private Database.Type type = Database.Type.SQLITE;
+
+        private MysqlSettings mysql = new MysqlSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class MysqlSettings {
+
+            @Comment("Specify credentials here if you are using MYSQL, MARIADB or POSTGRESQL as database type")
+            private Credentials credentials = new Credentials();
+
+            @Getter
+            @Configuration
+            @NoArgsConstructor(access = AccessLevel.PRIVATE)
+            public static class Credentials {
+                private String host = "localhost";
+                private int port = 3306;
+                private String database = "ultimate_teams";
+                private String username = "root";
+                private String password = "pa55w0rd";
+                private String parameters = "?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8";
+            }
+
+            @Comment("MYSQL / MARIADB / POSTGRESQL database connection pool properties. Don't modify this unless you know what you're doing!")
+            private ConnectionPool connectionPool = new ConnectionPool();
+
+            @Getter
+            @Configuration
+            @NoArgsConstructor(access = AccessLevel.PRIVATE)
+            public static class ConnectionPool {
+                private int size = 12;
+                private int idle = 12;
+                private long lifetime = 1800000;
+                private long keepalive = 30000;
+                private long timeout = 20000;
+            }
+        }
+
+        @Comment("Names of tables to use on your database. Don't modify this unless you know what you're doing!")
+        @Getter(AccessLevel.NONE)
+        private Map<String, String> tableNames = Map.of(
+                Database.Table.TEAM_DATA.name().toLowerCase(Locale.ENGLISH), Database.Table.TEAM_DATA.getDefaultName(),
+                Database.Table.USER_DATA.name().toLowerCase(Locale.ENGLISH), Database.Table.USER_DATA.getDefaultName()
+        );
+
+        @NotNull
+        public String getTableName(@NotNull Database.Table table) {
+            return Optional.ofNullable(tableNames.get(table.name().toLowerCase(Locale.ENGLISH))).orElse(table.getDefaultName());
+        }
+    }
+
+    @Comment("Cross-Server Settings")
+    private CrossServerSettings crossServer = new CrossServerSettings();
+
     @Getter
-    private boolean teamCreateRequirePermColorCodes = false;
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class CrossServerSettings {
 
+        @Comment("Whether enable cross-server mode. You must use MYSQL/MARIADB/POSTGRESQL to use cross-server")
+        private boolean enable = false;
 
-    // Team name
-    @YamlKey("team.name.min-length")
+        @Comment("The name of the server as it appears on Bungee/Velocity (case-sensitive)")
+        private String serverName = "Survival";
+
+        @Comment("The cluster ID, for if you're networking multiple separate groups of UltimateTeams-enabled servers. Do not change unless you know what you're doing")
+        private String clusterId = "main";
+
+        @Comment("Type of network message broker to ues for data synchronization (PLUGIN_MESSAGE or REDIS). Always use REDIS if possible.")
+        private Broker.Type broker = Broker.Type.PLUGIN_MESSAGE;
+
+        @Comment("Settings for if you're using REDIS as your message broker")
+        private RedisSettings redis = new RedisSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class RedisSettings {
+            private String host = "localhost";
+            private int port = 6379;
+            private String password = "";
+            private boolean useSsl = false;
+        }
+    }
+
+    @Comment("Placeholder Settings")
+    private PlaceholderSettings placeholder = new PlaceholderSettings();
+
     @Getter
-    private int teamNameMinLength = 4;
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class PlaceholderSettings {
+        @Comment("When the placeholder would be blank, the text below will be shown instead (you can use color codes)")
+        private String notInATeam = "Not in a team";
+    }
 
-    @YamlKey("team.name.max-length")
+    @Comment("Team Settings")
+    private TeamSettings team = new TeamSettings();
+
     @Getter
-    private int teamNameMaxLength = 10;
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class TeamSettings {
 
-    @YamlKey("team.name.regex.enable")
-    @YamlComment("If enabled, the team name will need to additionally pass the regex in order to be used. Advanced users only.")
+        @Comment("Should the plugin cancel teleports if the player moves or is damaged during the tp delay? [Changes require restart]")
+        private boolean cancelTp = true;
+
+        private NameSettings name = new NameSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class NameSettings {
+            @Comment("Whether to allow color codes (& and #) in the teams name")
+            private boolean allowColorCodes = false;
+
+            @Comment("If enabled, players will need the ultimateteams.team.create.usecolors permission to use color codes")
+            private boolean requirePermForColorCodes = false;
+
+            private int minLength = 4;
+            private int maxLength = 10;
+
+            private RegexSettings regex = new RegexSettings("[a-zA-Z]+");
+        }
+
+        private JoinSettings join = new JoinSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class JoinSettings {
+            @Comment("Do you want a message to be sent to team players when a player joins a team? [Default value: true]")
+            private boolean announce = true;
+        }
+
+        private LeaveSettings leave = new LeaveSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class LeaveSettings {
+            @Comment("Do you want a message to be sent to team players when a player leaves a team? [Default value: true]")
+            private boolean announce = true;
+        }
+
+        private SizeSettings size = new SizeSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class SizeSettings {
+            @Comment("Set the default maximum amount of members that can join a players' team. [Default value: 8]")
+            private int defaultMaxTeamSize = 8;
+
+            @Comment("If true, the default members limit will be stacked with permission limit.\n If a player has ultimateteams.max_members.2 and the default limit is 8, he will be able to have 10 members. otherwise only 2.")
+            private boolean stackMembers = false;
+        }
+
+        private HomeSettings home = new HomeSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class HomeSettings {
+            @Comment("Enable the '/team [sethome|home]' system. [Default value: true]")
+            private boolean enabled = true;
+
+            @Comment("Define the delay (cooldown) in seconds before the tp starts.\nThis value has no effect if using HuskHomes as teleport handler")
+            private int tpDelay = 3;
+
+            private CooldownSettings coolDown = new CooldownSettings(true, 120);
+        }
+
+        private PvpSettings pvp = new PvpSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class PvpSettings {
+            @Comment("Globally enable the team friendly fire system (the friendly fire is disabled by default in new teams). [Default value: true]")
+            private boolean enabled = true;
+
+            @Comment("Enable the ability for a player to bypass the pvp protection using 'ultimateteams.bypass.pvp'. [Default value: true]")
+            private boolean bypassPermission = true;
+
+            @Comment("If this is enabled, new teams will have PvP (friendly fire) enabled by default. [Default value: false]")
+            private boolean defaultAllowPvp = false;
+        }
+
+        private WarpSettings warp = new WarpSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class WarpSettings {
+            @Comment("Enable the '/team [setwarp|warp]' system. [Default value: true]")
+            private boolean enable = true;
+
+            @Comment("Define the delay (cooldown) in seconds before the tp starts.\nThis value has no effect if using HuskHomes as teleport handler")
+            private int tpDelay = 3;
+
+            @Comment("Decide how many warps a team owner can set.\n Can be overwritten by giving a player the ultimateteams.max_warps.<number> permission")
+            private int limit = 2;
+
+            @Comment("If true, the default warp limit will be stacked with permission limit.\nFor example: If a player has ultimateteams.max_warps.3 and the default limit is 2, he will be able to set 5 warps.")
+            private boolean stackWarps = false;
+
+            private CooldownSettings coolDown = new CooldownSettings(true, 120);
+        }
+
+        private ChatSettings chat = new ChatSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class ChatSettings {
+            @Comment("Enable the team chat system. [Default value: true]")
+            private boolean enabled = true;
+
+            @Comment("Below is the prefix for the team chat messages. (you can also use any other PAPI placeholder)")
+            private String prefix = "&6[&3TC&6]&r %TEAM% %PLAYER%:";
+        }
+
+        private AlliesSettings allies = new AlliesSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class AlliesSettings {
+            @Comment("Enable the team ally system. [Default value: true]")
+            private boolean enabled = true;
+
+            @Comment("Set the maximum amount of allied teams that can a team can have. [Default value: 4]")
+            private int maxAllies = 4;
+
+            private ChatSettings chat = new ChatSettings("&6[&eAC&6]&r");
+
+            @Getter
+            @Configuration
+            @NoArgsConstructor(access = AccessLevel.PRIVATE)
+            public static class ChatSettings {
+                @Comment("Enable the team ally chat system. [Default value: true]")
+                private boolean enabled = true;
+
+                @Comment("Below is the prefix for the team ally chat messages. (you can also use any other PAPI placeholder)")
+                private String prefix;
+
+                public ChatSettings(String prefix) {
+                    this.prefix = prefix;
+                }
+            }
+        }
+
+        private EnemiesSettings enemies = new EnemiesSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class EnemiesSettings {
+            @Comment("Enable the team enemies system. [Default value: true]")
+            private boolean enabled = true;
+
+            @Comment("Set the maximum amount of enemies teams that can a team can have. [Default value: 2")
+            private int maxEnemies = 2;
+        }
+
+        private PrefixSettings prefix = new PrefixSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class PrefixSettings {
+            @Comment("Whether to allow color codes (& and #) in the teams prefix")
+            private boolean allowColorCodes = true;
+
+            @Comment("If enabled, players need the ultimateteams.team.tag.usecolors permission to use color codes")
+            private boolean requirePermForColorCodes = false;
+
+            @Comment("Set the minimum length of the team prefix. [Default value: 3]")
+            private int minLength = 3;
+
+            @Comment("Set the maximum length of the team prefix. [Default value: 8]")
+            private int maxLength = 8;
+
+            private RegexSettings regex = new RegexSettings("[a-zA-Z]+");
+
+            @Comment("Set below names that are not allowed to be used in prefixes or names. [They are NOT casesensitive]")
+            private List<String> disallowedTags = List.of("Gamers", "Rise", "Up");
+
+            @Comment("Add a space after the team prefix in chat. [Default value: false].")
+            private boolean prefixAddSpaceAfter = false;
+
+            @Comment("Add `[]` characters before and after the team prefix in the chat. [Default value: false]")
+            private boolean prefixAddBrackets = false;
+
+            @Comment("Below is how the above brackets should appear.")
+            private String bracketsOpening = "&f[";
+            private String bracketsClosing = "&f]";
+        }
+
+        private MotdSettings motd = new MotdSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class MotdSettings {
+            @Comment("Should players be allowed to set a MOTD for their team?")
+            private boolean enable = true;
+
+            @Comment("Should players be be sent the team MOTD when they join the team?")
+            private boolean sendOnJoin = true;
+
+            private boolean allowColors = false;
+
+            @Comment("If enabled, players will need the ultimateteams.team.motd.usecolors permission to use color codes")
+            private boolean colorsRequirePerm = false;
+
+            private LengthSettings length = new LengthSettings();
+
+            @Getter
+            @Configuration
+            @NoArgsConstructor(access = AccessLevel.PRIVATE)
+            public static class LengthSettings {
+                private int min = 5;
+                private int max = 30;
+            }
+
+            private RegexSettings regex = new RegexSettings("[a-zA-Z]+");
+        }
+
+        private EchestSettings echest = new EchestSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class EchestSettings {
+            @Comment("Enable the team enderchest system. [Default value: true]\nThis is not compatible with cross-server (yet).\nIf you are currently on 1.21.4 or below, and you want to update your server remember to migrate the team enderchests (guide in the docs)")
+            private boolean enabled = true;
+
+            @Comment("How many rows will the default enderchest have? [Default value: 3]\nValue can go from 1 to 6, being 3 a normal chest and 6 a double chest")
+            private int rows = 3;
+
+            @Comment("ONLY FOR SERVERS WHO JUST UPDATED TO A VERSION THAT SUPPORTS THIS FEATURE!\nShould the plugin add an enderchest to each team on startup? [Default value: false]\nSince teams created before this version didn't have enderchests, add one.\nAFTER A FULL STARTUP DISABLE THIS AND RESTART THE SERVER!")
+            private boolean migrate = false;
+        }
+    }
+
+    @Comment("Chat Spy Settings")
+    private GlobalChatSettings chat = new GlobalChatSettings();
+
     @Getter
-    private boolean teamNameUseRegex = false;
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class GlobalChatSettings {
+        private ChatSpySettings chatSpy = new ChatSpySettings();
 
-    @YamlKey("team.name.regex.value")
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class ChatSpySettings {
+            @Comment("Do you want players with the perm 'ultimateteams.chat.spy' be able to spy on all team chat messages? [Default value: true]")
+            private boolean enabled = true;
+
+            @Comment("Below is the prefix for th chat spy messages. [Default value: &6[&cSPY&6]&r]")
+            private String prefix = "&6[&cSPY&6]&r";
+        }
+    }
+
+    @Comment("Economy Settings")
+    private EconomySettings economy = new EconomySettings();
+
     @Getter
-    private String teamNameRegex = "[a-zA-Z]+";
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class EconomySettings {
+        @Comment("Whether to enable economy (Vault is required). Changes might require to restart the server")
+        private boolean enable = false;
 
+        private TeamCreateSettings teamCreate = new TeamCreateSettings();
 
-    // Team join
-    @YamlComment("Do you want a message to be sent to team players when a player joins a team? [Default value: true]")
-    @YamlKey("team.join.announce")
-    private boolean teamJoinAnnounce = true;
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class TeamCreateSettings {
+            @Comment("Should players pay to create a team?")
+            private boolean enabled = false;
 
-    @YamlComment("Do you want a message to be sent to team players when a player leaves a team? [Default value: true]")
-    @YamlKey("team.leave.announce")
-    private boolean teamLeftAnnounce = true;
+            @Comment("The cost to create a team")
+            private double cost = 100.0;
+        }
 
+        private TeamJoinFeeSettings teamJoinFee = new TeamJoinFeeSettings();
 
-    // Team Size
-    @YamlComment("Set the default maximum amount of members that can join a players' team. [Default value: 8]")
-    @YamlKey("team.size.default-max-team-size")
-    private int maxTeamSize = 8;
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class TeamJoinFeeSettings {
+            @Comment("Should players be allowed to ask who joins a team a fee (that will be deposited in the team bank)?")
+            private boolean enabled = false;
 
-    @YamlComment("If true, the default members limit will be stacked with permission limit.\n If a player has ultimateteams.max_members.2 and the default limit is 8, he will be able to have 10 members. otherwise only 2.")
-    @YamlKey("team.size.stack-members")
-    private boolean stackTeamSizeWithPermission = false;
+            @Comment("The default cost of the join fee")
+            private double defaultValue = 100.0; // Avoid 'default' keyword, mapped to defaultValue
 
+            @Comment("The max cost of the join fee")
+            private double maxFee = 10000.0;
+        }
+    }
 
-    // Team Home
-    @YamlComment("Enable the '/team [sethome|home]' system. [Default value: true]")
-    @YamlKey("team.home.enabled")
-    private boolean teamHomeEnabled = true;
+    @Comment("Update Checker Notifications")
+    private PluginUpdateNotifications pluginUpdateNotifications = new PluginUpdateNotifications();
 
-    @YamlComment("Define the delay (cooldown) in seconds before the tp starts.\nThis value has no effect if using HuskHomes as teleport handler")
-    @YamlKey("team.home.tp-delay")
-    private int teamHomeTpDelay = 3;
-
-    @YamlComment("Enable the cool down on the '/team warp <name>' command to prevent tp spamming (RECOMMENDED). [Default value: true]")
-    @YamlKey("team.home.cool-down.enabled")
-    private boolean teamHomeCooldownEnabled = true;
-
-    @YamlComment("Cool-down time in seconds. [Default value: 120 = 2 minutes]")
-    @YamlKey("team.home.cool-down.time")
-    private int teamHomeCooldownValue = 120;
-
-
-    // Team PvP
-    @YamlComment("Globally enable the team friendly fire system (the friendly fire is disabled by default in new teams). [Default value: true]")
-    @YamlKey("team.pvp.enabled")
-    private boolean pvpCommandEnabled = true;
-
-    @YamlComment("Enable the ability for a player to bypass the pvp protection using 'ultimateteams.bypass.pvp'. [Default value: true]")
-    @YamlKey("team.pvp.bypass-permission")
-    private boolean pvpCommandBypassPerm = true;
-
-    @YamlComment("If this is enabled, new teams will have PvP (friendly fire) enabled by default. [Default value: false]")
-    @YamlKey("team.pvp.default-allow-pvp")
     @Getter
-    private boolean pvpDefaultAllow = false;
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class PluginUpdateNotifications {
+        @Comment("Do you want to enable in game plugin update notifications? (Permission:'ultimateteams.update'). [Default value: true]")
+        private boolean enabled = true;
+    }
 
+    @Comment("General Settings")
+    private GeneralSettings general = new GeneralSettings();
 
-    // Team Warp
-    @YamlComment("Enable the '/team [setwarp|warp]' system. [Default value: true]")
-    @YamlKey("team.warp.enable")
-    private boolean teamWarpEnable = true;
-
-    @YamlComment("Define the delay (cooldown) in seconds before the tp starts.\nThis value has no effect if using HuskHomes as teleport handler")
-    @YamlKey("team.warp.tp-delay")
-    private int teamWarpTpDelay = 3;
-
-    @YamlComment("Decide how many warps a team owner can set.\n Can be overwritten by ultimateteams.max_warps.<number>")
-    @YamlKey("team.warp.limit")
-    private int teamWarpLimit = 2;
-
-    @YamlComment("If true, the default warp limit will be stacked with permission limit.\n If a player has ultimateteams.max_warps.3 and the default limit is 2, he will be able to set 5 warps.")
-    @YamlKey("team.warp.stack-warps")
-    private boolean stackWarpLimitWithPermission = false;
-
-    @YamlComment("Enable the cool down on the '/team warp <name>' command to prevent tp spamming (RECOMMENDED). [Default value: true]")
-    @YamlKey("team.warp.cool-down.enabled")
-    private boolean teamWarpCooldownEnabled = true;
-
-    @YamlComment("Cool-down time in seconds. [Default value: 120 = 2 minutes]")
-    @YamlKey("team.warp.cool-down.time")
-    private int teamWarpCooldownValue = 120;
-
-
-    // Team Chat
-    @YamlComment("Enable the team chat system. [Default value: true]")
-    @YamlKey("team.chat.enabled")
-    private boolean teamChatEnabled = true;
-
-    @YamlComment("Below is the prefix for the team chat messages. (Placeholders: %TEAM% %PLAYER%)")
-    @YamlKey("team.chat.prefix")
-    private String teamChatPrefix = "&6[&3TC&6]&r %TEAM% %PLAYER%:";
-
-
-    // Team Allies
-    @YamlComment("Set the maximum amount of allied teams that can a team can have. [Default value: 4]")
-    @YamlKey("team.allies.max-allies")
-    private int maxAllies = 4;
-
-    // Ally Chat
-    @YamlComment("Enable the team ally chat system. [Default value: true]")
-    @YamlKey("team.allies.chat.enabled")
-    private boolean teamAllyChatEnabled = true;
-
-    @YamlComment("Below is the prefix for the team ally chat messages. (Placeholders: %TEAM% %PLAYER%)")
-    @YamlKey("team.allies.chat.prefix")
-    private String teamAllyChatPrefix = "&6[&eAC&6]&r";
-
-
-    // Team Enemies
-    @YamlComment("Set the maximum amount of enemies teams that can a team can have. [Default value: 2")
-    @YamlKey("team.enemies.max-enemies")
-    private int maxEnemies = 2;
-
-
-    // Team Tags
-    @YamlComment("Whether to allow color codes (& and #) in the teams tag")
-    @YamlKey("team.tag.allow-color-codes")
     @Getter
-    private boolean teamTagAllowColorCodes = true;
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class GeneralSettings {
 
-    @YamlComment("If enabled, players need the ultimateteams.team.tag.usecolors permission to use color codes")
-    @YamlKey("team.tag.require-perm-for-color-codes")
+        @Comment("Do you want to enable the plugins ability to auto-wipe the invites list? [Default value: true]")
+        private boolean runAutoInviteWipeTask = true;
+
+        @Comment("Do you want the plugin to send a message in console when it does the auto-wipe of the invites list? [Default value: true]")
+        private boolean runAutoInviteWipeTaskLog = true;
+
+        @Comment("Do you want the plugin to send a message in console when it does the team echests backup? [Default value: true]")
+        private boolean echestBackupLog = true;
+
+        @Comment("Do you want to see a lot of debug messages in console when most actions are performed? [Default value: false]")
+        private boolean developerDebugMode = false;
+    }
+
+    // --- Common reusable sub-settings below --- //
+
     @Getter
-    private boolean teamTagRequirePermColorCodes = false;
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class RegexSettings {
+        @Comment("If enabled, it will need to additionally pass the regex in order to be used. Advanced users only.")
+        private boolean enable = false;
+        private String value;
 
-    @YamlComment("Set the minimum length of the team prefix. [Default value: 3]")
-    @YamlKey("team.tag.min-length")
-    private int minCharacterLimit = 3;
+        public RegexSettings(String value) {
+            this.value = value;
+        }
+    }
 
-    @YamlComment("Set the minimum length of the team prefix. [Default value: 8]")
-    @YamlKey("team.tag.max-length")
-    private int maxCharacterLimit = 8;
-
-    @YamlKey("team.tag.regex.enable")
-    @YamlComment("If enabled, the team prefix will need to additionally pass the regex in order to be used. Advanced users only.")
     @Getter
-    private boolean teamPrefixUseRegex = false;
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class CooldownSettings {
+        @Comment("Enable the cool down to prevent spamming (RECOMMENDED).")
+        private boolean enabled = true;
 
-    @YamlKey("team.tag.regex.value")
-    @Getter
-    private String teamPrefixRegex = "[a-zA-Z]+";
+        @Comment("Cool-down time in seconds.")
+        private int time = 120;
 
-    @YamlComment("Set below names that are not allowed to be used in prefixes or names. [They are NOT casesensitive]")
-    @YamlKey("team.tag.disallowed-tags")
-    private List<String> disallowedTags = List.of("Gamers", "Rise", "Up");
-
-    @YamlComment("Add a space after the team prefix in chat. [Default value: false].")
-    @YamlKey("team.tag.prefix-add-space-after")
-    private boolean addPrefixChatAfter = false;
-
-    @YamlComment("Add `[]` characters before and after the team prefix in the chat. [Default value: false]")
-    @YamlKey("team.tag.prefix-add-brackets")
-    private boolean addPrefixBrackets = false;
-
-    @YamlComment("Below is how the above brackets should appear.")
-    @YamlKey("team.tag.brackets-opening")
-    private String bracketsOpening = "&f[";
-
-    @YamlKey("team.tag.brackets-closing")
-    private String bracketsClosing = "&f]";
-
-    // Team MOTD
-    @YamlComment("Should players be allowed to set a MOTD for their team?")
-    @YamlKey("team.motd.enable")
-    @Getter
-    private boolean enableMotd = true;
-
-    @YamlComment("Should players be be sent the team MOTD when they join the team?")
-    @YamlKey("team.motd.send-on-join")
-    @Getter
-    private boolean sendMotdOnJoin = true;
-
-    @YamlKey("team.motd.allow-colors")
-    @Getter
-    private boolean motdAllowColors = false;
-
-    @YamlKey("team.motd.colors-require-perm")
-    @YamlComment("If enabled, players will need the ultimateteams.team.motd.usecolors permission to use color codes")
-    @Getter
-    private boolean motdColorsRequirePerm = false;
-
-    @YamlKey("team.motd.length.min")
-    @Getter
-    private int motdMinLength = 5;
-
-    @YamlKey("team.motd.length.max")
-    @Getter
-    private int motdMaxLength = 30;
-
-    @YamlKey("team.motd.regex.enable")
-    @YamlComment("If enabled, the MOTD will need to pass the regex in order to be used. Advanced users only.")
-    @Getter
-    private boolean motdUseRegex = false;
-
-    @YamlKey("team.motd.regex.value")
-    @Getter
-    private String motdRegex = "[a-zA-Z]+";
-
-    // Team Echest
-    @YamlComment("Enable the team enderchest system. [Default value: true]\nThis is not compatible with cross-server (yet).\nIf you are currently on 1.21.4 or below, and you want to update your server remember to migrate the team enderchests (guide in the docs)")
-    @YamlKey("team.echest.enabled")
-    @Getter
-    private boolean teamEnderChestEnabled = true;
-
-    @YamlComment("How many rows will the default enderchest have? [Default value: 3]\nValue can go from 1 to 6, being 3 a normal chest and 6 a double chest")
-    @YamlKey("team.echest.rows")
-    @Getter
-    private int teamEnderChestRows = 3;
-
-    @YamlComment("ONLY FOR SERVERS WHO JUST UPDATED TO A VERSION THAT SUPPORTS THIS FEATURE!\nShould the plugin add an enderchest to each team on startup? [Default value: false]\nSince teams created before this version didn't have enderchests, add one.\nAFTER A FULL STARTUP DISABLE THIS AND RESTART THE SERVER!")
-    @YamlKey("team.echest.migrate")
-    @Getter
-    private boolean teamEnderChestMigrate = false;
-
-
-    // Chat Spy
-    @YamlComment("Do you want players with the perm 'ultimateteams.chat.spy' be able to spy on all team chat messages? [Default value: true]")
-    @YamlKey("chat.chat-spy.enabled")
-    private boolean teamChatSpyEnabled = true;
-
-
-    @YamlComment("Below is the prefix for th chat spy messages. [Default value: &6[&cSPY&6]&r]")
-    @YamlKey("chat.chat-spy.prefix")
-    private String teamChatSpyPrefix = "&6[&cSPY&6]&r";
-
-
-    // Economy
-    @YamlComment("Whether to enable economy (Vault is required). Changes might require to restart the server")
-    @YamlKey("economy.enable")
-    @Getter
-    private boolean economyEnabled = false;
-
-    @YamlComment("Should players pay to create a team?")
-    @YamlKey("economy.team-create.enabled")
-    @Getter
-    private boolean teamCreateCostEnabled = false;
-
-    @YamlComment("The cost to create a team")
-    @YamlKey("economy.team-create.cost")
-    @Getter
-    private double teamCreateCost = 100.0;
-
-    @YamlComment("Should players be allowed to ask who joins a team a fee (that will be deposited in the team bank)?")
-    @YamlKey("economy.team-join-fee.enabled")
-    @Getter
-    private boolean teamJoinFeeEnabled = false;
-
-    @YamlComment("The default cost of the join fee")
-    @YamlKey("economy.team-join-fee.default")
-    @Getter
-    private double teamJoinFeeDefault = 100.0;
-
-    @YamlComment("The max cost of the join fee")
-    @YamlKey("economy.team-join-fee.max-fee")
-    @Getter
-    private double teamJoinFeeMax = 10000.0;
-
-
-    // Update Checker
-    @YamlComment("Do you want to enable in game plugin update notifications? (Permission:'ultimateteams.update'). [Default value: true]")
-    @YamlKey("plugin-update-notifications.enabled")
-    private boolean checkForUpdates = true;
-
-
-    // General Settings
-    @YamlComment("Do you want to enable the plugins ability to auto-wipe the invites list? [Default value: true]")
-    @YamlKey("general.run-auto-invite-wipe-task")
-    private boolean autoInviteWipeTask = true;
-
-    @YamlComment("Do you want the plugin to send a message in console when it does the auto-wipe of the invites list? [Default value: true]")
-    @YamlKey("general.run-auto-invite-wipe-task-log")
-    private boolean autoInviteWipeTaskLog = true;
-
-    @YamlComment("Do you want the plugin to send a message in console when it does the team echests backup? [Default value: true]")
-    @YamlKey("general.echest-backup-log")
-    @Getter
-    private boolean echestBackupTaskLog = true;
-
-    @YamlComment("Do you want to see a lot of debug messages in console when most actions are performed? [Default value: false]")
-    @YamlKey("general.developer-debug-mode")
-    private boolean debugMode = false;
-
-
-    private Settings() {
+        public CooldownSettings(boolean enabled, int time) {
+            this.enabled = enabled;
+            this.time = time;
+        }
     }
-
-    public boolean doCheckForUpdates() {
-        return checkForUpdates;
-    }
-
-    public boolean useGlobalGui() {
-        return useGlobalGui;
-    }
-
-    public Database.Type getDatabaseType() {
-        return databaseType;
-    }
-
-    public String getMySqlHost() {
-        return mySqlHost;
-    }
-
-    public int getMySqlPort() {
-        return mySqlPort;
-    }
-
-    public String getMySqlDatabase() {
-        return mySqlDatabase;
-    }
-
-    public String getMySqlUsername() {
-        return mySqlUsername;
-    }
-
-    public String getMySqlPassword() {
-        return mySqlPassword;
-    }
-
-    public String getMySqlConnectionParameters() {
-        return mySqlConnectionParameters;
-    }
-
-    public int getMySqlConnectionPoolSize() {
-        return mySqlConnectionPoolSize;
-    }
-
-    public int getMySqlConnectionPoolIdle() {
-        return mySqlConnectionPoolIdle;
-    }
-
-    public long getMySqlConnectionPoolLifetime() {
-        return mySqlConnectionPoolLifetime;
-    }
-
-    public long getMySqlConnectionPoolKeepAlive() {
-        return mySqlConnectionPoolKeepAlive;
-    }
-
-    public long getMySqlConnectionPoolTimeout() {
-        return mySqlConnectionPoolTimeout;
-    }
-
-    public Map<String, String> getTableNames() {
-        return tableNames;
-    }
-
-    @NotNull
-    public String getTableName(@NotNull Database.Table table) {
-        return Optional.ofNullable(getTableNames().get(table.name().toLowerCase())).orElse(table.getDefaultName());
-    }
-
-    public String getNotInTeamPlaceholder() {
-        return notInTeamPlaceholder;
-    }
-
-    public boolean LuckPermsHook() {
-        return luckpermshook;
-    }
-
-    public boolean HuskHomesHook() {
-        return useHuskhomes;
-    }
-
-    public boolean FloodGateHook() {
-        return floodgateHook;
-    }
-
-    public int getTeamTagsMinCharLimit() {
-        return minCharacterLimit;
-    }
-
-    public int getTeamTagsMaxCharLimit() {
-        return maxCharacterLimit;
-    }
-
-    public boolean isTagsBanned(@NotNull String tag) {
-        return disallowedTags.stream()
-                .anyMatch(name -> name.equalsIgnoreCase(tag));
-    }
-
-    public List<String> getTeamTagsDisallowedList() {
-        return disallowedTags;
-    }
-
-    public boolean addSpaceAfterPrefix() {
-        return addPrefixChatAfter;
-    }
-
-    public boolean addPrefixBrackets() {
-        return addPrefixBrackets;
-    }
-
-    public String getPrefixBracketsOpening() {
-        return bracketsOpening;
-    }
-
-    public String getPrefixBracketsClosing() {
-        return bracketsClosing;
-    }
-
-    public int getTeamMaxSize() {
-        return maxTeamSize;
-    }
-
-    public boolean getStackedTeamSize() {
-        return stackTeamSizeWithPermission;
-    }
-
-    public boolean teamJoinAnnounce() {
-        return teamJoinAnnounce;
-    }
-
-    public boolean teamLeftAnnounce() {
-        return teamLeftAnnounce;
-    }
-
-    public boolean teamWarpEnabled() {
-        return teamWarpEnable;
-    }
-
-    public int getTeamWarpTpDelay() {
-        return teamWarpTpDelay;
-    }
-
-    public int getTeamWarpLimit() {
-        return teamWarpLimit;
-    }
-
-    public boolean getTeamWarpStackEnabled() {
-        return stackWarpLimitWithPermission;
-    }
-
-    public boolean teamWarpCooldownEnabled() {
-        return teamWarpCooldownEnabled;
-    }
-
-    public int getTeamWarpCooldownValue() {
-        return teamWarpCooldownValue;
-    }
-
-    public boolean teamChatEnabled() {
-        return teamChatEnabled;
-    }
-
-    public String getTeamChatPrefix() {
-        return teamChatPrefix;
-    }
-
-    public boolean teamAllyChatEnabled() {
-        return teamAllyChatEnabled;
-    }
-
-    public String getTeamAllyChatPrefix() {
-        return teamAllyChatPrefix;
-    }
-
-    public boolean teamChatSpyEnabled() {
-        return teamChatSpyEnabled;
-    }
-
-    public String getTeamChatSpyPrefix() {
-        return teamChatSpyPrefix;
-    }
-
-    public int getMaxTeamAllies() {
-        return maxAllies;
-    }
-
-    public int getMaxTeamEnemies() {
-        return maxEnemies;
-    }
-
-    public boolean isPvpCommandEnabled() {
-        return pvpCommandEnabled;
-    }
-
-    public boolean enablePvPBypassPermission() {
-        return pvpCommandBypassPerm;
-    }
-
-    public boolean teamHomeEnabled() {
-        return teamHomeEnabled;
-    }
-
-    public int getTeamHomeTpDelay() {
-        return teamHomeTpDelay;
-    }
-
-    public boolean teamHomeCooldownEnabled() {
-        return teamHomeCooldownEnabled;
-    }
-
-    public int getTeamHomeCooldownValue() {
-        return teamHomeCooldownValue;
-    }
-
-    public boolean enableAutoInviteWipe() {
-        return autoInviteWipeTask;
-    }
-
-    public boolean enableAutoInviteWipeLog() {
-        return autoInviteWipeTaskLog;
-    }
-
-    public boolean debugModeEnabled() {
-        return debugMode;
-    }
-
 }

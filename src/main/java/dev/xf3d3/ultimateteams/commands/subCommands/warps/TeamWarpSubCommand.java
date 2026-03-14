@@ -29,14 +29,14 @@ public class TeamWarpSubCommand {
             return;
         }
 
-        if (!plugin.getSettings().teamWarpEnabled()) {
+        if (!plugin.getSettings().getTeam().getWarp().isEnable()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
 
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
-                    if (!plugin.getSettings().teamWarpCooldownEnabled()) {
+                    if (!plugin.getSettings().getTeam().getWarp().getCoolDown().isEnabled()) {
                         tpWarp(player, team, name);
 
                         return;
@@ -49,12 +49,12 @@ public class TeamWarpSubCommand {
                             player.sendMessage(MineDown.parse(plugin.getMessages().getHomeCoolDownTimerWait()
                                     .replaceAll(TIME_LEFT, Long.toString(timeLeft))));
                         } else {
-                            warpCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
+                            warpCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeam().getWarp().getCoolDown().getTime() * 1000L));
                             tpWarp(player, team, name);
                         }
                     } else {
                         tpWarp(player, team, name);
-                        warpCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
+                        warpCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeam().getWarp().getCoolDown().getTime() * 1000L));
                     }
 
 
@@ -84,7 +84,7 @@ public class TeamWarpSubCommand {
             return;
         }
 
-        if (!plugin.getSettings().teamWarpEnabled()) {
+        if (!plugin.getSettings().getTeam().getWarp().isEnable()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
@@ -108,7 +108,7 @@ public class TeamWarpSubCommand {
                           .replaceAll("%Y%", String.valueOf((int) warp.getWarpY()))
                           .replaceAll("%Z%", String.valueOf((int) warp.getWarpZ()))
                           .replaceAll("%WORLD_NAME%", warp.getWarpWorld())
-                          .replaceAll("%SERVER_NAME%", Objects.requireNonNullElse(warp.getServer(), plugin.getSettings().getServerName()));
+                          .replaceAll("%SERVER_NAME%", Objects.requireNonNullElse(warp.getServer(), plugin.getSettings().getCrossServer().getServerName()));
 
                   player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpMenuItem()
                           .replaceAll("%WARP_NAME%", warp.getName())

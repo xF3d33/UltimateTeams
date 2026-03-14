@@ -28,10 +28,10 @@ public class TeamCreateSubCommand {
 
         this.storageUtil = plugin.getTeamStorageUtil();
 
-        this.MIN_CHAR_LIMIT = plugin.getSettings().getTeamNameMinLength();
-        this.MAX_CHAR_LIMIT = plugin.getSettings().getTeamNameMaxLength();
+        this.MIN_CHAR_LIMIT = plugin.getSettings().getTeam().getName().getMinLength();
+        this.MAX_CHAR_LIMIT = plugin.getSettings().getTeam().getName().getMaxLength();
 
-        if (teamNameRegex == null) teamNameRegex = Pattern.compile(plugin.getSettings().getTeamNameRegex());
+        if (teamNameRegex == null) teamNameRegex = Pattern.compile(plugin.getSettings().getTeam().getName().getRegex().getValue());
     }
 
     public void createTeamSubCommand(CommandSender sender, String name, List<String> bannedTags) {
@@ -41,7 +41,7 @@ public class TeamCreateSubCommand {
             return;
         }
 
-        if (plugin.getSettings().isTeamNameUseRegex() && !teamNameRegex.matcher(name).matches()) {
+        if (plugin.getSettings().getTeam().getName().getRegex().isEnable() && !teamNameRegex.matcher(name).matches()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameIsBanned()));
 
             return;
@@ -63,13 +63,13 @@ public class TeamCreateSubCommand {
             return;
         }
 
-        if (!plugin.getSettings().isTeamCreateAllowColorCodes() && (name.contains("&") || name.contains("#"))) {
+        if (!plugin.getSettings().getTeam().getName().isAllowColorCodes() && (name.contains("&") || name.contains("#"))) {
 
             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameCannotContainColours()));
             return;
         }
 
-        if (plugin.getSettings().isTeamCreateRequirePermColorCodes() && !player.hasPermission("ultimateteams.team.create.usecolors") && (name.contains("&") || name.contains("#"))) {
+        if (plugin.getSettings().getTeam().getName().isRequirePermForColorCodes() && !player.hasPermission("ultimateteams.team.create.usecolors") && (name.contains("&") || name.contains("#"))) {
 
             player.sendMessage(MineDown.parse(plugin.getMessages().getUseColoursMissingPermission()));
             return;
@@ -92,8 +92,8 @@ public class TeamCreateSubCommand {
             return;
         }
 
-        if (plugin.getEconomyHook() != null && !plugin.getEconomyHook().takeMoney(player, plugin.getSettings().getTeamCreateCost())) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getNotEnoughMoney().replace("%MONEY%", String.valueOf(plugin.getSettings().getTeamCreateCost()))));
+        if (plugin.getEconomyHook() != null && !plugin.getEconomyHook().takeMoney(player, plugin.getSettings().getEconomy().getTeamCreate().getCost())) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getNotEnoughMoney().replace("%MONEY%", String.valueOf(plugin.getSettings().getEconomy().getTeamCreate().getCost()))));
             return;
         }
 

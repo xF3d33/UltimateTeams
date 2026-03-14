@@ -24,8 +24,8 @@ public class MySqlDatabase extends Database {
     public MySqlDatabase(@NotNull UltimateTeams plugin) {
         super(plugin);
 
-        this.type = plugin.getSettings().getDatabaseType().getProtocol();
-        this.driverClass = plugin.getSettings().getDatabaseType() == Type.MARIADB ? "org.mariadb.jdbc.Driver" : "com.mysql.cj.jdbc.Driver";
+        this.type = plugin.getSettings().getDatabase().getType().getProtocol();
+        this.driverClass = plugin.getSettings().getDatabase().getType() == Type.MARIADB ? "org.mariadb.jdbc.Driver" : "com.mysql.cj.jdbc.Driver";
     }
 
     /**
@@ -49,22 +49,22 @@ public class MySqlDatabase extends Database {
         dataSource.setDriverClassName(driverClass);
         dataSource.setJdbcUrl(String.format("jdbc:%s://%s:%s/%s%s",
                 type,
-                plugin.getSettings().getMySqlHost(),
-                plugin.getSettings().getMySqlPort(),
-                plugin.getSettings().getMySqlDatabase(),
-                plugin.getSettings().getMySqlConnectionParameters()
+                plugin.getSettings().getDatabase().getMysql().getCredentials().getHost(),
+                plugin.getSettings().getDatabase().getMysql().getCredentials().getPort(),
+                plugin.getSettings().getDatabase().getMysql().getCredentials().getDatabase(),
+                plugin.getSettings().getDatabase().getMysql().getCredentials().getParameters()
         ));
 
         // Authenticate
-        dataSource.setUsername(plugin.getSettings().getMySqlUsername());
-        dataSource.setPassword(plugin.getSettings().getMySqlPassword());
+        dataSource.setUsername(plugin.getSettings().getDatabase().getMysql().getCredentials().getUsername());
+        dataSource.setPassword(plugin.getSettings().getDatabase().getMysql().getCredentials().getPassword());
 
         // Set connection pool options
-        dataSource.setMaximumPoolSize(plugin.getSettings().getMySqlConnectionPoolSize());
-        dataSource.setMinimumIdle(plugin.getSettings().getMySqlConnectionPoolIdle());
-        dataSource.setMaxLifetime(plugin.getSettings().getMySqlConnectionPoolLifetime());
-        dataSource.setKeepaliveTime(plugin.getSettings().getMySqlConnectionPoolKeepAlive());
-        dataSource.setConnectionTimeout(plugin.getSettings().getMySqlConnectionPoolTimeout());
+        dataSource.setMaximumPoolSize(plugin.getSettings().getDatabase().getMysql().getConnectionPool().getSize());
+        dataSource.setMinimumIdle(plugin.getSettings().getDatabase().getMysql().getConnectionPool().getIdle());
+        dataSource.setMaxLifetime(plugin.getSettings().getDatabase().getMysql().getConnectionPool().getLifetime());
+        dataSource.setKeepaliveTime(plugin.getSettings().getDatabase().getMysql().getConnectionPool().getKeepalive());
+        dataSource.setConnectionTimeout(plugin.getSettings().getDatabase().getMysql().getConnectionPool().getTimeout());
         dataSource.setPoolName(DATA_POOL_NAME);
 
         // Set additional connection pool properties
@@ -250,7 +250,7 @@ public class MySqlDatabase extends Database {
     }
 
     public Team createTeam(@NotNull String name, @NotNull Player creator) {
-        final Team team = Team.create(name, creator, plugin.getSettings().isPvpDefaultAllow(), plugin.getSettings().getTeamEnderChestRows());
+        final Team team = Team.create(name, creator, plugin.getSettings().getTeam().getPvp().isDefaultAllowPvp(), plugin.getSettings().getTeam().getEchest().getRows());
 
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""

@@ -23,7 +23,7 @@ public class TeamSetHomeSubCommand {
             return;
         }
 
-        if (!plugin.getSettings().teamHomeEnabled()) {
+        if (!plugin.getSettings().getTeam().getHome().isEnabled()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
@@ -37,7 +37,7 @@ public class TeamSetHomeSubCommand {
                     }
 
                     Location location = player.getLocation();
-                    final TeamHome home = TeamHome.of(location, plugin.getSettings().getServerName());
+                    final TeamHome home = TeamHome.of(location, plugin.getSettings().getCrossServer().getServerName());
 
                     if (!(new TeamHomeCreateEvent(player, team, home).callEvent())) {
                         return;

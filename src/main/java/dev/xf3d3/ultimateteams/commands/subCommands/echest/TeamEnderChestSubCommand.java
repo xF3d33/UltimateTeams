@@ -75,7 +75,7 @@ public class TeamEnderChestSubCommand implements Listener {
             sharedInventories.put(key, inventory);
             inventoryViewers.put(key, new HashSet<>());
             
-            if (plugin.getSettings().debugModeEnabled()) {
+            if (plugin.getSettings().getGeneral().isDeveloperDebugMode()) {
                 plugin.log(java.util.logging.Level.INFO, 
                     "Created shared inventory for team " + team.getName() + " chest #" + chestNumber);
             }
@@ -112,7 +112,7 @@ public class TeamEnderChestSubCommand implements Listener {
         viewer.openInventory(inventory);
 
         // Debug logging
-        if (plugin.getSettings().debugModeEnabled()) {
+        if (plugin.getSettings().getGeneral().isDeveloperDebugMode()) {
             plugin.log(java.util.logging.Level.INFO,
                     "Player/Admin " + viewer.getName() + " opened chest #" + chestNumber + " for team " + team.getName());
         }
@@ -150,7 +150,7 @@ public class TeamEnderChestSubCommand implements Listener {
                     Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
                     plugin.runAsync(task2 -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
 
-                    if (plugin.getSettings().debugModeEnabled()) {
+                    if (plugin.getSettings().getGeneral().isDeveloperDebugMode()) {
                         plugin.log(java.util.logging.Level.INFO,
                                 "Auto-saved team ender chest #" + chestNumber + " for team " + team.getName());
                     }
@@ -171,7 +171,7 @@ public class TeamEnderChestSubCommand implements Listener {
             return;
         }
 
-        if (!plugin.getSettings().isTeamEnderChestEnabled()) {
+        if (!plugin.getSettings().getTeam().getEchest().isEnabled()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
 
             return;
@@ -298,7 +298,7 @@ public class TeamEnderChestSubCommand implements Listener {
                             // Update the team in storage
                             plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                            if (plugin.getSettings().debugModeEnabled()) {
+                            if (plugin.getSettings().getGeneral().isDeveloperDebugMode()) {
                                 plugin.log(java.util.logging.Level.INFO,
                                     "Saved and unloaded team ender chest #" + view.chestNumber + " for team " + team.getName());
                             }
@@ -309,12 +309,12 @@ public class TeamEnderChestSubCommand implements Listener {
                     sharedInventories.remove(key);
                     inventoryViewers.remove(key);
 
-                    if (plugin.getSettings().debugModeEnabled()) {
+                    if (plugin.getSettings().getGeneral().isDeveloperDebugMode()) {
                         plugin.log(java.util.logging.Level.INFO,
                             "Removed shared inventory " + key + " (no more viewers)");
                     }
                 } else {
-                    if (plugin.getSettings().debugModeEnabled()) {
+                    if (plugin.getSettings().getGeneral().isDeveloperDebugMode()) {
                         plugin.log(java.util.logging.Level.INFO,
                             "Player " + player.getName() + " closed chest, " + viewers.size() + " viewer(s) remaining");
                     }

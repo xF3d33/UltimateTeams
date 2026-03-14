@@ -37,7 +37,7 @@ public class TeamChatCommand extends BaseCommand {
         }
 
         // Check if enabled
-        if (!plugin.getSettings().teamChatEnabled()) {
+        if (!plugin.getSettings().getTeam().getChat().isEnabled()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
@@ -77,23 +77,23 @@ public class TeamChatCommand extends BaseCommand {
 
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
-                    String chatSpyPrefix = plugin.getSettings().getTeamChatSpyPrefix();
+                    String chatSpyPrefix = plugin.getSettings().getChat().getChatSpy().getPrefix();
 
                     StringBuilder messageString = new StringBuilder();
-                    messageString.append(plugin.getSettings().getTeamChatPrefix()).append(" ");
+                    messageString.append(plugin.getSettings().getTeam().getChat().getPrefix()).append(" ");
                     for (String arg : args) {
                         messageString.append(arg).append(" ");
                     }
 
-                    final String msg = messageString.toString()
+                    final String msg = plugin.replacePlaceholders(player, messageString.toString()
                             .replace("%TEAM%", team.getName())
-                            .replace("%PLAYER%", player.getName());
+                            .replace("%PLAYER%", player.getName()));
 
                     // Send message to team members
                     team.sendTeamMessage(MineDown.parse(msg));
 
                     // Send spy message directly to players with permission (hidden from Discord)
-                    if (plugin.getSettings().teamChatSpyEnabled()) {
+                    if (plugin.getSettings().getChat().getChatSpy().isEnabled()) {
                         plugin.getUtils().sendSpyMessage(MineDown.parse(chatSpyPrefix + " " + msg));
                     }
 

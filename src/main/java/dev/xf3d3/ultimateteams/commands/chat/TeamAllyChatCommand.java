@@ -41,8 +41,15 @@ public class TeamAllyChatCommand extends BaseCommand {
             return;
         }
 
+        // Check if ally enabled
+        if (!plugin.getSettings().getTeam().getAllies().isEnabled()) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+
+            return;
+        }
+
         // Check if enabled
-        if (!plugin.getSettings().teamAllyChatEnabled()){
+        if (!plugin.getSettings().getTeam().getAllies().getChat().isEnabled()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
 
             return;
@@ -93,17 +100,17 @@ public class TeamAllyChatCommand extends BaseCommand {
                             .filter(otherTeam -> team.areRelationsBilateral(otherTeam, Team.Relation.ALLY))
                             .collect(Collectors.toSet());
 
-                    String chatSpyPrefix = plugin.getSettings().getTeamChatSpyPrefix();
+                    String chatSpyPrefix = plugin.getSettings().getChat().getChatSpy().getPrefix();
 
                     StringBuilder messageString = new StringBuilder();
-                    messageString.append(plugin.getSettings().getTeamAllyChatPrefix()).append(" ");
+                    messageString.append(plugin.getSettings().getTeam().getAllies().getChat().getPrefix()).append(" ");
                     for (String arg : args) {
                         messageString.append(arg).append(" ");
                     }
 
-                    final String msg = messageString.toString()
+                    final String msg = plugin.replacePlaceholders(player, messageString.toString()
                             .replace("%TEAM%", team.getName())
-                            .replace("%PLAYER%", player.getName());
+                            .replace("%PLAYER%", player.getName()));
 
                     // Send message to team members
                     team.sendTeamMessage(MineDown.parse(msg));
@@ -114,7 +121,7 @@ public class TeamAllyChatCommand extends BaseCommand {
                     );
 
                     // Send spy message
-                    if (plugin.getSettings().teamChatSpyEnabled()) {
+                    if (plugin.getSettings().getChat().getChatSpy().isEnabled()) {
                         plugin.getUtils().sendSpyMessage(MineDown.parse(chatSpyPrefix + " " + msg));
                     }
 

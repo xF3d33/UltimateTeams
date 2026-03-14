@@ -22,7 +22,14 @@ public class TeamEnemySubCommand {
 
     public void teamEnemySubAddCommand(CommandSender sender, String teamName) {
         if (!(sender instanceof final Player player)) {
+
             sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            return;
+        }
+
+        if (!plugin.getSettings().getTeam().getEnemies().isEnabled()) {
+
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
 
@@ -35,8 +42,8 @@ public class TeamEnemySubCommand {
                     }
 
 
-                    if (team.getRelations(plugin).size() >= plugin.getSettings().getMaxTeamEnemies()) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamEnemyMaxAmountReached().replaceAll("%LIMIT%", String.valueOf(plugin.getSettings().getMaxTeamAllies()))));
+                    if (team.getRelations(plugin).size() >= plugin.getSettings().getTeam().getEnemies().getMaxEnemies()) {
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamEnemyMaxAmountReached().replaceAll("%LIMIT%", String.valueOf(plugin.getSettings().getTeam().getEnemies().getMaxEnemies()))));
                         return;
                     }
 
@@ -76,6 +83,11 @@ public class TeamEnemySubCommand {
     public void teamEnemySubRemoveCommand(CommandSender sender, String teamName) {
         if (!(sender instanceof final Player player)) {
             sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            return;
+        }
+
+        if (!plugin.getSettings().getTeam().getEnemies().isEnabled()) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
 

@@ -56,9 +56,9 @@ public class PlayerChatEvent implements Listener {
     private void sendToTeamChat(Player player, Component message) {
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {
-                    final String prefixStr = Utils.Color(plugin.getSettings().getTeamChatPrefix()
+                    final String prefixStr = Utils.Color(plugin.replacePlaceholders(player, plugin.getSettings().getTeam().getChat().getPrefix()
                             .replace("%TEAM%", team.getName())
-                            .replace("%PLAYER%", player.getName()));
+                            .replace("%PLAYER%", player.getName())));
 
                     Component prefixComponent = LegacyComponentSerializer.legacySection().deserialize(prefixStr);
 
@@ -71,8 +71,8 @@ public class PlayerChatEvent implements Listener {
                     team.sendTeamMessage(newMessage);
 
                     // Send spy message directly to players with permission (hidden from Discord)
-                    if (plugin.getSettings().teamChatSpyEnabled()) {
-                        String spyPrefixStr = Utils.Color(plugin.getSettings().getTeamChatSpyPrefix());
+                    if (plugin.getSettings().getChat().getChatSpy().isEnabled()) {
+                        String spyPrefixStr = Utils.Color(plugin.getSettings().getChat().getChatSpy().getPrefix());
 
                         Component spyMessage = LegacyComponentSerializer.legacySection().deserialize(spyPrefixStr)
                                 .append(Component.text(" " + player.getName() + ": "))
@@ -106,9 +106,9 @@ public class PlayerChatEvent implements Listener {
                             .filter(otherTeam -> team.areRelationsBilateral(otherTeam, Team.Relation.ALLY))
                             .collect(Collectors.toSet());
 
-                    final String prefixStr = Utils.Color(plugin.getSettings().getTeamAllyChatPrefix()
+                    final String prefixStr = Utils.Color(plugin.replacePlaceholders(player, plugin.getSettings().getTeam().getAllies().getChat().getPrefix()
                             .replace("%TEAM%", team.getName())
-                            .replace("%PLAYER%", player.getName()));
+                            .replace("%PLAYER%", player.getName())));
 
                     Component prefixComponent = LegacyComponentSerializer.legacySection().deserialize(prefixStr);
 
@@ -127,8 +127,8 @@ public class PlayerChatEvent implements Listener {
 
 
                     // Send spy message directly to players with permission (hidden from Discord)
-                    if (plugin.getSettings().teamChatSpyEnabled()) {
-                        String spyPrefixStr = Utils.Color(plugin.getSettings().getTeamChatSpyPrefix());
+                    if (plugin.getSettings().getChat().getChatSpy().isEnabled()) {
+                        String spyPrefixStr = Utils.Color(plugin.getSettings().getChat().getChatSpy().getPrefix());
 
                         Component spyMessage = LegacyComponentSerializer.legacySection().deserialize(spyPrefixStr)
                                 .append(Component.text(" [Ally] " + player.getName() + ": "))

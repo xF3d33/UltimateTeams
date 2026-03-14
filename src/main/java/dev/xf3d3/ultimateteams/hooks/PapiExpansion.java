@@ -47,7 +47,7 @@ public class PapiExpansion extends PlaceholderExpansion {
     }
 
     private String getNotInTeamPlaceholder() {
-        return plugin.getSettings().getNotInTeamPlaceholder();
+        return plugin.getSettings().getPlaceholder().getNotInATeam();
     }
 
     @Override
@@ -91,8 +91,8 @@ public class PapiExpansion extends PlaceholderExpansion {
                         .orElse(getNotInTeamPlaceholder()));
 
             case "team_prefix", "teamprefix": {
-                String openBracket = plugin.getSettings().getPrefixBracketsOpening();
-                String closeBracket = plugin.getSettings().getPrefixBracketsClosing();
+                String openBracket = plugin.getSettings().getTeam().getPrefix().getBracketsOpening();
+                String closeBracket = plugin.getSettings().getTeam().getPrefix().getBracketsClosing();
 
                 return Utils.Color(optionalTeam
                         .map(team -> {
@@ -100,9 +100,9 @@ public class PapiExpansion extends PlaceholderExpansion {
                             if (prefix == null || prefix.isEmpty()) {
                                 return "";
                             }
-                            return plugin.getSettings().addPrefixBrackets()
+                            return plugin.getSettings().getTeam().getPrefix().isPrefixAddBrackets()
                                     ? openBracket + prefix + closeBracket
-                                    : prefix + "&r" + (plugin.getSettings().addSpaceAfterPrefix() ? " " : "");
+                                    : prefix + "&r" + (plugin.getSettings().getTeam().getPrefix().isPrefixAddSpaceAfter() ? " " : "");
                         })
                         .orElse("") // Empty string if no team
                         + (optionalTeam.isPresent() ? "" : getNotInTeamPlaceholder())
@@ -232,8 +232,8 @@ public class PapiExpansion extends PlaceholderExpansion {
                                         .map(onlinePlayer ->
                                                 teamPlayer.getMaxMembers(
                                                         onlinePlayer,
-                                                        plugin.getSettings().getTeamMaxSize(),
-                                                        plugin.getSettings().getStackedTeamSize()
+                                                        plugin.getSettings().getTeam().getSize().getDefaultMaxTeamSize(),
+                                                        plugin.getSettings().getTeam().getSize().isStackMembers()
                                                 )
                                         )
 

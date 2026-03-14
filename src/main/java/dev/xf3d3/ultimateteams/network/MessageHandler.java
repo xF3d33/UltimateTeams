@@ -83,7 +83,7 @@ public interface MessageHandler {
 
         getPlugin().getTeamInviteUtil().removeInvitee(invite.getInvitee());
 
-        if (!getPlugin().getSettings().teamJoinAnnounce())
+        if (!getPlugin().getSettings().getTeam().getJoin().isAnnounce())
             return;
 
         if (Boolean.FALSE.equals(invite.getAccepted())) {
@@ -110,8 +110,8 @@ public interface MessageHandler {
                             team.sendTeamMessage(MineDown.parse(text));
 
                             // Send spy message directly to players with permission (hidden from Discord)
-                            if (getPlugin().getSettings().teamChatSpyEnabled()) {
-                                Component spyMessage = MineDown.parse(getPlugin().getSettings().getTeamChatSpyPrefix() + " " + text);
+                            if (getPlugin().getSettings().getChat().getChatSpy().isEnabled()) {
+                                Component spyMessage = MineDown.parse(getPlugin().getSettings().getChat().getChatSpy().getPrefix() + " " + text);
                                 getPlugin().getUtils().sendSpyMessage(spyMessage);
                             }
                         }));
@@ -136,8 +136,8 @@ public interface MessageHandler {
                     );
 
                     // Send spy message directly to players with permission (hidden from Discord)
-                    if (getPlugin().getSettings().teamChatSpyEnabled()) {
-                        Component spyMessage = MineDown.parse(getPlugin().getSettings().getTeamChatSpyPrefix() + " " + text);
+                    if (getPlugin().getSettings().getChat().getChatSpy().isEnabled()) {
+                        Component spyMessage = MineDown.parse(getPlugin().getSettings().getChat().getChatSpy().getPrefix() + " " + text);
                         getPlugin().getUtils().sendSpyMessage(spyMessage);
                     }
                 }));

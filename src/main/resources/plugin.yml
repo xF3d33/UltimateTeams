@@ -1,11 +1,11 @@
 name: UltimateTeams
-version: "4.8.8"
+version: "5.0"
 main: dev.xf3d3.ultimateteams.UltimateTeams
 api-version: 1.21
 prefix: UltimateTeams
 website: "https://modrinth.com/plugin/ultimate-teams"
 authors: [ xF3d3 ]
-contributors: [ dei2004, gbpii, R00tB33rMan ]
+contributors: [ dei2004, gbpii, R00tB33rMan, bestzige ]
 description: A simple and lightweight Teams plugin for Minecraft, with cross-server support, developed with optimization in mind!
 folia-supported: true
 softdepend:

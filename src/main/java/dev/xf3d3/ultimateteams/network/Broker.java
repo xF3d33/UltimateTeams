@@ -81,11 +81,11 @@ public abstract class Broker implements MessageHandler {
      */
     @NotNull
     protected String getSubChannelId() {
-        return String.valueOf(plugin.getSettings().getClusterId());
+        return String.valueOf(plugin.getSettings().getCrossServer().getClusterId());
     }
 
     protected String getServer() {
-        return plugin.getSettings().getServerName();
+        return plugin.getSettings().getCrossServer().getServerName();
     }
 
     // Returns the formatted version of the plugin (format: x.x)

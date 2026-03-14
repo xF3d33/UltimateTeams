@@ -22,10 +22,10 @@ public class TeamPrefixSubCommand {
 
     public TeamPrefixSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.MAX_CHAR_LIMIT = plugin.getSettings().getTeamTagsMaxCharLimit();
-        this.MIN_CHAR_LIMIT = plugin.getSettings().getTeamTagsMinCharLimit();
+        this.MAX_CHAR_LIMIT = plugin.getSettings().getTeam().getPrefix().getMaxLength();
+        this.MIN_CHAR_LIMIT = plugin.getSettings().getTeam().getPrefix().getMinLength();
 
-        if (teamPrefixRegex == null) teamPrefixRegex = Pattern.compile(plugin.getSettings().getTeamPrefixRegex());
+        if (teamPrefixRegex == null) teamPrefixRegex = Pattern.compile(plugin.getSettings().getTeam().getPrefix().getRegex().getValue());
     }
 
     public void teamPrefixSubCommand(CommandSender sender, String prefix, List<String> bannedTags) {
@@ -34,7 +34,7 @@ public class TeamPrefixSubCommand {
             return;
         }
 
-        if (plugin.getSettings().isTeamPrefixUseRegex() && !teamPrefixRegex.matcher(prefix).matches()) {
+        if (plugin.getSettings().getTeam().getPrefix().getRegex().isEnable() && !teamPrefixRegex.matcher(prefix).matches()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInvalidPrefix()));
 
             return;
@@ -50,13 +50,13 @@ public class TeamPrefixSubCommand {
             return;
         }
 
-        if (!plugin.getSettings().isTeamTagAllowColorCodes() && (prefix.contains("&") || prefix.contains("#"))) {
+        if (!plugin.getSettings().getTeam().getPrefix().isAllowColorCodes() && (prefix.contains("&") || prefix.contains("#"))) {
 
             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamTagCannotContainColours()));
             return;
         }
 
-        if (plugin.getSettings().isTeamTagRequirePermColorCodes() && !player.hasPermission("ultimateteams.team.tag.usecolors") && (prefix.contains("&") || prefix.contains("#"))) {
+        if (plugin.getSettings().getTeam().getPrefix().isRequirePermForColorCodes() && !player.hasPermission("ultimateteams.team.tag.usecolors") && (prefix.contains("&") || prefix.contains("#"))) {
 
             player.sendMessage(MineDown.parse(plugin.getMessages().getUseColoursMissingPermission()));
             return;

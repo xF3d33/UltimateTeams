@@ -21,10 +21,10 @@ public class TeamMotdSubCommand {
 
     public TeamMotdSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.MAX_CHAR_LIMIT = plugin.getSettings().getMotdMaxLength();
-        this.MIN_CHAR_LIMIT = plugin.getSettings().getMotdMinLength();
+        this.MAX_CHAR_LIMIT = plugin.getSettings().getTeam().getMotd().getLength().getMax();
+        this.MIN_CHAR_LIMIT = plugin.getSettings().getTeam().getMotd().getLength().getMin();
 
-        if (motdRegex == null) motdRegex = Pattern.compile(plugin.getSettings().getMotdRegex());
+        if (motdRegex == null) motdRegex = Pattern.compile(plugin.getSettings().getTeam().getMotd().getRegex().getValue());
     }
 
     public void teamSetMotdSubCommand(CommandSender sender, String[] args) {
@@ -33,7 +33,7 @@ public class TeamMotdSubCommand {
             return;
         }
 
-        if (!plugin.getSettings().isEnableMotd()) {
+        if (!plugin.getSettings().getTeam().getMotd().isEnable()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
 
             return;
@@ -41,20 +41,20 @@ public class TeamMotdSubCommand {
 
         final String motd = String.join(" ", args);
 
-        if (plugin.getSettings().isMotdUseRegex() && !motdRegex.matcher(motd).matches()) {
+        if (plugin.getSettings().getTeam().getMotd().getRegex().isEnable() && !motdRegex.matcher(motd).matches()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamMotdNotValid()));
 
             return;
         }
 
 
-        if (!plugin.getSettings().isMotdAllowColors() && (motd.contains("&") || motd.contains("#"))) {
+        if (!plugin.getSettings().getTeam().getMotd().isAllowColors() && (motd.contains("&") || motd.contains("#"))) {
 
             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamMotdCannotContainColours()));
             return;
         }
 
-        if (plugin.getSettings().isMotdColorsRequirePerm() && !player.hasPermission("ultimateteams.team.motd.usecolors") && (motd.contains("&") || motd.contains("#"))) {
+        if (plugin.getSettings().getTeam().getMotd().isAllowColors() && !player.hasPermission("ultimateteams.team.motd.usecolors") && (motd.contains("&") || motd.contains("#"))) {
 
             player.sendMessage(MineDown.parse(plugin.getMessages().getUseColoursMissingPermission()));
             return;
@@ -92,7 +92,7 @@ public class TeamMotdSubCommand {
             return;
         }
 
-        if (!plugin.getSettings().isEnableMotd()) {
+        if (!plugin.getSettings().getTeam().getMotd().isEnable()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
 
             return;

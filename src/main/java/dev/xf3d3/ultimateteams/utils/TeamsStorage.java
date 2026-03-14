@@ -33,12 +33,12 @@ public class TeamsStorage {
     public void loadTeams() {
         teams.addAll(plugin.getDatabase().getAllTeams());
 
-        if (plugin.getSettings().isTeamEnderChestMigrate()) {
+        if (plugin.getSettings().getTeam().getEchest().isMigrate()) {
             teams.forEach(team -> {
                if (team.getEnderChestCount() < 1) {
                    TeamEnderChest defaultChest = TeamEnderChest.builder()
                            .chestNumber(1)
-                           .rows(plugin.getSettings().getTeamEnderChestRows())
+                           .rows(plugin.getSettings().getTeam().getEchest().getRows())
                            .serializedContents("")
                            .build();
 
@@ -149,7 +149,7 @@ public class TeamsStorage {
         team.addMember(player.getUniqueId(), null);
         plugin.runAsync(task -> updateTeamData(player, team));
 
-        if (plugin.getSettings().isEnableMotd() && plugin.getSettings().isSendMotdOnJoin() && team.getMotd() != null) {
+        if (plugin.getSettings().getTeam().getMotd().isEnable() && plugin.getSettings().getTeam().getMotd().isSendOnJoin() && team.getMotd() != null) {
             player.sendMessage(Utils.Color(team.getMotd()));
         }
     }

@@ -28,7 +28,8 @@ public class TeamInviteUtil {
 
         final Player player = Bukkit.getPlayer(inviteeUUID);
         final TeamInvite invite = new TeamInvite(id, inviter.getUniqueId(), inviteeUUID, new Date().getTime(), null);
-        if (player == null && plugin.getSettings().isEnableCrossServer()) {
+
+        if (player == null && plugin.getSettings().getCrossServer().isEnable()) {
             final String senderName = Objects.requireNonNullElse(Bukkit.getOfflinePlayer(invite.getInvitee()).getName(), "");
 
             invites.put(inviter.getUniqueId(), invite);
@@ -115,7 +116,7 @@ public class TeamInviteUtil {
 
         invites.values().removeIf(invite -> currentTime.getTime() - invite.getInvitedAt() > expiryTime);
 
-        if (plugin.getSettings().debugModeEnabled()) {
+        if (plugin.getSettings().getGeneral().isDeveloperDebugMode()) {
             plugin.log(Level.INFO, Utils.Color("&6UltimateTeams-Debug: &aExpired team invites removed"));
         }
     }

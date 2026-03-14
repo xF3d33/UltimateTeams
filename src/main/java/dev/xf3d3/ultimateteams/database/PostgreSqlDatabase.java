@@ -54,22 +54,22 @@ public class PostgreSqlDatabase extends Database {
 
         dataSource.setDriverClassName(driverClass);
         dataSource.setJdbcUrl(String.format("jdbc:postgresql://%s:%s/%s%s",
-                plugin.getSettings().getMySqlHost(),
-                plugin.getSettings().getMySqlPort(),
-                plugin.getSettings().getMySqlDatabase(),
-                plugin.getSettings().getMySqlConnectionParameters()
+                plugin.getSettings().getDatabase().getMysql().getCredentials().getHost(),
+                plugin.getSettings().getDatabase().getMysql().getCredentials().getPort(),
+                plugin.getSettings().getDatabase().getMysql().getCredentials().getDatabase(),
+                plugin.getSettings().getDatabase().getMysql().getCredentials().getParameters()
         ));
 
         // Authenticate with the database
-        dataSource.setUsername(plugin.getSettings().getMySqlUsername());
-        dataSource.setPassword(plugin.getSettings().getMySqlPassword());
+        dataSource.setUsername(plugin.getSettings().getDatabase().getMysql().getCredentials().getUsername());
+        dataSource.setPassword(plugin.getSettings().getDatabase().getMysql().getCredentials().getPassword());
 
         // Set connection pool options
-        dataSource.setMaximumPoolSize(plugin.getSettings().getMySqlConnectionPoolSize());
-        dataSource.setMinimumIdle(plugin.getSettings().getMySqlConnectionPoolIdle());
-        dataSource.setMaxLifetime(plugin.getSettings().getMySqlConnectionPoolLifetime());
-        dataSource.setKeepaliveTime(plugin.getSettings().getMySqlConnectionPoolKeepAlive());
-        dataSource.setConnectionTimeout(plugin.getSettings().getMySqlConnectionPoolTimeout());
+        dataSource.setMaximumPoolSize(plugin.getSettings().getDatabase().getMysql().getConnectionPool().getSize());
+        dataSource.setMinimumIdle(plugin.getSettings().getDatabase().getMysql().getConnectionPool().getIdle());
+        dataSource.setMaxLifetime(plugin.getSettings().getDatabase().getMysql().getConnectionPool().getLifetime());
+        dataSource.setKeepaliveTime(plugin.getSettings().getDatabase().getMysql().getConnectionPool().getKeepalive());
+        dataSource.setConnectionTimeout(plugin.getSettings().getDatabase().getMysql().getConnectionPool().getTimeout());
         dataSource.setPoolName(DATA_POOL_NAME);
 
         // Set additional connection pool properties
@@ -245,7 +245,7 @@ public class PostgreSqlDatabase extends Database {
     }
 
     public Team createTeam(@NotNull String name, @NotNull Player creator) {
-        final Team team = Team.create(name, creator, plugin.getSettings().isPvpDefaultAllow(), plugin.getSettings().getTeamEnderChestRows());
+        final Team team = Team.create(name, creator, plugin.getSettings().getTeam().getPvp().isDefaultAllowPvp(), plugin.getSettings().getTeam().getEchest().getRows());
 
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""

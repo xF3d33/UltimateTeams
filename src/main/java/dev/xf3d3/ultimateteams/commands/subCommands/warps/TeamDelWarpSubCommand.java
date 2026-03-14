@@ -22,7 +22,7 @@ public class TeamDelWarpSubCommand {
             return;
         }
 
-        if (!plugin.getSettings().teamWarpEnabled()) {
+        if (!plugin.getSettings().getTeam().getWarp().isEnable()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }

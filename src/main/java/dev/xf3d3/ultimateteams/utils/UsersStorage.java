@@ -177,7 +177,7 @@ public class UsersStorage {
         final UUID uuid = player.getUniqueId();
 
         for (TeamPlayer teamPlayer : usermap.values()) {
-            if (plugin.getSettings().FloodGateHook()) {
+            if (plugin.getSettings().isFloodgateHook()) {
                 if (plugin.getFloodgateApi() != null) {
                     FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(uuid);
                     if (!(floodgatePlayer.getJavaUniqueId().toString().equals(teamPlayer.getBedrockUUID()))) {
@@ -207,7 +207,7 @@ public class UsersStorage {
     public void updateBedrockPlayerJavaUUID(Player player){
         UUID uuid = player.getUniqueId();
         TeamPlayer teamPlayer = usermap.get(uuid);
-        if (plugin.getSettings().FloodGateHook()) {
+        if (plugin.getSettings().isFloodgateHook()) {
             if (plugin.getFloodgateApi() != null) {
                 FloodgatePlayer floodgatePlayer = plugin.getFloodgateApi().getPlayer(uuid);
                 teamPlayer.setJavaUUID(floodgatePlayer.getJavaUniqueId());

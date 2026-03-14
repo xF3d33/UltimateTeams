@@ -28,7 +28,7 @@ public class UpdateCheck {
     }
 
     public void checkForUpdates() {
-        if (plugin.getSettings().doCheckForUpdates()) {
+        if (plugin.getSettings().getPluginUpdateNotifications().isEnabled()) {
             getUpdateChecker().check().thenAccept(checked -> {
                 if (!checked.isUpToDate()) {
                     plugin.log(Level.WARNING, "A new version of UltimateTeams is available: v"

@@ -20,6 +20,7 @@ import dev.xf3d3.ultimateteams.commands.subCommands.relations.TeamEnemySubComman
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamDelWarpSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamSetWarpSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.warps.TeamWarpSubCommand;
+import dev.xf3d3.ultimateteams.gui.NotInTeamManager;
 import dev.xf3d3.ultimateteams.gui.TeamList;
 import dev.xf3d3.ultimateteams.gui.TeamManager;
 import org.bukkit.OfflinePlayer;
@@ -42,7 +43,7 @@ public class TeamCommand extends BaseCommand {
     }
 
     public static void updateBannedTagsList() {
-        bannedTags = UltimateTeams.getPlugin().getSettings().getTeamTagsDisallowedList();
+        bannedTags = UltimateTeams.getPlugin().getSettings().getTeam().getPrefix().getDisallowedTags();
     }
 
     @Default
@@ -55,14 +56,14 @@ public class TeamCommand extends BaseCommand {
         }
 
         if (sender instanceof final Player player) {
-            if (plugin.getSettings().useGlobalGui()) {
+            if (plugin.getSettings().getGui().isUseGuiForTeamList()) {
                 // Check if player is in a team
                 if (plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).isPresent()) {
                     // Player is in a team, open team manager
                     new TeamManager(plugin, player);
                 } else {
                     // Player is not in a team, open team list
-                    new TeamList(plugin, player);
+                    new NotInTeamManager(plugin, player);
                 }
                 return;
             }
@@ -98,7 +99,7 @@ public class TeamCommand extends BaseCommand {
         if (plugin.getTeamStorageUtil().isInTeam(player)) {
             new TeamManager(plugin, player);
         } else {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()));
+            new NotInTeamManager(plugin, player);
         }
     }
 
@@ -241,10 +242,15 @@ public class TeamCommand extends BaseCommand {
     }
 
 
-
     // TEAM ENEMIES
     @Subcommand("enemy")
     public void onTeamEnemyCommand(@NotNull CommandSender sender) {
+        if (!plugin.getSettings().getTeam().getEnemies().isEnabled()) {
+
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            return;
+        }
+
         plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
     }
 
@@ -268,6 +274,12 @@ public class TeamCommand extends BaseCommand {
     // TEAM ALLIES
     @Subcommand("ally")
     public void onTeamAllyCommand(@NotNull CommandSender sender) {
+        if (!plugin.getSettings().getTeam().getAllies().isEnabled()) {
+
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            return;
+        }
+
         plugin.getMessages().getTeamCommandIncorrectUsage().forEach(line -> sender.sendMessage(MineDown.parse(line)));
     }
 
@@ -312,7 +324,7 @@ public class TeamCommand extends BaseCommand {
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.team.list")
     public void onTeamListCommand(@NotNull CommandSender sender) {
-        if (plugin.getSettings().isTeamListUseGui() && (sender instanceof final Player player)) {
+        if (plugin.getSettings().getGui().isUseGuiForTeamList() && (sender instanceof final Player player)) {
             new TeamList(plugin, player);
 
             return;

@@ -26,7 +26,7 @@ public class TeamManager {
     }
 
     private void open() {
-        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.getTeamsGui().getTeamsManagerGuiName()), plugin.getTeamsGui().getTeamsManagerguiSetup().toArray(new String[0]));
+        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiName())), plugin.getTeamsGui().getTeamsManagerguiSetup().toArray(new String[0]));
 
         Optional<Team> OptionalTeam = plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId());
 
@@ -44,7 +44,7 @@ public class TeamManager {
                             click.getGui().close();
                             return true;
                         },
-                        plugin.getTeamsGui().getCloseButtonName()
+                        plugin.replacePlaceholders(player, plugin.getTeamsGui().getCloseButtonName())
                 ));
 
 
@@ -85,13 +85,13 @@ public class TeamManager {
 
                     return true;
                 },
-                plugin.getTeamsGui().getTeamsManagerGuiHomeText()
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiHomeText())
                         .stream()
                         .map(s -> s.replaceAll("%HOMESET%", plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).map(t -> team.getHome() != null ? "TRUE" : "FALSE").orElse("Team Not Found")))
                         .toArray(String[]::new)
         ));
 
-        if (plugin.getSettings().teamHomeEnabled()) {
+        if (plugin.getSettings().getTeam().getHome().isEnabled()) {
             gui.addElement(home);
         }
 
@@ -109,10 +109,10 @@ public class TeamManager {
 
                     return true;
                 },
-                plugin.getTeamsGui().getTeamsManagerGuiWarpsText().toArray(new String[0])
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiWarpsText()).toArray(new String[0])
         );
 
-        if (plugin.getSettings().teamWarpEnabled()) {
+        if (plugin.getSettings().getTeam().getWarp().isEnable()) {
             gui.addElement(warps);
         }
 
@@ -129,7 +129,7 @@ public class TeamManager {
 
                     return true;
                 },
-                plugin.getTeamsGui().getTeamsManagerGuiMembersText().toArray(new String[0])
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiMembersText()).toArray(new String[0])
         ));
 
         // TEAM PVP
@@ -157,18 +157,18 @@ public class TeamManager {
 
                     return true;
                 },
-                plugin.getTeamsGui().getTeamsManagerGuiPvpText()
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiPvpText())
                         .stream()
                         .map(s -> s.replaceAll("%ENABLED%", String.valueOf(plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).map(Team::isFriendlyFire).orElse(null)).toUpperCase()))
                         .toArray(String[]::new)
         ));
 
-        if (plugin.getSettings().isPvpCommandEnabled()) {
+        if (plugin.getSettings().getTeam().getPvp().isEnabled()) {
             gui.addElement(pvp);
         }
 
         // TEAM ALLIES
-        gui.addElement(new StaticGuiElement('e',
+        StaticGuiElement allies = new StaticGuiElement('e',
                 new ItemStack(plugin.getTeamsGui().getTeamsManagerGuiAlliesMaterial()),
                 1, // Display a number as the item count
                 click -> {
@@ -180,11 +180,15 @@ public class TeamManager {
 
                     return true;
                 },
-                plugin.getTeamsGui().getTeamsManagerGuiAlliesText().toArray(new String[0])
-        ));
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiAlliesText()).toArray(new String[0])
+        );
+
+        if (plugin.getSettings().getTeam().getAllies().isEnabled()) {
+            gui.addElement(allies);
+        }
 
         // TEAM ENEMIES
-        gui.addElement(new StaticGuiElement('h',
+        StaticGuiElement enemies = new StaticGuiElement('h',
                 new ItemStack(plugin.getTeamsGui().getTeamsManagerGuiEnemiesMaterial()),
                 1, // Display a number as the item count
                 click -> {
@@ -196,7 +200,26 @@ public class TeamManager {
 
                     return true;
                 },
-                plugin.getTeamsGui().getTeamsManagerGuiEnemiesText().toArray(new String[0])
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiEnemiesText()).toArray(new String[0])
+        );
+        
+        if (plugin.getSettings().getTeam().getEnemies().isEnabled()) {
+            gui.addElement(enemies);
+        }
+
+        // TEAM LIST
+        gui.addElement(new StaticGuiElement('i',
+                new ItemStack(plugin.getTeamsGui().getTeamListButtonMaterial()),
+                1, // Display a number as the item count
+                click -> {
+                    if (click.getType().isLeftClick()) {
+                        click.getGui().close();
+                        new TeamList(plugin, player);
+                    }
+
+                    return true;
+                },
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamListButtonText()).toArray(new String[0])
         ));
 
         gui.show(player);

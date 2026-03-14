@@ -20,7 +20,7 @@ public class TeamPvpSubCommand {
             return;
         }
 
-        if (!plugin.getSettings().isPvpCommandEnabled()) {
+        if (!plugin.getSettings().getTeam().getPvp().isEnabled()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
