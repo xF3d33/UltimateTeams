@@ -79,12 +79,12 @@ public class EnderChestBackupManager {
             }
             
             try {
-                if (plugin.getSettings().isEchestBackupTaskLog()) plugin.getLogger().info("Creating automatic ender chest backups...");
+                if (plugin.getSettings().getGeneral().isEchestBackupLog()) plugin.getLogger().info("Creating automatic ender chest backups...");
 
                 backupAllChests();
                 saveBackups();
 
-                if (plugin.getSettings().isEchestBackupTaskLog()) plugin.getLogger().info("Automatic ender chest backups completed.");
+                if (plugin.getSettings().getGeneral().isEchestBackupLog()) plugin.getLogger().info("Automatic ender chest backups completed.");
             } catch (Exception e) {
                 plugin.getLogger().log(java.util.logging.Level.SEVERE, 
                     "Error during automatic ender chest backup: {0}", e.getMessage());

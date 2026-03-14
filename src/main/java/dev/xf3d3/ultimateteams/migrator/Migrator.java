@@ -95,13 +95,13 @@ public class Migrator {
 
                         // Team Warps
                         Map<String, TeamWarp> warps = Maps.newHashMap();
-                        team.getTeamWarps().forEach(legacyWarp -> warps.put(legacyWarp.getName(), TeamWarp.of(legacyWarp.getName(), legacyWarp.getLocation(), plugin.getSettings().isEnableCrossServer() ? plugin.getSettings().getServerName() : null)));
+                        team.getTeamWarps().forEach(legacyWarp -> warps.put(legacyWarp.getName(), TeamWarp.of(legacyWarp.getName(), legacyWarp.getLocation(), plugin.getSettings().getCrossServer().isEnable() ? plugin.getSettings().getCrossServer().getServerName() : null)));
 
                         // Team Home
                         TeamHome teamHome = null;
                         if (team.getTeamHomeWorld() != null) {
                             final Location homeLocation = new Location(Bukkit.getWorld(team.getTeamHomeWorld()), team.getTeamHomeX(), team.getTeamHomeY(), team.getTeamHomeZ(), team.getTeamHomeYaw(), team.getTeamHomePitch());
-                            teamHome = TeamHome.of(homeLocation, plugin.getSettings().getServerName());
+                            teamHome = TeamHome.of(homeLocation, plugin.getSettings().getCrossServer().getServerName());
                         }
 
                         teams.add(Team.builder()

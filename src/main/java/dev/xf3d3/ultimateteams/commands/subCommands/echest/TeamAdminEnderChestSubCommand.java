@@ -29,7 +29,7 @@ public class TeamAdminEnderChestSubCommand {
      * @param rowsOrType Number of rows to add (1-6)
      */
     public void addEnderChest(@NotNull CommandSender sender, @NotNull String teamName, @NotNull String rowsOrType) {
-        if (!plugin.getSettings().isTeamEnderChestEnabled()) {
+        if (!plugin.getSettings().getTeam().getEchest().isEnabled()) {
             sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
@@ -137,7 +137,7 @@ public class TeamAdminEnderChestSubCommand {
      * @param chestNumber The chest number to remove
      */
     public void removeEnderChest(@NotNull CommandSender sender, @NotNull String teamName, int chestNumber) {
-        if (!plugin.getSettings().isTeamEnderChestEnabled()) {
+        if (!plugin.getSettings().getTeam().getEchest().isEnabled()) {
             sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
@@ -181,7 +181,7 @@ public class TeamAdminEnderChestSubCommand {
      * @param teamName The name of the team
      */
     public void listEnderChests(@NotNull CommandSender sender, @NotNull String teamName) {
-        if (!plugin.getSettings().isTeamEnderChestEnabled()) {
+        if (!plugin.getSettings().getTeam().getEchest().isEnabled()) {
             sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
@@ -221,7 +221,7 @@ public class TeamAdminEnderChestSubCommand {
             return;
         }
 
-        if (!plugin.getSettings().isTeamEnderChestEnabled()) {
+        if (!plugin.getSettings().getTeam().getEchest().isEnabled()) {
             sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
@@ -251,7 +251,7 @@ public class TeamAdminEnderChestSubCommand {
                 " for team &6" + team.getName() + "&a (Real-time View)"));
         sender.sendMessage(Utils.Color("&eChanges are synchronized in real-time with all viewers."));
         
-        if (plugin.getSettings().debugModeEnabled()) {
+        if (plugin.getSettings().getGeneral().isDeveloperDebugMode()) {
             plugin.log(java.util.logging.Level.INFO, 
                 "Admin " + player.getName() + " opened shared chest #" + chestNumber + " for team " + team.getName());
         }
@@ -263,7 +263,7 @@ public class TeamAdminEnderChestSubCommand {
      * @param teamName The name of the team
      */
     public void backupAllChests(@NotNull CommandSender sender, @NotNull String teamName) {
-        if (!plugin.getSettings().isTeamEnderChestEnabled()) {
+        if (!plugin.getSettings().getTeam().getEchest().isEnabled()) {
             sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
@@ -297,7 +297,7 @@ public class TeamAdminEnderChestSubCommand {
      * @param rowsToRemove Number of rows to remove (1-5)
      */
     public void removeRows(@NotNull CommandSender sender, @NotNull String teamName, int chestNumber, int rowsToRemove) {
-        if (!plugin.getSettings().isTeamEnderChestEnabled()) {
+        if (!plugin.getSettings().getTeam().getEchest().isEnabled()) {
             sender.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }

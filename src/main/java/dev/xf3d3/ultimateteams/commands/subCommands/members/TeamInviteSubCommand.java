@@ -61,7 +61,7 @@ public class TeamInviteSubCommand {
 
 
                     plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAccept(teamPlayer -> {
-                        final int maxMembers = teamPlayer.getMaxMembers(player, plugin.getSettings().getTeamMaxSize(), plugin.getSettings().getStackedTeamSize());
+                        final int maxMembers = teamPlayer.getMaxMembers(player, plugin.getSettings().getTeam().getSize().getDefaultMaxTeamSize(), plugin.getSettings().getTeam().getSize().isStackMembers());
 
                         if (team.getMembers().size() >= maxMembers) {
                             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteMaxSizeReached().replace("%LIMIT%", String.valueOf(maxMembers))));
@@ -189,7 +189,7 @@ public class TeamInviteSubCommand {
 
                             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinSuccessful().replace(TEAM_PLACEHOLDER, team.getName())));
 
-                            if (!plugin.getSettings().teamJoinAnnounce())
+                            if (!plugin.getSettings().getTeam().getJoin().isAnnounce())
                                 return;
 
                             // Send message to team members

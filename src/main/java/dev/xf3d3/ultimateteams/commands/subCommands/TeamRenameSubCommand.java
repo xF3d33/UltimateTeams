@@ -22,8 +22,8 @@ public class TeamRenameSubCommand {
 
     public TeamRenameSubCommand(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        this.MIN_CHAR_LIMIT = plugin.getSettings().getTeamNameMinLength();
-        this.MAX_CHAR_LIMIT = plugin.getSettings().getTeamNameMaxLength();
+        this.MIN_CHAR_LIMIT = plugin.getSettings().getTeam().getName().getMinLength();
+        this.MAX_CHAR_LIMIT = plugin.getSettings().getTeam().getName().getMaxLength();
     }
 
     public void renameTeamSubCommand(CommandSender sender, String newName, List<String> bannedTags) {
@@ -32,7 +32,7 @@ public class TeamRenameSubCommand {
             return;
         }
 
-        if (plugin.getSettings().isTeamNameUseRegex() && !teamNameRegex.matcher(newName).matches()) {
+        if (plugin.getSettings().getTeam().getName().getRegex().isEnable() && !teamNameRegex.matcher(newName).matches()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameIsBanned()));
 
             return;
@@ -53,13 +53,13 @@ public class TeamRenameSubCommand {
             return;
         }
 
-        if (!plugin.getSettings().isTeamCreateAllowColorCodes() && (newName.contains("&") || newName.contains("#"))) {
+        if (!plugin.getSettings().getTeam().getName().isAllowColorCodes() && (newName.contains("&") || newName.contains("#"))) {
 
             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameCannotContainColours()));
             return;
         }
 
-        if (plugin.getSettings().isTeamCreateRequirePermColorCodes() && !player.hasPermission("ultimateteams.team.create.usecolors") && (newName.contains("&") || newName.contains("#"))) {
+        if (plugin.getSettings().getTeam().getName().isRequirePermForColorCodes() && !player.hasPermission("ultimateteams.team.create.usecolors") && (newName.contains("&") || newName.contains("#"))) {
 
             player.sendMessage(MineDown.parse(plugin.getMessages().getUseColoursMissingPermission()));
             return;

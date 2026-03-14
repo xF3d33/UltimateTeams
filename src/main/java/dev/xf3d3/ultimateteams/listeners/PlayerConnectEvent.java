@@ -39,7 +39,7 @@ public class PlayerConnectEvent implements Listener {
 
 
         // check if floodgate hook is enabled and available
-        if (plugin.getSettings().FloodGateHook() && (plugin.getFloodgateApi() != null)) {
+        if (plugin.getSettings().isFloodgateHook() && (plugin.getFloodgateApi() != null)) {
 
             if (plugin.getFloodgateApi().isFloodgatePlayer(uuid)) {
 
@@ -82,7 +82,7 @@ public class PlayerConnectEvent implements Listener {
                                 position.getYaw(), position.getPitch()
                         );
 
-                        plugin.getUtils().teleportPlayer(player, location, plugin.getSettings().getServerName(), Utils.TeleportType.SERVER, null);
+                        plugin.getUtils().teleportPlayer(player, location, plugin.getSettings().getCrossServer().getServerName(), Utils.TeleportType.SERVER, null);
                         teamPlayer.getPreferences().clearTeleportTarget();
                         plugin.getUsersStorageUtil().updatePlayer(teamPlayer);
                     }

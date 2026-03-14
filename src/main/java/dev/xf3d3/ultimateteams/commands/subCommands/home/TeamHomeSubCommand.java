@@ -29,7 +29,7 @@ public class TeamHomeSubCommand {
         }
 
         // check if function is enabled
-        if (!plugin.getSettings().teamHomeEnabled()) {
+        if (!plugin.getSettings().getTeam().getHome().isEnabled()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
@@ -44,7 +44,7 @@ public class TeamHomeSubCommand {
                         return;
                     }
 
-                    if (plugin.getSettings().teamHomeCooldownEnabled()) {
+                    if (plugin.getSettings().getTeam().getHome().getCoolDown().isEnabled()) {
                         if (!player.hasPermission("ultimateteams.bypass.homecooldown") && homeCoolDownTimer.containsKey(player.getUniqueId())) {
                             if (homeCoolDownTimer.get(player.getUniqueId()) > System.currentTimeMillis()) {
                                 long timeLeft = (homeCoolDownTimer.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000;
@@ -52,7 +52,7 @@ public class TeamHomeSubCommand {
                                 player.sendMessage(MineDown.parse(plugin.getMessages().getHomeCoolDownTimerWait()
                                         .replaceAll(TIME_LEFT, Long.toString(timeLeft))));
                             } else {
-                                homeCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
+                                homeCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeam().getHome().getCoolDown().getTime() * 1000L));
 
                                 if (!(new TeamTeleportEvent(player, team, home.getLocation()).callEvent())) return;
                                 tpHome(player, home);
@@ -60,7 +60,7 @@ public class TeamHomeSubCommand {
                         } else {
                             if (!(new TeamTeleportEvent(player, team, home.getLocation()).callEvent())) return;
                             tpHome(player, home);
-                            homeCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeamHomeCooldownValue() * 1000L));
+                            homeCoolDownTimer.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.getSettings().getTeam().getHome().getCoolDown().getTime() * 1000L));
                         }
                         return;
                     }

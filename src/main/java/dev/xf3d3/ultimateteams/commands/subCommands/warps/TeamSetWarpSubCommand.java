@@ -23,7 +23,7 @@ public class TeamSetWarpSubCommand {
         }
 
 
-        if (!plugin.getSettings().teamWarpEnabled()) {
+        if (!plugin.getSettings().getTeam().getWarp().isEnable()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
@@ -43,7 +43,7 @@ public class TeamSetWarpSubCommand {
                     }
 
                     plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAccept(teamPlayer -> {
-                        if (team.getWarps().size() >= teamPlayer.getMaxWarps(player, plugin.getSettings().getTeamWarpLimit(), plugin.getSettings().getTeamWarpStackEnabled())) {
+                        if (team.getWarps().size() >= teamPlayer.getMaxWarps(player, plugin.getSettings().getTeam().getWarp().getLimit(), plugin.getSettings().getTeam().getWarp().isStackWarps())) {
                             player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpLimitReached()));
                             return;
                         }
@@ -53,7 +53,7 @@ public class TeamSetWarpSubCommand {
                             return;
                         }
 
-                        final TeamWarp warp = TeamWarp.of(name, player.getLocation(), plugin.getSettings().getServerName());
+                        final TeamWarp warp = TeamWarp.of(name, player.getLocation(), plugin.getSettings().getCrossServer().getServerName());
 
                         if (!(new TeamWarpSetEvent(player, team, warp).callEvent()))  return;
 

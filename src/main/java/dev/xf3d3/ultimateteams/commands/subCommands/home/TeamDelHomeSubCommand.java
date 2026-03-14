@@ -22,7 +22,7 @@ public class TeamDelHomeSubCommand {
         }
 
 
-        if (!plugin.getSettings().teamHomeEnabled()) {
+        if (!plugin.getSettings().getTeam().getHome().isEnabled()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }

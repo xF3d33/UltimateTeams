@@ -45,7 +45,7 @@ public class TeamLeaveSubCommand {
                         player.sendMessage(MineDown.parse(plugin.getMessages().getTeamLeaveSuccessful().replace(Team_PLACEHOLDER, Utils.Color(team.getName()))));
 
                         // Send message to team players
-                        if (plugin.getSettings().teamLeftAnnounce()) {
+                        if (plugin.getSettings().getTeam().getLeave().isAnnounce()) {
                             team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeamLeftBroadcastChat()
                                     .replace("%PLAYER%", player.getName())
                                     .replace("%TEAM%", Utils.Color(team.getName()))));

@@ -78,7 +78,7 @@ public class PlayerDamageEvent implements Listener {
         final Team victimTeam = plugin.getTeamStorageUtil().findTeamByMember(victim.getUniqueId()).orElse(null);
 
 
-        if (attackerTeam == null || victimTeam == null || (attackingPlayer.hasPermission("ultimateteams.bypass.pvp") && plugin.getSettings().enablePvPBypassPermission())) {
+        if (attackerTeam == null || victimTeam == null || (attackingPlayer.hasPermission("ultimateteams.bypass.pvp") && plugin.getSettings().getTeam().getPvp().isBypassPermission())) {
             return;
         }
 

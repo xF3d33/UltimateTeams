@@ -23,19 +23,26 @@ public class TeamChatSpyCommand extends BaseCommand {
     @Default
     public void onCommand(CommandSender sender) {
         if (sender instanceof final Player player) {
-            if (plugin.getSettings().teamChatSpyEnabled()){
-                if (player.hasPermission("ultimateteams.chat.spy")) {
-                    if (plugin.getUsersStorageUtil().toggleChatSpy(player)) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getChatspyToggleOn()));
-                    } else {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getChatspyToggleOff()));
-                    }
-                } else {
-                    player.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
-                }
-            } else {
+            if (!plugin.getSettings().getChat().getChatSpy().isEnabled()) {
+
                 player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+                return;
             }
+
+            if (!player.hasPermission("ultimateteams.chat.spy")) {
+
+                player.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                return;
+            }
+
+            if (plugin.getUsersStorageUtil().toggleChatSpy(player)) {
+
+                player.sendMessage(MineDown.parse(plugin.getMessages().getChatspyToggleOn()));
+            } else {
+
+                player.sendMessage(MineDown.parse(plugin.getMessages().getChatspyToggleOff()));
+            }
+
         }
     }
 }

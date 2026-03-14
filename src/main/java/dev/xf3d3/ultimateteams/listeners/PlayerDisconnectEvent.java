@@ -25,12 +25,12 @@ public class PlayerDisconnectEvent implements Listener {
         plugin.getUsersStorageUtil().removePlayer(player.getUniqueId());
         plugin.getUsersStorageUtil().getOnlineUserMap().remove(player.getUniqueId());
 
-        if (plugin.getSettings().isEnableCrossServer()) {
+        if (plugin.getSettings().getCrossServer().isEnable()) {
             final List<User> localPlayerList = plugin.getUsersStorageUtil().getOnlineUserMap().values().stream()
                     .filter(u -> !u.equals(player)).map(u -> User.of(u.getUniqueId(), u.getName())).toList();
 
             // Update global user list if needed
-            if (plugin.getSettings().getBrokerType() == Broker.Type.REDIS) {
+            if (plugin.getSettings().getCrossServer().getBroker() == Broker.Type.REDIS) {
                 plugin.getUsersStorageUtil().syncGlobalUserList(player, localPlayerList);
             } else {
                 plugin.getUsersStorageUtil().getOnlineUserMap().values().stream()

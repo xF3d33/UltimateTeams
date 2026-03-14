@@ -37,11 +37,11 @@ public class RedisBroker extends PluginMessageBroker {
     private Pool<Jedis> establishJedisPool() {
         final Pool<Jedis> pool = new JedisPool(
             new JedisPoolConfig(),
-            plugin.getSettings().getRedisHost(),
-            plugin.getSettings().getRedisPort(),
+            plugin.getSettings().getCrossServer().getRedis().getHost(),
+            plugin.getSettings().getCrossServer().getRedis().getPort(),
             0,
-            plugin.getSettings().getRedisPassword().isEmpty() ? null : plugin.getSettings().getRedisPassword(),
-            plugin.getSettings().isRedisUseSSL()
+            plugin.getSettings().getCrossServer().getRedis().getPassword().isEmpty() ? null : plugin.getSettings().getCrossServer().getRedis().getPassword(),
+            plugin.getSettings().getCrossServer().getRedis().isUseSsl()
         );
 
         plugin.log(Level.INFO, "Using Redis pool");

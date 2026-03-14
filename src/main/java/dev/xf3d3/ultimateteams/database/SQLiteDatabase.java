@@ -250,7 +250,7 @@ public class SQLiteDatabase extends Database {
     }
 
     public Team createTeam(@NotNull String name, @NotNull Player creator) {
-        final Team team = Team.create(name, creator, plugin.getSettings().isPvpDefaultAllow(), plugin.getSettings().getTeamEnderChestRows());
+        final Team team = Team.create(name, creator, plugin.getSettings().getTeam().getPvp().isDefaultAllowPvp(), plugin.getSettings().getTeam().getEchest().getRows());
 
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""

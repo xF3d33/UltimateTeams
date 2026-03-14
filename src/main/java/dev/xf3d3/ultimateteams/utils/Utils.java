@@ -37,16 +37,16 @@ public class Utils {
     }
 
     public void teleportPlayer(@NotNull Player player, @NotNull Location location, @Nullable String server, @NotNull TeleportType teleportType, @Nullable String warpName) {
-        final String targetServer = server != null ? server : plugin.getSettings().getServerName();
+        final String targetServer = server != null ? server : plugin.getSettings().getCrossServer().getServerName();
 
         // Execute tp immediately if HuskHome is in use
-        if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && plugin.getSettings().HuskHomesHook()) {
+        if (Bukkit.getPluginManager().getPlugin("HuskHomes") != null && plugin.getSettings().isUseHuskhomes()) {
             plugin.getHuskHomesHook().teleportPlayer(player, location, targetServer);
 
             return;
         }
 
-        if (plugin.getSettings().isEnableCrossServer() && !targetServer.equals(plugin.getSettings().getServerName())) {
+        if (plugin.getSettings().getCrossServer().isEnable() && !targetServer.equals(plugin.getSettings().getCrossServer().getServerName())) {
             plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAccept(teamPlayer -> {
                 teamPlayer.getPreferences().setTeleportTarget(
                         Position.at(location.getX(), location.getY(), location.getZ(), location.getWorld().getName(), location.getYaw(), location.getPitch())
@@ -60,8 +60,8 @@ public class Utils {
         }
 
         // if tp is Home and cooldown is enabled handle teleport
-        if ((plugin.getSettings().getTeamHomeTpDelay() > 0) && teleportType.equals(TeleportType.HOME)) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamHomeCooldownStart().replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeamHomeTpDelay()))));
+        if ((plugin.getSettings().getTeam().getHome().getTpDelay() > 0) && teleportType.equals(TeleportType.HOME)) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamHomeCooldownStart().replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeam().getHome().getTpDelay()))));
 
             final WrappedTask task = plugin.runLater(() -> {
                 // Run on the appropriate thread scheduler for this platform
@@ -69,15 +69,15 @@ public class Utils {
                 this.getPendingTeleport().remove(player.getUniqueId());
 
                 player.sendMessage(MineDown.parse(plugin.getMessages().getSuccessfullyTeleportedToHome()));
-            }, plugin.getSettings().getTeamHomeTpDelay());
+            }, plugin.getSettings().getTeam().getHome().getTpDelay());
 
             pendingTeleport.put(player.getUniqueId(), task);
             return;
         }
 
         // if tp is Warp and cooldown is enabled handle teleport
-        if ((plugin.getSettings().getTeamWarpTpDelay() > 0) && teleportType.equals(TeleportType.WARP)) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpCooldownStart().replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeamWarpTpDelay()))));
+        if ((plugin.getSettings().getTeam().getWarp().getTpDelay() > 0) && teleportType.equals(TeleportType.WARP)) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpCooldownStart().replaceAll("%SECONDS%", String.valueOf(plugin.getSettings().getTeam().getWarp().getTpDelay()))));
 
             final WrappedTask task = plugin.runLater(() -> {
                 // Run on the appropriate thread scheduler for this platform
@@ -86,7 +86,7 @@ public class Utils {
 
                 player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpTeleportedSuccessful().replaceAll("%WARP_NAME%", String.valueOf(warpName))));
 
-            }, plugin.getSettings().getTeamWarpTpDelay());
+            }, plugin.getSettings().getTeam().getWarp().getTpDelay());
 
             pendingTeleport.put(player.getUniqueId(), task);
             return;

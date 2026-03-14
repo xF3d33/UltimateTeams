@@ -49,7 +49,7 @@ public class TeamFeeSubCommand {
             return;
         }
 
-        if (plugin.getEconomyHook() == null || !plugin.getSettings().isTeamJoinFeeEnabled()) {
+        if (plugin.getEconomyHook() == null || !plugin.getSettings().getEconomy().getTeamJoinFee().isEnabled()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
 
             return;
@@ -71,9 +71,9 @@ public class TeamFeeSubCommand {
                         return;
                     }
 
-                    if (amount > plugin.getSettings().getTeamJoinFeeMax()) {
+                    if (amount > plugin.getSettings().getEconomy().getTeamJoinFee().getMaxFee()) {
                         player.sendMessage(MineDown.parse(plugin.getMessages().getTeamFeeTooBig()
-                                .replace("%AMOUNT%", String.valueOf(plugin.getSettings().getTeamJoinFeeMax()))
+                                .replace("%AMOUNT%", String.valueOf(plugin.getSettings().getEconomy().getTeamJoinFee().getMaxFee()))
                         ));
 
                         return;

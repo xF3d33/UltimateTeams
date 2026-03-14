@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "dev.xF3d3"
-version = "4.8.8"
+version = "5.0"
 
 repositories {
     mavenLocal()
@@ -29,6 +29,7 @@ dependencies {
     implementation("net.william278:annotaml:2.0.7")
     implementation("net.william278:DesertWell:2.0.4")
     implementation("com.google.code.gson:gson:2.13.2")
+    implementation("de.exlll:configlib-yaml:4.8.1")
 
     // Kotlin
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.2.21")

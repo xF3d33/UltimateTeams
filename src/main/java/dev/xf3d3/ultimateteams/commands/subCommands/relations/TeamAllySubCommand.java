@@ -28,7 +28,14 @@ public class TeamAllySubCommand {
 
     public void teamAllyAddSubCommand(CommandSender sender, String teamName) {
         if (!(sender instanceof final Player player)) {
+
             sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            return;
+        }
+
+        if (!plugin.getSettings().getTeam().getAllies().isEnabled()) {
+
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
             return;
         }
 
@@ -40,8 +47,8 @@ public class TeamAllySubCommand {
                         return;
                     }
 
-                    if (team.getRelations(plugin).size() >= plugin.getSettings().getMaxTeamAllies()) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamAllyMaxAmountReached().replaceAll("%LIMIT%", String.valueOf(plugin.getSettings().getMaxTeamAllies()))));
+                    if (team.getRelations(plugin).size() >= plugin.getSettings().getTeam().getAllies().getMaxAllies()) {
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamAllyMaxAmountReached().replaceAll("%LIMIT%", String.valueOf(plugin.getSettings().getTeam().getAllies().getMaxAllies()))));
                         return;
                     }
 
@@ -84,6 +91,10 @@ public class TeamAllySubCommand {
             return;
         }
 
+        if (!plugin.getSettings().getTeam().getAllies().isEnabled()) {
+            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            return;
+        }
 
         plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresentOrElse(
                 team -> {

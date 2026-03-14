@@ -54,8 +54,8 @@ public class TeamAdmin extends BaseCommand {
     public void aboutSubcommand(CommandSender sender) {
         sender.sendMessage(Utils.Color("&3~~~~~~~~~~ &6&nUltimateTeams&r &3~~~~~~~~~~"));
         sender.sendMessage(Utils.Color("&3Version: &6" + plugin.getDescription().getVersion()));
-        sender.sendMessage(Utils.Color("&3Database Type: &6" + plugin.getSettings().getDatabaseType().getDisplayName()));
-        plugin.getMessageBroker().ifPresent(broker -> sender.sendMessage(Utils.Color("&3Broker Type: &6" + plugin.getSettings().getBrokerType().getDisplayName())));
+        sender.sendMessage(Utils.Color("&3Database Type: &6" + plugin.getSettings().getDatabase().getType().getDisplayName()));
+        plugin.getMessageBroker().ifPresent(broker -> sender.sendMessage(Utils.Color("&3Broker Type: &6" + plugin.getSettings().getCrossServer().getBroker().getDisplayName())));
         sender.sendMessage(Utils.Color("&3Author: &6" + plugin.getDescription().getAuthors()));
         sender.sendMessage(Utils.Color("&3Contributors: &6" + plugin.getDescription().getContributors()));
         sender.sendMessage(Utils.Color("&3Description: &6" + plugin.getDescription().getDescription()));
@@ -75,9 +75,9 @@ public class TeamAdmin extends BaseCommand {
             plugin.loadConfigs();
 
             TeamCommand.updateBannedTagsList();
-            TeamMotdSubCommand.motdRegex = Pattern.compile(plugin.getSettings().getMotdRegex());
-            TeamCreateSubCommand.teamNameRegex = Pattern.compile(plugin.getSettings().getTeamNameRegex());
-            TeamPrefixSubCommand.teamPrefixRegex = Pattern.compile(plugin.getSettings().getTeamPrefixRegex());
+            TeamMotdSubCommand.motdRegex = Pattern.compile(plugin.getSettings().getTeam().getMotd().getRegex().getValue());
+            TeamCreateSubCommand.teamNameRegex = Pattern.compile(plugin.getSettings().getTeam().getName().getRegex().getValue());
+            TeamPrefixSubCommand.teamPrefixRegex = Pattern.compile(plugin.getSettings().getTeam().getPrefix().getRegex().getValue());
 
             sender.sendMessage(MineDown.parse(plugin.getMessages().getPluginReloadSuccessful()));
         });
@@ -123,7 +123,7 @@ public class TeamAdmin extends BaseCommand {
 
         plugin.getTeamStorageUtil().findTeamByName(teamName).ifPresentOrElse(
                 team -> {
-                    if (!plugin.getSettings().isEnableCrossServer()) {
+                    if (!plugin.getSettings().getCrossServer().isEnable()) {
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(null, team));
                         sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamSuccessfullyDisbanded()));
 

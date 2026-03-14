@@ -146,19 +146,19 @@ public class TeamInfoSubCommand {
         }
 
         teamInfo.append(" ");
-        if (plugin.getSettings().isEconomyEnabled()) {
+        if (plugin.getSettings().getEconomy().isEnable()) {
             teamInfo.append(Utils.Color(plugin.getMessages().getTeamInfoBankAmount()
                     .replace("%AMOUNT%", String.format("%.2f", team.getBalance()))
             )).append("\n");
 
-            if (plugin.getSettings().isTeamJoinFeeEnabled()) {
+            if (plugin.getSettings().getEconomy().getTeamJoinFee().isEnabled()) {
                 teamInfo.append(Utils.Color(plugin.getMessages().getTeamInfoJoinFee()
                         .replace("%AMOUNT%", String.valueOf(team.getJoin_fee()))
                 )).append("\n");
             }
         }
 
-        if (plugin.getSettings().isEnableMotd()) {
+        if (plugin.getSettings().getTeam().getMotd().isEnable()) {
             teamInfo.append(plugin.getMessages().getTeamInfoMotd().replace("%MOTD%", Objects.requireNonNullElse(Utils.Color(team.getMotd()), plugin.getMessages().getTeamMotdNotSet()))).append("\n");
         }
 

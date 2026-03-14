@@ -38,8 +38,8 @@ public abstract class Database {
 	@NotNull
 	protected final String format(@NotNull @Language("SQL") String statement) {
 		return statement
-				.replaceAll("%team_table%", plugin.getSettings().getTableName(Table.TEAM_DATA))
-				.replaceAll("%user_table%", plugin.getSettings().getTableName(Table.USER_DATA));
+				.replaceAll("%team_table%", plugin.getSettings().getDatabase().getTableName(Table.TEAM_DATA))
+				.replaceAll("%user_table%", plugin.getSettings().getDatabase().getTableName(Table.USER_DATA));
 	}
 
 	public abstract void initialize();
