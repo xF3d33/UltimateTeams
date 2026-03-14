@@ -31,18 +31,18 @@ public class MembersManager {
     }
 
     private void open() {
-        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getMembersManagerGuiName())), plugin.getTeamsGui().getTeamsManagerMembersguiSetup().toArray(new String[0]));
+        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamManager().getMembers().getManager().getName())), plugin.getTeamsGui().getTeamManager().getMembers().getLayout().toArray(new String[0]));
 
         // Previous page
-        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.replacePlaceholders(player, plugin.getTeamsGui().getPreviousPage())));
+        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getGui().getPreviousPage().getMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.replacePlaceholders(player, plugin.replacePlaceholders(player, plugin.getTeamsGui().getGui().getPreviousPage().getName()))));
 
         // Next page
-        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getNextPageMaterial()), GuiPageElement.PageAction.NEXT, plugin.replacePlaceholders(player, plugin.getTeamsGui().getNextPage())));
+        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getGui().getNextPage().getMaterial()), GuiPageElement.PageAction.NEXT, plugin.replacePlaceholders(player, plugin.getTeamsGui().getGui().getNextPage().getName())));
 
         // Back
         gui.addElement(
                 new StaticGuiElement('b',
-                        new ItemStack(plugin.getTeamsGui().getBackButtonMaterial()),
+                        new ItemStack(plugin.getTeamsGui().getGui().getBackButton().getMaterial()),
                         1, // Display a number as the item count
                         click -> {
                             click.getGui().close();
@@ -50,7 +50,7 @@ public class MembersManager {
 
                             return true;
                         },
-                        plugin.replacePlaceholders(player, plugin.getTeamsGui().getBackButtonName())
+                        plugin.replacePlaceholders(player, plugin.getTeamsGui().getGui().getBackButton().getName())
                 ));
 
 
@@ -96,7 +96,7 @@ public class MembersManager {
 
                                 return true;
                             },
-                            plugin.replacePlaceholders(player, plugin.getTeamsGui().getMembersManagerGuiText())
+                            plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamManager().getMembers().getManager().getText())
                                     .stream()
                                     .map(s -> s.replaceAll("%NAME%", Objects.requireNonNullElse(offlineMember.getName(), "Player Not Found")))
                                     .toArray(String[]::new)

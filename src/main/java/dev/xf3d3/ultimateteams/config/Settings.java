@@ -218,7 +218,10 @@ public class Settings {
             @Comment("Set the default maximum amount of members that can join a players' team. [Default value: 8]")
             private int defaultMaxTeamSize = 8;
 
-            @Comment("If true, the default members limit will be stacked with permission limit.\n If a player has ultimateteams.max_members.2 and the default limit is 8, he will be able to have 10 members. otherwise only 2.")
+            @Comment({
+                    "If true, the default members limit will be stacked with permission limit.",
+                    "If a player has ultimateteams.max_members.2 and the default limit is 8, he will be able to have 10 members. otherwise only 2."
+            })
             private boolean stackMembers = false;
         }
 
@@ -231,7 +234,10 @@ public class Settings {
             @Comment("Enable the '/team [sethome|home]' system. [Default value: true]")
             private boolean enabled = true;
 
-            @Comment("Define the delay (cooldown) in seconds before the tp starts.\nThis value has no effect if using HuskHomes as teleport handler")
+            @Comment({
+                    "Define the delay (cooldown) in seconds before the tp starts.",
+                    "This value has no effect if using HuskHomes as teleport handler"
+            })
             private int tpDelay = 3;
 
             private CooldownSettings coolDown = new CooldownSettings(true, 120);
@@ -262,13 +268,22 @@ public class Settings {
             @Comment("Enable the '/team [setwarp|warp]' system. [Default value: true]")
             private boolean enable = true;
 
-            @Comment("Define the delay (cooldown) in seconds before the tp starts.\nThis value has no effect if using HuskHomes as teleport handler")
+            @Comment({
+                    "Define the delay (cooldown) in seconds before the tp starts.",
+                    "This value has no effect if using HuskHomes as teleport handler"
+            })
             private int tpDelay = 3;
 
-            @Comment("Decide how many warps a team owner can set.\n Can be overwritten by giving a player the ultimateteams.max_warps.<number> permission")
+            @Comment({
+                    "Decide how many warps a team owner can set.",
+                    "Can be overwritten by giving a player the ultimateteams.max_warps.<number> permission"
+            })
             private int limit = 2;
 
-            @Comment("If true, the default warp limit will be stacked with permission limit.\nFor example: If a player has ultimateteams.max_warps.3 and the default limit is 2, he will be able to set 5 warps.")
+            @Comment({
+                    "If true, the default warp limit will be stacked with permission limit.",
+                    "For example: If a player has ultimateteams.max_warps.3 and the default limit is 2, he will be able to set 5 warps."
+            })
             private boolean stackWarps = false;
 
             private CooldownSettings coolDown = new CooldownSettings(true, 120);
@@ -400,13 +415,26 @@ public class Settings {
         @Configuration
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class EchestSettings {
-            @Comment("Enable the team enderchest system. [Default value: true]\nThis is not compatible with cross-server (yet).\nIf you are currently on 1.21.4 or below, and you want to update your server remember to migrate the team enderchests (guide in the docs)")
+            @Comment({
+                    "Enable the team enderchest system. [Default value: true]",
+                    "This is not compatible with cross-server (yet).",
+                    "If you are currently on 1.21.4 or below, and you want to update your server remember to migrate the team enderchests (guide in the docs)"
+            })
             private boolean enabled = true;
 
-            @Comment("How many rows will the default enderchest have? [Default value: 3]\nValue can go from 1 to 6, being 3 a normal chest and 6 a double chest")
+            @Comment({
+                    "How many rows will the default enderchest have? [Default value: 3]",
+                    "Value can go from 1 to 6, being 3 a normal chest and 6 a double chest"
+            })
             private int rows = 3;
 
-            @Comment("ONLY FOR SERVERS WHO JUST UPDATED TO A VERSION THAT SUPPORTS THIS FEATURE!\nShould the plugin add an enderchest to each team on startup? [Default value: false]\nSince teams created before this version didn't have enderchests, add one.\nAFTER A FULL STARTUP DISABLE THIS AND RESTART THE SERVER!")
+            @Comment({
+                    "ONLY FOR SERVERS WHO JUST UPDATED TO A VERSION THAT SUPPORTS THIS FEATURE!",
+                    "Should the plugin add an enderchest to each team on startup? [Default value: false]",
+                    "Since teams created before this version didn't have enderchests, add one.",
+                    "",
+                    "AFTER A FULL STARTUP DISABLE THIS AND RESTART THE SERVER!"
+            })
             private boolean migrate = false;
         }
     }
