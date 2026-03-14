@@ -25,18 +25,18 @@ public class WarpsManager {
     }
 
     private void open() {
-        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getWarpsManagerGuiName())), plugin.getTeamsGui().getTeamsManagerWarpsguiSetup().toArray(new String[0]));
+        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamManager().getWarps().getManager().getName())), plugin.getTeamsGui().getTeamManager().getWarps().getLayout().toArray(new String[0]));
 
         // Previous page
-        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.replacePlaceholders(player, plugin.getTeamsGui().getPreviousPage())));
+        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getGui().getPreviousPage().getMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.replacePlaceholders(player, plugin.replacePlaceholders(player, plugin.getTeamsGui().getGui().getPreviousPage().getName()))));
 
         // Next page
-        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getNextPageMaterial()), GuiPageElement.PageAction.NEXT, plugin.replacePlaceholders(player, plugin.getTeamsGui().getNextPage())));
+        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getGui().getNextPage().getMaterial()), GuiPageElement.PageAction.NEXT, plugin.replacePlaceholders(player, plugin.getTeamsGui().getGui().getNextPage().getName())));
 
         // Back
         gui.addElement(
                 new StaticGuiElement('b',
-                        new ItemStack(plugin.getTeamsGui().getBackButtonMaterial()),
+                        new ItemStack(plugin.getTeamsGui().getGui().getBackButton().getMaterial()),
                         1, // Display a number as the item count
                         click -> {
                             click.getGui().close();
@@ -44,7 +44,7 @@ public class WarpsManager {
 
                             return true;
                         },
-                        plugin.replacePlaceholders(player, plugin.getTeamsGui().getBackButtonName())
+                        plugin.replacePlaceholders(player, plugin.getTeamsGui().getGui().getBackButton().getName())
                 ));
 
 
@@ -60,7 +60,7 @@ public class WarpsManager {
         for (TeamWarp warp : team.getWarps().values()) {
             group.addElement(
                     new DynamicGuiElement('g', (viewer) -> new StaticGuiElement('g',
-                            new ItemStack(plugin.getTeamsGui().getTeamsManagerGuiWarpsMaterial()),
+                            new ItemStack(plugin.getTeamsGui().getTeamManager().getWarps().getMaterial()),
                             1, // Display a number as the item count
                             click -> {
                                 // LEFT CLICK, TP TO WARP
@@ -87,7 +87,7 @@ public class WarpsManager {
 
                                 return true;
                             },
-                            plugin.replacePlaceholders(player, plugin.getTeamsGui().getWarpsManagerGuiWarpsText())
+                            plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamManager().getWarps().getManager().getText())
                                     .stream()
                                     .map(s -> s.replaceAll("%WARP%", warp.getName()))
                                     .toArray(String[]::new)

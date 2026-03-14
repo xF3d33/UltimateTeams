@@ -26,7 +26,7 @@ public class TeamManager {
     }
 
     private void open() {
-        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiName())), plugin.getTeamsGui().getTeamsManagerguiSetup().toArray(new String[0]));
+        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamManager().getName())), plugin.getTeamsGui().getTeamManager().getLayout().toArray(new String[0]));
 
         Optional<Team> OptionalTeam = plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId());
 
@@ -38,20 +38,20 @@ public class TeamManager {
         // Close
         gui.addElement(
                 new StaticGuiElement('y',
-                        new ItemStack(plugin.getTeamsGui().getCloseButtonMaterial()),
+                        new ItemStack(plugin.getTeamsGui().getGui().getCloseButton().getMaterial()),
                         1, // Display a number as the item count
                         click -> {
                             click.getGui().close();
                             return true;
                         },
-                        plugin.replacePlaceholders(player, plugin.getTeamsGui().getCloseButtonName())
+                        plugin.replacePlaceholders(player, plugin.getTeamsGui().getGui().getCloseButton().getName())
                 ));
 
 
         // INFO
         gui.addElement(
                 new StaticGuiElement('x',
-                        new ItemStack(plugin.getTeamsGui().getTeamsManagerGuiInfoMaterial()),
+                        new ItemStack(plugin.getTeamsGui().getTeamManager().getInfo().getMaterial()),
                         1, // Display a number as the item count
                         click -> true,
                         TeamList.getTeamInfo(plugin, team).toArray(new String[0])
@@ -60,7 +60,7 @@ public class TeamManager {
 
         // HOME
         DynamicGuiElement home = new DynamicGuiElement('a', (viewer) -> new StaticGuiElement('a',
-                new ItemStack(plugin.getTeamsGui().getTeamsManagerGuiHomeMaterial()),
+                new ItemStack(plugin.getTeamsGui().getTeamManager().getHome().getMaterial()),
                 1, // Display a number as the item count
                 click -> {
                     // LEFT CLICK, TP TO HOME
@@ -85,7 +85,7 @@ public class TeamManager {
 
                     return true;
                 },
-                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiHomeText())
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamManager().getHome().getText())
                         .stream()
                         .map(s -> s.replaceAll("%HOMESET%", plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).map(t -> team.getHome() != null ? "TRUE" : "FALSE").orElse("Team Not Found")))
                         .toArray(String[]::new)
@@ -98,7 +98,7 @@ public class TeamManager {
 
         // TEAM WARPS
         StaticGuiElement warps = new StaticGuiElement('b',
-                new ItemStack(plugin.getTeamsGui().getTeamsManagerGuiWarpsMaterial()),
+                new ItemStack(plugin.getTeamsGui().getTeamManager().getWarps().getMaterial()),
                 1, // Display a number as the item count
                 click -> {
                     if (click.getType().isLeftClick()) {
@@ -109,7 +109,7 @@ public class TeamManager {
 
                     return true;
                 },
-                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiWarpsText()).toArray(new String[0])
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamManager().getWarps().getText()).toArray(new String[0])
         );
 
         if (plugin.getSettings().getTeam().getWarp().isEnable()) {
@@ -118,7 +118,7 @@ public class TeamManager {
 
         // TEAM MEMBERS
         gui.addElement(new StaticGuiElement('c',
-                new ItemStack(plugin.getTeamsGui().getTeamsManagerGuiMembersMaterial()),
+                new ItemStack(plugin.getTeamsGui().getTeamManager().getMembers().getMaterial()),
                 1, // Display a number as the item count
                 click -> {
                     if (click.getType().isLeftClick()) {
@@ -129,12 +129,12 @@ public class TeamManager {
 
                     return true;
                 },
-                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiMembersText()).toArray(new String[0])
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamManager().getMembers().getText()).toArray(new String[0])
         ));
 
         // TEAM PVP
         DynamicGuiElement pvp = new DynamicGuiElement('d', (viewer) -> new StaticGuiElement('d',
-                new ItemStack(plugin.getTeamsGui().getTeamsManagerGuiPvpMaterial()),
+                new ItemStack(plugin.getTeamsGui().getTeamManager().getPvp().getMaterial()),
                 1, // Display a number as the item count
                 click -> {
                     if (click.getType().isLeftClick()) {
@@ -157,7 +157,7 @@ public class TeamManager {
 
                     return true;
                 },
-                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiPvpText())
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamManager().getPvp().getText())
                         .stream()
                         .map(s -> s.replaceAll("%ENABLED%", String.valueOf(plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).map(Team::isFriendlyFire).orElse(null)).toUpperCase()))
                         .toArray(String[]::new)
@@ -169,7 +169,7 @@ public class TeamManager {
 
         // TEAM ALLIES
         StaticGuiElement allies = new StaticGuiElement('e',
-                new ItemStack(plugin.getTeamsGui().getTeamsManagerGuiAlliesMaterial()),
+                new ItemStack(plugin.getTeamsGui().getTeamManager().getAllies().getMaterial()),
                 1, // Display a number as the item count
                 click -> {
                     if (click.getType().isLeftClick()) {
@@ -180,7 +180,7 @@ public class TeamManager {
 
                     return true;
                 },
-                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiAlliesText()).toArray(new String[0])
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamManager().getAllies().getText()).toArray(new String[0])
         );
 
         if (plugin.getSettings().getTeam().getAllies().isEnabled()) {
@@ -189,7 +189,7 @@ public class TeamManager {
 
         // TEAM ENEMIES
         StaticGuiElement enemies = new StaticGuiElement('h',
-                new ItemStack(plugin.getTeamsGui().getTeamsManagerGuiEnemiesMaterial()),
+                new ItemStack(plugin.getTeamsGui().getTeamManager().getEnemies().getMaterial()),
                 1, // Display a number as the item count
                 click -> {
                     if (click.getType().isLeftClick()) {
@@ -200,27 +200,12 @@ public class TeamManager {
 
                     return true;
                 },
-                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamsManagerGuiEnemiesText()).toArray(new String[0])
+                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamManager().getEnemies().getText()).toArray(new String[0])
         );
         
         if (plugin.getSettings().getTeam().getEnemies().isEnabled()) {
             gui.addElement(enemies);
         }
-
-        // TEAM LIST
-        gui.addElement(new StaticGuiElement('i',
-                new ItemStack(plugin.getTeamsGui().getTeamListButtonMaterial()),
-                1, // Display a number as the item count
-                click -> {
-                    if (click.getType().isLeftClick()) {
-                        click.getGui().close();
-                        new TeamList(plugin, player);
-                    }
-
-                    return true;
-                },
-                plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamListButtonText()).toArray(new String[0])
-        ));
 
         gui.show(player);
     }

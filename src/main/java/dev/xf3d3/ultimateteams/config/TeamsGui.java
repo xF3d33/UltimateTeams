@@ -1,390 +1,406 @@
 package dev.xf3d3.ultimateteams.config;
 
+import de.exlll.configlib.Comment;
+import de.exlll.configlib.Configuration;
+import lombok.AccessLevel;
 import lombok.Getter;
-import net.william278.annotaml.YamlComment;
-import net.william278.annotaml.YamlFile;
-import net.william278.annotaml.YamlKey;
+import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 
 import java.util.List;
 import java.util.Map;
 
-
-@YamlFile(header = """
-        ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-        ┃     UltimateTeams Config     ┃
-        ┃      Developed by xF3d3      ┃
-        ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-        ┃
-        ┗╸ Information: https://modrinth.com/plugin/ultimate-teams""")
+@SuppressWarnings("FieldMayBeFinal")
+@Getter
+@Configuration
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TeamsGui {
 
-    // Previous page
-    @YamlComment("The name of the previous page icon")
-    @YamlKey("gui.previous-page.name")
+    public static final String GUI_HEADER = """
+            ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+            ┃     UltimateTeams Config     ┃
+            ┃      Developed by xF3d3      ┃
+            ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+            ┃
+            ┗╸ Information: https://modrinth.com/plugin/ultimate-teams""";
+
+    private GuiSettings gui = new GuiSettings();
+
     @Getter
-    private String previousPage = "&r&7Go to previous page (%prevpage%)";
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class GuiSettings {
+        @Comment("The name and material of the previous page icon")
+        private ButtonSettings previousPage = new ButtonSettings("&r&7Go to previous page (%prevpage%)", Material.ARROW);
 
-    @YamlComment("The Material of the previous page icon")
-    @YamlKey("gui.previous-page.material")
-    @Getter
-    private Material previousPageMaterial = Material.ARROW;
+        @Comment("The name and material of the next page icon")
+        private ButtonSettings nextPage = new ButtonSettings("&r&7Go to next page (%nextpage%)", Material.ARROW);
 
+        @Comment("The name and material of the back button")
+        private ButtonSettings backButton = new ButtonSettings("&r&7Go Back", Material.ENDER_EYE);
 
-    // next page
-    @YamlComment("The name of the next page icon")
-    @YamlKey("gui.next-page.name")
-    @Getter
-    private String nextPage = "&r&7Go to next page (%nextpage%)";
-
-    @YamlComment("The Material of the next page icon")
-    @YamlKey("gui.next-page.material")
-    @Getter
-    private Material nextPageMaterial = Material.ARROW;
-
-
-    // Back
-    @YamlComment("The name of the back button icon")
-    @YamlKey("gui.back-button.name")
-    @Getter
-    private String backButtonName = "&r&7Go Back";
-
-    @YamlComment("The Material of the back button")
-    @YamlKey("gui.back-button.material")
-    @Getter
-    private Material backButtonMaterial = Material.ENDER_EYE;
-
-    // Close
-    @YamlComment("The name of the close button")
-    @YamlKey("gui.close-button.name")
-    @Getter
-    private String closeButtonName = "&r&7Close";
-
-    @YamlComment("The Material of the close button")
-    @YamlKey("gui.close-button.material")
-    @Getter
-    private Material closeButtonMaterial = Material.BARRIER;
-
-    // Not In Team
-    @YamlComment("Modify this to change the slot of the items. each character is an item.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
-    @YamlKey("not-in-team.layout")
-    @Getter
-    private List<String> notInTeamGuiSetup = List.of(
-            "         ",
-            "   + i   ",
-            "         "
-    );
-
-    @YamlComment("what name would you like the not in team gui to have?")
-    @YamlKey("not-in-team.name")
-    @Getter
-    private String notInTeamGuiName = "&3You are not in a team";
-
-    @YamlComment("Create team item material (according to the server's version)")
-    @YamlKey("not-in-team.create-team.material")
-    @Getter
-    private Material notInTeamGuiCreateTeamMaterial = Material.GREEN_BANNER;
-
-    @YamlComment("Create team item name and lore (you can add more lines)")
-    @YamlKey("not-in-team.create-team.text")
-    @Getter
-    private List<String> notInTeamGuiCreateTeamText = List.of(
-            "&a&lCREATE A TEAM",
-            " ",
-            "&r&8&lLEFT CLICK &r&7to create a team"
-    );
-
-    @YamlComment("The Material of team list button")
-    @YamlKey("not-in-team.team-list-button.material")
-    @Getter
-    private Material teamListButtonMaterial = Material.CREEPER_BANNER_PATTERN;
-
-    @YamlComment("Team list item name and lore (you can add more lines)")
-    @YamlKey("not-in-team.team-list-button.text")
-    @Getter
-    private List<String> teamListButtonText = List.of(
-            "&3&lTEAMS LIST",
-            " ",
-            "&r&8&lLEFT CLICK &r&7to open the teams list"
-    );
-
-    @YamlComment("Modify this to change the slot of the items.\neach character is an item, and the 'g' are the slots for the teams.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
-    @YamlKey("team-list.layout")
-    @Getter
-    private List<String> teamsListguiSetup = List.of(
-            "         ",
-            "  ggggg  ",
-            "  ggggg  ",
-            "  ggggg  ",
-            "         ",
-            "f   c   n"
-    );
-
-
-    // GUI NAME
-    @YamlComment("What name would you like the gui to have?")
-    @YamlKey("team-list.name")
-    private String teamsListGuiName = "&3Teams List";
-
-    @YamlComment("This allows you to customise the lore text for the player head icons in the TeamList GUI")
-    @YamlKey("team-list.icons.lore")
-    private Map<String, String> loreMap = Map.ofEntries(
-            Map.entry("header", "&7----------"),
-            Map.entry("team-name", "&3Team Name: &r"),
-            Map.entry("owner-online", "&3Team Owner: &d"),
-            Map.entry("owner-offline", "&3Team Owner &7&o(Offline)&3: &d"),
-            Map.entry("members", "&3Team Members:"),
-            Map.entry("members-color", "&d"),
-            Map.entry("managers", "&3Team Managers:"),
-            Map.entry("managers-color", "&d"),
-            Map.entry("allies", "&3Team Allies:"),
-            Map.entry("allies-color", "&d"),
-            Map.entry("enemies", "&3Team Enemies:"),
-            Map.entry("enemies-color", "&d"),
-            Map.entry("prefix", "&3Team Prefix: &r"),
-            Map.entry("home", "&3Team Home: &r"),
-            Map.entry("pvp", "&3Team PvP: &r"),
-            Map.entry("footer-1", "&f"),
-            Map.entry("action", "&f"),
-            Map.entry("footer-2", "&7----------")
-    );
-
-    @YamlComment("Modify this to change the slot of the items. each character is an item.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
-    @YamlKey("team-manager.layout")
-    @Getter
-    private List<String> teamsManagerguiSetup = List.of(
-            "         ",
-            "    x    ",
-            "  abcde  ",
-            "    h    ",
-            "         ",
-            "    y    "
-    );
-
-
-    @YamlComment("What name would you like the gui to have?")
-    @YamlKey("team-manager.name")
-    @Getter
-    private String teamsManagerGuiName = "&3&lTeam Manager";
-
-    // INFO
-    @YamlComment("Team info item material (according to the server's version).\nThe displayed information follows the pattern of team-list.icons.lore")
-    @YamlKey("team-manager.info.material")
-    @Getter
-    private Material teamsManagerGuiInfoMaterial = Material.LIGHT_BLUE_BANNER;
-
-
-    // HOME
-    @YamlComment("Home item material (according to the server's version)")
-    @YamlKey("team-manager.home.material")
-    @Getter
-    private Material teamsManagerGuiHomeMaterial = Material.COMPASS;
-
-    @YamlComment("Home item name and lore (you can add more lines)")
-    @YamlKey("team-manager.home.text")
-    @Getter
-    private List<String> teamsManagerGuiHomeText = List.of(
-            "&6&lTEAM HOME",
-            " ",
-            "&r&7Home set: &e&l%HOMESET%",
-            " ",
-            "&r&7If your team has a home,",
-            "&r&8&lLEFT CLICK &r&7to TP to the team home",
-            "&r&8&lRIGHT CLICK &r&7to delete the team home (you must be the team owner)"
-    );
-
-    // WARPS
-    @YamlComment("Modify this to change the slot of the items.\neach character is an item, and the 'g' are the slots for the teams.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
-    @YamlKey("team-manager.warps.layout")
-    @Getter
-    private List<String> teamsManagerWarpsguiSetup = List.of(
-            "         ",
-            "  ggggg  ",
-            "  ggggg  ",
-            "  ggggg  ",
-            "         ",
-            "f   b   n"
-    );
-
-    @YamlComment("Warps item material (according to the server's version)")
-    @YamlKey("team-manager.warps.material")
-    @Getter
-    private Material teamsManagerGuiWarpsMaterial = Material.ENDER_PEARL;
-
-    @YamlComment("Warps item name and lore (you can add more lines)")
-    @YamlKey("team-manager.warps.text")
-    @Getter
-    private List<String> teamsManagerGuiWarpsText = List.of(
-            "&c&lTEAM WARPS",
-            " ",
-            "&r&8&lLEFT CLICK &r&7to open warps manager"
-    );
-
-    @YamlComment("Warps manager GUI name")
-    @YamlKey("team-manager.warps.manager.name")
-    @Getter
-    private String warpsManagerGuiName = "&3&lWarps Manager";
-
-    @YamlComment("Warps manager item name and lore (you can add more lines)")
-    @YamlKey("team-manager.warps.manager.text")
-    @Getter
-    private List<String> warpsManagerGuiWarpsText = List.of(
-            "&c&l%WARP%",
-            " ",
-            "&r&8&lLEFT CLICK &r&7to TP to the warp position",
-            "&r&8&lRIGHT CLICK &r&7to delete the warp"
-    );
-
-    // MEMBERS
-    @YamlComment("Modify this to change the slot of the items.\neach character is an item, and the 'g' are the slots for the teams.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
-    @YamlKey("team-manager.members.layout")
-    @Getter
-    private List<String> teamsManagerMembersguiSetup = List.of(
-            "         ",
-            "  ggggg  ",
-            "  ggggg  ",
-            "  ggggg  ",
-            "         ",
-            "f   b   n"
-    );
-
-    @YamlComment("Members item material (according to the server's version)")
-    @YamlKey("team-manager.members.material")
-    @Getter
-    private Material teamsManagerGuiMembersMaterial = Material.PLAYER_HEAD;
-
-    @YamlComment("Members item name and lore (you can add more lines)")
-    @YamlKey("team-manager.members.text")
-    @Getter
-    private List<String> teamsManagerGuiMembersText = List.of(
-            "&e&lTEAM MEMBERS",
-            " ",
-            "&r&8&lLEFT CLICK &r&7to open members manager"
-    );
-
-    @YamlComment("Members manager GUI name")
-    @YamlKey("team-manager.members.manager.name")
-    @Getter
-    private String membersManagerGuiName = "&3&lMembers Manager";
-
-    @YamlComment("Members manager item name and lore (you can add more lines)")
-    @YamlKey("team-manager.members.manager.text")
-    @Getter
-    private List<String> membersManagerGuiText = List.of(
-            "&e&l%NAME%",
-            " ",
-            "&r&8&lRIGHT CLICK &r&7to kick the player"
-    );
-
-    // PVP
-    @YamlComment("PvP item material (according to the server's version)")
-    @YamlKey("team-manager.pvp.material")
-    @Getter
-    private Material teamsManagerGuiPvpMaterial = Material.DIAMOND_SWORD;
-
-    @YamlComment("PvP item name and lore (you can add more lines)")
-    @YamlKey("team-manager.pvp.text")
-    @Getter
-    private List<String> teamsManagerGuiPvpText = List.of(
-            "&B&lTEAM PvP",
-            " ",
-            "&r&7enabled: &a&l%ENABLED%",
-            " ",
-            "&r&8&lLEFT CLICK &r&7to enable/disable team PvP"
-    );
-
-    // ALLIES
-    @YamlComment("Modify this to change the slot of the items.\neach character is an item, and the 'g' are the slots for the teams.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
-    @YamlKey("team-manager.allies.layout")
-    @Getter
-    private List<String> teamsManagerAlliesguiSetup = List.of(
-            "         ",
-            "  ggggg  ",
-            "  ggggg  ",
-            "  ggggg  ",
-            "         ",
-            "f   b   n"
-    );
-
-    @YamlComment("Allies item material (according to the server's version)")
-    @YamlKey("team-manager.allies.material")
-    @Getter
-    private Material teamsManagerGuiAlliesMaterial = Material.TOTEM_OF_UNDYING;
-
-    @YamlComment("Allies item name and lore (you can add more lines)")
-    @YamlKey("team-manager.allies.text")
-    @Getter
-    private List<String> teamsManagerGuiAlliesText = List.of(
-            "&a&lTEAM ALLIES",
-            " ",
-            "&r&8&lLEFT CLICK &r&7to open allies manager"
-    );
-
-    @YamlComment("Allies manager GUI name")
-    @YamlKey("team-manager.allies.manager.name")
-    @Getter
-    private String alliesManagerGuiName = "&3&lAllies Manager";
-
-    @YamlComment("Allies manager item name and lore (you can add more lines)")
-    @YamlKey("team-manager.allies.manager.text")
-    @Getter
-    private List<String> alliesManagerGuiText = List.of(
-            "&e&l%NAME%",
-            " ",
-            "&r&8&lRIGHT CLICK &r&7to remove the team from your allies"
-    );
-
-    // ENEMIES
-    @YamlComment("Modify this to change the slot of the items.\neach character is an item, and the 'g' are the slots for the teams.\nYou can move them as you want as long as you don't modify the structure/size of the lines.")
-    @YamlKey("team-manager.enemies.layout")
-    @Getter
-    private List<String> teamsManagerEnemiesguiSetup = List.of(
-            "         ",
-            "  ggggg  ",
-            "  ggggg  ",
-            "  ggggg  ",
-            "         ",
-            "f   b   n"
-    );
-
-    @YamlComment("Enemies item material (according to the server's version)")
-    @YamlKey("team-manager.enemies.material")
-    @Getter
-    private Material teamsManagerGuiEnemiesMaterial = Material.NETHERITE_SWORD;
-
-    @YamlComment("Enemies item name and lore (you can add more lines)")
-    @YamlKey("team-manager.enemies.text")
-    @Getter
-    private List<String> teamsManagerGuiEnemiesText = List.of(
-            "&4&lTEAM ENEMIES",
-            " ",
-            "&r&8&lLEFT CLICK &r&7to open enemies manager"
-    );
-
-    @YamlComment("Enemies manager GUI name")
-    @YamlKey("team-manager.enemies.manager.name")
-    @Getter
-    private String enemiesManagerGuiName = "&3&lEnemies Manager";
-
-    @YamlComment("Enemies manager item name and lore (you can add more lines)")
-    @YamlKey("team-manager.enemies.manager.text")
-    @Getter
-    private List<String> enemiesManagerGuiText = List.of(
-            "&e&l%NAME%",
-            " ",
-            "&r&8&lRIGHT CLICK &r&7to delete the team from your enemies (you must be the team owner)"
-    );
-
-    @SuppressWarnings("unused")
-    private TeamsGui() {
+        @Comment("The name and material of the close button")
+        private ButtonSettings closeButton = new ButtonSettings("&r&7Close", Material.BARRIER);
     }
 
-    public String getTeamsListGuiName() {
-        return teamsListGuiName;
+    private NotInTeamSettings notInTeam = new NotInTeamSettings();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class NotInTeamSettings {
+
+        @Comment({"Modify this to change the slot of the items. each character is an item.",
+                "You can move them as you want as long as you don't modify the structure/size of the lines."})
+        private List<String> layout = List.of(
+                "         ",
+                "   + i   ",
+                "         "
+        );
+
+        @Comment("what name would you like the not in team gui to have?")
+        private String name = "&3You are not in a team";
+
+        @Comment("Create team item material (according to the server's version) and lore")
+        private MenuItemSettings createTeam = new MenuItemSettings(
+                Material.GREEN_BANNER,
+                List.of(
+                        "&a&lCREATE A TEAM",
+                        " ",
+                        "&r&8&lLEFT CLICK &r&7to create a team"
+                )
+        );
+
+        @Comment("Team list button material and lore")
+        private MenuItemSettings teamListButton = new MenuItemSettings(
+                Material.CREEPER_BANNER_PATTERN,
+                List.of(
+                        "&3&lTEAMS LIST",
+                        " ",
+                        "&r&8&lLEFT CLICK &r&7to open the teams list"
+                )
+        );
     }
 
-    public Map<String, String> getLoreMap() {
-        return loreMap;
+    private TeamListSettings teamList = new TeamListSettings();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class TeamListSettings {
+
+        @Comment("What name would you like the gui to have?")
+        private String name = "&3Teams List";
+
+        @Comment({"Modify this to change the slot of the items.",
+                "each character is an item, and the 'g' are the slots for the teams.",
+                "You can move them as you want as long as you don't modify the structure/size of the lines."})
+        private List<String> layout = List.of(
+                "         ",
+                "  ggggg  ",
+                "  ggggg  ",
+                "  ggggg  ",
+                "         ",
+                "f   c   n"
+        );
+
+        private IconsSettings icons = new IconsSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class IconsSettings {
+            @Comment("This allows you to customise the lore text for the player head icons in the TeamList GUI")
+            private Map<String, String> lore = Map.ofEntries(
+                    Map.entry("header", "&7----------"),
+                    Map.entry("team-name", "&3Team Name: &r"),
+                    Map.entry("owner-online", "&3Team Owner: &d"),
+                    Map.entry("owner-offline", "&3Team Owner &7&o(Offline)&3: &d"),
+                    Map.entry("members", "&3Team Members:"),
+                    Map.entry("members-color", "&d"),
+                    Map.entry("managers", "&3Team Managers:"),
+                    Map.entry("managers-color", "&d"),
+                    Map.entry("allies", "&3Team Allies:"),
+                    Map.entry("allies-color", "&d"),
+                    Map.entry("enemies", "&3Team Enemies:"),
+                    Map.entry("enemies-color", "&d"),
+                    Map.entry("prefix", "&3Team Prefix: &r"),
+                    Map.entry("home", "&3Team Home: &r"),
+                    Map.entry("pvp", "&3Team PvP: &r"),
+                    Map.entry("footer-1", "&f"),
+                    Map.entry("action", "&f"),
+                    Map.entry("footer-2", "&7----------")
+            );
+        }
     }
 
+    private TeamManagerSettings teamManager = new TeamManagerSettings();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class TeamManagerSettings {
+
+        @Comment("What name would you like the gui to have?")
+        private String name = "&3&lTeam Manager";
+
+        @Comment({"Modify this to change the slot of the items. each character is an item.",
+                "You can move them as you want as long as you don't modify the structure/size of the lines."})
+        private List<String> layout = List.of(
+                "         ",
+                "    x    ",
+                "  abcde  ",
+                "    h    ",
+                "         ",
+                "    y    "
+        );
+
+        private InfoSettings info = new InfoSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class InfoSettings {
+            @Comment({"Team info item material (according to the server's version).",
+                    "The displayed information follows the pattern of team-list.icons.lore"})
+            private Material material = Material.LIGHT_BLUE_BANNER;
+        }
+
+        private HomeSettings home = new HomeSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class HomeSettings {
+            @Comment("Home item material (according to the server's version)")
+            private Material material = Material.COMPASS;
+
+            @Comment("Home item name and lore (you can add more lines)")
+            private List<String> text = List.of(
+                    "&6&lTEAM HOME",
+                    " ",
+                    "&r&7Home set: &e&l%HOMESET%",
+                    " ",
+                    "&r&7If your team has a home,",
+                    "&r&8&lLEFT CLICK &r&7to TP to the team home",
+                    "&r&8&lRIGHT CLICK &r&7to delete the team home (you must be the team owner)"
+            );
+        }
+
+        private WarpsSettings warps = new WarpsSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class WarpsSettings {
+            @Comment({"Modify this to change the slot of the items.",
+                    "each character is an item, and the 'g' are the slots for the teams.",
+                    "You can move them as you want as long as you don't modify the structure/size of the lines."})
+            private List<String> layout = List.of(
+                    "         ",
+                    "  ggggg  ",
+                    "  ggggg  ",
+                    "  ggggg  ",
+                    "         ",
+                    "f   b   n"
+            );
+
+            @Comment("Warps item material (according to the server's version)")
+            private Material material = Material.ENDER_PEARL;
+
+            @Comment("Warps item name and lore (you can add more lines)")
+            private List<String> text = List.of(
+                    "&c&lTEAM WARPS",
+                    " ",
+                    "&r&8&lLEFT CLICK &r&7to open warps manager"
+            );
+
+            private ManagerSettings manager = new ManagerSettings(
+                    "&3&lWarps Manager",
+                    List.of(
+                            "&c&l%WARP%",
+                            " ",
+                            "&r&8&lLEFT CLICK &r&7to TP to the warp position",
+                            "&r&8&lRIGHT CLICK &r&7to delete the warp"
+                    )
+            );
+        }
+
+        private MembersSettings members = new MembersSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class MembersSettings {
+            @Comment({"Modify this to change the slot of the items.",
+                    "each character is an item, and the 'g' are the slots for the teams.",
+                    "You can move them as you want as long as you don't modify the structure/size of the lines."})
+            private List<String> layout = List.of(
+                    "         ",
+                    "  ggggg  ",
+                    "  ggggg  ",
+                    "  ggggg  ",
+                    "         ",
+                    "f   b   n"
+            );
+
+            @Comment("Members item material (according to the server's version)")
+            private Material material = Material.PLAYER_HEAD;
+
+            @Comment("Members item name and lore (you can add more lines)")
+            private List<String> text = List.of(
+                    "&e&lTEAM MEMBERS",
+                    " ",
+                    "&r&8&lLEFT CLICK &r&7to open members manager"
+            );
+
+            private ManagerSettings manager = new ManagerSettings(
+                    "&3&lMembers Manager",
+                    List.of(
+                            "&e&l%NAME%",
+                            " ",
+                            "&r&8&lRIGHT CLICK &r&7to kick the player"
+                    )
+            );
+        }
+
+        private PvpSettings pvp = new PvpSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class PvpSettings {
+            @Comment("PvP item material (according to the server's version)")
+            private Material material = Material.DIAMOND_SWORD;
+
+            @Comment("PvP item name and lore (you can add more lines)")
+            private List<String> text = List.of(
+                    "&B&lTEAM PvP",
+                    " ",
+                    "&r&7enabled: &a&l%ENABLED%",
+                    " ",
+                    "&r&8&lLEFT CLICK &r&7to enable/disable team PvP"
+            );
+        }
+
+        private AlliesSettings allies = new AlliesSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class AlliesSettings {
+            @Comment({"Modify this to change the slot of the items.",
+                    "each character is an item, and the 'g' are the slots for the teams.",
+                    "You can move them as you want as long as you don't modify the structure/size of the lines."})
+            private String[] layout = {
+                    "         ",
+                    "  ggggg  ",
+                    "  ggggg  ",
+                    "  ggggg  ",
+                    "         ",
+                    "f   b   n"
+            };
+
+            @Comment("Allies item material (according to the server's version)")
+            private Material material = Material.TOTEM_OF_UNDYING;
+
+            @Comment("Allies item name and lore (you can add more lines)")
+            private List<String> text = List.of(
+                    "&a&lTEAM ALLIES",
+                    " ",
+                    "&r&8&lLEFT CLICK &r&7to open allies manager"
+            );
+
+            private ManagerSettings manager = new ManagerSettings(
+                    "&3&lAllies Manager",
+                    List.of(
+                            "&e&l%NAME%",
+                            " ",
+                            "&r&8&lRIGHT CLICK &r&7to remove the team from your allies"
+                    )
+            );
+        }
+
+        private EnemiesSettings enemies = new EnemiesSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class EnemiesSettings {
+            @Comment({"Modify this to change the slot of the items.",
+                    "each character is an item, and the 'g' are the slots for the teams.",
+                    "You can move them as you want as long as you don't modify the structure/size of the lines."})
+            private List<String> layout = List.of(
+                    "         ",
+                    "  ggggg  ",
+                    "  ggggg  ",
+                    "  ggggg  ",
+                    "         ",
+                    "f   b   n"
+            );
+
+            @Comment("Enemies item material (according to the server's version)")
+            private Material material = Material.NETHERITE_SWORD;
+
+            @Comment("Enemies item name and lore (you can add more lines)")
+            private List<String> text = List.of(
+                    "&4&lTEAM ENEMIES",
+                    " ",
+                    "&r&8&lLEFT CLICK &r&7to open enemies manager"
+            );
+
+            private ManagerSettings manager = new ManagerSettings(
+                    "&3&lEnemies Manager",
+                    List.of(
+                            "&e&l%NAME%",
+                            " ",
+                            "&r&8&lRIGHT CLICK &r&7to delete the team from your enemies (you must be the team owner)"
+                    )
+            );
+        }
+    }
+
+    // --- Common reusable sub-settings below --- //
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ButtonSettings {
+        private String name;
+        private Material material;
+
+        public ButtonSettings(String name, Material material) {
+            this.name = name;
+            this.material = material;
+        }
+    }
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class MenuItemSettings {
+        private Material material;
+        private List<String> text;
+
+        public MenuItemSettings(Material material, List<String> text) {
+            this.material = material;
+            this.text = text;
+        }
+    }
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ManagerSettings {
+        @Comment("Manager GUI name")
+        private String name;
+
+        @Comment("Manager item name and lore (you can add more lines)")
+        private List<String> text;
+
+        public ManagerSettings(String name, List<String> text) {
+            this.name = name;
+            this.text = text;
+        }
+    }
 }

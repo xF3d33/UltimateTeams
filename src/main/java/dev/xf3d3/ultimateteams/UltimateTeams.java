@@ -80,12 +80,14 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     private UpdateCheck updateChecker;
 
     @Getter @Setter private Settings settings;
+    @Getter @Setter private TeamsGui teamsGui;
+    @Getter @Setter private Messages  messages;
+
     @Getter private HuskHomesHook huskHomesHook;
     @Getter private Utils utils;
-    @Getter private TeamsGui teamsGui;
-    @Getter private Messages  messages;
-    @Getter @Nullable private VaultHook economyHook;
     @Getter private EnderChestBackupManager backupManager;
+
+    @Getter @Nullable private VaultHook economyHook;
 
 
     @Override
@@ -326,14 +328,6 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
             .charset(StandardCharsets.UTF_8)
             .setNameFormatter(NameFormatters.LOWER_UNDERSCORE);
 
-    public void setGuiFile(@NotNull TeamsGui teamsGui) {
-        this.teamsGui = teamsGui;
-    }
-
-    public void setMessages(@NotNull Messages messages) {
-        this.messages = messages;
-    }
-
     private void initialize(@NotNull String name, @NotNull ThrowingConsumer<UltimateTeams> runner) {
         log(Level.INFO, "Initializing " + name + "...");
         try {
@@ -360,7 +354,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
             ));
 
             // Load Gui File
-            setGuiFile(Annotaml.create(new File(getDataFolder(), "teamgui.yml"), TeamsGui.class).get());
+            setTeamsGui(YamlConfigurations.update(
+                    getDataFolder().toPath().resolve("teamgui.yml"),
+                    TeamsGui.class,
+                    YAML_CONFIGURATION_PROPERTIES.header(TeamsGui.GUI_HEADER).build()
+            ));
 
             // Load messages
             setMessages(Annotaml.create(new File(getDataFolder(), "messages.yml"), Messages.class).get());

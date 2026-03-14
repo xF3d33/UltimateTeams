@@ -29,18 +29,18 @@ public class EnemiesManager {
     }
 
     private void open() {
-        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getEnemiesManagerGuiName())), plugin.getTeamsGui().getTeamsManagerEnemiesguiSetup().toArray(new String[0]));
+        final InventoryGui gui = new InventoryGui(plugin, player, Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamManager().getEnemies().getManager().getName())), plugin.getTeamsGui().getTeamManager().getEnemies().getLayout().toArray(new String[0]));
 
         // Previous page
-        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getPreviousPageMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.replacePlaceholders(player, plugin.getTeamsGui().getPreviousPage())));
+        gui.addElement(new GuiPageElement('f', new ItemStack(plugin.getTeamsGui().getGui().getPreviousPage().getMaterial()), GuiPageElement.PageAction.PREVIOUS, plugin.replacePlaceholders(player, plugin.replacePlaceholders(player, plugin.getTeamsGui().getGui().getPreviousPage().getName()))));
 
         // Next page
-        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getNextPageMaterial()), GuiPageElement.PageAction.NEXT, plugin.replacePlaceholders(player, plugin.getTeamsGui().getNextPage())));
+        gui.addElement(new GuiPageElement('n', new ItemStack(plugin.getTeamsGui().getGui().getNextPage().getMaterial()), GuiPageElement.PageAction.NEXT, plugin.replacePlaceholders(player, plugin.getTeamsGui().getGui().getNextPage().getName())));
 
         // Back
         gui.addElement(
                 new StaticGuiElement('b',
-                        new ItemStack(plugin.getTeamsGui().getBackButtonMaterial()),
+                        new ItemStack(plugin.getTeamsGui().getGui().getBackButton().getMaterial()),
                         1, // Display a number as the item count
                         click -> {
                             click.getGui().close();
@@ -48,8 +48,9 @@ public class EnemiesManager {
 
                             return true;
                         },
-                        plugin.replacePlaceholders(player, plugin.getTeamsGui().getBackButtonName())
+                        plugin.replacePlaceholders(player, plugin.getTeamsGui().getGui().getBackButton().getName())
                 ));
+
 
 
 
@@ -90,7 +91,7 @@ public class EnemiesManager {
 
                                 return true;
                             },
-                            plugin.replacePlaceholders(player, plugin.getTeamsGui().getEnemiesManagerGuiText())
+                            plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamManager().getEnemies().getManager().getText())
                                     .stream()
                                     .map(s -> s.replaceAll("%NAME%", enemy.getName()))
                                     .toArray(String[]::new)
