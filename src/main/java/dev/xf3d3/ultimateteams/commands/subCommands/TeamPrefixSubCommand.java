@@ -30,35 +30,35 @@ public class TeamPrefixSubCommand {
 
     public void teamPrefixSubCommand(CommandSender sender, String prefix, List<String> bannedTags) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (plugin.getSettings().getTeam().getPrefix().getRegex().isEnable() && !teamPrefixRegex.matcher(prefix).matches()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInvalidPrefix()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPrefix().getInvalidPrefix()));
 
             return;
         }
 
         if (bannedTags.stream().map(String::toLowerCase).toList().contains(prefix.toLowerCase())) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamPrefixIsBanned().replace("%TEAMPREFIX%", prefix)));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPrefix().getIsBanned().replace("%TEAMPREFIX%", prefix)));
             return;
         }
 
         if (plugin.getTeamStorageUtil().getTeams().stream().map(Team::getPrefix).toList().contains(prefix)) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamPrefixAlreadyTaken().replace("%TEAMPREFIX%", prefix)));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPrefix().getAlreadyTaken().replace("%TEAMPREFIX%", prefix)));
             return;
         }
 
         if (!plugin.getSettings().getTeam().getPrefix().isAllowColorCodes() && (prefix.contains("&") || prefix.contains("#"))) {
 
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamTagCannotContainColours()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPrefix().getCannotContainColours()));
             return;
         }
 
         if (plugin.getSettings().getTeam().getPrefix().isRequirePermForColorCodes() && !player.hasPermission("ultimateteams.team.tag.usecolors") && (prefix.contains("&") || prefix.contains("#"))) {
 
-            player.sendMessage(MineDown.parse(plugin.getMessages().getUseColoursMissingPermission()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoColourPermission()));
             return;
         }
 
@@ -69,21 +69,21 @@ public class TeamPrefixSubCommand {
                     team -> {
                         // Check permission
                         if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.PREFIX)))) {
-                            sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                             return;
                         }
 
                         team.setPrefix(prefix);
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamPrefixChangeSuccessful().replace("%TEAMPREFIX%", Utils.Color(prefix))));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPrefix().getChangeSuccessful().replace("%TEAMPREFIX%", Utils.Color(prefix))));
                     },
-                    () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                    () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
             );
 
         } else if (prefixLength > MAX_CHAR_LIMIT) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamPrefixTooLong().replace("%CHARMAX%", String.valueOf(MAX_CHAR_LIMIT))));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPrefix().getTooLong().replace("%CHARMAX%", String.valueOf(MAX_CHAR_LIMIT))));
         } else {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamPrefixTooShort().replace("%CHARMIN%", String.valueOf(MIN_CHAR_LIMIT))));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPrefix().getTooShort().replace("%CHARMIN%", String.valueOf(MIN_CHAR_LIMIT))));
         }
     }}

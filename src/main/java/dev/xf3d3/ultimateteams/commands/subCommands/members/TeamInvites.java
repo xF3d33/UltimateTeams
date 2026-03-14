@@ -27,7 +27,7 @@ public class TeamInvites extends BaseCommand {
     @CommandPermission("ultimateteams.invites.enable")
     public void onInvitesEnable(CommandSender sender) {
         if (!(sender instanceof final Player player)){
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
 
             return;
         }
@@ -36,7 +36,7 @@ public class TeamInvites extends BaseCommand {
            teamPlayer.getPreferences().setAcceptInvitations(true);
 
            plugin.runAsync(task -> plugin.getDatabase().updatePlayer(teamPlayer));
-           player.sendMessage(MineDown.parse(plugin.getMessages().getInvitesEnabled()));
+           player.sendMessage(MineDown.parse(plugin.getMessages().getInvites().getInvitesEnabled()));
         });
 
 
@@ -47,7 +47,7 @@ public class TeamInvites extends BaseCommand {
     @CommandPermission("ultimateteams.invites.disable")
     public void onInvitesDisable(CommandSender sender) {
         if (!(sender instanceof final Player player)){
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
 
             return;
         }
@@ -56,7 +56,7 @@ public class TeamInvites extends BaseCommand {
             teamPlayer.getPreferences().setAcceptInvitations(false);
 
             plugin.runAsync(task -> plugin.getDatabase().updatePlayer(teamPlayer));
-            player.sendMessage(MineDown.parse(plugin.getMessages().getInvitesDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getInvites().getInvitesDisabled()));
         });
     }
 }

@@ -146,19 +146,19 @@ public class TeamList {
         lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamList().getIcons().getLore().get("prefix") + "&r&f" + (team.getPrefix() != null ? team.getPrefix() : ""))));
 
         if (plugin.getSettings().getEconomy().isEnable()) {
-            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getMessages().getTeamInfoBankAmount()
+            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getMessages().getTeam().getInfo().getBankAmount()
                     .replace("%AMOUNT%", String.format("%.2f", team.getBalance())))
             ));
 
             if (plugin.getSettings().getEconomy().getTeamJoinFee().isEnabled()) {
-                lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getMessages().getTeamInfoMotd().replace("%MOTD%", plugin.getMessages().getTeamInfoJoinFee()
+                lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getMessages().getTeam().getInfo().getMotd().replace("%MOTD%", plugin.getMessages().getTeam().getInfo().getJoinFee()
                         .replace("%AMOUNT%", String.valueOf(team.getJoin_fee()))
                 ))));
             }
         }
 
         if (plugin.getSettings().getTeam().getMotd().isEnable()) {
-            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getMessages().getTeamInfoMotd().replace("%MOTD%", Objects.requireNonNullElse(Utils.Color(team.getMotd()), plugin.getMessages().getTeamMotdNotSet())))));
+            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getMessages().getTeam().getInfo().getMotd().replace("%MOTD%", Objects.requireNonNullElse(Utils.Color(team.getMotd()), plugin.getMessages().getTeam().getMotd().getNotSet())))));
         }
 
         if (team.isFriendlyFire()) {

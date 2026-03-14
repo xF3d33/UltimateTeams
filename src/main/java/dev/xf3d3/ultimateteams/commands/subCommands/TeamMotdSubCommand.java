@@ -29,12 +29,12 @@ public class TeamMotdSubCommand {
 
     public void teamSetMotdSubCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getSettings().getTeam().getMotd().isEnable()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
 
             return;
         }
@@ -42,7 +42,7 @@ public class TeamMotdSubCommand {
         final String motd = String.join(" ", args);
 
         if (plugin.getSettings().getTeam().getMotd().getRegex().isEnable() && !motdRegex.matcher(motd).matches()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamMotdNotValid()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getMotd().getNotValid()));
 
             return;
         }
@@ -50,13 +50,13 @@ public class TeamMotdSubCommand {
 
         if (!plugin.getSettings().getTeam().getMotd().isAllowColors() && (motd.contains("&") || motd.contains("#"))) {
 
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamMotdCannotContainColours()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getMotd().getCannotContainColours()));
             return;
         }
 
         if (plugin.getSettings().getTeam().getMotd().isAllowColors() && !player.hasPermission("ultimateteams.team.motd.usecolors") && (motd.contains("&") || motd.contains("#"))) {
 
-            player.sendMessage(MineDown.parse(plugin.getMessages().getUseColoursMissingPermission()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoColourPermission()));
             return;
         }
 
@@ -67,33 +67,33 @@ public class TeamMotdSubCommand {
                     team -> {
                         // Check permission
                         if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.MOTD)))) {
-                            sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                             return;
                         }
 
                         team.setMotd(motd);
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamMotdChangeSuccessful().replace("%MOTD%", Utils.Color(motd))));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getMotd().getChangeSuccessful().replace("%MOTD%", Utils.Color(motd))));
                     },
-                    () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                    () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
             );
 
         } else if (motdLength > MAX_CHAR_LIMIT) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamMotdTooLong().replace("%CHARMAX%", String.valueOf(MAX_CHAR_LIMIT))));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getMotd().getTooLong().replace("%CHARMAX%", String.valueOf(MAX_CHAR_LIMIT))));
         } else {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamMotdTooShort().replace("%CHARMIN%", String.valueOf(MIN_CHAR_LIMIT))));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getMotd().getTooShort().replace("%CHARMIN%", String.valueOf(MIN_CHAR_LIMIT))));
         }
     }
 
     public void teamRemoveMotdSubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getSettings().getTeam().getMotd().isEnable()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
 
             return;
         }
@@ -102,16 +102,16 @@ public class TeamMotdSubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.MOTD)))) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                         return;
                     }
 
                     team.setMotd(null);
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamMotdDisabledSuccessful()));
+                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getMotd().getDisabled()));
                 },
-                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 }

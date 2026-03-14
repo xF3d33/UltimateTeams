@@ -20,12 +20,12 @@ public class TeamManagersSubCommand {
 
     public void teamPromoteSubCommand(CommandSender sender, OfflinePlayer offlinePlayer) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (!offlinePlayer.hasPlayedBefore() || offlinePlayer.getName() == null) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getCouldNotFindSpecifiedPlayer().replace(PLAYER_TO_KICK, offlinePlayer.toString())));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getKick().getPlayerNotFound().replace(PLAYER_TO_KICK, offlinePlayer.toString())));
             return;
         }
 
@@ -33,43 +33,43 @@ public class TeamManagersSubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.PROMOTE)))) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                         return;
                     }
 
 
                     if (player.getName().equalsIgnoreCase(offlinePlayer.getName())) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamPromoteSelfError()));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getManager().getPromoteSelfError()));
 
                         return;
                     }
 
                     if (!team.getMembers().containsKey(offlinePlayer.getUniqueId())) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getTargetedPlayerIsNotInYourTeam().replace(PLAYER_TO_KICK, offlinePlayer.getName())));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getKick().getTargetNotInTeam().replace(PLAYER_TO_KICK, offlinePlayer.getName())));
                     }
 
                     team.getMembers().put(offlinePlayer.getUniqueId(), 2);
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeamPromoteSuccessful().replace("%PLAYER%", offlinePlayer.getName())));
+                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getManager().getPromoteSuccessful().replace("%PLAYER%", offlinePlayer.getName())));
                 },
-                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 
     public void teamDemoteSubCommand(CommandSender sender, OfflinePlayer offlinePlayer) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (!offlinePlayer.hasPlayedBefore() || offlinePlayer.getName() == null) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getCouldNotFindSpecifiedPlayer().replace(PLAYER_TO_KICK, offlinePlayer.toString())));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getKick().getPlayerNotFound().replace(PLAYER_TO_KICK, offlinePlayer.toString())));
             return;
         }
 
         if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamMustBeOwner()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getMustBeOwner()));
             return;
         }
 
@@ -77,22 +77,22 @@ public class TeamManagersSubCommand {
                 team -> {
 
                     if (player.getName().equalsIgnoreCase(offlinePlayer.getName())) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamDemoteSelfError()));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getManager().getDemoteSelfError()));
 
                         return;
                     }
 
                     if (!team.getMembers().containsKey(offlinePlayer.getUniqueId())) {
 
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getTargetedPlayerIsNotInYourTeam().replace(PLAYER_TO_KICK, offlinePlayer.getName())));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getKick().getTargetNotInTeam().replace(PLAYER_TO_KICK, offlinePlayer.getName())));
                     }
 
                     team.getMembers().put(offlinePlayer.getUniqueId(), 1);
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeamDemoteSuccessful().replace("%PLAYER%", offlinePlayer.getName())));
+                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getManager().getDemoteSuccessful().replace("%PLAYER%", offlinePlayer.getName())));
                 },
-                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 }

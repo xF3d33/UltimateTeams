@@ -22,7 +22,7 @@ public class TeamLeaveSubCommand {
         if (sender instanceof final Player player) {
 
             if (plugin.getTeamStorageUtil().isTeamOwner(player)) {
-                player.sendMessage(MineDown.parse(plugin.getMessages().getFailedTeamOwner()));
+                player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getLeave().getFailedOwner()));
                 return;
             }
 
@@ -42,16 +42,16 @@ public class TeamLeaveSubCommand {
 
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamLeaveSuccessful().replace(Team_PLACEHOLDER, Utils.Color(team.getName()))));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getLeave().getSuccessful().replace(Team_PLACEHOLDER, Utils.Color(team.getName()))));
 
                         // Send message to team players
                         if (plugin.getSettings().getTeam().getLeave().isAnnounce()) {
-                            team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeamLeftBroadcastChat()
+                            team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeam().getLeave().getBroadcastChat()
                                     .replace("%PLAYER%", player.getName())
                                     .replace("%TEAM%", Utils.Color(team.getName()))));
                         }
                     },
-                    () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeamLeaveFailed()))
+                    () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getLeave().getFailed()))
             );
         }
     }

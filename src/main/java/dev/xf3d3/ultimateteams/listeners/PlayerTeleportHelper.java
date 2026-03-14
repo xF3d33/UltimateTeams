@@ -30,7 +30,7 @@ public class PlayerTeleportHelper implements Listener {
                 || event.getFrom().getBlockZ() != event.getTo().getBlockZ()) {
 
 
-            event.getPlayer().sendMessage(MineDown.parse(plugin.getMessages().getTeleportCancelledMoved()));
+            event.getPlayer().sendMessage(MineDown.parse(plugin.getMessages().getTeam().getHome().getTeleportMoved()));
             plugin.getUtils().getPendingTeleport().get(event.getPlayer().getUniqueId()).cancel();
             plugin.getUtils().getPendingTeleport().remove(event.getPlayer().getUniqueId());
         }
@@ -41,7 +41,7 @@ public class PlayerTeleportHelper implements Listener {
         if (event.getEntity() instanceof Player player
                 && plugin.getUtils().getPendingTeleport().containsKey(player.getUniqueId())) {
 
-            event.getEntity().sendMessage(MineDown.parse(plugin.getMessages().getTeleportCancelledMoved()));
+            event.getEntity().sendMessage(MineDown.parse(plugin.getMessages().getTeam().getHome().getTeleportMoved()));
             plugin.getUtils().getPendingTeleport().get(player.getUniqueId()).cancel();
             plugin.getUtils().getPendingTeleport().remove(player.getUniqueId());
         }

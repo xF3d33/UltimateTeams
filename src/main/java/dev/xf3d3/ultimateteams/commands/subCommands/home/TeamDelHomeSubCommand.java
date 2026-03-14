@@ -17,13 +17,13 @@ public class TeamDelHomeSubCommand {
 
     public void deleteTeamHomeSubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
 
         if (!plugin.getSettings().getTeam().getHome().isEnabled()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
             return;
         }
 
@@ -31,7 +31,7 @@ public class TeamDelHomeSubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.HOME)))) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                         return;
                     }
 
@@ -40,12 +40,12 @@ public class TeamDelHomeSubCommand {
                         if (!(new TeamHomeDeleteEvent(player, team).callEvent())) return;
 
                         plugin.getTeamStorageUtil().deleteHome(player, team);
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getSuccessfullyDeletedTeamHome()));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getHome().getDeleteSuccessful()));
                     } else {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getFailedNoHomeSet()));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getHome().getNoHomeSet()));
                     }
                 },
-                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeamMustBeOwner()))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getMustBeOwner()))
         );
     }
 

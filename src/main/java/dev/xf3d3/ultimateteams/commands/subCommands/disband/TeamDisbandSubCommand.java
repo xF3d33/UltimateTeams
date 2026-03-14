@@ -16,15 +16,15 @@ public class TeamDisbandSubCommand {
 
     public void disbandTeamSubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getTeamStorageUtil().isTeamOwner(player)) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamMustBeOwner()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getMustBeOwner()));
             return;
         }
 
-        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamDisbandWarning()));
+        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getDisband().getWarning()));
     }
 }

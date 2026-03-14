@@ -69,7 +69,7 @@ public class TeamAdmin extends BaseCommand {
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.admin.reload")
     public void reloadSubcommand(CommandSender sender) {
-        sender.sendMessage(MineDown.parse(plugin.getMessages().getPluginReloadBegin()));
+        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPluginReloadBegin()));
 
         plugin.runSync(task -> {
             plugin.loadConfigs();
@@ -79,7 +79,7 @@ public class TeamAdmin extends BaseCommand {
             TeamCreateSubCommand.teamNameRegex = Pattern.compile(plugin.getSettings().getTeam().getName().getRegex().getValue());
             TeamPrefixSubCommand.teamPrefixRegex = Pattern.compile(plugin.getSettings().getTeam().getPrefix().getRegex().getValue());
 
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPluginReloadSuccessful()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPluginReloadSuccessful()));
         });
     }
 
@@ -125,7 +125,7 @@ public class TeamAdmin extends BaseCommand {
                 team -> {
                     if (!plugin.getSettings().getCrossServer().isEnable()) {
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(null, team));
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamSuccessfullyDisbanded()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getDisband().getSuccessful()));
 
                         return;
                     }
@@ -136,7 +136,7 @@ public class TeamAdmin extends BaseCommand {
                             () -> plugin.runAsync(task -> plugin.getTeamStorageUtil().deleteTeamData(null, team))
                     );
                 },
-                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamAdminDisbandFailure()))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getAdmin().getDisband().getFailure()))
         );
     }
 
@@ -148,7 +148,7 @@ public class TeamAdmin extends BaseCommand {
         Player player = user.getPlayer();
 
         if (plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).isPresent()) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteInvitedAlreadyInTeam()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInvite().getInvitedAlreadyInTeam()));
 
             return;
         }
@@ -159,15 +159,15 @@ public class TeamAdmin extends BaseCommand {
 
                     plugin.getTeamStorageUtil().addTeamMember(team, player);
 
-                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinSuccessful().replace("%TEAM%", team.getName())));
+                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getJoin().getSuccessful().replace("%TEAM%", team.getName())));
 
 
                     // Send message to team players
-                    team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeamJoinBroadcastChat()
+                    team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeam().getJoin().getBroadcastChat()
                             .replace("%PLAYER%", player.getName())
                             .replace("%TEAM%", Utils.Color(team.getName()))));
                 },
-                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinFailed().replace("%TEAM%", teamName))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getJoin().getFailed().replace("%TEAM%", teamName))
         ));
     }
 
@@ -178,14 +178,14 @@ public class TeamAdmin extends BaseCommand {
     public void teamTransferSubCommand(CommandSender sender, @Values("@teams") String teamName, @Values("@onlineUsers") OfflinePlayer user) {
 
         if (!user.hasPlayedBefore() || user.getName() == null) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerNotFound()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerNotFound()));
             return;
         }
 
         plugin.getTeamStorageUtil().findTeamByName(teamName).ifPresentOrElse(
                 team -> {
                     if (!team.getMembers().containsKey(user.getUniqueId())) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferFailureNotSameTeam()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getTransfer().getFailureNotSameTeam()));
                         return;
                     }
 
@@ -194,16 +194,16 @@ public class TeamAdmin extends BaseCommand {
                     plugin.getTeamStorageUtil().transferTeamOwner(team, user.getUniqueId());
 
 
-                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferSuccessful()
+                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getTransfer().getSuccessful()
                             .replace("%PLAYER%", user.getName())));
 
                     if (user.isOnline() && user.getPlayer() != null) {
-                        user.getPlayer().sendMessage(MineDown.parse(plugin.getMessages().getTeamOwnershipTransferNewOwner()
+                        user.getPlayer().sendMessage(MineDown.parse(plugin.getMessages().getTeam().getTransfer().getNewOwnerMessage()
                                 .replace("%TEAM%", team.getName())));
                     }
 
                 },
-                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamNotFound()))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getTeamNotFound()))
         );
 
     }

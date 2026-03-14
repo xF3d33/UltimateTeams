@@ -28,50 +28,50 @@ public class TeamRenameSubCommand {
 
     public void renameTeamSubCommand(CommandSender sender, String newName, List<String> bannedTags) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (plugin.getSettings().getTeam().getName().getRegex().isEnable() && !teamNameRegex.matcher(newName).matches()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameIsBanned()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getNameBanned()));
 
             return;
         }
 
         if (newName.contains(" ")) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameContainsSpace().replace(TEAM_PLACEHOLDER, newName)));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getNameContainsSpace().replace(TEAM_PLACEHOLDER, newName)));
             return;
         }
 
         if (bannedTags.stream().map(String::toLowerCase).toList().contains(newName.toLowerCase())) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameIsBanned().replace(TEAM_PLACEHOLDER, newName)));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getNameBanned().replace(TEAM_PLACEHOLDER, newName)));
             return;
         }
 
         if (plugin.getTeamStorageUtil().getTeamsName().stream().map(String::toLowerCase).toList().contains(newName.toLowerCase())) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameAlreadyTaken().replace(TEAM_PLACEHOLDER, newName)));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getNameTaken().replace(TEAM_PLACEHOLDER, newName)));
             return;
         }
 
         if (!plugin.getSettings().getTeam().getName().isAllowColorCodes() && (newName.contains("&") || newName.contains("#"))) {
 
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameCannotContainColours()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getNameCannotContainColours()));
             return;
         }
 
         if (plugin.getSettings().getTeam().getName().isRequirePermForColorCodes() && !player.hasPermission("ultimateteams.team.create.usecolors") && (newName.contains("&") || newName.contains("#"))) {
 
-            player.sendMessage(MineDown.parse(plugin.getMessages().getUseColoursMissingPermission()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoColourPermission()));
             return;
         }
 
         final int nameLength = Utils.removeColors(newName).length();
         if (nameLength < MIN_CHAR_LIMIT) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameTooShort().replace("%CHARMIN%", Integer.toString(MIN_CHAR_LIMIT))));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getNameTooShort().replace("%CHARMIN%", Integer.toString(MIN_CHAR_LIMIT))));
 
             return;
         } else if (nameLength > MAX_CHAR_LIMIT) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameTooLong().replace("%CHARMAX%", Integer.toString(MAX_CHAR_LIMIT))));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getCreate().getNameTooLong().replace("%CHARMAX%", Integer.toString(MAX_CHAR_LIMIT))));
 
             return;
         }
@@ -80,16 +80,16 @@ public class TeamRenameSubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.RENAME)))) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                         return;
                     }
 
                     team.setName(newName);
                     plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamNameChangeSuccessful().replace("%TEAM%", newName)));
+                    sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getRename().getSuccessful().replace("%TEAM%", newName)));
                 },
-                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 }

@@ -205,7 +205,7 @@ public class TeamsStorage {
                 .filter(online -> online.getUniqueId().equals(player.getUniqueId()))
                 .findFirst()
                 .ifPresentOrElse(onlineUser -> {
-                            onlineUser.sendMessage(MineDown.parse(plugin.getMessages().getTeamKickedPlayerMessage().replace("%TEAM%", team.getName())));
+                            onlineUser.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getKick().getKickedPlayerMessage().replace("%TEAM%", team.getName())));
 
                             plugin.getUsersStorageUtil().getPlayer(player.getUniqueId()).thenAcceptAsync(teamPlayer -> {
                                 if (teamPlayer.getPreferences().isTeamChatTalking() || teamPlayer.getPreferences().isAllyChatTalking()) {
@@ -248,7 +248,7 @@ public class TeamsStorage {
                 // New owner is on same server - send message directly
                 // (Broker ignores same-server messages, so we must send directly)
                 newOwnerPlayer.sendMessage(
-                        MineDown.parse(plugin.getMessages().getTeamOwnershipTransferNewOwner()
+                        MineDown.parse(plugin.getMessages().getTeam().getTransfer().getNewOwnerMessage()
                                 .replace("%TEAM%", team.getName()))
                 );
             } else {

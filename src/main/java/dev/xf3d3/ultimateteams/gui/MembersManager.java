@@ -76,7 +76,7 @@ public class MembersManager {
                                 if (click.getType().isRightClick()) {
                                     if (plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.KICK))) {
                                         if (player.getName().equalsIgnoreCase(offlineMember.getName())) {
-                                            player.sendMessage(MineDown.parse(plugin.getMessages().getFailedCannotKickYourself()));
+                                            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getKick().getFailedCannotKickYourself()));
 
                                             return true;
                                         }
@@ -85,12 +85,12 @@ public class MembersManager {
 
                                         plugin.getTeamStorageUtil().kickPlayer(player, team, offlineMember);
 
-                                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamMemberKickSuccessful().replace("%KICKEDPLAYER%", Objects.requireNonNullElse(offlineMember.getName(), "Player Not Found"))));
+                                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getKick().getSuccessful().replace("%KICKEDPLAYER%", Objects.requireNonNullElse(offlineMember.getName(), "Player Not Found"))));
 
                                         click.getGui().close();
                                         new MembersManager(plugin, player);
                                     } else {
-                                        player.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                                        player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                                     }
                                 }
 

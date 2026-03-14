@@ -52,7 +52,7 @@ public class TeamInviteUtil {
 
     public void handleInboundInvite(Player invitee, TeamInvite invite) {
         plugin.getTeamStorageUtil().findTeam(invite.getTeamId()).ifPresent(team -> {
-            invitee.sendMessage((MineDown.parse(String.join("\n", plugin.getMessages().getTeamInviteInvitedMessage())
+            invitee.sendMessage((MineDown.parse(String.join("\n", plugin.getMessages().getTeam().getInvite().getReceivedMessage())
                     .replace("%TEAM%", team.getName())
                     .replace("%INVITER%", Objects.requireNonNullElse(Bukkit.getOfflinePlayer(invite.getInviter()).getName(), "player not found"))
             )));
@@ -94,7 +94,7 @@ public class TeamInviteUtil {
 
         final Player inviter = Bukkit.getPlayer(invite.getInviter());
         if (inviter != null)  {
-            inviter.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteDeniedInviter()
+            inviter.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInvite().getDeniedInviter()
                     .replace("%PLAYER%", player.getName())));
         }
 

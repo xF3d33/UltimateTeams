@@ -27,7 +27,7 @@ public class TeamInviteSubCommand {
 
     public void teamInviteSendSubCommand(CommandSender sender, String inviteeName) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
@@ -38,24 +38,24 @@ public class TeamInviteSubCommand {
 
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.INVITE)))) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                         return;
                     }
 
                     if (offlinePlayer.getUniqueId().toString().equals(player.getUniqueId().toString())) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteSelfError()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInvite().getSelfError()));
                         return;
                     }
 
                     // Check if the player is already in a team
                     if (plugin.getTeamStorageUtil().findTeamByMember(offlinePlayer.getUniqueId()).isPresent()) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteInvitedAlreadyInTeam().replace(INVITED_PLAYER, inviteeName)));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInvite().getInvitedAlreadyInTeam().replace(INVITED_PLAYER, inviteeName)));
                         return;
                     }
 
                     // Check if the player has another active invite
                     if (plugin.getTeamInviteUtil().hasInvitee(offlinePlayer.getUniqueId())) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteFailed().replaceAll("%INVITED%", inviteeName)));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInvite().getFailed().replaceAll("%INVITED%", inviteeName)));
                         return;
                     }
 
@@ -64,13 +64,13 @@ public class TeamInviteSubCommand {
                         final int maxMembers = teamPlayer.getMaxMembers(player, plugin.getSettings().getTeam().getSize().getDefaultMaxTeamSize(), plugin.getSettings().getTeam().getSize().isStackMembers());
 
                         if (team.getMembers().size() >= maxMembers) {
-                            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteMaxSizeReached().replace("%LIMIT%", String.valueOf(maxMembers))));
+                            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInvite().getMaxSizeReached().replace("%LIMIT%", String.valueOf(maxMembers))));
                             return;
                         }
 
                         plugin.getUsersStorageUtil().getPlayer(offlinePlayer.getUniqueId()).thenAccept(invitedTeamPlayer -> {
                             if (!invitedTeamPlayer.getPreferences().isAcceptInvitations()) {
-                                player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteFailInvitesOff().replace("%NAME%", inviteeName)));
+                                player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInvite().getErrorInvitesDisabled().replace("%NAME%", inviteeName)));
 
                                 return;
                             }
@@ -78,22 +78,22 @@ public class TeamInviteSubCommand {
                             boolean invited = plugin.getTeamInviteUtil().createInvite(team.getId(), player, offlinePlayer.getUniqueId());
 
                             if (invited) {
-                                player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteSuccessful().replace(INVITED_PLAYER, inviteeName)));
+                                player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInvite().getSuccessful().replace(INVITED_PLAYER, inviteeName)));
 
                                 Optional.ofNullable(offlinePlayer.getPlayer())
-                                        .ifPresent(invitedPlayer -> invitedPlayer.sendMessage(MineDown.parse(String.join("\n", plugin.getMessages().getTeamInviteInvitedMessage())
+                                        .ifPresent(invitedPlayer -> invitedPlayer.sendMessage(MineDown.parse(String.join("\n", plugin.getMessages().getTeam().getInvite().getReceivedMessage())
                                                 .replace("%TEAM%", team.getName())
                                                 .replace("%INVITER%", player.getName())
                                                 .replace("%FEE%", String.valueOf(team.getJoin_fee()))
                                                 .replace("%CURRENCY_NAME%", plugin.getEconomyHook() != null ? plugin.getEconomyHook().getCurrencyNamePlural() : "$")
                                         )));
                             } else {
-                                player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteFailed().replace(INVITED_PLAYER, inviteeName)));
+                                player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInvite().getFailed().replace(INVITED_PLAYER, inviteeName)));
                             }
                         });
                     });
                 },
-                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> sender.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
 
 
@@ -133,19 +133,19 @@ public class TeamInviteSubCommand {
 
     public void teamInviteDenySubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getTeamInviteUtil().hasInvitee(player.getUniqueId())) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteDenyFail()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInvite().getDenyFail()));
             return;
         }
 
         if (plugin.getTeamInviteUtil().declineInvite(player)) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteDenied()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInvite().getDenied()));
         } else {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamInviteDenyFail()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInvite().getDenyFail()));
         }
     }
 
@@ -153,12 +153,12 @@ public class TeamInviteSubCommand {
     // ACCEPT
     public void teamInviteAcceptSubCommand(CommandSender sender) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getTeamInviteUtil().hasInvitee(player.getUniqueId())) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinFailedNoInvite()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getJoin().getFailedNoInvite()));
             return;
         }
 
@@ -167,7 +167,7 @@ public class TeamInviteSubCommand {
                         team -> {
                             if (plugin.getEconomyHook() != null && team.getJoin_fee() > 0) {
                                 if (!plugin.getEconomyHook().takeMoney(player, team.getJoin_fee())) {
-                                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeamFeeCantJoin()
+                                    player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getFee().getCantJoinNotEnoughMoney()
                                             .replace("%TEAM%",  team.getName())
                                             .replace("%AMOUNT%", String.valueOf(team.getJoin_fee()))
                                     ));
@@ -176,7 +176,7 @@ public class TeamInviteSubCommand {
                                 }
 
                                 team.addBalance(team.getJoin_fee());
-                                team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeamFeeDeposited()
+                                team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeam().getFee().getFeeDeposited()
                                         .replace("%PLAYER%", player.getName())
                                         .replace("%AMOUNT%", String.valueOf(team.getJoin_fee()))
                                 ));
@@ -187,19 +187,19 @@ public class TeamInviteSubCommand {
                             plugin.getTeamStorageUtil().addTeamMember(team, player);
                             plugin.getTeamInviteUtil().acceptInvite(invite, player);
 
-                            player.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinSuccessful().replace(TEAM_PLACEHOLDER, team.getName())));
+                            player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getJoin().getSuccessful().replace(TEAM_PLACEHOLDER, team.getName())));
 
                             if (!plugin.getSettings().getTeam().getJoin().isAnnounce())
                                 return;
 
                             // Send message to team members
-                            team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeamJoinBroadcastChat()
+                            team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeam().getJoin().getBroadcastChat()
                                     .replace(PLAYER_PLACEHOLDER, player.getName())
                                     .replace(TEAM_PLACEHOLDER, Utils.Color(team.getName()))));
                         },
-                        () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinFailedNoValidTeam()))
+                        () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getJoin().getFailedNoValidTeam()))
                 ),
-                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeamJoinFailedNoInvite()))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getJoin().getFailedNoInvite()))
         );
     }
 }

@@ -29,13 +29,13 @@ public class TeamAllySubCommand {
     public void teamAllyAddSubCommand(CommandSender sender, String teamName) {
         if (!(sender instanceof final Player player)) {
 
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getSettings().getTeam().getAllies().isEnabled()) {
 
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
             return;
         }
 
@@ -43,29 +43,29 @@ public class TeamAllySubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.RELATIONS)))) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                         return;
                     }
 
                     if (team.getRelations(plugin).size() >= plugin.getSettings().getTeam().getAllies().getMaxAllies()) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamAllyMaxAmountReached().replaceAll("%LIMIT%", String.valueOf(plugin.getSettings().getTeam().getAllies().getMaxAllies()))));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getAlly().getMaxAmountReached().replaceAll("%LIMIT%", String.valueOf(plugin.getSettings().getTeam().getAllies().getMaxAllies()))));
                         return;
                     }
 
                     final Optional<Team> optionalOtherTeam = plugin.getTeamStorageUtil().findTeamByName(teamName);
                     if (optionalOtherTeam.isEmpty() || optionalOtherTeam.get().equals(team)) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNotFound()));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getTeamNotFound()));
                         return;
                     }
 
                     final Team otherTeam = optionalOtherTeam.get();
                     if (team.getRelations(plugin).containsKey(otherTeam) && team.getRelations(plugin).get(otherTeam).equals(Team.Relation.ENEMY)) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getFailedCannotAllyEnemyTeam()));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getAlly().getFailedCannotAllyEnemy()));
                         return;
                     }
 
                     if (team.getRelations(plugin).containsKey(otherTeam) && team.getRelations(plugin).get(otherTeam).equals(Team.Relation.ALLY)) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getFailedTeamAlreadyYourAlly()));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getAlly().getFailedAlreadyAlly()));
                         return;
                     }
 
@@ -76,23 +76,23 @@ public class TeamAllySubCommand {
                     //fireTeamAllyAddEvent(player, team, allyTeamOwner, team);
 
                     // send message to team members
-                    team.sendTeamMessage(MineDown.parse(plugin.getMessages().getAddedTeamToYourAllies().replaceAll(ALLY_TEAM, otherTeam.getName())));
+                    team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeam().getAlly().getAddedSuccessful().replaceAll(ALLY_TEAM, otherTeam.getName())));
 
                     // send message to allie team members
-                    otherTeam.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeamAddedToOtherAllies().replaceAll("%TEAMOWNER%", team.getName())));
+                    otherTeam.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeam().getAlly().getAddedNotification().replaceAll("%TEAMOWNER%", team.getName())));
                 },
-                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getFailedNotInTeam()))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getPvp().getFailedNotInTeam()))
         );
     }
 
     public void teamAllyRemoveSubCommand(CommandSender sender, String teamName) {
         if (!(sender instanceof final Player player)) {
-            sender.sendMessage(MineDown.parse(plugin.getMessages().getPlayerOnlyCommand()));
+            sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getPlayerOnlyCommand()));
             return;
         }
 
         if (!plugin.getSettings().getTeam().getAllies().isEnabled()) {
-            player.sendMessage(MineDown.parse(plugin.getMessages().getFunctionDisabled()));
+            player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
             return;
         }
 
@@ -100,14 +100,14 @@ public class TeamAllySubCommand {
                 team -> {
                     // Check permission
                     if (!(plugin.getTeamStorageUtil().isTeamOwner(player) || (plugin.getTeamStorageUtil().isTeamManager(player) && team.hasPermission(Team.Permission.RELATIONS)))) {
-                        sender.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                        sender.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                         return;
                     }
 
 
                     final Optional<Team> optionalOtherTeam = plugin.getTeamStorageUtil().findTeamByName(teamName);
                     if (optionalOtherTeam.isEmpty() || optionalOtherTeam.get().equals(team)) {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamNotFound()));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getTeamNotFound()));
                         return;
                     }
 
@@ -119,14 +119,14 @@ public class TeamAllySubCommand {
                         plugin.getTeamStorageUtil().removeTeamAlly(team, otherTeam, player);
 
 
-                        team.sendTeamMessage(MineDown.parse(plugin.getMessages().getRemovedTeamFromYourAllies().replace(ALLY_TEAM, otherTeam.getName())));
+                        team.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeam().getAlly().getRemovedSuccessful().replace(ALLY_TEAM, otherTeam.getName())));
 
-                        otherTeam.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeamRemovedFromOtherAllies().replace(ALLY_TEAM, team.getName())));
+                        otherTeam.sendTeamMessage(MineDown.parse(plugin.getMessages().getTeam().getAlly().getRemovedOtherNotification().replace(ALLY_TEAM, team.getName())));
                     } else {
-                        player.sendMessage(MineDown.parse(plugin.getMessages().getFailedToRemoveTeamFromAllies().replace("%ALLYTEAM%", teamName)));
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getAlly().getFailedToRemove().replace("%ALLYTEAM%", teamName)));
                     }
                 },
-                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getNotInTeam()))
+                () -> player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getInfo().getNotInTeam()))
         );
     }
 }

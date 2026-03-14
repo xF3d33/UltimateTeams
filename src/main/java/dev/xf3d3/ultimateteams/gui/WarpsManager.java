@@ -76,12 +76,12 @@ public class WarpsManager {
                                         team.removeTeamWarp(warp.getName());
                                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeamWarpDeletedSuccessful().replaceAll("%WARP_NAME%", warp.getName())));
+                                        player.sendMessage(MineDown.parse(plugin.getMessages().getTeam().getWarp().getDeletedSuccessful().replaceAll("%WARP_NAME%", warp.getName())));
 
                                         click.getGui().close();
                                         new WarpsManager(plugin, player);
                                     } else {
-                                        player.sendMessage(MineDown.parse(plugin.getMessages().getNoPermission()));
+                                        player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getNoPermission()));
                                     }
                                 }
 
