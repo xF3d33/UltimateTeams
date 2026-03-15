@@ -112,6 +112,8 @@ public class Messages {
             private String noValidPlayer = "[Please specify a player to invite!](dark_aqua)";
             private String notTeamOwner = "[You must be a team owner to invite people!](dark_aqua)";
             private String selfError = "[You can't invite yourself!](dark_aqua)";
+            private String feeWillExceedLimit = "[You can't invite more players as the join fee will exceed the team bank limit (](dark_aqua)[%CURRENCY%%LIMIT%](gold)[)!](dark_aqua)";
+            private String cantJoinFeeWillExceedLimit = "[You can't accept the invite as the join fee will exceed the team bank limit (](dark_aqua)[%CURRENCY%%LIMIT%](gold)[)!](dark_aqua)";
             private String inviteeNotFound = "[Player](dark_aqua) [%INVITED%](gold) [was not found, make sure they are online!](dark_aqua)";
             private String invitedAlreadyInTeam = "[Player](dark_aqua) [%INVITED%](gold) [is already in a team!](dark_aqua)";
             private String maxSizeReached = "[You have reached the team members size limit](dark_aqua) [%LIMIT%](green)[!](dark_aqua)";
@@ -478,6 +480,7 @@ public class Messages {
         @Comment("Economy")
         private String notEnoughMoney = "[You don't have enough money for this action. Required balance is:](dark_aqua) [%MONEY%](gold)";
         private String invalidAmount = "[%MONEY%](gold) [is not a valid amount](dark_aqua)";
+        private String limitReached = "[You reached the bank limit](dark_aqua) [%CURRENCY%%LIMIT%](gold)[!](dark_aqua)";
         private String deposited = "[You have successfully deposited](dark_aqua) [%CURRENCY%%MONEY%](gold) [in the team bank](dark_aqua)";
 
         private WithdrawSettings withdraw = new WithdrawSettings();
@@ -605,25 +608,25 @@ public class Messages {
 
         @Comment("/team Command Responses")
         private List<String> teamHelp = List.of(
-                "[UltimateTeams usage:](gold)",
-                "[/team create <name>](dark_aqua)",
-                "[/team disband](dark_aqua)",
-                "[/team invite accept/deny/send <player>](dark_aqua)",
-                "[/team leave](dark_aqua)",
-                "[/team kick <player>](dark_aqua)",
-                "[/team info](dark_aqua)",
-                "[/team list](dark_aqua)",
-                "[/team prefix <prefix>](dark_aqua)",
-                "[/team transfer <player-name>](dark_aqua)",
-                "[/team ally [add|remove] <team-owner>](dark_aqua)",
-                "[/team enemy [add|remove] <team-owner>](dark_aqua)",
-                "[/team pvp](dark_aqua)",
-                "[/team [sethome|delhome|home]](dark_aqua)",
-                "[/team promote <player>](dark_aqua)",
-                "[/team demote <player>](dark_aqua)",
-                "[/team permissions add <permission>](dark_aqua)",
-                "[/team permissions remove <permission>](dark_aqua)",
-                "[/team echest [number]](dark_aqua)",
+                "&6UltimateTeams usage:",
+                "&3/team create <name>",
+                "&3/team disband",
+                "&3/team invite accept/deny/send <player>",
+                "&3/team leave",
+                "&3/team kick <player>",
+                "&3/team info",
+                "&3/team list",
+                "&3/team prefix <prefix>",
+                "&3/team transfer <player-name>",
+                "&3/team ally [add|remove] <team-owner>",
+                "&3/team enemy [add|remove] <team-owner>",
+                "&3/team pvp",
+                "&3/team [sethome|delhome|home]",
+                "&3/team promote <player>",
+                "&3/team demote <player>",
+                "&3/team permissions add <permission>",
+                "&3/team permissions remove <permission>",
+                "&3/team echest [number]",
                 ""
         );
 

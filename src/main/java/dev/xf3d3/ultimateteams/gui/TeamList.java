@@ -146,9 +146,12 @@ public class TeamList {
         lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getTeamsGui().getTeamList().getIcons().getLore().get("prefix") + "&r&f" + (team.getPrefix() != null ? team.getPrefix() : ""))));
 
         if (plugin.getSettings().getEconomy().isEnable()) {
-            lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getMessages().getTeam().getInfo().getBankAmount()
-                    .replace("%AMOUNT%", String.format("%.2f", team.getBalance())))
-            ));
+
+            if (plugin.getSettings().getEconomy().getTeamBank().isEnabled()) {
+                lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getMessages().getTeam().getInfo().getBankAmount()
+                        .replace("%AMOUNT%", String.format("%.2f", team.getBalance())))
+                ));
+            }
 
             if (plugin.getSettings().getEconomy().getTeamJoinFee().isEnabled()) {
                 lore.add(Utils.Color(plugin.replacePlaceholders(player, plugin.getMessages().getTeam().getInfo().getMotd().replace("%MOTD%", plugin.getMessages().getTeam().getInfo().getJoinFee()

@@ -147,9 +147,12 @@ public class TeamInfoSubCommand {
 
         teamInfo.append(" ");
         if (plugin.getSettings().getEconomy().isEnable()) {
-            teamInfo.append(Utils.Color(plugin.getMessages().getTeam().getInfo().getBankAmount()
-                    .replace("%AMOUNT%", String.format("%.2f", team.getBalance()))
-            )).append("\n");
+
+            if (plugin.getSettings().getEconomy().getTeamBank().isEnabled()) {
+                teamInfo.append(Utils.Color(plugin.getMessages().getTeam().getInfo().getBankAmount()
+                        .replace("%AMOUNT%", String.format("%.2f", team.getBalance()))
+                )).append("\n");
+            }
 
             if (plugin.getSettings().getEconomy().getTeamJoinFee().isEnabled()) {
                 teamInfo.append(Utils.Color(plugin.getMessages().getTeam().getInfo().getJoinFee()
