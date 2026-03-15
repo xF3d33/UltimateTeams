@@ -1,5 +1,5 @@
 name: UltimateTeams
-version: "5.0-BETA02"
+version: "5.0"
 main: dev.xf3d3.ultimateteams.UltimateTeams
 api-version: 1.21
 prefix: UltimateTeams
