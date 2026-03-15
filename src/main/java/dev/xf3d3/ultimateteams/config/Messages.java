@@ -263,9 +263,9 @@ public class Messages {
         @Configuration
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class ListSettings {
-            private String noTeams = "[No teams found!](dark_aqua)\n[Create one using](dark_aqua) [/team create <name>](aqua)[!](dark_aqua)";
-            private String header = "[----- ](gray)[TeamsList](gold)[ -----](gray)\n[Current teams:](dark_aqua bold)\n";
-            private String footer = "[-----](gray)";
+            private String noTeams = "&3No teams found!\n&3Create one using &b/team create <name>&3!";
+            private String header = "&7----- &6TeamsList&7 -----\n&3&lCurrent teams:\n";
+            private String footer = "&7-----";
         }
 
         @Comment("Team Info Messages")
