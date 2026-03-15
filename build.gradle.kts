@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "dev.xF3d3"
-version = "5.0"
+version = "5.0-BETA01"
 
 repositories {
     mavenLocal()
@@ -26,7 +26,6 @@ repositories {
 
 dependencies {
     compileOnly("com.zaxxer:HikariCP:7.0.2")
-    implementation("net.william278:annotaml:2.0.7")
     implementation("net.william278:DesertWell:2.0.4")
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("de.exlll:configlib-yaml:4.8.1")
@@ -53,7 +52,6 @@ dependencies {
 
     // Libs
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
-    implementation("dev.dejvokep:boosted-yaml:1.3.7")
 
     implementation("de.themoep:minedown-adventure:1.7.5")
 
