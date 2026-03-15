@@ -23,7 +23,7 @@ public class TeamBankSubCommand {
             return;
         }
 
-        if (plugin.getEconomyHook() == null) {
+        if (plugin.getEconomyHook() == null || !plugin.getSettings().getEconomy().getTeamBank().isEnabled()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
 
             return;
@@ -49,15 +49,24 @@ public class TeamBankSubCommand {
                         player.sendMessage(MineDown.parse(plugin.getMessages().getEconomy().getInvalidAmount()
                                 .replace("%MONEY%", String.valueOf(amount))
                         ));
+
                         return;
                     }
 
+                    if (plugin.getSettings().getEconomy().getTeamBank().isBankLimit() && team.getBalance() + amount > plugin.getSettings().getEconomy().getTeamBank().getLimit()) {
+                        player.sendMessage(MineDown.parse(plugin.getMessages().getEconomy().getLimitReached()
+                                .replace("%LIMIT%", String.valueOf(plugin.getSettings().getEconomy().getTeamBank().getLimit()))
+                                .replace("%CURRENCY%", plugin.getSettings().getEconomy().getTeamBank().getLimit() == 1 ? plugin.getEconomyHook().getCurrencyNameSingular() : plugin.getEconomyHook().getCurrencyNamePlural())
+                        ));
+
+                        return;
+                    }
 
 
                     if (!(new TeamBankDepositEvent(player, team, team.getBalance(), team.getBalance() + amount).callEvent())) return;
 
                     if (plugin.getEconomyHook().takeMoney(player, amount)) {
-                        String currencyName = amount > 1 ? plugin.getEconomyHook().getCurrencyNameSingular() : plugin.getEconomyHook().getCurrencyNamePlural();
+                        String currencyName = amount == 1 ? plugin.getEconomyHook().getCurrencyNameSingular() : plugin.getEconomyHook().getCurrencyNamePlural();
 
                         team.addBalance(amount);
 
@@ -78,7 +87,7 @@ public class TeamBankSubCommand {
             return;
         }
 
-        if (plugin.getEconomyHook() == null) {
+        if (plugin.getEconomyHook() == null || !plugin.getSettings().getEconomy().getTeamBank().isEnabled()) {
             player.sendMessage(MineDown.parse(plugin.getMessages().getGeneral().getFunctionDisabled()));
 
             return;
@@ -111,7 +120,7 @@ public class TeamBankSubCommand {
                     if (team.subBalance(amount)) {
                         plugin.runAsync(task -> plugin.getTeamStorageUtil().updateTeamData(player, team));
 
-                        String currencyName = amount > 1 ? plugin.getEconomyHook().getCurrencyNameSingular() : plugin.getEconomyHook().getCurrencyNamePlural();
+                        String currencyName = amount == 1 ? plugin.getEconomyHook().getCurrencyNameSingular() : plugin.getEconomyHook().getCurrencyNamePlural();
                         plugin.getEconomyHook().giveMoney(player, amount);
 
                         player.sendMessage(MineDown.parse(plugin.getMessages().getEconomy().getWithdraw().getSuccess()

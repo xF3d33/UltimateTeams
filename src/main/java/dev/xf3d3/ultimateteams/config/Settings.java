@@ -483,6 +483,22 @@ public class Settings {
             private double cost = 100.0;
         }
 
+        private TeamBankSettings teamBank = new TeamBankSettings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class TeamBankSettings {
+            @Comment("Whether to enable the team bank")
+            private boolean enabled = false;
+
+            @Comment("Whether to enable the team bank limit")
+            private boolean bankLimit = false;
+
+            @Comment("The bank limit")
+            private double limit = 20000.0;
+        }
+
         private TeamJoinFeeSettings teamJoinFee = new TeamJoinFeeSettings();
 
         @Getter
