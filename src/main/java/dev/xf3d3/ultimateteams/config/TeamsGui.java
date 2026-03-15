@@ -110,7 +110,7 @@ public class TeamsGui {
         @Configuration
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class IconsSettings {
-            @Comment("This allows you to customise the lore text for the player head icons in the TeamList GUI")
+            @Comment("This allows you to customize the lore text for the player head icons in the TeamList GUI")
             private Map<String, String> lore = Map.ofEntries(
                     Map.entry("header", "&7----------"),
                     Map.entry("team-name", "&3Team Name: &r"),

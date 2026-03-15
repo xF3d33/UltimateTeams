@@ -34,7 +34,7 @@ public class Settings {
     @Comment("Hook into luckperms to create contexts (e.g. is-in-team) [Default value: false]. Needs LuckPerms")
     private boolean luckpermsHook = false;
 
-    @Comment("use HuskHomes to teleport players instead of built-in teleport handler [Default value: true]")
+    @Comment("use HuskHomes to teleport players instead of built-in teleport handler [Default value: false]")
     private boolean useHuskhomes = false;
 
     @Comment("Hook into floodgate to handle bedrock players properly [Default value: false]. Needs FloodGate")
@@ -50,7 +50,7 @@ public class Settings {
         @Comment("Do you want to use the GUI system? [Default value: true]")
         private boolean enable = true;
 
-        @Comment("Should the plugin open the team list GUI instead of sending chat message when /team list is used? [Default value: false]")
+        @Comment("Should the plugin open the team list GUI instead of sending a chat message when /team list is used? [Default value: false]")
         private boolean useGuiForTeamList = false;
     }
 
@@ -177,7 +177,7 @@ public class Settings {
         @Configuration
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class NameSettings {
-            @Comment("Whether to allow color codes (& and #) in the teams name")
+            @Comment("Whether to allow color codes (& and #) in the team name")
             private boolean allowColorCodes = false;
 
             @Comment("If enabled, players will need the ultimateteams.team.create.usecolors permission to use color codes")

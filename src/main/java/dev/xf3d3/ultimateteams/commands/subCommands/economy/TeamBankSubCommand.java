@@ -52,6 +52,8 @@ public class TeamBankSubCommand {
                         return;
                     }
 
+
+
                     if (!(new TeamBankDepositEvent(player, team, team.getBalance(), team.getBalance() + amount).callEvent())) return;
 
                     if (plugin.getEconomyHook().takeMoney(player, amount)) {
