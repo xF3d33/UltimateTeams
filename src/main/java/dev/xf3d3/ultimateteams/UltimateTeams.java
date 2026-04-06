@@ -173,6 +173,11 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
             initialize("luckperms" , (plugin) -> new LuckPermsHook(this));
         }
 
+        // Initialize Apollo (Lunar Client) teamview hook
+        if (getSettings().isApolloHook()) {
+            initialize("apollo", (plugin) -> new ApolloHook(this));
+        }
+
         // Register command completions
         this.manager.getCommandCompletions().registerAsyncCompletion("onlineUsers", c -> getUsersStorageUtil().getUserList().stream().map(User::getUsername).collect(Collectors.toList()));
         this.manager.getCommandCompletions().registerAsyncCompletion("teams", c -> teamsStorage.getTeamsName().stream().map(Utils::removeColors).collect(Collectors.toList()));
