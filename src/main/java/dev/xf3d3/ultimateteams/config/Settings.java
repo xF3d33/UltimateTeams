@@ -40,6 +40,9 @@ public class Settings {
     @Comment("Hook into floodgate to handle bedrock players properly [Default value: false]. Needs FloodGate")
     private boolean floodgateHook = false;
 
+    @Comment("Enable the Apollo Team View integration for Lunar Client players. Teammates will appear as markers on the minimap and direction HUD. [Default value: true]")
+    private boolean apolloHook = true;
+
     @Comment("GUI Settings")
     private GuiSettings gui = new GuiSettings();
 
