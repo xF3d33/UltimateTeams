@@ -4,9 +4,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.api.events.TeamDisbandEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamHomeCreateEvent;
+import dev.xf3d3.ultimateteams.api.events.TeamHomeDeleteEvent;
 import dev.xf3d3.ultimateteams.api.events.TeamMemberJoinEvent;
 import dev.xf3d3.ultimateteams.api.events.TeamMemberLeaveEvent;
 import dev.xf3d3.ultimateteams.models.Team;
+import dev.xf3d3.ultimateteams.models.TeamHome;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -60,7 +63,12 @@ public final class ApolloHook implements Listener {
         final Player player = event.getPlayer();
         apolloPlayers.add(player.getUniqueId());
 
-        plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresent(this::refreshTeam);
+        plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).ifPresent(team -> {
+            refreshTeam(team);
+            if (team.getHome() != null) {
+                sendHomeWaypoint(player, team.getHome());
+            }
+        });
     }
 
     @EventHandler
@@ -81,6 +89,24 @@ public final class ApolloHook implements Listener {
         }
 
         refreshTeam(event.getTeam());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onHomeCreate(TeamHomeCreateEvent event) {
+        for (final Player member : event.getTeam().getOnlineMembers()) {
+            if (apolloPlayers.contains(member.getUniqueId())) {
+                sendHomeWaypoint(member, event.getTeamHome());
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onHomeDelete(TeamHomeDeleteEvent event) {
+        for (final Player member : event.getTeam().getOnlineMembers()) {
+            if (apolloPlayers.contains(member.getUniqueId())) {
+                sendRemoveHomeWaypoint(member);
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -128,6 +154,26 @@ public final class ApolloHook implements Listener {
         return obj;
     }
 
+    private static final String HOME_WAYPOINT_NAME = "Team Home";
+
+    private void sendHomeWaypoint(Player player, TeamHome home) {
+        final JsonObject message = new JsonObject();
+        message.addProperty("@type", "type.googleapis.com/lunarclient.apollo.waypoint.v1.DisplayWaypointMessage");
+        message.addProperty("name", HOME_WAYPOINT_NAME);
+        message.add("location", createBlockLocationObject(home.getLocation()));
+        message.add("color", createColorObject(Color.GREEN));
+        message.addProperty("prevent_removal", false);
+        message.addProperty("hidden", false);
+        sendPacket(player, message);
+    }
+
+    private void sendRemoveHomeWaypoint(Player player) {
+        final JsonObject message = new JsonObject();
+        message.addProperty("@type", "type.googleapis.com/lunarclient.apollo.waypoint.v1.RemoveWaypointMessage");
+        message.addProperty("name", HOME_WAYPOINT_NAME);
+        sendPacket(player, message);
+    }
+
     private void sendResetTeamMembers(Player player) {
         final JsonObject message = new JsonObject();
         message.addProperty("@type", "type.googleapis.com/lunarclient.apollo.team.v1.ResetTeamMembersMessage");
@@ -158,6 +204,15 @@ public final class ApolloHook implements Listener {
         obj.addProperty("x", location.getX());
         obj.addProperty("y", location.getY());
         obj.addProperty("z", location.getZ());
+        return obj;
+    }
+
+    private static JsonObject createBlockLocationObject(Location location) {
+        final JsonObject obj = new JsonObject();
+        obj.addProperty("world", location.getWorld().getName());
+        obj.addProperty("x", location.getBlockX());
+        obj.addProperty("y", location.getBlockY());
+        obj.addProperty("z", location.getBlockZ());
         return obj;
     }
 
