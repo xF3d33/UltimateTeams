@@ -100,13 +100,7 @@ public class TeamAllyChatCommand extends BaseCommand {
 
                     String chatSpyPrefix = plugin.getSettings().getChat().getChatSpy().getPrefix();
 
-                    StringBuilder messageString = new StringBuilder();
-                    messageString.append(plugin.getSettings().getTeam().getAllies().getChat().getPrefix()).append(" ");
-                    for (String arg : args) {
-                        messageString.append(arg).append(" ");
-                    }
-
-                    final String msg = plugin.replacePlaceholders(player, messageString.toString()
+                    final String msg = plugin.replacePlaceholders(player, plugin.getSettings().getTeam().getAllies().getChat().getPrefix() + " " + String.join(" ", args)
                             .replace("%TEAM%", team.getName())
                             .replace("%PLAYER%", player.getName()));
 
