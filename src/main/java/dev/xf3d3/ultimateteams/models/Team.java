@@ -112,20 +112,24 @@ public class Team {
     }
 
     public List<Player> getOnlineMembers() {
-        return Bukkit.getOnlinePlayers().stream()
-                .filter(player -> getMembers().containsKey(player.getUniqueId())).collect(Collectors.toUnmodifiableList());
+        return getMembers().keySet().stream()
+                .map(Bukkit::getPlayer)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public void sendTeamMessage(@NotNull String message) {
-        Bukkit.getOnlinePlayers().stream()
-                .filter(player -> getMembers().containsKey(player.getUniqueId()))
-                .forEach(player -> player.sendMessage(message));
+        getMembers().keySet().forEach(uuid -> {
+            final Player player = Bukkit.getPlayer(uuid);
+            if (player != null) player.sendMessage(message);
+        });
     }
 
     public void sendTeamMessage(@NotNull Component component) {
-        Bukkit.getOnlinePlayers().stream()
-                .filter(player -> getMembers().containsKey(player.getUniqueId()))
-                .forEach(player -> player.sendMessage(component));
+        getMembers().keySet().forEach(uuid -> {
+            final Player player = Bukkit.getPlayer(uuid);
+            if (player != null) player.sendMessage(component);
+        });
     }
 
     public Optional<TeamWarp> getTeamWarp(@NotNull String name) {
