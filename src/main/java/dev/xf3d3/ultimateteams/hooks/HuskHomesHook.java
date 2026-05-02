@@ -27,6 +27,7 @@ public class HuskHomesHook {
 
         Position position = Position.at(
                 location.getX(), location.getY(), location.getZ(),
+                location.getYaw(), location.getPitch(),
                 World.from(location.getWorld().getName(), location.getWorld().getUID()), server
         );
 
