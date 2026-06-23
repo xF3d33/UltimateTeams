@@ -48,7 +48,7 @@ dependencies {
     
     // PaperLib
     implementation("io.papermc:paperlib:1.0.8")
-    implementation("com.tcoded:FoliaLib:0.5.1")
+    implementation("com.tcoded:FoliaLib:0.5.2")
 
     // Libs
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")

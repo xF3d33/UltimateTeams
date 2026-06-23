@@ -213,6 +213,8 @@ public class TeamEnderChestRollbackSubCommand {
                     boolean success = plugin.getBackupManager().restoreBackup(team.getId(), chestNumber, backupIndex);
                     
                     if (success) {
+                        plugin.getTeamEnderChestSubCommand().invalidateChest(team.getId(), chestNumber);
+
                         String rollbackType = force ? "&c&lFORCE ROLLBACK" : "&aROLLBACK";
                         sender.sendMessage(Utils.Color("&a✓ Successfully rolled back Ender Chest #" + chestNumber + " for team " + team.getName() + "!"));
                         sender.sendMessage(Utils.Color("&7Restored from: &f" + backup.getFormattedTimestamp() + 
