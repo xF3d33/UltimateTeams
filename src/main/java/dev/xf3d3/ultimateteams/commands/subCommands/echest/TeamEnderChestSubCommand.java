@@ -63,8 +63,24 @@ public class TeamEnderChestSubCommand implements Listener {
         String key = getInventoryKey(teamId, chestNumber);
 
         synchronized (INVENTORY_LOCK) {
+            Set<UUID> viewers = inventoryViewers.remove(key);
             sharedInventories.remove(key);
-            inventoryViewers.remove(key);
+
+            // Force close for all active viewers to prevent desyncs
+            if (viewers != null) {
+                for (UUID viewerId : viewers) {
+                    Player viewer = Bukkit.getPlayer(viewerId);
+
+                    if (viewer != null && viewer.isOnline()) {
+
+                        // Ensure activeViews are removed so they can't trigger saves
+                        activeViews.remove(viewerId);
+
+                        // Close inventory on the next tick to avoid ConcurrentModificationException inside an event
+                        plugin.getScheduler().runLater(() -> viewer.closeInventory(), 1L);
+                    }
+                }
+            }
         }
 
         synchronized (pendingSaveTasks) {
