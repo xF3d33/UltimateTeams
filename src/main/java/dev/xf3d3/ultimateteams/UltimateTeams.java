@@ -13,6 +13,8 @@ import dev.xf3d3.ultimateteams.commands.TeamCommand;
 import dev.xf3d3.ultimateteams.commands.chat.TeamAllyChatCommand;
 import dev.xf3d3.ultimateteams.commands.chat.TeamChatCommand;
 import dev.xf3d3.ultimateteams.commands.chat.TeamChatSpyCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamAdminEnderChestSubCommand;
+import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.members.TeamInvites;
 import dev.xf3d3.ultimateteams.config.Messages;
 import dev.xf3d3.ultimateteams.config.Settings;
@@ -81,6 +83,8 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
     @Getter private HuskHomesHook huskHomesHook;
     @Getter private Utils utils;
     @Getter private EnderChestBackupManager backupManager;
+    @Getter private TeamEnderChestSubCommand teamEnderChestSubCommand;
+    @Getter private TeamAdminEnderChestSubCommand teamAdminEnderChestSubCommand;
 
     @Getter @Nullable private VaultHook economyHook;
 
@@ -128,6 +132,10 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
             });
         }
 
+        // Initialize team ender chest handlers before commands (TeamAdmin depends on these)
+        this.teamEnderChestSubCommand = new TeamEnderChestSubCommand(this);
+        this.teamAdminEnderChestSubCommand = new TeamAdminEnderChestSubCommand(this, teamEnderChestSubCommand);
+
         // Register commands
         initialize("commands", (plugin) -> {
             manager.enableUnstableAPI("help");
@@ -157,11 +165,13 @@ public final class UltimateTeams extends JavaPlugin implements TaskRunner, GsonU
         // Load the teams
         initialize("teams", (plugin) -> runAsync(task -> teamsStorage.loadTeams()));
 
-        // Initialize backup manager for ender chests (only if enabled)
+        // Initialize backup manager and echest listener (only if enabled)
         if (getSettings().getTeam().getEchest().isEnabled()) {
-            initialize("ender chest backup manager", (plugin) -> this.backupManager = new EnderChestBackupManager(this));
+            initialize("ender chest system", (plugin) -> {
+                getServer().getPluginManager().registerEvents(teamEnderChestSubCommand, this);
+                this.backupManager = new EnderChestBackupManager(this);
+            });
         } else {
-            //sendConsole("&6UltimateTeams: &3Team ender chests system disabled in config");
             log(Level.INFO, "Team ender chests system disabled in config");
         }
 

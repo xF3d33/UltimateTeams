@@ -128,7 +128,7 @@ public final class ApolloHook implements Listener {
             members.add(createTeamMemberObject(member));
         }
 
-        if (members.isEmpty()) {
+        if (members.size() == 0) {
             return;
         }
 

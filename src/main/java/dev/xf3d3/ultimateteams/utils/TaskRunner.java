@@ -3,6 +3,7 @@ package dev.xf3d3.ultimateteams.utils;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import com.tcoded.folialib.wrapper.task.WrappedTask;
 import dev.xf3d3.ultimateteams.UltimateTeams;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -55,6 +56,10 @@ public interface TaskRunner {
 
     default void runSyncDelayed(@NotNull Runnable runnable, long delay) {
         getScheduler().runLater(runnable, delay);
+    }
+
+    default WrappedTask runAtEntityLater(@NotNull Player player, @NotNull Runnable runnable, long delayTicks) {
+        return getScheduler().runAtEntityLater(player, runnable, delayTicks);
     }
 
     default void runSyncRepeating(@NotNull Runnable runnable, long period) {

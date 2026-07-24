@@ -8,7 +8,6 @@ import dev.xf3d3.ultimateteams.UltimateTeams;
 import dev.xf3d3.ultimateteams.commands.subCommands.*;
 import dev.xf3d3.ultimateteams.commands.subCommands.disband.TeamDisbandConfirmSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.disband.TeamDisbandSubCommand;
-import dev.xf3d3.ultimateteams.commands.subCommands.echest.TeamEnderChestSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.economy.TeamBankSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.economy.TeamFeeSubCommand;
 import dev.xf3d3.ultimateteams.commands.subCommands.home.TeamDelHomeSubCommand;
@@ -405,14 +404,14 @@ public class TeamCommand extends BaseCommand {
     @CommandCompletion("@nothing")
     @CommandPermission("ultimateteams.team.echest")
     public void onTeamEnderChestCommand(@NotNull CommandSender sender) {
-        new TeamEnderChestSubCommand(plugin).openEnderChest(sender, 1);
+        plugin.getTeamEnderChestSubCommand().openEnderChest(sender, 1);
     }
 
     @Subcommand("echest")
     @CommandCompletion("@teamChests @nothing")
     @CommandPermission("ultimateteams.team.echest")
     public void onTeamEnderChestNumberCommand(@NotNull CommandSender sender, int chestNumber) {
-        new TeamEnderChestSubCommand(plugin).openEnderChest(sender, chestNumber);
+        plugin.getTeamEnderChestSubCommand().openEnderChest(sender, chestNumber);
     }
 
     // TEAM BANK

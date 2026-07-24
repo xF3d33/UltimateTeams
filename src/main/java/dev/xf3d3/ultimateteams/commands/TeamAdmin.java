@@ -40,10 +40,8 @@ public class TeamAdmin extends BaseCommand {
 
     public TeamAdmin(@NotNull UltimateTeams plugin) {
         this.plugin = plugin;
-        
-        // Initialize ender chest subcommands
-        this.teamEnderChestSubCommand = new TeamEnderChestSubCommand(plugin);
-        this.teamAdminEnderChestSubCommand = new TeamAdminEnderChestSubCommand(plugin, teamEnderChestSubCommand);
+        this.teamEnderChestSubCommand = plugin.getTeamEnderChestSubCommand();
+        this.teamAdminEnderChestSubCommand = plugin.getTeamAdminEnderChestSubCommand();
     }
 
 

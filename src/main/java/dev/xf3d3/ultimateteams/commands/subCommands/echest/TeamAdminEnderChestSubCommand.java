@@ -81,6 +81,8 @@ public class TeamAdminEnderChestSubCommand {
                     lastChest.setRows(newRows);
                     team.setEnderChest(lastChest);
 
+                    teamEnderChestSubCommand.invalidateChest(team.getId(), lastChest.getChestNumber());
+
                     Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
                     plugin.runAsync(task1 -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
 
@@ -165,6 +167,8 @@ public class TeamAdminEnderChestSubCommand {
         
         // Remove the chest
         team.removeEnderChest(chestNumber);
+
+        teamEnderChestSubCommand.invalidateChest(team.getId(), chestNumber);
 
         Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
         plugin.runAsync(task1 -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
@@ -342,6 +346,8 @@ public class TeamAdminEnderChestSubCommand {
         // Update chest
         chest.setRows(newRows);
         team.setEnderChest(chest);
+
+        teamEnderChestSubCommand.invalidateChest(team.getId(), chestNumber);
 
         Player randomPlayer = Bukkit.getOnlinePlayers().stream().findAny().orElse(null);
         plugin.runAsync(task1 -> plugin.getTeamStorageUtil().updateTeamData(randomPlayer, team));
