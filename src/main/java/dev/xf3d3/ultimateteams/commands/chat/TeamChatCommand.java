@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
-@CommandAlias("tc|teamchat|tchat")
+@CommandAlias("mytc|myteamchat|mytchat")
 public class TeamChatCommand extends BaseCommand {
     private final Logger logger;
     private final UltimateTeams plugin;
@@ -26,7 +26,7 @@ public class TeamChatCommand extends BaseCommand {
 
     @Default
     @CommandCompletion("<message>")
-    @Syntax("/tc <message>")
+    @Syntax("/mytc <message>")
     @CommandPermission("ultimateteams.teamchat")
     public void onCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof final Player player)){
