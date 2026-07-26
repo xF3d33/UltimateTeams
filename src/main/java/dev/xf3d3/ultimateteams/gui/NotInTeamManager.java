@@ -52,7 +52,7 @@ public class NotInTeamManager {
                     if (click.getType().isLeftClick()) {
 
                         click.getGui().close();
-                        player.performCommand("team create");
+                        player.performCommand(plugin.getSettings().getMainCommand() + " create");
                     }
 
                     return true;
