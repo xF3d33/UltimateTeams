@@ -53,7 +53,7 @@ dependencies {
     // Libs
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
 
-    implementation("de.themoep:minedown-adventure:1.7.5")
+    implementation("de.themoep:minedown-adventure:1.7.6-SNAPSHOT")
 
     compileOnly("net.luckperms:api:5.5")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
@@ -87,7 +87,7 @@ tasks {
         relocate("org.jetbrains", "dev.xf3d3.ultimateteams.libraries.jetbrains")
         relocate("org.intellij", "dev.xf3d3.ultimateteams.libraries.intellij")
         relocate("org.json", "dev.xf3d3.ultimateteams.libraries.json")
-        relocate("de.themoep", "dev.xf3d3.ultimateteams.libraries.inventorygui")
+        relocate("de.themoep.inventorygui", "dev.xf3d3.ultimateteams.libraries.inventorygui")
         relocate("dev.dejvokep", "dev.xf3d3.ultimateteams.libraries.boostedyaml")
         relocate("net.william278.desertwell", "dev.xf3d3.ultimateteams.libraries.william278.desertwell")
         relocate("net.william278.annotaml", "dev.xf3d3.ultimateteams.libraries.william278.annotaml")
